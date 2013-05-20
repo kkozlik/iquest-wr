@@ -44,7 +44,10 @@
 
 class apu_iquest extends apu_base_class{
 
+    protected $grp_ref_id;
+    protected $smarty_action = 'default';
     protected $smarty_groups;
+    protected $smarty_clues;
 
     /** 
      *  return required data layer methods - static class 
@@ -89,6 +92,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['form_name'] =           '';
         $this->opt['smarty_name'] =         'name';
         $this->opt['smarty_groups'] =       'clue_groups';
+        $this->opt['smarty_clues'] =        'clues';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         
@@ -106,9 +110,6 @@ class apu_iquest extends apu_base_class{
         
         $this->session = &$_SESSION['apu_iquest'][$this->opt['instance_id']];
         
-        if (!isset($this->session['smarty_action'])){
-            $this->session['smarty_action'] = 'default';
-        }
         if (!isset($this->session['name'])){
             $this->session['name'] = '';
         }
@@ -134,13 +135,44 @@ class apu_iquest extends apu_base_class{
 
     
     /**
+     *  Method perform action view_grp 
+     *
+     *  @return array           return array of $_GET params fo redirect or FALSE on failure
+     */
+
+    function action_view_grp(){
+
+        $opt = array("ref_id" => $this->grp_ref_id);
+
+        $clue_grp = Iquest::get_clue_grps_team($this->user_id->get_uid(), $opt);
+        if (!$clue_grp){
+            ErrorHandler::add_error("Unknown clue group!");
+            sw_log("Unknown clue group: '".$this->grp_ref_id."'", PEAR_LOG_ERR);
+            return false;
+        }
+        $clue_grp = reset($clue_grp);
+        
+        $clues = $clue_grp->get_clues();
+
+        $this->smarty_clues = array();
+        foreach($clues as $k => $v){
+            $smarty_clue = $v->to_smarty();
+            $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($v->ref_id), false);
+            $this->smarty_clues[$k] = $smarty_clue;
+        }
+
+        action_log($this->opt['screen_name'], $this->action, "View hello world screen");
+        return true;
+    }
+
+    
+    /**
      *  Method perform action default 
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
     function action_default(){
-        $this->session['smarty_action'] = 'default';
 
         $clue_groups = Iquest::get_clue_grps_team($this->user_id->get_uid());
 
@@ -164,6 +196,13 @@ class apu_iquest extends apu_base_class{
             $this->action=array('action'=>"update",
                                 'validate_form'=>true,
                                 'reload'=>true);
+        }
+        elseif (isset($_GET['view_grp'])){
+            $this->smarty_action = 'view_grp';
+            $this->grp_ref_id = $_GET['view_grp'];
+            $this->action=array('action'=>"view_grp",
+                                 'validate_form'=>true,
+                                 'reload'=>false);
         }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
@@ -190,6 +229,10 @@ class apu_iquest extends apu_base_class{
         if ($this->action['action'] == "update"){
             action_log($this->opt['screen_name'], $this->action, "Update action failed", false, array("errors"=>$this->controler->errors));
         }
+        elseif ($this->action['action'] == "view_grp"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View clue group failed", false, array("errors"=>$this->controler->errors));
+            if (false === $this->action_default($errors)) return false;
+        }
     }
 
     /**
@@ -199,6 +242,16 @@ class apu_iquest extends apu_base_class{
      */
     function validate_form(){
         global $lang_str;
+
+        if ($this->action['action'] == "view_grp"){
+            $grp_ok = true;
+
+//@todo: check grp is accessible to the user
+
+            return $grp_ok;
+        }
+
+
         $form_ok = true;
         if (false === parent::validate_form()) $form_ok = false;
 
@@ -228,9 +281,10 @@ class apu_iquest extends apu_base_class{
     function pass_values_to_html(){
         global $smarty;
 
-        $smarty->assign($this->opt['smarty_action'], $this->session['smarty_action']);
+        $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
         $smarty->assign($this->opt['smarty_name'], $this->session['name']);
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
+        $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         
         
     }
