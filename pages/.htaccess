@@ -1,0 +1,5 @@
+
+
+# Let the framework know where the script describing application directories is
+#
+# SetEnv SERWEB_SET_DIRS "/my/app/config/set_dirs.php"

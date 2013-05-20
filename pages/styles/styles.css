@@ -1,0 +1,22 @@
+
+table.errtbl {
+    background-color: #FFDCDC;
+    border: thin solid red;
+    font-size: 12px;
+}
+
+td.errmsg {
+    background-color: #FFDCDC;
+    color: red;
+}
+
+
+table.statustbl {
+    background-color: #88EE88;
+    border: thin solid green;
+    font-size: 12px;
+}
+
+td.statusmsg {
+    color: green;
+}

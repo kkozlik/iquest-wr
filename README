@@ -1,0 +1,7 @@
+Dependencies
+------------
+ * serweb-frmwrk
+ * php-log
+ * php-mdb2
+ * php5-mysql
+ * pear: MDB2#mysqli    
