@@ -45,6 +45,7 @@
 class apu_iquest extends apu_base_class{
 
     protected $grp_ref_id;
+    protected $clue_ref_id;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
@@ -122,7 +123,6 @@ class apu_iquest extends apu_base_class{
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
-
     function action_update(){
 
         $this->session['name'] = $_POST['hello_world_name'];
@@ -133,13 +133,20 @@ class apu_iquest extends apu_base_class{
         return $get;
     }
 
+
+    function action_get_clue(){
+        $this->controler->disable_html_output();
+        $clue = Iquest_Clue::by_ref_id($this->clue_ref_id);
+        $clue->flush_content();
+        return true;
+    }
+
     
     /**
      *  Method perform action view_grp 
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
-
     function action_view_grp(){
 
         $opt = array("ref_id" => $this->grp_ref_id);
@@ -204,6 +211,13 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
+        elseif (isset($_GET['get_clue'])){
+            $this->clue_ref_id = $_GET['get_clue'];
+            $this->action=array('action'=>"get_clue",
+                                 'validate_form'=>true,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
                                  'reload'=>false);
@@ -249,6 +263,14 @@ class apu_iquest extends apu_base_class{
 //@todo: check grp is accessible to the user
 
             return $grp_ok;
+        }
+
+        if ($this->action['action'] == "get_clue"){
+            $clue_ok = true;
+
+//@todo: check clue is accessible to the user
+
+            return $clue_ok;
         }
 
 

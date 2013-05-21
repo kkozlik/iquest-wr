@@ -2,6 +2,8 @@
 
 {include file='_head.tpl'}
 
+{include file="iquest/iquest-functions.tpl"}
+
 {if $action=='view_grp'}
 
     {foreach $clues as $clue}
@@ -11,6 +13,7 @@
         <th>{$clue.filename}</th>
         <th><a href="{$clue.file_url|escape}">{$lang_str.iquest_download}</a></th>
     </tr>
+    {call iquestRenderFile file=$clue}
     </table>
     </div>
     {/foreach}

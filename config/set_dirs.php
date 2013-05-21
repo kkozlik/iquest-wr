@@ -11,15 +11,15 @@ $thisdir = dirname(__FILE__);
 global $_SERWEB, $config;
 
 // directory that should be accesible directly from the web
-$_SERWEB["pagesdir"] =      $thisdir."/";
+$_SERWEB["pagesdir"] =      realpath($thisdir."/../pages")."/";
 // directory containing configuration
-$_SERWEB["configdir"] =     $thisdir."/../config/";
+$_SERWEB["configdir"] =     realpath($thisdir)."/";
 // directory containing language strings
-$_SERWEB["langdir"] =       $thisdir."/../lang/";
+$_SERWEB["langdir"] =       realpath($thisdir."/../lang")."/";
 // directory containing modules
-$_SERWEB["modulesdir"] =    $thisdir."/../modules/";
+$_SERWEB["modulesdir"] =    realpath($thisdir."/../modules")."/";
 // directory containing smarty templates
-$_SERWEB["templatesdir"] =  $thisdir."/../templates/";
+$_SERWEB["templatesdir"] =  realpath($thisdir."/../templates")."/";
 
 unset($thisdir);
 

@@ -18,4 +18,7 @@
 
     $config->force_lang = 'cs-utf-8';
 
+
+    $config->iquest_data_dir = realpath($_SERWEB["configdir"]."../data")."/";
+
 ?>
