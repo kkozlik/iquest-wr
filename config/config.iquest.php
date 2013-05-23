@@ -42,6 +42,7 @@ $config->data_sql->iquest_clue->cols->cgrp_id =         "cgrp_id";
 $config->data_sql->iquest_clue->cols->filename =        "filename";
 $config->data_sql->iquest_clue->cols->content_type =    "content_type";
 $config->data_sql->iquest_clue->cols->comment =         "comment";
+$config->data_sql->iquest_clue->cols->ordering =        "ordering";
 
 
 
@@ -85,5 +86,37 @@ $config->data_sql->iquest_hint_team->table_name =           "hint_team";
 $config->data_sql->iquest_hint_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_hint_team->cols->hint_id =        "hint_id";
 $config->data_sql->iquest_hint_team->cols->show_at =        "show_at";
+
+
+/**
+ *      solution
+ */ 
+$config->data_sql->iquest_solution = new stdClass();
+$config->data_sql->iquest_solution->cols = new stdClass();
+        
+$config->data_sql->iquest_solution->table_name =            "task_solution";
+
+$config->data_sql->iquest_solution->cols->id =              "solution_id";
+$config->data_sql->iquest_solution->cols->ref_id =          "ref_id";
+$config->data_sql->iquest_solution->cols->cgrp_id =         "cgrp_id";
+$config->data_sql->iquest_solution->cols->name =            "name";
+$config->data_sql->iquest_solution->cols->key =             "key";
+$config->data_sql->iquest_solution->cols->filename =        "filename";
+$config->data_sql->iquest_solution->cols->content_type =    "content_type";
+$config->data_sql->iquest_solution->cols->timeout =         "timeout";
+$config->data_sql->iquest_solution->cols->comment =         "comment";
+
+
+/**
+ *      solution_team
+ */ 
+$config->data_sql->iquest_solution_team = new stdClass();
+$config->data_sql->iquest_solution_team->cols = new stdClass();
+        
+$config->data_sql->iquest_solution_team->table_name =           "task_solution_team";
+
+$config->data_sql->iquest_solution_team->cols->team_id =        "team_id";
+$config->data_sql->iquest_solution_team->cols->solution_id =    "solution_id";
+$config->data_sql->iquest_solution_team->cols->show_at =        "show_at";
 
 ?>

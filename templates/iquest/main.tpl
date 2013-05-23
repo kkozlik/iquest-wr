@@ -30,7 +30,17 @@
     {/foreach}
     {/foreach}
 
+{elseif $action=='view_solution'}
 
+    <div class="datatable solution">
+    <table>
+    <tr>
+        <th>{$solutions.name}</th>
+        <th>&nbsp;</th>
+    </tr>
+    {call iquestRenderFile file=$solutions}
+    </table>
+    </div>
 
 {else}
     
@@ -52,6 +62,21 @@
     {/foreach}
     </table>
     </div>
+
+    {foreach $solutions as $solution}
+        {if $solution@first}
+        <div class="datatable">
+        <table>
+        <tr><th>{$lang_str.iquest_avail_solutions}</th></tr>
+        {/if}
+
+        <tr><td><a href="{$solution.detail_url|escape}">{$solution.name}</a></td></tr>
+
+        {if $solution@last}
+        </table>
+        </div>
+        {/if}
+    {/foreach}
 
 {/if}
 <br>

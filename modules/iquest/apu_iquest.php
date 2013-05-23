@@ -50,6 +50,7 @@ class apu_iquest extends apu_base_class{
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
+    protected $smarty_solutions;
 
     /** 
      *  return required data layer methods - static class 
@@ -95,6 +96,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_name'] =         'name';
         $this->opt['smarty_groups'] =       'clue_groups';
         $this->opt['smarty_clues'] =        'clues';
+        $this->opt['smarty_solutions'] =    'solutions';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         
@@ -151,6 +153,13 @@ class apu_iquest extends apu_base_class{
         return true;
     }
 
+    function action_get_solution(){
+        $this->controler->disable_html_output();
+        $hint = Iquest_Solution::by_ref_id($this->ref_id);
+        $hint->flush_content();
+        return true;
+    }
+
     
     /**
      *  Method perform action view_grp 
@@ -184,11 +193,37 @@ class apu_iquest extends apu_base_class{
             $this->smarty_clues[$k] = $smarty_clue;
         }
 
-        action_log($this->opt['screen_name'], $this->action, "View hello world screen");
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View clue group screen");
         return true;
     }
 
     
+
+    
+    /**
+     *  Method perform action view_solution 
+     *
+     *  @return array           return array of $_GET params fo redirect or FALSE on failure
+     */
+    function action_view_solution(){
+
+        $opt = array("ref_id" => $this->ref_id);
+
+        $solution = Iquest_Solution::fetch($opt);
+        if (!$solution){
+            ErrorHandler::add_error("Unknown solution!");
+            sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_ERR);
+            return false;
+        }
+        $solution = reset($solution);
+        
+        $this->smarty_solutions = $solution->to_smarty();
+        $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($solution->ref_id), false);
+
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
+        return true;
+    }
     /**
      *  Method perform action default 
      *
@@ -206,8 +241,17 @@ class apu_iquest extends apu_base_class{
             $this->smarty_groups[$k] = $smarty_group;
         }
 
+        $solutions = Iquest::get_accessible_solutions($this->team_id);
 
-        action_log($this->opt['screen_name'], $this->action, "View hello world screen");
+        $this->smarty_solutions = array();
+        foreach($solutions as $k => $v){
+            $smarty_solution = $v->to_smarty();
+            $smarty_solution['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_solution=".RawURLEncode($v->ref_id));
+            $this->smarty_solutions[$k] = $smarty_solution;
+        }
+
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
     }
     
@@ -227,6 +271,13 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
+        elseif (isset($_GET['view_solution'])){
+            $this->smarty_action = 'view_solution';
+            $this->ref_id = $_GET['view_solution'];
+            $this->action=array('action'=>"view_solution",
+                                 'validate_form'=>true,
+                                 'reload'=>false);
+        }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
             $this->action=array('action'=>"get_clue",
@@ -237,6 +288,13 @@ class apu_iquest extends apu_base_class{
         elseif (isset($_GET['get_hint'])){
             $this->ref_id = $_GET['get_hint'];
             $this->action=array('action'=>"get_hint",
+                                 'validate_form'=>true,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['get_solution'])){
+            $this->ref_id = $_GET['get_solution'];
+            $this->action=array('action'=>"get_solution",
                                  'validate_form'=>true,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -281,6 +339,15 @@ class apu_iquest extends apu_base_class{
         global $lang_str;
 
         if ($this->action['action'] == "view_grp"){
+            $grp_ok = true;
+
+//@todo: check grp is accessible to the user
+
+            return $grp_ok;
+        }
+
+        if ($this->action['action'] == "view_solution" or 
+            $this->action['action'] == "get_solution"){
             $grp_ok = true;
 
 //@todo: check grp is accessible to the user
@@ -338,6 +405,7 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_name'], $this->session['name']);
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
+        $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);
         
         
     }

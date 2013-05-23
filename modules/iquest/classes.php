@@ -141,7 +141,8 @@ class Iquest_Clue extends Iquest_file{
                      c.".$cc->content_type.",
                      c.".$cc->comment." 
               from ".$tc_name." c ".
-              $qw;
+              $qw."
+              order by c.".$cc->ordering;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -282,7 +283,8 @@ class Iquest_Hint extends Iquest_file{
                      c.".$cc->comment.
                      $cols." 
               from ".$tc_name." c ".implode(" ", $join).
-              $qw;
+              $qw."
+              order by c.".$cc->timeout;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -312,6 +314,104 @@ class Iquest_Hint extends Iquest_file{
         $this->show_at = $show_at;
     }
 }
+
+
+class Iquest_Solution extends Iquest_file{
+    public $cgrp_id;
+    public $name;
+    public $key;
+    public $timeout;
+    public $show_at;
+
+    /**
+     *  Fetch solution from DB
+     */         
+    static function fetch($opt=array()){
+        global $data, $config;
+
+        $data->connect_to_db();
+
+        /* table's name */
+        $tc_name  = &$config->data_sql->iquest_solution->table_name;
+        $tt_name  = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $cc      = &$config->data_sql->iquest_solution->cols;
+        $ct      = &$config->data_sql->iquest_solution_team->cols;
+
+        $qw = array();
+        $join = array();
+        $cols = "";
+        $order = "";
+        if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
+        if (isset($opt['team_id'])){
+            $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
+            $join[] = " join ".$tt_name." t on c.".$cc->id." = t.".$ct->solution_id;
+            $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
+
+            if (!empty($opt['accessible'])){
+                $qw[] = "t.".$ct->show_at." < now()";
+            }
+
+            $order = " order by ".$ct->show_at." desc";
+        }
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        $q = "select c.".$cc->id.",
+                     c.".$cc->ref_id.",
+                     c.".$cc->cgrp_id.",
+                     c.".$cc->filename.",
+                     c.".$cc->content_type.",
+                     time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
+                     c.".$cc->comment.",
+                     c.".$cc->name.",
+                     c.".$cc->key.
+                     $cols." 
+              from ".$tc_name." c ".implode(" ", $join).
+              $qw.$order;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
+            
+            $out[$row[$cc->id]] =  new Iquest_Solution($row[$cc->id], 
+                                                       $row[$cc->ref_id],
+                                                       $row[$cc->filename],
+                                                       $row[$cc->content_type],
+                                                       $row[$cc->comment],
+                                                       $row[$cc->name],
+                                                       $row[$cc->cgrp_id],
+                                                       $row[$cc->timeout],
+                                                       $row[$cc->key],
+                                                       $row[$ct->show_at]);
+        }
+        $res->free();
+        return $out;
+    }
+
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $name, $cgrp_id, $timeout, $key, $show_at=null){
+        parent::__construct($id, $ref_id, $filename, $content_type, $comment);
+        
+        $this->name = $name;
+        $this->cgrp_id = $cgrp_id;
+        $this->timeout = $timeout;
+        $this->key = $key;
+        $this->show_at = $show_at;
+    }
+
+    function to_smarty(){
+        $out = parent::to_smarty();
+        $out['name'] = $this->name;
+
+        return $out;
+    }
+}
+
 
 class Iquest{
 
@@ -346,7 +446,7 @@ class Iquest{
                      UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
               from ".$tc_name." c join ".$to_name." o on c.".$cc->id."=o.".$co->cgrp_id.
               $qw." 
-              order by ".$co->gained_at;
+              order by ".$co->gained_at." desc";
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -363,6 +463,12 @@ class Iquest{
     }
 
 
+    static function get_accessible_solutions($team_id){
+        $opt = array("team_id" => $team_id,
+                     "accessible" => true);
+    
+        return Iquest_Solution::fetch($opt);
+    }
 
 
 }
