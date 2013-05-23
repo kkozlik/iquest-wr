@@ -7,7 +7,7 @@
 {if $action=='view_grp'}
 
     {foreach $clues as $clue}
-    <div class="datatable">
+    <div class="datatable clue">
     <table>
     <tr>
         <th>{$clue.filename}</th>
@@ -16,7 +16,21 @@
     {call iquestRenderFile file=$clue}
     </table>
     </div>
+
+    {foreach $clue.hints as $hint}
+    <div class="datatable hint">
+    <table>
+    <tr>
+        <th>Hint: {$hint.filename}</th>
+        <th><a href="{$hint.file_url|escape}">{$lang_str.iquest_download}</a></th>
+    </tr>
+    {call iquestRenderFile file=$hint}
+    </table>
+    </div>
     {/foreach}
+    {/foreach}
+
+
 
 {else}
     

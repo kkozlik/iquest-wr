@@ -1,5 +1,8 @@
 <?php
 
+/**
+ *      clue_grp
+ */ 
 $config->data_sql->iquest_cgrp = new stdClass();
 $config->data_sql->iquest_cgrp->cols = new stdClass();
         
@@ -11,6 +14,9 @@ $config->data_sql->iquest_cgrp->cols->name =        "name";
 
 
 
+/**
+ *      open_clue_grp_team
+ */ 
 $config->data_sql->iquest_cgrp_open = new stdClass();
 $config->data_sql->iquest_cgrp_open->cols = new stdClass();
         
@@ -22,6 +28,9 @@ $config->data_sql->iquest_cgrp_open->cols->gained_at = "gained_at";
 
 
 
+/**
+ *      clue
+ */ 
 $config->data_sql->iquest_clue = new stdClass();
 $config->data_sql->iquest_clue->cols = new stdClass();
         
@@ -36,6 +45,9 @@ $config->data_sql->iquest_clue->cols->comment =         "comment";
 
 
 
+/**
+ *      clue2solution
+ */ 
 $config->data_sql->iquest_clue2solution = new stdClass();
 $config->data_sql->iquest_clue2solution->cols = new stdClass();
         
@@ -43,5 +55,35 @@ $config->data_sql->iquest_clue2solution->table_name =           "clue_point_to_s
 
 $config->data_sql->iquest_clue2solution->cols->clue_id =        "clue_id";
 $config->data_sql->iquest_clue2solution->cols->solution_id =    "solution_id";
+
+
+/**
+ *      hint
+ */ 
+$config->data_sql->iquest_hint = new stdClass();
+$config->data_sql->iquest_hint->cols = new stdClass();
+        
+$config->data_sql->iquest_hint->table_name =      "hint";
+
+$config->data_sql->iquest_hint->cols->id =              "hint_id";
+$config->data_sql->iquest_hint->cols->ref_id =          "ref_id";
+$config->data_sql->iquest_hint->cols->clue_id =         "clue_id";
+$config->data_sql->iquest_hint->cols->filename =        "filename";
+$config->data_sql->iquest_hint->cols->content_type =    "content_type";
+$config->data_sql->iquest_hint->cols->timeout =         "timeout";
+$config->data_sql->iquest_hint->cols->comment =         "comment";
+
+
+/**
+ *      hint_team
+ */ 
+$config->data_sql->iquest_hint_team = new stdClass();
+$config->data_sql->iquest_hint_team->cols = new stdClass();
+        
+$config->data_sql->iquest_hint_team->table_name =           "hint_team";
+
+$config->data_sql->iquest_hint_team->cols->team_id =        "team_id";
+$config->data_sql->iquest_hint_team->cols->hint_id =        "hint_id";
+$config->data_sql->iquest_hint_team->cols->show_at =        "show_at";
 
 ?>

@@ -5,3 +5,7 @@ Dependencies
  * php-mdb2
  * php5-mysql
  * pear: MDB2#mysqli    
+
+
+Check value of session garbage collection in php.ini: 
+session.gc_maxlifetime = 86400

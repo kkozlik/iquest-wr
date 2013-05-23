@@ -44,8 +44,9 @@
 
 class apu_iquest extends apu_base_class{
 
+    protected $team_id;
     protected $grp_ref_id;
-    protected $clue_ref_id;
+    protected $ref_id;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
@@ -105,6 +106,8 @@ class apu_iquest extends apu_base_class{
     function init(){
         parent::init();
 
+        $this->team_id = $this->user_id->get_uid();
+
         if (!isset($_SESSION['apu_iquest'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest'][$this->opt['instance_id']] = array();
         }
@@ -136,8 +139,15 @@ class apu_iquest extends apu_base_class{
 
     function action_get_clue(){
         $this->controler->disable_html_output();
-        $clue = Iquest_Clue::by_ref_id($this->clue_ref_id);
+        $clue = Iquest_Clue::by_ref_id($this->ref_id);
         $clue->flush_content();
+        return true;
+    }
+
+    function action_get_hint(){
+        $this->controler->disable_html_output();
+        $hint = Iquest_Hint::by_ref_id($this->ref_id);
+        $hint->flush_content();
         return true;
     }
 
@@ -151,7 +161,7 @@ class apu_iquest extends apu_base_class{
 
         $opt = array("ref_id" => $this->grp_ref_id);
 
-        $clue_grp = Iquest::get_clue_grps_team($this->user_id->get_uid(), $opt);
+        $clue_grp = Iquest::get_clue_grps_team($this->team_id, $opt);
         if (!$clue_grp){
             ErrorHandler::add_error("Unknown clue group!");
             sw_log("Unknown clue group: '".$this->grp_ref_id."'", PEAR_LOG_ERR);
@@ -163,8 +173,14 @@ class apu_iquest extends apu_base_class{
 
         $this->smarty_clues = array();
         foreach($clues as $k => $v){
-            $smarty_clue = $v->to_smarty();
-            $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($v->ref_id), false);
+            $clues[$k]->get_accessible_hints($this->team_id);
+            $smarty_clue = $clues[$k]->to_smarty();
+            $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+
+            foreach($smarty_clue['hints'] as $hk => $hv){
+                $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+            }
+
             $this->smarty_clues[$k] = $smarty_clue;
         }
 
@@ -181,7 +197,7 @@ class apu_iquest extends apu_base_class{
 
     function action_default(){
 
-        $clue_groups = Iquest::get_clue_grps_team($this->user_id->get_uid());
+        $clue_groups = Iquest::get_clue_grps_team($this->team_id);
 
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
@@ -212,8 +228,15 @@ class apu_iquest extends apu_base_class{
                                  'reload'=>false);
         }
         elseif (isset($_GET['get_clue'])){
-            $this->clue_ref_id = $_GET['get_clue'];
+            $this->ref_id = $_GET['get_clue'];
             $this->action=array('action'=>"get_clue",
+                                 'validate_form'=>true,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['get_hint'])){
+            $this->ref_id = $_GET['get_hint'];
+            $this->action=array('action'=>"get_hint",
                                  'validate_form'=>true,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -266,6 +289,14 @@ class apu_iquest extends apu_base_class{
         }
 
         if ($this->action['action'] == "get_clue"){
+            $clue_ok = true;
+
+//@todo: check clue is accessible to the user
+
+            return $clue_ok;
+        }
+
+        if ($this->action['action'] == "get_hint"){
             $clue_ok = true;
 
 //@todo: check clue is accessible to the user

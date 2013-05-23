@@ -12,6 +12,17 @@ class Iquest_file{
     public $comment;
     public $content = null;
 
+    /**
+     *  Instantiate obj by ref_id
+     */         
+    static function &by_ref_id($ref_id){
+        $objs = static::fetch(array("ref_id"=>$ref_id));
+        if (!$objs) return null;
+        
+        $obj = reset($objs);
+        return $obj;
+    }
+    
     function __construct($id, $ref_id, $filename, $content_type, $comment){
         $this->id =             $id;
         $this->ref_id =         $ref_id;
@@ -99,22 +110,13 @@ class Iquest_file{
 class Iquest_Clue extends Iquest_file{
     public $cgrp_id;
     public $point_to; // point to solution
-
-    /**
-     *  Instantiate clue by ref_id
-     */         
-    static function &by_ref_id($ref_id){
-        $clues = self::fetch_clues(array("ref_id"=>$ref_id));
-        if (!$clues) return null;
-        
-        $clue = reset($clues);
-        return $clue;
-    }
     
+    private $hints = null;
+
     /**
      *  Fetch clues form DB
      */         
-    static function fetch_clues($opt=array()){
+    static function fetch($opt=array()){
         global $data, $config;
 
         $data->connect_to_db();
@@ -163,6 +165,31 @@ class Iquest_Clue extends Iquest_file{
         $this->cgrp_id = $cgrp_id;
         $this->point_to = $point_to;
     }
+    
+    function get_accessible_hints($team_id){
+        if (!is_null($this->hints)) return $this->hints;
+    
+        $opt = array("clue_id" => $this->id,
+                     "team_id" => $team_id,
+                     "accessible" => true);
+    
+        $this->hints = Iquest_Hint::fetch($opt);
+        return $this->hints;
+    }
+
+    function to_smarty(){
+        $out = parent::to_smarty();
+        $out['hints'] = array();
+
+        if (!is_null($this->hints)){
+            foreach($this->hints as $k => $v){
+                $out['hints'][] = $this->hints[$k]->to_smarty();
+            }
+        }
+
+        return $out;
+    }
+
 }
 
 
@@ -189,7 +216,7 @@ class Iquest_ClueGrp{
     }
 
     function load_clues(){
-        $this->clues = Iquest_Clue::fetch_clues(array("cgrp_id"=>$this->id));
+        $this->clues = Iquest_Clue::fetch(array("cgrp_id"=>$this->id));
         return $this->clues;
     }
 
@@ -204,6 +231,86 @@ class Iquest_ClueGrp{
         return $out;
     }
 
+}
+
+
+class Iquest_Hint extends Iquest_file{
+    public $clue_id;
+    public $timeout;
+    public $show_at;
+
+    /**
+     *  Fetch hits form DB
+     */         
+    static function fetch($opt=array()){
+        global $data, $config;
+
+        $data->connect_to_db();
+
+        /* table's name */
+        $tc_name  = &$config->data_sql->iquest_hint->table_name;
+        $tt_name  = &$config->data_sql->iquest_hint_team->table_name;
+        /* col names */
+        $cc      = &$config->data_sql->iquest_hint->cols;
+        $ct      = &$config->data_sql->iquest_hint_team->cols;
+
+        $qw = array();
+        $join = array();
+        $cols = "";
+        if (isset($opt['clue_id'])) $qw[] = "c.".$cc->clue_id." = ".$data->sql_format($opt['clue_id'], "s");
+        if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
+        if (isset($opt['team_id'])){
+            $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
+            $join[] = " join ".$tt_name." t on c.".$cc->id." = t.".$ct->hint_id;
+            $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
+
+            if (!empty($opt['accessible'])){
+                $qw[] = "t.".$ct->show_at." < now()";
+            }
+        }
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        $q = "select c.".$cc->id.",
+                     c.".$cc->ref_id.",
+                     c.".$cc->clue_id.",
+                     c.".$cc->filename.",
+                     c.".$cc->content_type.",
+                     time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
+                     c.".$cc->comment.
+                     $cols." 
+              from ".$tc_name." c ".implode(" ", $join).
+              $qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
+            
+            $out[$row[$cc->id]] =  new Iquest_Hint($row[$cc->id], 
+                                                   $row[$cc->ref_id],
+                                                   $row[$cc->filename],
+                                                   $row[$cc->content_type],
+                                                   $row[$cc->comment],
+                                                   $row[$cc->clue_id],
+                                                   $row[$cc->timeout],
+                                                   $row[$ct->show_at]);
+        }
+        $res->free();
+        return $out;
+    }
+
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $show_at=null){
+        parent::__construct($id, $ref_id, $filename, $content_type, $comment);
+        
+        $this->clue_id = $clue_id;
+        $this->timeout = $timeout;
+        $this->show_at = $show_at;
+    }
 }
 
 class Iquest{
