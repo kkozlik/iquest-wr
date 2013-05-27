@@ -49,6 +49,7 @@ class apu_iquest extends apu_base_class{
     protected $clue;
     protected $clue_grp;
     protected $hint;
+    protected $solution;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
@@ -155,8 +156,7 @@ class apu_iquest extends apu_base_class{
 
     function action_get_solution(){
         $this->controler->disable_html_output();
-        $hint = Iquest_Solution::by_ref_id($this->ref_id);
-        $hint->flush_content();
+        $this->solution->flush_content();
         return true;
     }
 
@@ -196,19 +196,9 @@ class apu_iquest extends apu_base_class{
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
     function action_view_solution(){
-
-        $opt = array("ref_id" => $this->ref_id);
-
-        $solution = Iquest_Solution::fetch($opt);
-        if (!$solution){
-            ErrorHandler::add_error("Unknown solution!");
-            sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_ERR);
-            return false;
-        }
-        $solution = reset($solution);
         
-        $this->smarty_solutions = $solution->to_smarty();
-        $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($solution->ref_id), false);
+        $this->smarty_solutions = $this->solution->to_smarty();
+        $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
 
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
@@ -317,6 +307,18 @@ class apu_iquest extends apu_base_class{
         elseif ($this->action['action'] == "view_grp"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View clue group failed", false, array("errors"=>$this->controler->errors));
         }
+        elseif ($this->action['action'] == "view_solution"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View solution failed", false, array("errors"=>$this->controler->errors));
+        }
+        elseif ($this->action['action'] == "get_solution"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Get solution failed", false, array("errors"=>$this->controler->errors));
+        }
+        elseif ($this->action['action'] == "get_clue"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Get clue failed", false, array("errors"=>$this->controler->errors));
+        }
+        elseif ($this->action['action'] == "get_hint"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Get hint failed", false, array("errors"=>$this->controler->errors));
+        }
     }
 
     /**
@@ -329,7 +331,6 @@ class apu_iquest extends apu_base_class{
 
         /* Check that clue group is accessible by user before showing it */
         if ($this->action['action'] == "view_grp"){
-            $grp_ok = true;
 
             $opt = array("ref_id" => $this->ref_id);
         
@@ -341,21 +342,32 @@ class apu_iquest extends apu_base_class{
             }
             $this->clue_grp = reset($this->clue_grp);
 
-            return $grp_ok;
+            return true;
         }
 
+
+        /* check that solution is accessible to the user */
         if ($this->action['action'] == "view_solution" or 
             $this->action['action'] == "get_solution"){
-            $grp_ok = true;
 
-//@todo: check grp is accessible to the user
+            $opt = array("ref_id" => $this->ref_id,
+                         "team_id" => $this->team_id,
+                         "accessible" => true);
+            $solutions = Iquest_Solution::fetch($opt);
+    
+            if (!$solutions){
+                ErrorHandler::add_error("Unknown solution!");
+                sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+            $this->solution = reset($solutions);
 
-            return $grp_ok;
+            return true;
         }
+
 
         /* Check that clue is accessible by user before showing it */
         if ($this->action['action'] == "get_clue"){
-            $clue_ok = true;
 
             $this->clue = Iquest_Clue::by_ref_id($this->ref_id);
             if (!$this->clue){
@@ -370,7 +382,7 @@ class apu_iquest extends apu_base_class{
                 return false;
             }
             
-            return $clue_ok;
+            return true;
         }
 
 
