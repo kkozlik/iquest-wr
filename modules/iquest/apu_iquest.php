@@ -45,8 +45,8 @@
 class apu_iquest extends apu_base_class{
 
     protected $team_id;
-    protected $grp_ref_id;
     protected $ref_id;
+    protected $clue_grp;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
@@ -168,17 +168,7 @@ class apu_iquest extends apu_base_class{
      */
     function action_view_grp(){
 
-        $opt = array("ref_id" => $this->grp_ref_id);
-
-        $clue_grp = Iquest::get_clue_grps_team($this->team_id, $opt);
-        if (!$clue_grp){
-            ErrorHandler::add_error("Unknown clue group!");
-            sw_log("Unknown clue group: '".$this->grp_ref_id."'", PEAR_LOG_ERR);
-            return false;
-        }
-        $clue_grp = reset($clue_grp);
-        
-        $clues = $clue_grp->get_clues();
+        $clues = $this->clue_grp->get_clues();
 
         $this->smarty_clues = array();
         foreach($clues as $k => $v){
@@ -266,7 +256,7 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['view_grp'])){
             $this->smarty_action = 'view_grp';
-            $this->grp_ref_id = $_GET['view_grp'];
+            $this->ref_id = $_GET['view_grp'];
             $this->action=array('action'=>"view_grp",
                                  'validate_form'=>true,
                                  'reload'=>false);
@@ -326,7 +316,6 @@ class apu_iquest extends apu_base_class{
         }
         elseif ($this->action['action'] == "view_grp"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View clue group failed", false, array("errors"=>$this->controler->errors));
-            if (false === $this->action_default($errors)) return false;
         }
     }
 
@@ -341,7 +330,15 @@ class apu_iquest extends apu_base_class{
         if ($this->action['action'] == "view_grp"){
             $grp_ok = true;
 
-//@todo: check grp is accessible to the user
+            $opt = array("ref_id" => $this->ref_id);
+        
+            $this->clue_grp = Iquest::get_clue_grps_team($this->team_id, $opt);
+            if (!$this->clue_grp){
+                ErrorHandler::add_error("Unknown clue group!");
+                sw_log("Unknown clue group: '".$this->ref_id."'", PEAR_LOG_ERR);
+                return false;
+            }
+            $this->clue_grp = reset($this->clue_grp);
 
             return $grp_ok;
         }
