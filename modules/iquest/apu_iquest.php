@@ -48,6 +48,7 @@ class apu_iquest extends apu_base_class{
     protected $ref_id;
     protected $clue;
     protected $clue_grp;
+    protected $hint;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_clues;
@@ -148,8 +149,7 @@ class apu_iquest extends apu_base_class{
 
     function action_get_hint(){
         $this->controler->disable_html_output();
-        $hint = Iquest_Hint::by_ref_id($this->ref_id);
-        $hint->flush_content();
+        $this->hint->flush_content();
         return true;
     }
 
@@ -373,12 +373,23 @@ class apu_iquest extends apu_base_class{
             return $clue_ok;
         }
 
+
+        /* check hint is accessible to the user */
         if ($this->action['action'] == "get_hint"){
-            $clue_ok = true;
 
-//@todo: check clue is accessible to the user
+            $opt = array("ref_id" => $this->ref_id,
+                         "team_id" => $this->team_id,
+                         "accessible" => true);
+            $hints = Iquest_Hint::fetch($opt);
 
-            return $clue_ok;
+            if (!$hints){
+                ErrorHandler::add_error("Unknown hint!");
+                sw_log("Unknown hint: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+
+            $this->hint = reset($hints);
+            return true;
         }
 
 
