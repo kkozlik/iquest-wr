@@ -46,6 +46,7 @@ class apu_iquest extends apu_base_class{
 
     protected $team_id;
     protected $ref_id;
+    protected $clue;
     protected $clue_grp;
     protected $smarty_action = 'default';
     protected $smarty_groups;
@@ -141,8 +142,7 @@ class apu_iquest extends apu_base_class{
 
     function action_get_clue(){
         $this->controler->disable_html_output();
-        $clue = Iquest_Clue::by_ref_id($this->ref_id);
-        $clue->flush_content();
+        $this->clue->flush_content();
         return true;
     }
 
@@ -327,6 +327,7 @@ class apu_iquest extends apu_base_class{
     function validate_form(){
         global $lang_str;
 
+        /* Check that clue group is accessible by user before showing it */
         if ($this->action['action'] == "view_grp"){
             $grp_ok = true;
 
@@ -335,7 +336,7 @@ class apu_iquest extends apu_base_class{
             $this->clue_grp = Iquest::get_clue_grps_team($this->team_id, $opt);
             if (!$this->clue_grp){
                 ErrorHandler::add_error("Unknown clue group!");
-                sw_log("Unknown clue group: '".$this->ref_id."'", PEAR_LOG_ERR);
+                sw_log("Unknown or not accessible clue group: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
             $this->clue_grp = reset($this->clue_grp);
@@ -352,11 +353,23 @@ class apu_iquest extends apu_base_class{
             return $grp_ok;
         }
 
+        /* Check that clue is accessible by user before showing it */
         if ($this->action['action'] == "get_clue"){
             $clue_ok = true;
 
-//@todo: check clue is accessible to the user
-
+            $this->clue = Iquest_Clue::by_ref_id($this->ref_id);
+            if (!$this->clue){
+                ErrorHandler::add_error("Unknown clue!");
+                sw_log("Unknown clue: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+            
+            if (!Iquest::is_cgrp_accessible($this->team_id, $this->clue->cgrp_id)){
+                ErrorHandler::add_error("Unknown clue!");
+                sw_log("Not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+            
             return $clue_ok;
         }
 

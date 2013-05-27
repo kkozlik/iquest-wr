@@ -12,7 +12,9 @@
  *  Is called when all files are included
  */
 function iquest_init(){
-    global $config, $_SERWEB, $lang_str;
+    global $config, $_SERWEB, $lang_str, $data;
+
+    $data->connect_to_db();
 
     /* load lang file for this module */
     load_another_lang('iquest');

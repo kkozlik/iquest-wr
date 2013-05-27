@@ -434,6 +434,7 @@ class Iquest{
         $qw = array();
         $qw[] = "o.".$co->team_id."=".$data->sql_format($team_id, "n");
 
+        if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
@@ -462,6 +463,32 @@ class Iquest{
         return $out;
     }
 
+    static function is_cgrp_accessible($team_id, $cgrp_id){
+        global $data, $config;
+
+        /* table's name */
+        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
+        /* col names */
+        $co      = &$config->data_sql->iquest_cgrp_open->cols;
+
+        $qw = array();
+        $qw[] = "o.".$co->team_id."=".$data->sql_format($team_id, "n");
+        $qw[] = "o.".$co->cgrp_id."=".$data->sql_format($cgrp_id, "s");
+
+        $qw = " where ".implode(' and ', $qw);
+
+        $q = "select count(*) 
+              from ".$to_name." o ".$qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
+        $out = !empty($row[0]);
+        $res->free();
+
+        return $out;
+    }
 
     static function get_accessible_solutions($team_id){
         $opt = array("team_id" => $team_id,
