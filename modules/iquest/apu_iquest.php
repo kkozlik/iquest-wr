@@ -127,13 +127,17 @@ class apu_iquest extends apu_base_class{
     
     
     /**
-     *  Method perform action update
+     *  Method perform action solve
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
-    function action_update(){
+    function action_solve(){
 
-        $this->session['name'] = $_POST['hello_world_name'];
+        $this->solution = Iquest_Solution::by_key($_POST['solution_key']);
+
+//@todo: check the key is valid ($this->solution not empty) 
+//@todo: check the key has not been already entered (cgroup is opened)
+        Iquest::solution_found($this->solution, $this->team_id);
 
         action_log($this->opt['screen_name'], $this->action, "update name to: ".$this->session['name']);
 
@@ -240,7 +244,7 @@ class apu_iquest extends apu_base_class{
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
-            $this->action=array('action'=>"update",
+            $this->action=array('action'=>"solve",
                                 'validate_form'=>true,
                                 'reload'=>true);
         }
@@ -439,8 +443,6 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);
-        
-        
     }
     
     /**
