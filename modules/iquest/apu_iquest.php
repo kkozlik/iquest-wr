@@ -216,7 +216,8 @@ class apu_iquest extends apu_base_class{
 
     function action_default(){
 
-        $clue_groups = Iquest::get_clue_grps_team($this->team_id);
+        $opt = array("team_id" => $this->team_id);
+        $clue_groups = Iquest_ClueGrp::fetch($opt);
 
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
@@ -336,9 +337,10 @@ class apu_iquest extends apu_base_class{
         /* Check that clue group is accessible by user before showing it */
         if ($this->action['action'] == "view_grp"){
 
-            $opt = array("ref_id" => $this->ref_id);
+            $opt = array("ref_id" => $this->ref_id,
+                         "team_id" => $this->team_id);
         
-            $this->clue_grp = Iquest::get_clue_grps_team($this->team_id, $opt);
+            $this->clue_grp = Iquest_ClueGrp::fetch($opt);
             if (!$this->clue_grp){
                 ErrorHandler::add_error("Unknown clue group!");
                 sw_log("Unknown or not accessible clue group: '".$this->ref_id."'", PEAR_LOG_INFO);
@@ -380,7 +382,7 @@ class apu_iquest extends apu_base_class{
                 return false;
             }
             
-            if (!Iquest::is_cgrp_accessible($this->team_id, $this->clue->cgrp_id)){
+            if (!Iquest_ClueGrp::is_accessible($this->team_id, $this->clue->cgrp_id)){
                 ErrorHandler::add_error("Unknown clue!");
                 sw_log("Not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;

@@ -283,6 +283,33 @@ class Iquest_ClueGrp{
         return $out;
     }
 
+    static function is_accessible($team_id, $cgrp_id){
+        global $data, $config;
+
+        /* table's name */
+        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
+        /* col names */
+        $co      = &$config->data_sql->iquest_cgrp_open->cols;
+
+        $qw = array();
+        $qw[] = "o.".$co->team_id."=".$data->sql_format($team_id, "n");
+        $qw[] = "o.".$co->cgrp_id."=".$data->sql_format($cgrp_id, "s");
+
+        $qw = " where ".implode(' and ', $qw);
+
+        $q = "select count(*) 
+              from ".$to_name." o ".$qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
+        $out = !empty($row[0]);
+        $res->free();
+
+        return $out;
+    }
+
     function __construct($id, $ref_id, $name, $gained_at=null){
 
         $this->id =         $id;
@@ -576,79 +603,6 @@ class Iquest_Solution extends Iquest_file{
 class Iquest{
 
 
-    /**
-     *  Return list of clue groups available to a team
-     */ 
-    static function get_clue_grps_team($team_id, $opt=array()){
-        global $data, $config;
-
-        $data->connect_to_db();
-
-        /* table's name */
-        $tc_name = &$config->data_sql->iquest_cgrp->table_name;
-        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
-        /* col names */
-        $cc      = &$config->data_sql->iquest_cgrp->cols;
-        $co      = &$config->data_sql->iquest_cgrp_open->cols;
-
-        $qw = array();
-        $qw[] = "o.".$co->team_id."=".$data->sql_format($team_id, "n");
-
-        if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
-        if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
-
-        if ($qw) $qw = " where ".implode(' and ', $qw);
-        else $qw = "";
-
-
-        $q = "select c.".$cc->id.",
-                     c.".$cc->ref_id.",
-                     c.".$cc->name.",
-                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
-              from ".$tc_name." c join ".$to_name." o on c.".$cc->id."=o.".$co->cgrp_id.
-              $qw." 
-              order by ".$co->gained_at." desc";
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-
-        $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$cc->id]] =  new Iquest_ClueGrp($row[$cc->id], 
-                                                      $row[$cc->ref_id],
-                                                      $row[$cc->name],
-                                                      $row[$co->gained_at]);
-        }
-        $res->free();
-        return $out;
-    }
-
-    static function is_cgrp_accessible($team_id, $cgrp_id){
-        global $data, $config;
-
-        /* table's name */
-        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
-        /* col names */
-        $co      = &$config->data_sql->iquest_cgrp_open->cols;
-
-        $qw = array();
-        $qw[] = "o.".$co->team_id."=".$data->sql_format($team_id, "n");
-        $qw[] = "o.".$co->cgrp_id."=".$data->sql_format($cgrp_id, "s");
-
-        $qw = " where ".implode(' and ', $qw);
-
-        $q = "select count(*) 
-              from ".$to_name." o ".$qw;
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-
-        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
-        $out = !empty($row[0]);
-        $res->free();
-
-        return $out;
-    }
 
     static function get_accessible_solutions($team_id){
         $opt = array("team_id" => $team_id,
@@ -683,7 +637,7 @@ class Iquest{
         Iquest_Solution::close_solution($solution->id, $team_id);    
 
         // 2. Open new clue group
-        if (!self::is_cgrp_accessible($solution->cgrp_id, $team_id)){
+        if (!Iquest_ClueGrp::is_accessible($solution->cgrp_id, $team_id)){
             Iquest_ClueGrp::open($solution->cgrp_id, $team_id);
         }
 
