@@ -14,9 +14,6 @@ $apu    = new apu_iquest();
 
 //$page_attributes['css_file'][]=$config->style_src_path."get_css.php?css=".RawURLEncode("hello-world/hw.css");
 
-fb(defined('MDB2_FETCHMODE_ASSOC'), 'MDB2_FETCHMODE_ASSOC');
-fb(defined('DB_FETCHMODE_ASSOC'), 'DB_FETCHMODE_ASSOC');
-
 $controler->add_apu($apu);
 //$controler->add_reqired_javascript('core/functions.js'); 
 $controler->set_template_name('iquest/main.tpl');
