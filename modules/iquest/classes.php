@@ -332,23 +332,23 @@ class Iquest_ClueGrp{
 
         $qw = array();
         $qw[] = "s.".$cs->solution_id." = ".$data->sql_format($solution_id, "s");
-        // needed for "gained_at" attribute
-        $qw[] = "(o.".$co->team_id." = ".$data->sql_format($team_id, "N").
-                " or isnull(o.".$co->team_id."))";  // get all clue groups, not only
-                                                    // those already gained by the team
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
+        // needed for 'gained_at' attribute
+        $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.") 
+               from ".$to_name." o 
+               where o.".$co->team_id." = ".$data->sql_format($team_id, "N")." and
+                     o.".$co->cgrp_id."=g.".$cg->id;
 
         $q = "select g.".$cg->id.",
                      g.".$cg->ref_id.",
                      g.".$cg->name.",
-                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
+                     (".$q2.") as ".$co->gained_at." 
               from ".$ts_name." s
                 join ".$tc_name." c on c.".$cc->id."=s.".$cs->clue_id."
-                join ".$tg_name." g on g.".$cg->id."=c.".$cc->cgrp_id."
-                left join ".$to_name." o on o.".$co->cgrp_id."=g.".$cg->id.
+                join ".$tg_name." g on g.".$cg->id."=c.".$cc->cgrp_id.
               $qw." 
               order by ".$co->gained_at." desc";
 
@@ -642,14 +642,15 @@ class Iquest_Solution extends Iquest_file{
 
         $qw = array();
         $qw[] = "c.".$cc->cgrp_id." = ".$data->sql_format($cgrp_id, "s");
-                // needed for 'show-at' attribute
-        $qw[] = "(t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." 
-                  or isnull(t.".$ct->team_id."))";  // fetch all solutions, not only 
-                                                    // those that are opened for the team
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
+        // needed for 'show-at' attribute
+        $q2 = "select UNIX_TIMESTAMP(t.".$ct->show_at.") 
+               from ".$tt_name." t 
+               where t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." and
+                     t.".$ct->solution_id."=s.".$cs->id;
 
         $q = "select s.".$cs->id.",
                      s.".$cs->ref_id.",
@@ -660,11 +661,10 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->comment.",
                      s.".$cs->name.",
                      s.".$cs->key.",
-                     UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at."  
+                     (".$q2.") as ".$ct->show_at."  
               from ".$ts_name." s
                 join ".$tcs_name." cs on cs.".$ccs->solution_id."=s.".$cs->id."
-                join ".$tc_name." c on c.".$cc->id."=cs.".$ccs->clue_id."
-                left join ".$tt_name." t on t.".$ct->solution_id."=s.".$cs->id.
+                join ".$tc_name." c on c.".$cc->id."=cs.".$ccs->clue_id.
               $qw;
 
         $res=$data->db->query($q);
