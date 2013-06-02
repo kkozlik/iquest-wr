@@ -21,4 +21,7 @@
 
     $config->iquest_data_dir = realpath($_SERWEB["configdir"]."../data")."/";
 
+    $config->enable_logging = true;
+    $config->log_file = "/var/log/iquest";
+
 ?>
