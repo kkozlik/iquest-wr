@@ -434,6 +434,16 @@ class Iquest_Hint extends Iquest_file{
             }
         }
 
+        if (isset($opt['unscheduled_team_id'])){
+            //Get only those hints that are not scheduled to be shown to given team yet 
+            $q2 = "select ".$ct->hint_id." 
+                   from ".$tt_name." 
+                   where ".$ct->team_id." = ".$data->sql_format($opt['unscheduled_team_id'], "s");
+                   
+            $qw[] = "c.".$cc->id." not in (".$q2.")";
+        }
+
+
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
@@ -802,11 +812,11 @@ class Iquest{
         // 3. Schedule show time for new hints
         $clues = $clue_grp->get_clues();
         foreach($clues as $k=>$v){
-            $opt = array("clue_id" => $v->id);
+            $opt = array("clue_id" => $v->id,
+                         "unscheduled_team_id"=>$team_id); // Only hints not scheduled yet
             $hints = Iquest_Hint::fetch($opt);
 
             foreach($hints as $hk=>$hv){
-//@todo: kontrolovat ze hint uz neni otevreny
                 Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout);
             }
         }
