@@ -310,6 +310,62 @@ class Iquest_ClueGrp{
         return $out;
     }
 
+    /**
+     *  Fetch all clue groups that leads to the solution
+     *  
+     *  If $team_id is provided, the 'gained_at' attribute of clue group is 
+     *  correctly filled               
+     */         
+    static function fetch_by_pointing_to_solution($solution_id, $team_id){
+        global $data, $config;
+
+        /* table's name */
+        $ts_name = &$config->data_sql->iquest_clue2solution->table_name;
+        $tc_name = &$config->data_sql->iquest_clue->table_name;
+        $tg_name = &$config->data_sql->iquest_cgrp->table_name;
+        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
+        /* col names */
+        $cs      = &$config->data_sql->iquest_clue2solution->cols;
+        $cc      = &$config->data_sql->iquest_clue->cols;
+        $cg      = &$config->data_sql->iquest_cgrp->cols;
+        $co      = &$config->data_sql->iquest_cgrp_open->cols;
+
+        $qw = array();
+        $qw[] = "s.".$cs->solution_id." = ".$data->sql_format($solution_id, "s");
+        // needed for "gained_at" attribute
+        $qw[] = "(o.".$co->team_id." = ".$data->sql_format($team_id, "N").
+                " or isnull(o.".$co->team_id."))";  // get all clue groups, not only
+                                                    // those already gained by the team
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        $q = "select g.".$cg->id.",
+                     g.".$cg->ref_id.",
+                     g.".$cg->name.",
+                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
+              from ".$ts_name." s
+                join ".$tc_name." c on c.".$cc->id."=s.".$cs->clue_id."
+                join ".$tg_name." g on g.".$cg->id."=c.".$cc->cgrp_id."
+                left join ".$to_name." o on o.".$co->cgrp_id."=g.".$cg->id.
+              $qw." 
+              order by ".$co->gained_at." desc";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$cg->id]] =  new Iquest_ClueGrp($row[$cg->id], 
+                                                      $row[$cg->ref_id],
+                                                      $row[$cg->name],
+                                                      $row[$co->gained_at]);
+        }
+        $res->free();
+        return $out;
+    }
+
     function __construct($id, $ref_id, $name, $gained_at=null){
 
         $this->id =         $id;
@@ -413,6 +469,8 @@ class Iquest_Hint extends Iquest_file{
         $res->free();
         return $out;
     }
+
+//@todo: rename to "schedule"
 
     /**
      *  Open new hint for team $team_id.
@@ -555,6 +613,75 @@ class Iquest_Solution extends Iquest_file{
 
 
     /**
+     *  Fetch solutions by the clue-group-id that leads to the solution.
+     *  
+     *  If team_id provided the fetched solutions contain correct
+     *  'show_at' attribute for the team.                
+     */         
+    static function fetch_by_opening_cgrp($cgrp_id, $team_id=null){
+        global $data, $config;
+
+        /* table's name */
+        $tcs_name= &$config->data_sql->iquest_clue2solution->table_name;
+        $tc_name = &$config->data_sql->iquest_clue->table_name;
+        $ts_name = &$config->data_sql->iquest_solution->table_name;
+        $tt_name = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $ccs     = &$config->data_sql->iquest_clue2solution->cols;
+        $cc      = &$config->data_sql->iquest_clue->cols;
+        $cs      = &$config->data_sql->iquest_solution->cols;
+        $ct      = &$config->data_sql->iquest_solution_team->cols;
+
+        $qw = array();
+        $qw[] = "c.".$cc->cgrp_id." = ".$data->sql_format($cgrp_id, "s");
+                // needed for 'show-at' attribute
+        $qw[] = "(t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." 
+                  or isnull(t.".$ct->team_id."))";  // fetch all solutions, not only 
+                                                    // those that are opened for the team
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        $q = "select s.".$cs->id.",
+                     s.".$cs->ref_id.",
+                     s.".$cs->cgrp_id.",
+                     s.".$cs->filename.",
+                     s.".$cs->content_type.",
+                     time_to_sec(s.".$cs->timeout.") as ".$cs->timeout.", 
+                     s.".$cs->comment.",
+                     s.".$cs->name.",
+                     s.".$cs->key.",
+                     UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at."  
+              from ".$ts_name." s
+                join ".$tcs_name." cs on cs.".$ccs->solution_id."=s.".$cs->id."
+                join ".$tc_name." c on c.".$cc->id."=cs.".$ccs->clue_id."
+                left join ".$tt_name." t on t.".$ct->solution_id."=s.".$cs->id.
+              $qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$cs->id]] =  new Iquest_Solution($row[$cs->id], 
+                                                       $row[$cs->ref_id],
+                                                       $row[$cs->filename],
+                                                       $row[$cs->content_type],
+                                                       $row[$cs->comment],
+                                                       $row[$cs->name],
+                                                       $row[$cs->cgrp_id],
+                                                       $row[$cs->timeout],
+                                                       $row[$cs->key],
+                                                       $row[$ct->show_at]);
+        }
+        $res->free();
+        return $out;
+    }
+
+//@todo: rename to "unschedule"
+
+    /**
      *  Close solution $id for team $team_id.
      *  If the solution is not displayed yet, it will not be displayed never.     
      */             
@@ -580,6 +707,31 @@ class Iquest_Solution extends Iquest_file{
         return true;
     }
 
+    /**
+     *  Schedule displaying of solution for team $team_id.
+     *  This function do not check whether solution is already scheduled!     
+     */         
+    static function schedule($id, $team_id, $timeout){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_solution_team->cols;
+
+        $q="insert into ".$t_name." (
+                    ".$c->solution_id.", 
+                    ".$c->team_id.", 
+                    ".$c->show_at.")
+            values (".$data->sql_format($id,        "s").",
+                    ".$data->sql_format($team_id,   "n").",
+                    addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")))";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    
+        return true;
+    }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, $cgrp_id, $timeout, $key, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
@@ -613,6 +765,7 @@ class Iquest{
 
 
     static function solution_found($solution, $team_id){
+        global $data;
     
         /**
          *  1. Close current task (only if the show_at time did not pass)
@@ -621,7 +774,7 @@ class Iquest{
          *  2. Open new clue group
          *     Table: open_cgrp_team.gained_at = now
          *
-         *  3. Determine when to show new hints
+         *  3. Schedule show time for new hints
          *     Table: hint_team.show_at = now+timeout
          *     
          *  4. If team gained all clues that lead to some task_solution
@@ -632,6 +785,8 @@ class Iquest{
          *     should not be never showed:          
          *     Table: hint_team.show_at = newer
          */                                   
+    
+        $data->transaction_start();
     
         // 1. Close current task
         Iquest_Solution::close_solution($solution->id, $team_id);    
@@ -647,16 +802,50 @@ class Iquest{
                                "Referenced by solution: ".json_encode($solution));
         }
 
-        // 3. Determine when to show new hints
+        // 3. Schedule show time for new hints
         $clues = $clue_grp->get_clues();
         foreach($clues as $k=>$v){
             $opt = array("clue_id" => $v->id);
             $hints = Iquest_Hint::fetch($opt);
 
             foreach($hints as $hk=>$hv){
+//@todo: kontrolovat ze hint uz neni otevreny
                 Iquest_Hint::open($hv->id, $team_id, $hv->timeout);
             }
         }
+
+        // 4. If team gained all clues that lead to some task_solution
+        //    schedule showing of the solution
+
+        // fetch list of solutions that are opened by gaining the clue group
+        $opening_solutions = Iquest_Solution::fetch_by_opening_cgrp($solution->cgrp_id, $team_id);
+
+        foreach($opening_solutions as $opening_solution){
+
+            // if solution is already scheduled, skip it
+            if (!is_null($opening_solution->show_at)) continue;
+
+            $schedule_solution = true;
+            // fetch list of all clue groups that opens the solution
+            $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($opening_solution->id, $team_id);
+            foreach($clue_grps as $clue_grp){
+                // if any of the clue groups is not gained yet, do not schedule
+                // the solution
+                if (is_null($clue_grp->gained_at)){
+                    $schedule_solution = false;
+                    break;
+                }
+            }
+            
+            if ($schedule_solution){
+                Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout);
+            }
+        }
+                
+        
+        
+        $data->transaction_commit();
+        
 
     }
 
