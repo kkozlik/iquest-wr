@@ -470,13 +470,11 @@ class Iquest_Hint extends Iquest_file{
         return $out;
     }
 
-//@todo: rename to "schedule"
-
     /**
-     *  Open new hint for team $team_id.
-     *  This function do not check whether it is already opened!     
+     *  Schedule time to show new hint for team $team_id.
+     *  This function do not check whether it is already scheduled!     
      */         
-    static function open($id, $team_id, $timeout){
+    static function schedule($id, $team_id, $timeout){
         global $data, $config;
 
         /* table's name */
@@ -679,13 +677,12 @@ class Iquest_Solution extends Iquest_file{
         return $out;
     }
 
-//@todo: rename to "unschedule"
 
     /**
-     *  Close solution $id for team $team_id.
+     *  De-schedule displaying of solution $id for team $team_id.
      *  If the solution is not displayed yet, it will not be displayed never.     
      */             
-    static function close_solution($id, $team_id){
+    static function deschedule($id, $team_id){
         global $data, $config;
     
         /* table's name */
@@ -789,7 +786,7 @@ class Iquest{
         $data->transaction_start();
     
         // 1. Close current task
-        Iquest_Solution::close_solution($solution->id, $team_id);    
+        Iquest_Solution::deschedule($solution->id, $team_id);    
 
         // 2. Open new clue group
         if (!Iquest_ClueGrp::is_accessible($solution->cgrp_id, $team_id)){
@@ -810,7 +807,7 @@ class Iquest{
 
             foreach($hints as $hk=>$hv){
 //@todo: kontrolovat ze hint uz neni otevreny
-                Iquest_Hint::open($hv->id, $team_id, $hv->timeout);
+                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout);
             }
         }
 
