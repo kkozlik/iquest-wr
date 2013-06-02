@@ -283,7 +283,7 @@ class Iquest_ClueGrp{
         return $out;
     }
 
-    static function is_accessible($team_id, $cgrp_id){
+    static function is_accessible($cgrp_id, $team_id){
         global $data, $config;
 
         /* table's name */

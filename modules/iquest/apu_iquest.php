@@ -382,7 +382,7 @@ class apu_iquest extends apu_base_class{
                 return false;
             }
             
-            if (!Iquest_ClueGrp::is_accessible($this->team_id, $this->clue->cgrp_id)){
+            if (!Iquest_ClueGrp::is_accessible($this->clue->cgrp_id, $this->team_id)){
                 ErrorHandler::add_error("Unknown clue!");
                 sw_log("Not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
