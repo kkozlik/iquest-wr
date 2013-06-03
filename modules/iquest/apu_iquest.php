@@ -216,7 +216,8 @@ class apu_iquest extends apu_base_class{
 
     function action_default(){
 
-        $opt = array("team_id" => $this->team_id);
+        $opt = array("team_id" => $this->team_id,
+                     "available_only" => true);
         $clue_groups = Iquest_ClueGrp::fetch($opt);
 
         $this->smarty_groups = array();
@@ -338,7 +339,8 @@ class apu_iquest extends apu_base_class{
         if ($this->action['action'] == "view_grp"){
 
             $opt = array("ref_id" => $this->ref_id,
-                         "team_id" => $this->team_id);
+                         "team_id" => $this->team_id,
+                         "available_only" => true);
         
             $this->clue_grp = Iquest_ClueGrp::fetch($opt);
             if (!$this->clue_grp){

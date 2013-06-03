@@ -255,7 +255,21 @@ class Iquest_ClueGrp{
 
         if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
-        if (isset($opt['team_id'])) $qw[] = "o.".$co->team_id." = ".$data->sql_format($opt['team_id'], "n");
+
+        // If team_id is specified, set the gained_at attribute of clue group
+        if (isset($opt['team_id'])){
+            $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.") 
+                   from ".$to_name." o 
+                   where o.".$co->team_id." = ".$data->sql_format($opt['team_id'], "n")." and
+                         o.".$co->cgrp_id."=c.".$cc->id;
+        }
+        else{
+            $q2 = "NULL";
+        }
+
+        // Fetch only clue groups available to a team. Make sense only together 
+        // with $opt['team_id']
+        if (!empty($opt['available_only']))  $qw[] = "!isnull((".$q2."))";
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
@@ -264,8 +278,8 @@ class Iquest_ClueGrp{
         $q = "select c.".$cc->id.",
                      c.".$cc->ref_id.",
                      c.".$cc->name.",
-                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
-              from ".$tc_name." c join ".$to_name." o on c.".$cc->id."=o.".$co->cgrp_id.
+                     (".$q2.") as ".$co->gained_at." 
+              from ".$tc_name." c ".
               $qw." 
               order by ".$co->gained_at." desc";
 
