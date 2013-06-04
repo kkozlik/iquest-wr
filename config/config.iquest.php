@@ -1,5 +1,9 @@
 <?php
 
+
+$config->iquest->graphviz_cmd = "dot";
+
+
 /**
  *      clue_grp
  */ 

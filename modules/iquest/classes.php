@@ -872,4 +872,311 @@ class Iquest{
 
 }
 
+
+/**
+ *  Node of the Iquest_solution_graph graph
+ */ 
+class Iquest_solution_graph_node{
+    const TYPE_CLUE = "clue";
+    const TYPE_SOLUTION = "solution";
+
+    private $obj;
+    private $type;
+    // flag indicating the node has been visited
+    public $visited = false;
+
+    // attributes for type=solution
+    public $solved = false;
+
+    // attributes  for type=clue
+    public $gained = false;
+
+
+    function __construct($type, &$obj){
+        $this->type = $type;
+        $this->obj = &$obj;
+    }
+    
+    function is_solution(){
+        return ($this->type==self::TYPE_SOLUTION);
+    }
+    
+    function is_clue(){
+        return ($this->type==self::TYPE_CLUE);
+    }
+
+    function get_obj(){
+        return $this->obj;
+    }
+    
+    /**
+     *  Return representation of the node in dot language
+     */         
+    public function to_dot(){
+        $dot = "[";
+
+        if ($this->type == self::TYPE_SOLUTION){
+            $dot .= "shape=box";
+            $dot .=  $this->solved ? ",fontcolor=green" : ""; 
+        }
+        else{
+            $dot .= "style=filled";
+            $dot .= $this->gained ? ",color=green" : ",color=red";
+        }
+
+        if ($this->visited){
+            $dot .= ",label=<<FONT color=\"#990000\">Visited: </FONT>".$this->obj->id.">";
+        }
+        else{
+            $dot .= ",label=".$this->obj->id;
+        }
+
+        $dot .= "]";
+        return $dot;
+    }
+
+}
+
+/**
+ *  Class holding graph of clue/solution dependencies 
+ */ 
+class Iquest_solution_graph{
+    private $team_id;
+    private $cgroups;
+    private $solutions;
+    private $nodes = array();
+    private $edges = array();
+    private $reverse_edges = array();
+    private $clue2solution;
+
+
+    /**
+     *  Create the graph for a team
+     */         
+    function __construct($team_id){
+        $this->team_id = $team_id;
+
+        // fetch clue groups and solutions
+        $opt = array("team_id" => $this->team_id);
+        $this->cgroups = Iquest_ClueGrp::fetch($opt);
+        $this->solutions = Iquest_Solution::fetch();
+
+        // create clue => solution edges
+        $this->load_clue2solution();
+
+        // walk through all solutions
+        foreach($this->solutions as &$solution){
+
+            // create nodes for task solutions
+            $this->nodes["S_".$solution->id] = 
+                new Iquest_solution_graph_node(Iquest_solution_graph_node::TYPE_SOLUTION, $solution);
+
+            // if there is a clue group that is gained by solving a task solution
+            if (isset($this->cgroups[$solution->cgrp_id])){
+                $cgrp = &$this->cgroups[$solution->cgrp_id];
+
+                // if team has gained the clue group, mark the solution as solved
+                if ($cgrp->gained_at){
+                    $this->nodes["S_".$solution->id]->solved = true;
+                }
+
+                // fetch all clues and create the solution => clue edges
+                $clues = $cgrp->get_clues();
+                foreach($clues as &$clue){
+                    if (!isset($this->edges["S_".$solution->id])) $this->edges["S_".$solution->id] = array();
+                    $this->edges["S_".$solution->id][] = "C_".$clue->id;
+                    
+                    if (!isset($this->reverse_edges["C_".$clue->id])) $this->reverse_edges["C_".$clue->id] = array();
+                    $this->reverse_edges["C_".$clue->id][] = "S_".$solution->id;
+                }
+            }
+        }
+
+        // walk through all clue groups
+        foreach($this->cgroups as &$cgroup){
+            // get clues of the group
+            $clues = $cgroup->get_clues();
+            foreach($clues as &$clue){
+                // create graph nodes for the clues
+                $this->nodes["C_".$clue->id] = 
+                    new Iquest_solution_graph_node(Iquest_solution_graph_node::TYPE_CLUE, $clue);
+                    
+                // if team has gained the clue group, mark the clue as gained
+                if ($cgroup->gained_at){
+                    $this->nodes["C_".$clue->id]->gained = true;
+                }
+            }
+        }
+    }
+
+    /**
+     *  Load clue2solution linkings and create the clue=>solution graph edges
+     */         
+    private function load_clue2solution(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_clue2solution->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_clue2solution->cols;
+
+        // fetch the whole clue2solution DB table
+        $q = "select ".$c->clue_id.",
+                     ".$c->solution_id."
+              from ".$t_name;
+    
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        // walk through the rows
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            // and create the clue=>solution edges
+            if (!isset($this->edges["C_".$row[$c->clue_id]])) $this->edges["C_".$row[$c->clue_id]] = array();
+            $this->edges["C_".$row[$c->clue_id]][] = "S_".$row[$c->solution_id];
+
+            // create the reversed edges as well
+            if (!isset($this->reverse_edges["S_".$row[$c->solution_id]])) $this->reverse_edges["S_".$row[$c->solution_id]] = array();
+            $this->reverse_edges["S_".$row[$c->solution_id]][] = "C_".$row[$c->clue_id];
+        }
+        $res->free();
+    } 
+
+    /**
+     *  Return list of IDs of clues that has been already gained by the team,
+     *  but that are not needed anymore (has been used to solve a task solution).
+     *  
+     *  It is done by walking the graph in reversed order from the final task.
+     *  All clues that are rachable from the final task (not meeting a solved task)
+     *  are still needed.                         
+     */         
+    public function get_unneded_clues(){
+
+        // reset all nodes visited flag
+        foreach($this->nodes as &$node) $node->visited = false;
+
+        //@todo: zjistit ID ciloveho uzlu
+        $final_task_id = "PYTLICI";
+        $queue = array();
+        
+        if (!isset($this->nodes["S_".$final_task_id])){
+            throw new UnexpectedValueException("Invalid ID of final task: '$final_task_id'");
+        }
+
+        //add final task node to the queue
+        $queue[] = "S_".$final_task_id;
+        
+        // as long as there are nodes in in the queue, fetch node from the queue...
+        while(!is_null($node_id = array_shift($queue))){
+            // and set it's visited flag to true
+            $this->nodes[$node_id]->visited = true;
+
+            // We are walking the graph in reversed order. If there are any
+            // edges leading TO this node walk through them. Get all nodes
+            // FROM what leads edge TO current node 
+            if (isset($this->reverse_edges[$node_id])){
+                foreach($this->reverse_edges[$node_id] as $from_node_id){
+
+                    // if the node has been already visited, skip it
+                    if ($this->nodes[$from_node_id]->visited) continue;
+
+                    // if the node is task solution that is solved, skip it
+                    if ($this->nodes[$from_node_id]->is_solution() and
+                        $this->nodes[$from_node_id]->solved)  continue;
+
+                    // add node to queue
+                    $queue[] = $from_node_id;
+                }
+            }
+        }
+
+
+        // create the list of unneded clues, walk through all nodes
+        $unneded_clues = array();
+        foreach($this->nodes as &$node){
+            // if the node is not clue skip it
+            if (!$node->is_clue()) continue;
+            // if the node has been visited, the clue is still needed. Skip it
+            if ($node->visited) continue;
+            // If the clue has not been gained yet, it do not belong to our scope. Skip it.
+            if (!$node->gained) continue;
+
+            // All the rest of nodes should be added to the array
+            $unneded_clues[] = $node->get_obj()->id;
+        }
+
+        return  $unneded_clues;
+    }
+
+
+    /**
+     *  Generate graph representation in DOT language (for graphviz)
+     */         
+    public function get_dot(){
+        $out = "digraph G {\n";
+
+        foreach($this->nodes as $k => $node){
+            $out .= $k." ".$node->to_dot().";\n";
+        }
+
+        foreach($this->edges as $k1 => $v1){
+            foreach($this->edges[$k1] as $v2){
+                $out .= $k1." -> ".$v2.";\n";
+            }
+        }
+
+        $out .= "}\n";
+        return $out;
+    }
+
+    /**
+     *  Visualize the graph using graphviz
+     */         
+    public function image_graph(){
+        global $config;
+
+        // prepare specification of file descriptors
+        $descriptorspec = array(
+           0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+           1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+           2 => array("file", "/dev/null", "a")                 // no stderr 
+        );
+
+        // execute the graphviz command
+        $cmd = $config->iquest->graphviz_cmd." -Tsvg";
+        $process = proc_open($cmd, $descriptorspec, $pipes);
+
+        if (!is_resource($process)) {
+            throw new RuntimeException("Failed to execute graphviz!");
+        }
+
+        // $pipes now looks like this:
+        // 0 => writeable handle connected to child stdin
+        // 1 => readable handle connected to child stdout
+    
+        // Write DOT representation of the graph to stdin of the graphviz
+        fwrite($pipes[0], $this->get_dot()); 
+        fclose($pipes[0]);
+    
+        // read the image data
+        $image_data = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+    
+        // It is important that you close any pipes before calling
+        // proc_close in order to avoid a deadlock
+        $return_value = proc_close($process);
+    
+        // Return image to the browser
+        header('Content-Description: File Transfer');
+        header('Content-type: image/svg+xml');
+//      header('Content-Disposition: attachment; filename="graph.png"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . strlen($image_data));
+
+        echo $image_data;
+    }
+}
+
 ?>
