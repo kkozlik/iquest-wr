@@ -6,6 +6,14 @@ $_required_apu = array('apu_auth_login');
 
 require dirname(__FILE__)."/prepend.php";
 
+if (!empty($_SESSION['auth']) and 
+    $_SESSION['auth']->is_authenticated()){
+
+    sw_log("Login screen: User already authenticated, redirecting to main screen.", PEAR_LOG_DEBUG);
+    
+    $controler->change_url_for_reload("main.php");
+    $controler->reload(array());
+}
 
 $apu = new apu_auth_login();
 $apu->set_opt("redirect_on_login", "main.php");
