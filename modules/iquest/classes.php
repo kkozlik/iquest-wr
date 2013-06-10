@@ -747,8 +747,11 @@ class Iquest_Solution extends Iquest_file{
         $ct      = &$config->data_sql->iquest_solution_team->cols;
 
         $qw = array();
+
+        if (is_array($id))  $qw[] = $data->get_sql_in($ct->solution_id, $id, true);
+        else                $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
+        
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
         $qw[] = $ct->show_at." >= now()";
         $qw = " where ".implode(' and ', $qw);
 
@@ -837,6 +840,13 @@ class Iquest{
          *  5. Hints that has not been displayed and are not needed any more
          *     should not be never showed:          
          *     Table: hint_team.show_at = newer
+         *              
+         *  6. Solutions that has not been displayed and are not needed any more
+         *     should not be never showed.
+         *     Different with the [1] is that this step walk throught whole the
+         *     graph of clues/solutions and search for the solutions that are
+         *     not realy needed to reach the final task.                                     
+         *     Table: task_solution_team.show_at = never           
          */                                   
 
         $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
@@ -940,6 +950,17 @@ class Iquest{
         if ($del_clue_ids){
             Iquest_Hint::deschedule($del_clue_ids, $team_id);
         }
+
+
+        // 6. Solutions that has not been displayed and are not needed any more
+        //    should not be never showed:          
+
+        $del_solution_ids = $graph->get_unneded_solutions();
+        sw_log($log_prefix."    Solutions not more needed: (IDs=".implode(", ", $del_solution_ids).")", PEAR_LOG_INFO);
+        if ($del_solution_ids){
+            Iquest_Solution::deschedule($del_solution_ids, $team_id);
+        }
+
         
         unset($graph);
         
@@ -1118,15 +1139,14 @@ class Iquest_solution_graph{
         $res->free();
     } 
 
+
     /**
-     *  Return list of IDs of clues that has been already gained by the team,
-     *  but that are not needed anymore (has been used to solve a task solution).
-     *  
+     *  Mark all nodes from which the final task could be reached without
+     *  meeting already solved tasks in the way.
+     *            
      *  It is done by walking the graph in reversed order from the final task.
-     *  All clues that are rachable from the final task (not meeting a solved task)
-     *  are still needed.                         
      */         
-    public function get_unneded_clues(){
+    protected function mark_accessible_nodes(){
 
         // reset all nodes visited flag
         foreach($this->nodes as &$node) $node->visited = false;
@@ -1165,7 +1185,20 @@ class Iquest_solution_graph{
                 }
             }
         }
+    
+    }
 
+    /**
+     *  Return list of IDs of clues that has been already gained by the team,
+     *  but that are not needed anymore (has been used to solve a task solution).
+     *  
+     *  It is done by walking the graph in reversed order from the final task.
+     *  All clues that are rachable from the final task (not meeting a solved task)
+     *  are still needed.                         
+     */         
+    public function get_unneded_clues(){
+
+        $this->mark_accessible_nodes();
 
         // create the list of unneded clues, walk through all nodes
         $unneded_clues = array();
@@ -1182,6 +1215,35 @@ class Iquest_solution_graph{
         }
 
         return  $unneded_clues;
+    }
+
+
+    /**
+     *  Return list of IDs of task solutions that are not needed anymore 
+     *  (Either has been already solved or solving them do not help with
+     *  reaching final task).
+     *  
+     *  It is done by walking the graph in reversed order from the final task.
+     *  All solutions that are rachable from the final task (not meeting a solved task)
+     *  are still needed.                         
+     */         
+    public function get_unneded_solutions(){
+
+        $this->mark_accessible_nodes();
+
+        // create the list of unneded solutions, walk through all nodes
+        $unneded_solutions = array();
+        foreach($this->nodes as &$node){
+            // if the node is not solutions skip it
+            if (!$node->is_solution()) continue;
+            // if the node has been visited, the solution is still needed. Skip it
+            if ($node->visited) continue;
+
+            // All the rest of nodes should be added to the array
+            $unneded_solutions[] = $node->get_obj()->id;
+        }
+
+        return  $unneded_solutions;
     }
 
 
