@@ -520,6 +520,38 @@ class Iquest_Hint extends Iquest_file{
         return true;
     }
 
+    /**
+     *  De-schedule displaying of hint by $clue_id for team $team_id.
+     *  If the hint is not displayed yet, it will not be displayed never.     
+     */             
+    static function deschedule($clue_ids, $team_id){
+        global $data, $config;
+    
+        /* table's name */
+        $th_name  = &$config->data_sql->iquest_hint->table_name;
+        $tt_name  = &$config->data_sql->iquest_hint_team->table_name;
+        /* col names */
+        $ch      = &$config->data_sql->iquest_hint->cols;
+        $ct      = &$config->data_sql->iquest_hint_team->cols;
+
+        $q2 = "select ".$ch->id."
+               from ".$th_name."
+               where ".$data->get_sql_in($ch->clue_id, $clue_ids, true);
+
+        $qw = array();
+        $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
+        $qw[] = $ct->hint_id." in (".$q2.")";
+        $qw[] = $ct->show_at." >= now()";
+        $qw = " where ".implode(' and ', $qw);
+
+        $q = "delete from ".$tt_name.$qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    
+        return true;
+    }
+
     function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
@@ -806,16 +838,23 @@ class Iquest{
          *     should not be never showed:          
          *     Table: hint_team.show_at = newer
          */                                   
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
     
         $data->transaction_start();
     
         // 1. Close current task
+        sw_log($log_prefix."*** Closing solution (ID={$solution->id})", PEAR_LOG_INFO);
         Iquest_Solution::deschedule($solution->id, $team_id);    
 
         // 2. Open new clue group
         if (!Iquest_ClueGrp::is_accessible($solution->cgrp_id, $team_id)){
+            sw_log($log_prefix."*** Opening clue group (ID={$solution->cgrp_id})", PEAR_LOG_INFO);
             Iquest_ClueGrp::open($solution->cgrp_id, $team_id);
         }
+
+        // 3. Schedule show time for new hints
+        sw_log($log_prefix."*** Schedule show times for new hints.", PEAR_LOG_INFO);
 
         $clue_grp = &Iquest_ClueGrp::by_id($solution->cgrp_id);
         if (!$clue_grp){
@@ -823,7 +862,6 @@ class Iquest{
                                "Referenced by solution: ".json_encode($solution));
         }
 
-        // 3. Schedule show time for new hints
         $clues = $clue_grp->get_clues();
         foreach($clues as $k=>$v){
             $opt = array("clue_id" => $v->id,
@@ -831,20 +869,40 @@ class Iquest{
             $hints = Iquest_Hint::fetch($opt);
 
             foreach($hints as $hk=>$hv){
+                sw_log($log_prefix."    scheduling to show hint (ID={$hv->id}) after ".gmdate('H:i:s', $hv->timeout), PEAR_LOG_INFO);
                 Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout);
             }
+
+            unset($hints);
         }
+        
+        unset($clues);
+        unset($clue_grp);
 
         // 4. If team gained all clues that lead to some task_solution
         //    schedule showing of the solution
+
+        sw_log($log_prefix."*** Check what solutions could be scheduled to show.", PEAR_LOG_INFO);
 
         // fetch list of solutions that are opened by gaining the clue group
         $opening_solutions = Iquest_Solution::fetch_by_opening_cgrp($solution->cgrp_id, $team_id);
 
         foreach($opening_solutions as $opening_solution){
-
+            sw_log($log_prefix."    * Checking solution (ID={$opening_solution->id})", PEAR_LOG_INFO);
+            
             // if solution is already scheduled, skip it
-            if (!is_null($opening_solution->show_at)) continue;
+            if (!is_null($opening_solution->show_at)){
+                sw_log($log_prefix."      It's already scheduled to ".date($opening_solution->show_at), PEAR_LOG_INFO);
+                continue;
+            }
+
+            // If solution is already solved, skip it.
+            // Solution is solved if the team gained the clue group to which the solution points
+            if (Iquest_ClueGrp::is_accessible($opening_solution->cgrp_id, $team_id)){
+                sw_log($log_prefix."      It's already solved", PEAR_LOG_INFO);
+                continue;
+            }
+
 
             $schedule_solution = true;
             // fetch list of all clue groups that opens the solution
@@ -853,21 +911,40 @@ class Iquest{
                 // if any of the clue groups is not gained yet, do not schedule
                 // the solution
                 if (is_null($clue_grp->gained_at)){
+                    sw_log($log_prefix."      Clue group (ID={$clue_grp->id}) not gained yet. Not schedule the solution.", PEAR_LOG_INFO);
                     $schedule_solution = false;
                     break;
                 }
             }
             
+            unset($clue_grps);
+            
             if ($schedule_solution){
+                sw_log($log_prefix."      Scheduling show solution (ID={$opening_solution->id}) after ".gmdate('H:i:s', $opening_solution->timeout), PEAR_LOG_INFO);
                 Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout);
             }
         }
-                
         
+        unset($opening_solutions);
+                
+        // 5. Hints that has not been displayed and are not needed any more
+        //    should not be never showed:          
+
+        sw_log($log_prefix."*** Check what hints could be de-scheduled to show.", PEAR_LOG_INFO);
+
+        $graph = new Iquest_solution_graph($team_id);
+        $del_clue_ids = $graph->get_unneded_clues();
+
+        sw_log($log_prefix."    Clue not more needed: (IDs=".implode(", ", $del_clue_ids).")", PEAR_LOG_INFO);
+        
+        if ($del_clue_ids){
+            Iquest_Hint::deschedule($del_clue_ids, $team_id);
+        }
+        
+        unset($graph);
         
         $data->transaction_commit();
         
-
     }
 
 }
