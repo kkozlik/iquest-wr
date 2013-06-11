@@ -85,9 +85,7 @@ class apu_iquest extends apu_base_class{
 
         $this->opt['screen_name'] = "IQUEST";
 
-
-        /* message on attributes update */
-        $this->opt['msg_update']['long']  =     &$lang_str['msg_changes_saved'];
+        $this->opt['msg_solve']['long']  =     &$lang_str['iquest_msg_key_correct'];
         
         /*** names of variables assigned to smarty ***/
         /* form */
@@ -133,15 +131,11 @@ class apu_iquest extends apu_base_class{
      */
     function action_solve(){
 
-        $this->solution = Iquest_Solution::by_key($_POST['solution_key']);
-
-//@todo: check the key is valid ($this->solution not empty) 
-//@todo: check the key has not been already entered (cgroup is opened)
         Iquest::solution_found($this->solution, $this->team_id);
 
-        action_log($this->opt['screen_name'], $this->action, "update name to: ".$this->session['name']);
+        action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
 
-        $get = array('hello_world_updated='.RawURLEncode($this->opt['instance_id']));
+        $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
         return $get;
     }
 
@@ -208,6 +202,7 @@ class apu_iquest extends apu_base_class{
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
         return true;
     }
+
     /**
      *  Method perform action default 
      *
@@ -307,8 +302,9 @@ class apu_iquest extends apu_base_class{
     }
 
     function form_invalid(){
-        if ($this->action['action'] == "update"){
-            action_log($this->opt['screen_name'], $this->action, "Update action failed", false, array("errors"=>$this->controler->errors));
+        if ($this->action['action'] == "solve"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Key entering failed", false, array("errors"=>$this->controler->errors));
+            if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "view_grp"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View clue group failed", false, array("errors"=>$this->controler->errors));
@@ -418,7 +414,19 @@ class apu_iquest extends apu_base_class{
 
         if (empty($_POST['solution_key'])){
             ErrorHandler::add_error($lang_str['iquest_err_key_empty']);
-            $form_ok = false; 
+            return false; 
+        }
+
+        $this->solution = Iquest_Solution::by_key($_POST['solution_key']);
+
+        if (!$this->solution){
+            ErrorHandler::add_error($lang_str['iquest_err_key_invalid']);
+            return false; 
+        }
+
+        if (Iquest_ClueGrp::is_accessible($this->solution->cgrp_id, $this->team_id)){
+            ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
+            return false; 
         }
 
         return $form_ok;
@@ -431,8 +439,8 @@ class apu_iquest extends apu_base_class{
      *  @param array $msgs  array of messages
      */
     function return_messages(&$msgs){
-        if (isset($_GET['hello_world_updated']) and $_GET['hello_world_updated'] == $this->opt['instance_id']){
-            $msgs[]=&$this->opt['msg_update'];
+        if (isset($_GET['apu_iquest']) and $_GET['apu_iquest'] == $this->opt['instance_id']){
+            $msgs[]=&$this->opt['msg_solve'];
         }
     }
 

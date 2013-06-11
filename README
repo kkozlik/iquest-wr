@@ -4,7 +4,8 @@ Dependencies
  * php-log
  * php-mdb2
  * php5-mysql
- * pear: MDB2#mysqli    
+ * pear: MDB2#mysqli
+ * graphviz 
 
 
 Check value of session garbage collection in php.ini: 

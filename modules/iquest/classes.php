@@ -587,9 +587,12 @@ class Iquest_Solution extends Iquest_file{
         $key = preg_replace("/^iq/", "", $key);
 
         sw_log("Matching key: '".$key."'", PEAR_LOG_DEBUG);
-
+        
         $objs = static::fetch(array("key"=>$key));
-        if (!$objs) return null;
+        if (!$objs) {
+            $null = null; //reference have to be returned
+            return $null;
+        }
         
         $obj = reset($objs);
         return $obj;
