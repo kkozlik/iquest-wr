@@ -823,7 +823,12 @@ class Iquest_Solution extends Iquest_file{
 
 class Iquest{
 
-
+    static function is_started(){
+        $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
+    
+        if (time() < $start_time) return false;
+        return true;
+    }
 
     static function solution_found($solution, $team_id){
         global $data;

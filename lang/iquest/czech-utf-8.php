@@ -10,4 +10,9 @@ $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód ře
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
+
+
+$lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";
+$lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";
+
 ?>

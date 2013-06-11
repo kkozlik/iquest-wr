@@ -10,6 +10,11 @@ $_required_apu = array('apu_iquest');
 require dirname(__FILE__)."/prepend.php";
 
 
+if (!Iquest::is_started()){
+    $controler->redirect("waittostart.php");
+    exit;
+} 
+
 $apu    = new apu_iquest();
 
 //$page_attributes['css_file'][]=$config->style_src_path."get_css.php?css=".RawURLEncode("hello-world/hw.css");
