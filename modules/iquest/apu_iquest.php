@@ -215,6 +215,14 @@ class apu_iquest extends apu_base_class{
                      "available_only" => true);
         $clue_groups = Iquest_ClueGrp::fetch($opt);
 
+        // if there are no open clue groups
+        if (!count($clue_groups)){
+            // The team did not started the contest yet, so start it
+            Iquest::start($this->team_id);
+            // And fetch the clue groups again
+            $clue_groups = Iquest_ClueGrp::fetch($opt);
+        }
+
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
             $smarty_group = $v->to_smarty();

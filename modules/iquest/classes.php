@@ -823,12 +823,46 @@ class Iquest_Solution extends Iquest_file{
 
 class Iquest{
 
+    /**
+     *  Check whether contest already started (START_TIME passed)
+     */         
     static function is_started(){
         $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
     
         if (time() < $start_time) return false;
         return true;
     }
+
+    /**
+     *  Start the content for the team:
+     *  
+     *  1. Open initial clue group
+     *  2. Schedule showing of hints
+     *  3. Schedule showing of solution                    
+     */         
+    static function start($team_id){
+        // Make sure it's time to start contest
+        if (!self::is_started()) return;
+
+        $cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
+        sw_log($log_prefix."*** Starting contest for Team", PEAR_LOG_INFO);
+
+        // 1. Open new clue group
+        self::_open_cgrp($cgrp_id, $team_id, $log_prefix);
+
+        // 2. Schedule show time for new hints
+        self::_schedule_new_hints($cgrp_id, $team_id, $log_prefix);
+
+        // 3. If team gained all clues that lead to some task_solution
+        //    schedule showing of the solution
+        self::_schedule_solution($cgrp_id, $team_id, $log_prefix);
+    }
+
+
+
+
 
     static function solution_found($solution, $team_id){
         global $data;
@@ -868,18 +902,67 @@ class Iquest{
         Iquest_Solution::deschedule($solution->id, $team_id);    
 
         // 2. Open new clue group
-        if (!Iquest_ClueGrp::is_accessible($solution->cgrp_id, $team_id)){
-            sw_log($log_prefix."*** Opening clue group (ID={$solution->cgrp_id})", PEAR_LOG_INFO);
-            Iquest_ClueGrp::open($solution->cgrp_id, $team_id);
-        }
+        self::_open_cgrp($solution->cgrp_id, $team_id, $log_prefix);
 
         // 3. Schedule show time for new hints
+        self::_schedule_new_hints($solution->cgrp_id, $team_id, $log_prefix);
+
+        // 4. If team gained all clues that lead to some task_solution
+        //    schedule showing of the solution
+        self::_schedule_solution($solution->cgrp_id, $team_id, $log_prefix);
+                
+        // 5. Hints that has not been displayed and are not needed any more
+        //    should not be never showed:          
+
+        sw_log($log_prefix."*** Check what hints could be de-scheduled to show.", PEAR_LOG_INFO);
+
+        $graph = new Iquest_solution_graph($team_id);
+        $del_clue_ids = $graph->get_unneded_clues();
+
+        sw_log($log_prefix."    Clue not more needed: (IDs=".implode(", ", $del_clue_ids).")", PEAR_LOG_INFO);
+        
+        if ($del_clue_ids){
+            Iquest_Hint::deschedule($del_clue_ids, $team_id);
+        }
+
+
+        // 6. Solutions that has not been displayed and are not needed any more
+        //    should not be never showed:          
+
+        $del_solution_ids = $graph->get_unneded_solutions();
+        sw_log($log_prefix."    Solutions not more needed: (IDs=".implode(", ", $del_solution_ids).")", PEAR_LOG_INFO);
+        if ($del_solution_ids){
+            Iquest_Solution::deschedule($del_solution_ids, $team_id);
+        }
+
+        
+        unset($graph);
+        
+        $data->transaction_commit();
+        
+    }
+
+
+    /**
+     *  Open new clue group
+     */         
+    private static function _open_cgrp($cgrp_id, $team_id, $log_prefix){
+        if (!Iquest_ClueGrp::is_accessible($cgrp_id, $team_id)){
+            sw_log($log_prefix."*** Opening clue group (ID=$cgrp_id)", PEAR_LOG_INFO);
+            Iquest_ClueGrp::open($cgrp_id, $team_id);
+        }
+    }
+
+
+    /**
+     *  Schedule show time for new hints
+     */         
+    private static function _schedule_new_hints($cgrp_id, $team_id, $log_prefix){
         sw_log($log_prefix."*** Schedule show times for new hints.", PEAR_LOG_INFO);
 
-        $clue_grp = &Iquest_ClueGrp::by_id($solution->cgrp_id);
+        $clue_grp = &Iquest_ClueGrp::by_id($cgrp_id);
         if (!$clue_grp){
-            throw new RuntimeException("Clue group '".$solution->cgrp_id."' does not exists. ".
-                               "Referenced by solution: ".json_encode($solution));
+            throw new RuntimeException("Clue group '".$cgrp_id."' does not exists. ");
         }
 
         $clues = $clue_grp->get_clues();
@@ -898,14 +981,19 @@ class Iquest{
         
         unset($clues);
         unset($clue_grp);
+    }
 
-        // 4. If team gained all clues that lead to some task_solution
-        //    schedule showing of the solution
+
+    /**
+     *  If team gained all clues that lead to some task_solution schedule 
+     *  showing of the solution
+     */         
+    private static function _schedule_solution($cgrp_id, $team_id, $log_prefix){
 
         sw_log($log_prefix."*** Check what solutions could be scheduled to show.", PEAR_LOG_INFO);
 
         // fetch list of solutions that are opened by gaining the clue group
-        $opening_solutions = Iquest_Solution::fetch_by_opening_cgrp($solution->cgrp_id, $team_id);
+        $opening_solutions = Iquest_Solution::fetch_by_opening_cgrp($cgrp_id, $team_id);
 
         foreach($opening_solutions as $opening_solution){
             sw_log($log_prefix."    * Checking solution (ID={$opening_solution->id})", PEAR_LOG_INFO);
@@ -946,38 +1034,7 @@ class Iquest{
         }
         
         unset($opening_solutions);
-                
-        // 5. Hints that has not been displayed and are not needed any more
-        //    should not be never showed:          
-
-        sw_log($log_prefix."*** Check what hints could be de-scheduled to show.", PEAR_LOG_INFO);
-
-        $graph = new Iquest_solution_graph($team_id);
-        $del_clue_ids = $graph->get_unneded_clues();
-
-        sw_log($log_prefix."    Clue not more needed: (IDs=".implode(", ", $del_clue_ids).")", PEAR_LOG_INFO);
-        
-        if ($del_clue_ids){
-            Iquest_Hint::deschedule($del_clue_ids, $team_id);
-        }
-
-
-        // 6. Solutions that has not been displayed and are not needed any more
-        //    should not be never showed:          
-
-        $del_solution_ids = $graph->get_unneded_solutions();
-        sw_log($log_prefix."    Solutions not more needed: (IDs=".implode(", ", $del_solution_ids).")", PEAR_LOG_INFO);
-        if ($del_solution_ids){
-            Iquest_Solution::deschedule($del_solution_ids, $team_id);
-        }
-
-        
-        unset($graph);
-        
-        $data->transaction_commit();
-        
     }
-
 }
 
 
