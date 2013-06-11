@@ -24,5 +24,7 @@
     $config->enable_logging = true;
     $config->log_file = "/var/log/iquest";
     $config->log_level = "PEAR_LOG_DEBUG";
+    
+    $config->custom_act_log_function = "iquest_action_log";
 
 ?>
