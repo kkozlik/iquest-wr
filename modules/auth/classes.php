@@ -17,6 +17,8 @@ class iquest_auth extends auth{
      */         
     public $lifetime       = 0;
 
+    private $team_name = null;
+
     /**
      *  Function is called when user is not authenticated
      *
@@ -133,6 +135,40 @@ class iquest_auth extends auth{
     }
 
 
+    /**
+     *  Get name of logged team
+     */         
+    public function get_team_name(){
+        global $data, $config;
+
+        // check the cache
+        if (!is_null($this->team_name)) return $this->team_name;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_team->cols;
+
+        $team_id = $this->get_uid();
+
+        $q = "select t.".$c->name." 
+              from ". $t_name." t 
+              where t.".$c->id."=".$data->sql_format($team_id, "n");
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        if (!$res->numRows()){
+            sw_log("get_team_name: Team name for team ID=$team_id not found ", PEAR_LOG_ERROR);
+            return null;
+        }
+
+		$row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+        $this->team_name = $row[$c->name];
+		$res->free();
+        
+        return $this->team_name;
+    }
 }
 
 

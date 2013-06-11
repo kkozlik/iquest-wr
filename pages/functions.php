@@ -9,8 +9,8 @@ function iquest_action_log($screen_name, $action, $msg=null, $success = true, $o
 
     $log_msg = "[action: ".$screen_name."/".$action['action']."] ";
     if (isset($_SESSION['auth'])){
-        //@todo: display team name instead of uid
-        $log_msg .= "(team: ".$_SESSION['auth']->get_uid().") ";
+        $log_msg .= "(team: ".$_SESSION['auth']->get_uid().
+                         " '".$_SESSION['auth']->get_team_name()."') ";
     }
 
     if (is_null($msg)) $log_msg .= "action performed";
