@@ -123,4 +123,16 @@ $config->data_sql->iquest_solution_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_solution_team->cols->solution_id =    "solution_id";
 $config->data_sql->iquest_solution_team->cols->show_at =        "show_at";
 
+
+/**
+ *      option
+ */ 
+$config->data_sql->iquest_option = new stdClass();
+$config->data_sql->iquest_option->cols = new stdClass();
+        
+$config->data_sql->iquest_option->table_name =          "options";
+
+$config->data_sql->iquest_option->cols->name =          "name";
+$config->data_sql->iquest_option->cols->value =         "value";
+
 ?>
