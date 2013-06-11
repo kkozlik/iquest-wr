@@ -1154,10 +1154,9 @@ class Iquest_solution_graph{
         // reset all nodes visited flag
         foreach($this->nodes as &$node) $node->visited = false;
 
-        //@todo: zjistit ID ciloveho uzlu
-        $final_task_id = "PYTLICI";
+        $final_task_id = Iquest_Options::get(Iquest_Options::FINAL_TASK_ID);
         $queue = array();
-        
+
         if (!isset($this->nodes["S_".$final_task_id])){
             throw new UnexpectedValueException("Invalid ID of final task: '$final_task_id'");
         }
