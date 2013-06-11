@@ -222,7 +222,7 @@ class apu_iquest extends apu_base_class{
             $this->smarty_groups[$k] = $smarty_group;
         }
 
-        $solutions = Iquest::get_accessible_solutions($this->team_id);
+        $solutions = Iquest_Solution::fetch_accessible($this->team_id);
 
         $this->smarty_solutions = array();
         foreach($solutions as $k => $v){

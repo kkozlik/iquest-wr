@@ -599,6 +599,16 @@ class Iquest_Solution extends Iquest_file{
     }
 
     /**
+     *  Fetch all solutions that are accessible to the team
+     */         
+    static function fetch_accessible($team_id){
+        $opt = array("team_id" => $team_id,
+                     "accessible" => true);
+    
+        return static::fetch($opt);
+    }
+
+    /**
      *  Fetch solution from DB
      */         
     static function fetch($opt=array()){
@@ -813,14 +823,6 @@ class Iquest_Solution extends Iquest_file{
 
 class Iquest{
 
-
-
-    static function get_accessible_solutions($team_id){
-        $opt = array("team_id" => $team_id,
-                     "accessible" => true);
-    
-        return Iquest_Solution::fetch($opt);
-    }
 
 
     static function solution_found($solution, $team_id){
