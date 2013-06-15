@@ -177,7 +177,7 @@ class Iquest_Clue extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $cgrp_id, $ordering, $point_to=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $cgrp_id, $ordering, $point_to=array()){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->cgrp_id = $cgrp_id;
@@ -190,8 +190,10 @@ class Iquest_Clue extends Iquest_file{
 
         /* table's name */
         $tc_name  = &$config->data_sql->iquest_clue->table_name;
+        $ts_name  = &$config->data_sql->iquest_clue2solution->table_name;
         /* col names */
         $cc      = &$config->data_sql->iquest_clue->cols;
+        $cs      = &$config->data_sql->iquest_clue2solution->cols;
     
         $q = "insert into ".$tc_name."(
                     ".$cc->id.",
@@ -214,6 +216,21 @@ class Iquest_Clue extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
+
+
+        foreach($this->point_to as $sol_id){
+            $q = "insert into ".$ts_name."(
+                        ".$cs->clue_id.",
+                        ".$cs->solution_id."
+                  )
+                  values(
+                        ".$data->sql_format($this->id,  "s").",
+                        ".$data->sql_format($sol_id,    "s")."
+                  )";
+            
+            $res=$data->db->query($q);
+            if ($data->dbIsError($res)) throw new DBException($res);
+        }
     }
 
     
