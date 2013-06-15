@@ -1,0 +1,445 @@
+#!/usr/bin/env php
+<?php
+
+putenv('SERWEB_DIR='.dirname(__FILE__)."/../../serweb-frmwrk/serweb-frmwrk/serweb-frmwrk/");
+putenv('SERWEB_SET_DIRS='.dirname(__FILE__)."/../config/set_dirs.php");
+if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
+
+$_required_modules = array('iquest', 'auth');
+
+require_once(dirname(__FILE__)."/../pages/functions.php");
+require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
+
+
+class Iquest_Metadata{
+
+    const METADATA_FILE = "metadata.ini";
+
+    private $data;
+    private $parent_metadata;
+
+    private static $default_cfg = array(
+        "clue_pattern"      => "indicie.*",
+        "hint_pattern"      => "napoveda.*",
+        "solution_pattern"  => "deadline.*",
+    );
+
+    function __construct($dir, $parent_metadata=null){
+        $this->data             = $this->get_metadata($dir.self::METADATA_FILE);
+        $this->parent_metadata  = $parent_metadata;
+    }
+
+    private function get_metadata($file){
+        if (file_exists($file)){
+            $metadata = parse_ini_file($file, true);
+            if (false === $metadata){
+                throw new RuntimeException("Cannot open or read metadata file: ".$file);
+            }
+            return $metadata;
+        }
+        return array();
+    }
+
+    function get_cfg(){
+        //@todo: change cfg by metadata
+        return self::$default_cfg;
+    }
+
+    function get_cgrp_id(){
+        if (!isset($this->data['general']['id'])){
+            throw new exception("ID not specified in metadata file.");
+        }
+        return $this->data['general']['id'];
+    }
+    
+    function get_cgrp_name(){
+        if (!isset($this->data['cgrp']['name'])){
+            throw new exception("name for clue group is not set.");
+        }
+        return $this->data['cgrp']['name'];
+    }
+
+    function get_solution_name(){
+        if (!isset($this->data['solution']['name'])){
+            echo "*** WARNING: name for solution is not set.\n";
+            return $this->get_cgrp_name();
+        }
+        return $this->data['solution']['name'];
+    }
+
+    function get_solution_key(){
+        if (!isset($this->data['solution']['key'])){
+            throw new exception("Solution key is not set.");
+        }
+        return $this->data['solution']['key'];
+    }
+
+    /**
+     *  Get canonicalized key
+     */         
+    function get_solution_key_canon(){
+        return Iquest_Solution::canonicalize_key($this->get_solution_key());
+    }
+
+    function get_solution_timeout(){
+        if (!isset($this->data['solution']['timeout'])){
+            echo "*** WARNING: timeout for solution is not set. It will not be displayed to teams.\n";
+            return 0;
+        }
+        return 60*(int)$this->data['solution']['timeout']; // minutes to seconds
+    }
+
+    function get_solution_next_cgrp(){
+        if (!isset($this->data['solution']['next_cgrp_id'])){
+            throw new exception("next_cgrp_id is not set.");
+        }
+        return $this->data['solution']['next_cgrp_id'];
+    }
+
+
+    function get_clue_point_to($clue_nr){
+        // If no point_to is specifed for the clue, assume it point to 
+        // solution specified in this directory 
+        if (!isset($this->data['clue']['point_to'][$clue_nr])){
+            return array($this->get_cgrp_id());
+        } 
+        
+        $point_to = $this->data['clue']['point_to'][$clue_nr];
+
+        // If point_to is "-" or "" it point to no solution
+        if ($point_to == "-" or $point_to == "") return array(); 
+
+        // Otherwise create array from the comma separated list
+        return explode(",", $point_to); 
+    }
+
+    function get_hint_clueid($hint_nr){
+        if (!isset($this->data['hint']['clue_IDs']) or 
+            trim($this->data['hint']['clue_IDs']) == ""){
+            
+            echo "*** WARNING: clue_IDs are not specified. Useing '0'\n";
+//@todo: return ID of last clue
+            return 0;
+        }
+        
+        $clue_IDs = explode(",", $this->data['hint']['clue_IDs']);
+
+        if (trim($clue_IDs[0]) == ""){
+            echo "*** WARNING: clue_IDs are not specified. Useing '0'\n";
+//@todo: return ID of last clue
+            return 0;
+        }
+        
+        if (!isset($clue_IDs[$hint_nr])){
+            $clue_ID = end($clue_IDs);
+            echo "*** WARNING: clue_ID for hint '$hint_nr' is not specified. Useing '$clue_ID'\n";
+        }
+        else{
+            $clue_ID = $clue_IDs[$hint_nr];
+        }
+
+//@todo: verify the clue exists
+        return (int)$clue_ID;
+    }
+
+    function get_hint_timeout($hint_nr){
+        if (!isset($this->data['hint']['timeouts']) or 
+            trim($this->data['hint']['timeouts']) == ""){
+            throw new exception("Timeouts for hints are not specified.");
+        }
+        
+        $timeouts = explode(",", $this->data['hint']['timeouts']);
+
+        if (trim($timeouts[0]) == ""){
+            throw new exception("Timeouts for hints are not specified.");
+        }
+
+        if (!isset($timeouts[$hint_nr])){
+            $timeout = end($timeouts);
+            echo "*** WARNING: timeout for hint '$hint_nr' is not specified. Useing '$timeout'\n";
+        }
+        else{
+            $timeout = $timeouts[$hint_nr];
+        }
+
+        if (!is_numeric($timeout)){
+            throw new exception("Invalid timeout value: '$timeout' for hint $hint_nr");
+        }
+
+        return 60*(int)$timeout; // minutes to seconds
+    }
+
+    
+    function save_options(){
+        if (!isset($this->data['options'])) return;
+        if (!is_array($this->data['options'])) return;
+
+        //@todo: verify option format
+            
+        foreach($this->data['options'] as $name=>$value){
+            Iquest_Options::set($name, $value);
+        }
+    }
+}
+
+
+class Chroust{
+
+
+    static function prune_data_dir(){
+        global $config;
+
+        if ($config->iquest_data_dir){
+            echo "Erasing content of directory: ".$config->iquest_data_dir."\n";
+
+            // make sure the destination directory is empty
+            rm($config->iquest_data_dir."*");
+        }
+        else {
+            throw new Exception("Iquest datadir is not set.");            
+        }
+    }
+
+    static function prune_db(){
+        global $data, $config;
+    
+        $tables = array(
+            $config->data_sql->iquest_cgrp->table_name,
+            $config->data_sql->iquest_clue->table_name,
+            $config->data_sql->iquest_clue2solution->table_name,
+            $config->data_sql->iquest_hint->table_name,
+            $config->data_sql->iquest_solution->table_name,
+
+            $config->data_sql->iquest_cgrp_open->table_name,
+            $config->data_sql->iquest_hint_team->table_name,
+            $config->data_sql->iquest_solution_team->table_name,
+
+//            $config->data_sql->iquest_option->table_name,
+        );
+
+        foreach($tables as $table){
+            echo "Erasing DB table: ".$table."\n";
+            $res=$data->db->query("delete from ".$table);
+            if ($data->dbIsError($res)) throw new DBException($res);
+        }
+    
+    }
+
+    static function insert_cgrp($metadata){
+        $cgrp_id = $metadata->get_cgrp_id();
+        $cgrp_name = $metadata->get_cgrp_name();
+        $ref_id = rfc4122_uuid();
+        
+        $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name);
+        $cgrp->insert();
+    }
+
+    static function insert_clue($filename, $clue_nr, $metadata){
+        $cgrp_id = $metadata->get_cgrp_id();
+        $ref_id = rfc4122_uuid();
+        $content_type = Iquest_file::get_mime_type($filename);
+        $point_to = $metadata->get_clue_point_to($clue_nr);
+        
+        $clue = new Iquest_Clue($cgrp_id."-".$clue_nr, $ref_id, 
+                $filename, $content_type, null, $cgrp_id, $clue_nr, $point_to);
+
+        $clue->insert();
+    }
+
+    static function insert_hint($filename, $hint_nr, $metadata){
+        $cgrp_id = $metadata->get_cgrp_id();
+        $ref_id = rfc4122_uuid();
+        $content_type = Iquest_file::get_mime_type($filename);
+        $clue_id = $metadata->get_hint_clueid($hint_nr);
+        $timeout = $metadata->get_hint_timeout($hint_nr);
+        
+        $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
+                $filename, $content_type, null, $cgrp_id."-".$clue_id, $timeout);
+
+        $hint->insert();
+    }
+
+    static function insert_solution($filename, $solution_nr, $metadata){
+
+        if ($solution_nr > 0){
+            echo "*** WARNING: Only one solution file allowed in a directory. Ignoring the another one: '$filename'\n";
+            return false; //@todo: do not copy the file in this case
+        }
+
+        $cgrp_id = $metadata->get_cgrp_id();
+        $ref_id = rfc4122_uuid();
+        $content_type = Iquest_file::get_mime_type($filename);
+
+        $name = $metadata->get_solution_name();
+        $key = $metadata->get_solution_key_canon();
+        $timeout = $metadata->get_solution_timeout();
+        $next_cgrp_id = $metadata->get_solution_next_cgrp();
+        
+        $solution = new Iquest_Solution($cgrp_id, $ref_id, 
+                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key);
+
+        $solution->insert();
+    }
+
+    
+    static function process_top_metadata($dir){
+
+        $metadata = new Iquest_Metadata($dir);
+    
+        try{
+            $metadata->save_options();
+        }
+        catch(Exception $e){
+            throw new Exception("Problem reading metadata of directory: ".$dir, 0 ,$e);
+        }
+        
+        return $metadata;
+    }
+
+    static function process_data_dir($src_dir){
+
+        $top_metadata = self::process_top_metadata($src_dir);
+
+        $dir = dir($src_dir);
+        if (!$dir) throw new RuntimeException("Cannot open directory: ".$src_dir);
+
+        while($entry = $dir->read()){
+            //skip entries that are not directories
+            if (!is_dir($src_dir.$entry)) continue; 
+            if (substr($entry, 0, 1) == ".") continue; 
+
+            try{
+                $dest_dir = self::canonicalize_name($entry);
+                self::process_task_dir($src_dir.$entry.DIRECTORY_SEPARATOR, $dest_dir, $top_metadata);
+            }
+            catch(Exception $e){
+                throw new Exception("Problem during processing directory: ".$src_dir.$entry.DIRECTORY_SEPARATOR, 0, $e);
+            }
+        }
+    
+        $dir->close();
+    }
+
+    static function process_task_dir($task_dir, $dest_dir, $top_metadata){
+        global $config;
+        
+        echo "Reading directory: $task_dir\n";
+
+        $metadata = new Iquest_Metadata($task_dir, $top_metadata);
+
+        
+        // re-create the dest. dir 
+        RecursiveMkdir($config->iquest_data_dir.$dest_dir);
+        
+        $dir = dir($task_dir);
+        if (!$dir) throw new RuntimeException("Cannot open directory: ".$task_dir);
+
+        $entries=array();
+        while($entry = $dir->read()){
+            //skip entries that are not files
+            if (!is_file($task_dir.$entry)) continue;
+            // skip metadata file
+            if ($entry == Iquest_Metadata::METADATA_FILE) continue; 
+        
+            $dest_file = self::canonicalize_name($entry);
+
+            if (!copy($task_dir.$entry, $config->iquest_data_dir.$dest_dir.DIRECTORY_SEPARATOR.$dest_file)){
+                throw new Exception("Copy of file $task_dir$entry failed");
+            }
+            
+            $entries[] = $dest_file;
+        }
+        $dir->close();
+
+        sort($entries);
+
+        self::insert_cgrp($metadata);
+
+//@todo: convert charsets
+//@todo: place KEY from metadata into solution file
+
+        $cfg = $metadata->get_cfg();
+        $clue_nr = $hint_nr = $solution_nr = 0;
+        foreach($entries as $entry){
+            if (preg_match("/".$cfg["clue_pattern"]."/", $entry)){
+                self::insert_clue($dest_dir.DIRECTORY_SEPARATOR.$entry, $clue_nr, $metadata);
+                $clue_nr++;
+            }
+            elseif (preg_match("/".$cfg["hint_pattern"]."/", $entry)){
+                self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$entry, $hint_nr, $metadata);
+                $hint_nr++;
+            }
+            elseif (preg_match("/".$cfg["solution_pattern"]."/", $entry)){
+                self::insert_solution($dest_dir.DIRECTORY_SEPARATOR.$entry, $solution_nr, $metadata);
+                $solution_nr++;
+            }
+        }
+        
+        
+    }
+
+
+    static function canonicalize_name($str){
+        $str = remove_diacritics($str);
+        $str = strtolower($str);
+        $str = str_replace(" ", "_", $str);
+        $str = preg_replace("/[^-_a-z0-9.]/", "", $str);
+        return $str;
+    }
+
+    static function report_errors($e){
+        if (is_a($e, "PearErrorException")){
+            fwrite(STDERR, $e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo()."\n");
+        }
+        else{
+            fwrite(STDERR, $e->getMessage()."\n");
+        }
+        if ($e->getPrevious()) self::report_errors($e->getPrevious());
+    }
+    
+    static function usage(){
+        echo "Usage: ".$_SERVER['argv'][0]." <datadir> \n\n";
+    }
+    
+    static function main(){
+    
+        if ($_SERVER['argc'] < 2){
+            self::usage();
+            exit;
+        }
+    
+        $src_dir = $_SERVER['argv'][1];
+    
+        if (!is_dir($src_dir)){
+            fwrite(STDERR, "The directory does not exists ($src_dir)\n");
+            exit(1);
+        }
+    
+        if (substr($src_dir, -1) != DIRECTORY_SEPARATOR){
+            $src_dir.=DIRECTORY_SEPARATOR;
+        }
+
+
+        try{
+            self::prune_data_dir();
+            self::prune_db();
+            self::process_data_dir($src_dir);
+
+//@todo: verify that next_cgrp_id for each solution is valid (exists)
+//@todo: verify that clue2soultion point to existing solution
+        }
+        catch (exception $e){
+            fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
+            self::report_errors($e);
+            exit(1);
+        }
+
+    
+    
+    }
+
+}
+
+Chroust::main();
+
+?>
