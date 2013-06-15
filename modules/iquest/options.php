@@ -10,6 +10,11 @@ class Iquest_Options{
     const INITIAL_CGRP_ID = "initial_cgrp_id";
     const FINAL_TASK_ID   = "final_task_id";
 
+    public static $supported_options = array(self::START_TIME,
+                                             self::END_TIME,
+                                             self::INITIAL_CGRP_ID,
+                                             self::FINAL_TASK_ID); 
+
     /** Options cache */
     private static $options = null;
 
@@ -70,6 +75,38 @@ class Iquest_Options{
         return self::$options[$option_name];
     }
 
+    public static function set($option_name, $option_value){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_option->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_option->cols;
+
+        if (!in_array($option_name, self::$supported_options)){
+            throw new UnexpectedValueException("Unknown option '$option_name'");
+        }
+
+        $q = "delete from ".$t_name."
+              where ".$c->name." = ".$data->sql_format($option_name, "s");
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+
+        $q = "insert into ".$t_name."(
+                ".$c->name.",
+                ".$c->value.")
+              values(
+                ".$data->sql_format($option_name,  "s").",
+                ".$data->sql_format($option_value, "s").")";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        if (!is_null(self::$options)) self::$options[$option_name] = $option_value; 
+        
+    }
 }
 
 ?>
