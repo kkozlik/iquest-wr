@@ -45,6 +45,17 @@ class Iquest_Metadata{
         return self::$default_cfg;
     }
 
+    function get_charset($filename){
+        //@todo: file specific charset
+        if (!isset($this->data['general']['charset'])){
+            if ($this->parent_metadata){
+                return $this->parent_metadata->get_charset($filename);
+            }
+            throw new exception("Charset not specified in metadata file.");
+        }
+        return $this->data['general']['charset'];
+    }
+
     function get_cgrp_id(){
         if (!isset($this->data['general']['id'])){
             throw new exception("ID not specified in metadata file.");
@@ -232,6 +243,7 @@ class Chroust{
         
         $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name);
         $cgrp->insert();
+        return $cgrp;
     }
 
     static function insert_clue($filename, $clue_nr, $metadata){
@@ -244,6 +256,7 @@ class Chroust{
                 $filename, $content_type, null, $cgrp_id, $clue_nr, $point_to);
 
         $clue->insert();
+        return $clue;
     }
 
     static function insert_hint($filename, $hint_nr, $metadata){
@@ -257,13 +270,14 @@ class Chroust{
                 $filename, $content_type, null, $cgrp_id."-".$clue_id, $timeout);
 
         $hint->insert();
+        return $hint;
     }
 
     static function insert_solution($filename, $solution_nr, $metadata){
 
         if ($solution_nr > 0){
             echo "*** WARNING: Only one solution file allowed in a directory. Ignoring the another one: '$filename'\n";
-            return false; //@todo: do not copy the file in this case
+            return null; 
         }
 
         $cgrp_id = $metadata->get_cgrp_id();
@@ -279,6 +293,7 @@ class Chroust{
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key);
 
         $solution->insert();
+        return $solution;
     }
 
     
@@ -320,6 +335,45 @@ class Chroust{
         $dir->close();
     }
 
+    static function copy_file($from, $to, $file_obj, $metadata){
+        global $config;
+
+        if (substr($file_obj->content_type, 0, 5) == "text/"){
+            $charset = $metadata->get_charset($file_obj->filename);
+
+            $in =  fopen($from, "r");
+            $out = fopen($config->iquest_data_dir.$to, "w");
+
+            while($line = fgets($in)) {
+                if ($charset != "UTF-8"){
+                    $line = iconv($charset, "UTF-8", $line);
+                }
+
+                if (is_a($file_obj, "Iquest_Solution")){
+//@todo: OTESTOVAT
+                    $line = str_replace("<key>", $file_obj->key, $line);
+                }
+
+                if (false === fwrite($out, $line)){
+                    throw new Exception("Copy of file $from failed");
+                }
+            }
+
+            if (!feof($in)) {
+                throw new Exception("Copy of file $from failed");
+            }
+
+
+            fclose($in);            
+            fclose($out);            
+            return;
+        }
+        
+        if (!copy($from, $config->iquest_data_dir.$to)){
+            throw new Exception("Copy of file $from failed");
+        }
+    }
+
     static function process_task_dir($task_dir, $dest_dir, $top_metadata){
         global $config;
         
@@ -334,7 +388,12 @@ class Chroust{
         $dir = dir($task_dir);
         if (!$dir) throw new RuntimeException("Cannot open directory: ".$task_dir);
 
+        $cfg = $metadata->get_cfg();
         $entries=array();
+        $entries['clues']=array();
+        $entries['hints']=array();
+        $entries['solutions']=array();
+        
         while($entry = $dir->read()){
             //skip entries that are not files
             if (!is_file($task_dir.$entry)) continue;
@@ -343,38 +402,59 @@ class Chroust{
         
             $dest_file = self::canonicalize_name($entry);
 
-            if (!copy($task_dir.$entry, $config->iquest_data_dir.$dest_dir.DIRECTORY_SEPARATOR.$dest_file)){
-                throw new Exception("Copy of file $task_dir$entry failed");
+            if (preg_match("/".$cfg["clue_pattern"]."/", $dest_file)){
+                $entries['clues'][$entry] = $dest_file;
             }
-            
-            $entries[] = $dest_file;
+            elseif (preg_match("/".$cfg["hint_pattern"]."/", $dest_file)){
+                $entries['hints'][$entry] = $dest_file;
+            }
+            elseif (preg_match("/".$cfg["solution_pattern"]."/", $dest_file)){
+                $entries['solutions'][$entry] = $dest_file;
+            }
         }
         $dir->close();
 
-        sort($entries);
+        asort($entries['clues']);
+        asort($entries['hints']);
+        asort($entries['solutions']);
 
         self::insert_cgrp($metadata);
 
-//@todo: convert charsets
-//@todo: place KEY from metadata into solution file
-
-        $cfg = $metadata->get_cfg();
         $clue_nr = $hint_nr = $solution_nr = 0;
-        foreach($entries as $entry){
-            if (preg_match("/".$cfg["clue_pattern"]."/", $entry)){
-                self::insert_clue($dest_dir.DIRECTORY_SEPARATOR.$entry, $clue_nr, $metadata);
-                $clue_nr++;
-            }
-            elseif (preg_match("/".$cfg["hint_pattern"]."/", $entry)){
-                self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$entry, $hint_nr, $metadata);
-                $hint_nr++;
-            }
-            elseif (preg_match("/".$cfg["solution_pattern"]."/", $entry)){
-                self::insert_solution($dest_dir.DIRECTORY_SEPARATOR.$entry, $solution_nr, $metadata);
-                $solution_nr++;
-            }
+
+        $clues = array();
+        foreach($entries['clues'] as $from_file=>$to_file){
+            $clue = self::insert_clue($dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue_nr, $metadata);
+            if (!$clue) continue;
+
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue, $metadata);
+
+            $clues[$clue->id] = $clue;
+            $clue_nr++;
         }
-        
+
+        $hints = array();
+        foreach($entries['hints'] as $from_file=>$to_file){
+            $hint = self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint_nr, $metadata);
+            if (!$hint) continue;
+
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint, $metadata);
+
+            $hints[$hint->id] = $hint;
+            $hint_nr++;
+        }
+
+        $solutions = array();
+        foreach($entries['solutions'] as $from_file=>$to_file){
+            $solution = self::insert_solution($dest_dir.DIRECTORY_SEPARATOR.$to_file, $solution_nr, $metadata);
+            if (!$solution) continue;
+
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $solution, $metadata);
+
+            $solutions[$solution->id] = $solution;
+            $solution_nr++;
+        }
+
         
     }
 
