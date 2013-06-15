@@ -23,6 +23,20 @@ class Iquest_file{
         return $obj;
     }
     
+    static function get_mime_type($filename){
+        $ext = substr($filename, strrpos($filename, ".")+1);
+        
+        switch (strtolower($ext)){
+        case "txt":     return "text/plain";
+        case "html":    return "text/html";
+        case "jpeg":
+        case "jpg":     return "image/jpeg";
+        case "mp3":     return "audio/mpeg";
+        default:        return "application/octet-string";
+        }
+        
+    }
+    
     function __construct($id, $ref_id, $filename, $content_type, $comment){
         $this->id =             $id;
         $this->ref_id =         $ref_id;
@@ -109,6 +123,7 @@ class Iquest_file{
 
 class Iquest_Clue extends Iquest_file{
     public $cgrp_id;
+    public $ordering;
     public $point_to; // point to solution
     
     private $hints = null;
@@ -139,7 +154,8 @@ class Iquest_Clue extends Iquest_file{
                      c.".$cc->cgrp_id.",
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
-                     c.".$cc->comment." 
+                     c.".$cc->comment.", 
+                     c.".$cc->ordering." 
               from ".$tc_name." c ".
               $qw."
               order by c.".$cc->ordering;
@@ -154,18 +170,52 @@ class Iquest_Clue extends Iquest_file{
                                                    $row[$cc->filename],
                                                    $row[$cc->content_type],
                                                    $row[$cc->comment],
-                                                   $row[$cc->cgrp_id]);
+                                                   $row[$cc->cgrp_id],
+                                                   $row[$cc->ordering]);
         }
         $res->free();
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $cgrp_id, $point_to=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $cgrp_id, $ordering, $point_to=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->cgrp_id = $cgrp_id;
+        $this->ordering = $ordering;
         $this->point_to = $point_to;
     }
+
+    function insert(){
+        global $data, $config;
+
+        /* table's name */
+        $tc_name  = &$config->data_sql->iquest_clue->table_name;
+        /* col names */
+        $cc      = &$config->data_sql->iquest_clue->cols;
+    
+        $q = "insert into ".$tc_name."(
+                    ".$cc->id.",
+                    ".$cc->ref_id.",
+                    ".$cc->filename.",
+                    ".$cc->content_type.",
+                    ".$cc->comment.", 
+                    ".$cc->cgrp_id.",
+                    ".$cc->ordering."
+              )
+              values(
+                    ".$data->sql_format($this->id,              "s").",
+                    ".$data->sql_format($this->ref_id,          "s").",
+                    ".$data->sql_format($this->filename,        "s").",
+                    ".$data->sql_format($this->content_type,    "s").",
+                    ".$data->sql_format($this->comment,         "S").",
+                    ".$data->sql_format($this->cgrp_id,         "s").",
+                    ".$data->sql_format($this->ordering,        "n")."
+              )";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    }
+
     
     function get_accessible_hints($team_id){
         if (!is_null($this->hints)) return $this->hints;
@@ -388,6 +438,30 @@ class Iquest_ClueGrp{
         $this->gained_at =  $gained_at;
     }
 
+
+    function insert(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_cgrp->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_cgrp->cols;
+    
+        $q = "insert into ".$t_name."(
+                    ".$c->id.",
+                    ".$c->ref_id.",
+                    ".$c->name."
+              )
+              values(
+                    ".$data->sql_format($this->id,              "s").",
+                    ".$data->sql_format($this->ref_id,          "s").",
+                    ".$data->sql_format($this->name,            "s")."
+              )";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    }
+
     function get_clues(){
         if (!is_null($this->clues)) return $this->clues;
         $this->load_clues();
@@ -559,6 +633,37 @@ class Iquest_Hint extends Iquest_file{
         $this->timeout = $timeout;
         $this->show_at = $show_at;
     }
+
+    function insert(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_hint->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_hint->cols;
+    
+        $q = "insert into ".$t_name."(
+                    ".$c->id.",
+                    ".$c->ref_id.",
+                    ".$c->filename.",
+                    ".$c->content_type.",
+                    ".$c->comment.", 
+                    ".$c->clue_id.",
+                    ".$c->timeout."
+              )
+              values(
+                    ".$data->sql_format($this->id,              "s").",
+                    ".$data->sql_format($this->ref_id,          "s").",
+                    ".$data->sql_format($this->filename,        "s").",
+                    ".$data->sql_format($this->content_type,    "s").",
+                    ".$data->sql_format($this->comment,         "S").",
+                    ".$data->sql_format($this->clue_id,         "s").",
+                    sec_to_time(".$data->sql_format($this->timeout, "n").")
+              )";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    }
 }
 
 
@@ -574,17 +679,7 @@ class Iquest_Solution extends Iquest_file{
      */         
     static function &by_key($key){
 
-        // remove diacritics
-        $key = Str_Replace(
-                    Array("á","č","ď","é","ě","í","ľ","ň","ó","ř","š","ť","ú","ů","ý ","ž","Á","Č","Ď","É","Ě","Í","Ľ","Ň","Ó","Ř","Š","Ť","Ú","Ů","Ý","Ž"),
-                    Array("a","c","d","e","e","i","l","n","o","r","s","t","u","u","y ","z","A","C","D","E","E","I","L","N","O","R","S","T","U","U","Y","Z"),
-                    $key);
-        // to lowercase
-        $key = strtolower($key);
-        // remove non-alphanumeric
-        $key = preg_replace("/[^a-z0-9]/", "", $key);
-        // remove initial "iq" (it was "I.Q:")
-        $key = preg_replace("/^iq/", "", $key);
+        $key = self::canonicalize_key($key);
 
         sw_log("Matching key: '".$key."'", PEAR_LOG_DEBUG);
         
@@ -596,6 +691,19 @@ class Iquest_Solution extends Iquest_file{
         
         $obj = reset($objs);
         return $obj;
+    }
+
+    static function canonicalize_key($key){
+        // remove diacritics
+        $key = remove_diacritics($key);
+        // to lowercase
+        $key = strtolower($key);
+        // remove non-alphanumeric
+        $key = preg_replace("/[^a-z0-9]/", "", $key);
+        // remove initial "iq" (it was "I.Q:")
+        $key = preg_replace("/^iq/", "", $key);
+
+        return $key;
     }
 
     /**
@@ -810,6 +918,41 @@ class Iquest_Solution extends Iquest_file{
         $this->timeout = $timeout;
         $this->key = $key;
         $this->show_at = $show_at;
+    }
+
+    function insert(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_solution->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_solution->cols;
+    
+        $q = "insert into ".$t_name."(
+                    ".$c->id.",
+                    ".$c->ref_id.",
+                    ".$c->filename.",
+                    ".$c->content_type.",
+                    ".$c->comment.", 
+                    ".$c->cgrp_id.",
+                    ".$c->name.",
+                    ".$c->key.",
+                    ".$c->timeout."
+              )
+              values(
+                    ".$data->sql_format($this->id,              "s").",
+                    ".$data->sql_format($this->ref_id,          "s").",
+                    ".$data->sql_format($this->filename,        "s").",
+                    ".$data->sql_format($this->content_type,    "s").",
+                    ".$data->sql_format($this->comment,         "S").",
+                    ".$data->sql_format($this->cgrp_id,         "s").",
+                    ".$data->sql_format($this->name,            "s").",
+                    ".$data->sql_format($this->key,             "s").",
+                    sec_to_time(".$data->sql_format($this->timeout, "n").")
+              )";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
     function to_smarty(){
@@ -1028,8 +1171,13 @@ class Iquest{
             unset($clue_grps);
             
             if ($schedule_solution){
-                sw_log($log_prefix."      Scheduling show solution (ID={$opening_solution->id}) after ".gmdate('H:i:s', $opening_solution->timeout), PEAR_LOG_INFO);
-                Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout);
+                if ($opening_solution->timeout > 0){
+                    sw_log($log_prefix."      Scheduling show solution (ID={$opening_solution->id}) after ".gmdate('H:i:s', $opening_solution->timeout), PEAR_LOG_INFO);
+                    Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout);
+                }
+                else{
+                    sw_log($log_prefix."      Solution (ID={$opening_solution->id}) should not be scheduled to show due to it's timeout is not set.", PEAR_LOG_INFO);
+                }
             }
         }
         
