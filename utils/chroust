@@ -41,8 +41,22 @@ class Iquest_Metadata{
     }
 
     function get_cfg(){
-        //@todo: change cfg by metadata
-        return self::$default_cfg;
+        // start with default configuration
+        if ($this->parent_metadata){
+            $cfg = $this->parent_metadata->get_cfg();
+        }
+        else{
+            $cfg = self::$default_cfg;
+        }
+
+        // replace all values specified in metadata file
+        foreach($cfg as $k => $v){
+            if (isset($this->data['cfg'][$k])){
+                $cfg[$k] = $this->data['cfg'][$k];
+            }
+        }
+        
+        return $cfg;
     }
 
     /**
