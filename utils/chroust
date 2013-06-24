@@ -45,15 +45,28 @@ class Iquest_Metadata{
         return self::$default_cfg;
     }
 
+    /**
+     *  Return charset used in for specific file
+     *  
+     *  Function first look to [$filename] section and if it do not contain 
+     *  the charset, it look to [general] section.               
+     */         
     function get_charset($filename){
-        //@todo: file specific charset
-        if (!isset($this->data['general']['charset'])){
-            if ($this->parent_metadata){
-                return $this->parent_metadata->get_charset($filename);
-            }
-            throw new exception("Charset not specified in metadata file.");
+        
+        $filename = basename($filename);
+        if (isset($this->data[$filename]['charset'])){
+            return $this->data[$filename]['charset'];
         }
-        return $this->data['general']['charset'];
+
+        if (isset($this->data['general']['charset'])){
+            return $this->data['general']['charset'];
+        }
+
+        if ($this->parent_metadata){
+            return $this->parent_metadata->get_charset($filename);
+        }
+
+        throw new exception("Charset not specified in metadata file.");
     }
 
     function get_cgrp_id(){
@@ -64,6 +77,7 @@ class Iquest_Metadata{
     }
     
     function get_cgrp_name(){
+//@todo: change charset?
         if (!isset($this->data['cgrp']['name'])){
             throw new exception("name for clue group is not set.");
         }
@@ -71,6 +85,7 @@ class Iquest_Metadata{
     }
 
     function get_solution_name(){
+//@todo: change charset?
         if (!isset($this->data['solution']['name'])){
             echo "*** WARNING: name for solution is not set.\n";
             return $this->get_cgrp_name();
