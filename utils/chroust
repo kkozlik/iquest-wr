@@ -131,6 +131,12 @@ class Iquest_Metadata{
         if (!isset($this->data['solution']['key'])){
             throw new exception("Solution key is not set.");
         }
+
+        $charset = $this->get_charset(self::METADATA_FILE);
+        if ($charset != "UTF-8"){
+            return iconv($charset, "UTF-8", $this->data['solution']['key']);
+        }
+
         return $this->data['solution']['key'];
     }
 
