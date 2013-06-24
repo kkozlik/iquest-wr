@@ -84,6 +84,14 @@ class Iquest_Metadata{
         return $this->data['cgrp']['name'];
     }
 
+    function is_start_cgrp(){
+        return !empty($this->data['cgrp']['start']);
+    }
+
+    function is_final_solution(){
+        return !empty($this->data['solution']['final']);
+    }
+
     function get_solution_name(){
 //@todo: change charset?
         if (!isset($this->data['solution']['name'])){
@@ -452,6 +460,10 @@ class Chroust{
 
         self::insert_cgrp($metadata);
 
+        if ($metadata->is_start_cgrp()){
+            Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
+        }
+
         $clue_nr = $hint_nr = $solution_nr = 0;
 
         $clues = array();
@@ -485,6 +497,11 @@ class Chroust{
 
             $solutions[$solution->id] = $solution;
             $solution_nr++;
+
+
+            if ($metadata->is_final_solution()){
+                Iquest_Options::set(Iquest_Options::FINAL_TASK_ID, $solution->id);
+            }
         }
 
         
