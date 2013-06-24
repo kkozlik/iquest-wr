@@ -68,8 +68,8 @@ class Iquest_Metadata{
     function get_charset($filename){
         
         $filename = basename($filename);
-        if (isset($this->data[$filename]['charset'])){
-            return $this->data[$filename]['charset'];
+        if (isset($this->data["file:".$filename]['charset'])){
+            return $this->data["file:".$filename]['charset'];
         }
 
         if (isset($this->data['general']['charset'])){
@@ -91,10 +91,16 @@ class Iquest_Metadata{
     }
     
     function get_cgrp_name(){
-//@todo: change charset?
+
         if (!isset($this->data['cgrp']['name'])){
             throw new exception("name for clue group is not set.");
         }
+
+        $charset = $this->get_charset(self::METADATA_FILE);
+        if ($charset != "UTF-8"){
+            return iconv($charset, "UTF-8", $this->data['cgrp']['name']);
+        }
+
         return $this->data['cgrp']['name'];
     }
 
@@ -107,11 +113,17 @@ class Iquest_Metadata{
     }
 
     function get_solution_name(){
-//@todo: change charset?
+
         if (!isset($this->data['solution']['name'])){
             echo "*** WARNING: name for solution is not set.\n";
             return $this->get_cgrp_name();
         }
+
+        $charset = $this->get_charset(self::METADATA_FILE);
+        if ($charset != "UTF-8"){
+            return iconv($charset, "UTF-8", $this->data['solution']['name']);
+        }
+
         return $this->data['solution']['name'];
     }
 
