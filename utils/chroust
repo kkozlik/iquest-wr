@@ -124,33 +124,34 @@ class Iquest_Metadata{
         return explode(",", $point_to); 
     }
 
+    /**
+     *  Retrieve the clue ID for given hint number
+     *  Return null if clue ids are not specified
+     */         
     function get_hint_clueid($hint_nr){
         if (!isset($this->data['hint']['clue_IDs']) or 
             trim($this->data['hint']['clue_IDs']) == ""){
             
-            echo "*** WARNING: clue_IDs are not specified. Useing '0'\n";
-//@todo: return ID of last clue
-            return 0;
+            return null;
         }
         
         $clue_IDs = explode(",", $this->data['hint']['clue_IDs']);
 
         if (trim($clue_IDs[0]) == ""){
-            echo "*** WARNING: clue_IDs are not specified. Useing '0'\n";
-//@todo: return ID of last clue
-            return 0;
+            return null;
         }
         
         if (!isset($clue_IDs[$hint_nr])){
-            $clue_ID = end($clue_IDs);
+            $clue_ID = (int)end($clue_IDs);
+            $clue_ID = $this->get_cgrp_id()."-".$clue_ID; 
             echo "*** WARNING: clue_ID for hint '$hint_nr' is not specified. Useing '$clue_ID'\n";
         }
         else{
-            $clue_ID = $clue_IDs[$hint_nr];
+            $clue_ID = (int)$clue_IDs[$hint_nr];
+            $clue_ID = $this->get_cgrp_id()."-".$clue_ID; 
         }
 
-//@todo: verify the clue exists
-        return (int)$clue_ID;
+        return $clue_ID;
     }
 
     function get_hint_timeout($hint_nr){
@@ -259,15 +260,28 @@ class Chroust{
         return $clue;
     }
 
-    static function insert_hint($filename, $hint_nr, $metadata){
+    static function insert_hint($filename, $hint_nr, $metadata, $clues){
         $cgrp_id = $metadata->get_cgrp_id();
         $ref_id = rfc4122_uuid();
         $content_type = Iquest_file::get_mime_type($filename);
         $clue_id = $metadata->get_hint_clueid($hint_nr);
         $timeout = $metadata->get_hint_timeout($hint_nr);
+
+        // if clue ID is not specified, use the ID of last clue
+        if (is_null($clue_id)){
+            $last_clue = end($clues);
+            $clue_id = $last_clue->id;
+
+            echo "*** WARNING: clue_IDs are not specified. Useing '$clue_id'\n";
+        }
+
+        // Check whether the clue ID is valid
+        if (!isset($clues[$clue_id])){
+            throw new exception("Invalid clue_ID '$clue_id' specified for a hint.");
+        }
         
         $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
-                $filename, $content_type, null, $cgrp_id."-".$clue_id, $timeout);
+                $filename, $content_type, null, $clue_id, $timeout);
 
         $hint->insert();
         return $hint;
@@ -440,7 +454,7 @@ class Chroust{
 
         $hints = array();
         foreach($entries['hints'] as $from_file=>$to_file){
-            $hint = self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint_nr, $metadata);
+            $hint = self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint_nr, $metadata, $clues);
             if (!$hint) continue;
 
             self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint, $metadata);
