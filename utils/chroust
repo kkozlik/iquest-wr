@@ -507,6 +507,52 @@ class Chroust{
         
     }
 
+    static function verify(){
+        global $data, $config;
+
+        $cgrps = Iquest_ClueGrp::fetch();
+        $clues = Iquest_Clue::fetch();
+        $solutions = Iquest_Solution::fetch();
+        
+        // verify that next_cgrp_id for each solution is valid (exists)
+        foreach($solutions as $solution){
+            if (!isset($cgrps[$solution->cgrp_id])){
+                throw new Exception("Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.");            
+            }
+        }
+        
+        
+        
+        // verify that clue2soultion point to existing solution
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_clue2solution->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_clue2solution->cols;
+
+        // fetch the whole clue2solution DB table
+        $q = "select ".$c->clue_id.",
+                     ".$c->solution_id."
+              from ".$t_name;
+    
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        // walk through the rows
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            if (!isset($solutions[$row[$c->solution_id]])){
+                throw new Exception("Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.");            
+            }
+
+            if (!isset($clues[$row[$c->clue_id]])){
+                throw new Exception("Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing clue '{$row[$c->clue_id]}'.");            
+            }
+
+        }
+        $res->free();
+
+    
+    }
 
     static function canonicalize_name($str){
         $str = remove_diacritics($str);
@@ -554,8 +600,7 @@ class Chroust{
             self::prune_db();
             self::process_data_dir($src_dir);
 
-//@todo: verify that next_cgrp_id for each solution is valid (exists)
-//@todo: verify that clue2soultion point to existing solution
+            self::verify();
         }
         catch (exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
