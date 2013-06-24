@@ -350,8 +350,7 @@ class Chroust{
                 }
 
                 if (is_a($file_obj, "Iquest_Solution")){
-//@todo: OTESTOVAT
-                    $line = str_replace("<key>", $file_obj->key, $line);
+                    $line = str_replace("<key>", $metadata->get_solution_key(), $line);
                 }
 
                 if (false === fwrite($out, $line)){
