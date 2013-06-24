@@ -201,8 +201,6 @@ class Iquest_Metadata{
         if (!isset($this->data['options'])) return;
         if (!is_array($this->data['options'])) return;
 
-        //@todo: verify option format
-            
         foreach($this->data['options'] as $name=>$value){
             Iquest_Options::set($name, $value);
         }

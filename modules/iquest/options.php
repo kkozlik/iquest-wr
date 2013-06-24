@@ -78,6 +78,19 @@ class Iquest_Options{
     public static function set($option_name, $option_value){
         global $data, $config;
 
+
+        // verify time options contain valid datetime
+        if ($option_name == self::START_TIME or
+            $option_name == self::END_TIME) {
+            
+            $time = strtotime($option_value);
+            
+            if (false === $time){
+                throw new RuntimeException("Option '$option_name' do not contain valid datetime but: '".$option_value."'");
+            }
+        }
+
+
         /* table's name */
         $t_name = &$config->data_sql->iquest_option->table_name;
         /* col names */
