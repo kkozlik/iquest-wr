@@ -10,6 +10,7 @@ $_required_modules = array('iquest', 'auth');
 require_once(dirname(__FILE__)."/../pages/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
+class Iquest_noMetaDataException extends RuntimeException {}
 
 class Iquest_Metadata{
 
@@ -30,14 +31,13 @@ class Iquest_Metadata{
     }
 
     private function get_metadata($file){
-        if (file_exists($file)){
-            $metadata = parse_ini_file($file, true);
-            if (false === $metadata){
-                throw new RuntimeException("Cannot open or read metadata file: ".$file);
-            }
-            return $metadata;
+        if (!file_exists($file)) throw new Iquest_noMetaDataException();
+        
+        $metadata = parse_ini_file($file, true);
+        if (false === $metadata){
+            throw new RuntimeException("Cannot open or read metadata file: ".$file);
         }
-        return array();
+        return $metadata;
     }
 
     function get_cfg(){
@@ -379,7 +379,13 @@ class Chroust{
         
         echo "Reading directory: $task_dir\n";
 
-        $metadata = new Iquest_Metadata($task_dir, $top_metadata);
+        try{
+            $metadata = new Iquest_Metadata($task_dir, $top_metadata);
+        }
+        catch (Iquest_noMetaDataException $e){
+            echo "No metadata. Skipping!!! \n";
+            return;
+        }
 
         
         // re-create the dest. dir 
