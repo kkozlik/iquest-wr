@@ -108,6 +108,10 @@ class Iquest_Metadata{
         return !empty($this->data['cgrp']['start']);
     }
 
+    function is_reveal_goal_cgrp(){
+        return !empty($this->data['cgrp']['reveal_goal']);
+    }
+
     function is_final_solution(){
         return !empty($this->data['solution']['final']);
     }
@@ -495,6 +499,11 @@ class Chroust{
         if ($metadata->is_start_cgrp()){
             Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
         }
+
+        if ($metadata->is_reveal_goal_cgrp()){
+            Iquest_Options::set(Iquest_Options::REVEAL_GOAL_CGRP_ID, $metadata->get_cgrp_id());
+        }
+
 
         $clue_nr = $hint_nr = $solution_nr = 0;
 

@@ -4,6 +4,13 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
+{if $contest_over}
+    <div>
+    <h1>{$lang_str.iquest_txt_contest_over}</h1>
+    <a href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
+    </div>
+{/if}
+
 {if $action=='view_grp'}
 
     {foreach $clues as $clue}

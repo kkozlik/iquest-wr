@@ -420,6 +420,11 @@ class apu_iquest extends apu_base_class{
         $form_ok = true;
         if (false === parent::validate_form()) $form_ok = false;
 
+        if (Iquest::is_over()){
+            ErrorHandler::add_error($lang_str['iquest_err_contest_over']);
+            return false; 
+        }
+
         if (empty($_POST['solution_key'])){
             ErrorHandler::add_error($lang_str['iquest_err_key_empty']);
             return false; 

@@ -17,7 +17,11 @@ class Iquest_file{
      */         
     static function &by_ref_id($ref_id){
         $objs = static::fetch(array("ref_id"=>$ref_id));
-        if (!$objs) return null;
+
+        if (!$objs) {
+            $null = null;
+            return $null;   // reference has to be returned
+        } 
         
         $obj = reset($objs);
         return $obj;
@@ -990,6 +994,16 @@ class Iquest{
         $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
     
         if (time() < $start_time) return false;
+        return true;
+    }
+
+    /**
+     *  Check whether contest is over (END_TIME passed)
+     */         
+    static function is_over(){
+        $end_time = Iquest_Options::get(Iquest_Options::END_TIME);
+    
+        if (time() < $end_time) return false;
         return true;
     }
 

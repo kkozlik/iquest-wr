@@ -19,6 +19,9 @@ $apu    = new apu_iquest();
 
 //$page_attributes['css_file'][]=$config->style_src_path."get_css.php?css=".RawURLEncode("hello-world/hw.css");
 
+$smarty->assign("contest_over", Iquest::is_over());
+$smarty->assign("reveal_url", $controler->url("showtargetlocation.php"));
+
 $controler->add_apu($apu);
 //$controler->add_reqired_javascript('core/functions.js'); 
 $controler->set_template_name('iquest/main.tpl');
