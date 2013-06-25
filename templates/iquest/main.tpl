@@ -11,6 +11,18 @@
     </div>
 {/if}
 
+{if $next_hint}
+    <div>
+    {$lang_str.iquest_txt_next_hint}: {$next_hint}
+    </div>
+{/if}
+
+{if $next_solution}
+    <div>
+    {$lang_str.iquest_txt_next_solution}: {$next_solution}
+    </div>
+{/if}
+
 {if $action=='view_grp'}
 
     {foreach $clues as $clue}
@@ -37,6 +49,8 @@
     {/foreach}
     {/foreach}
 
+    <a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a>
+
 {elseif $action=='view_solution'}
 
     <div class="datatable solution">
@@ -48,6 +62,8 @@
     {call iquestRenderFile file=$solutions}
     </table>
     </div>
+
+    <a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a>
 
 {else}
     

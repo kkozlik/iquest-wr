@@ -44,6 +44,8 @@
 
 class apu_iquest extends apu_base_class{
 
+    const   COUNTDOWN_LIMIT = 900; // 15 minutes
+
     protected $team_id;
     protected $ref_id;
     protected $clue;
@@ -54,6 +56,8 @@ class apu_iquest extends apu_base_class{
     protected $smarty_groups;
     protected $smarty_clues;
     protected $smarty_solutions;
+    protected $smarty_next_solution = null;
+    protected $smarty_next_hint = null;
 
     /** 
      *  return required data layer methods - static class 
@@ -98,6 +102,11 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_groups'] =       'clue_groups';
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_solutions'] =    'solutions';
+
+        $this->opt['smarty_next_solution'] =    'next_solution';
+        $this->opt['smarty_next_hint'] =        'next_hint';
+
+        $this->opt['smarty_main_url'] =         'main_url';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         
@@ -122,7 +131,29 @@ class apu_iquest extends apu_base_class{
         }
     }
     
-    
+    function get_timeouts(){
+
+        $next_solution = Iquest_Solution::get_next_scheduled($this->team_id);
+        $next_hint     = Iquest_Hint::get_next_scheduled($this->team_id);
+
+        if ($next_solution){
+            $show_after = $next_solution['show_at'] - time();
+            if ($show_after > 0 and 
+                $show_after < self::COUNTDOWN_LIMIT){
+                
+                $this->smarty_next_solution = gmdate("H:i:s", $show_after);
+            }
+        }
+
+        if ($next_hint){
+            $show_after = $next_hint['show_at'] - time();
+            if ($show_after > 0 and 
+                $show_after < self::COUNTDOWN_LIMIT){
+                
+                $this->smarty_next_hint = gmdate("H:i:s", $show_after);
+            }
+        }
+    }
     
     /**
      *  Method perform action solve
@@ -181,6 +212,8 @@ class apu_iquest extends apu_base_class{
             $this->smarty_clues[$k] = $smarty_clue;
         }
 
+        $this->get_timeouts();
+
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View clue group screen");
         return true;
     }
@@ -198,6 +231,7 @@ class apu_iquest extends apu_base_class{
         $this->smarty_solutions = $this->solution->to_smarty();
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
 
+        $this->get_timeouts();
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
         return true;
@@ -239,6 +273,7 @@ class apu_iquest extends apu_base_class{
             $this->smarty_solutions[$k] = $smarty_solution;
         }
 
+        $this->get_timeouts();
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
@@ -468,6 +503,11 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);
+
+        $smarty->assign($this->opt['smarty_next_solution'], $this->smarty_next_solution);
+        $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);
+
+        $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
     }
     
     /**

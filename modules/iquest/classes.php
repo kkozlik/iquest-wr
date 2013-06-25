@@ -647,6 +647,41 @@ class Iquest_Hint extends Iquest_file{
         return true;
     }
 
+    static function get_next_scheduled($team_id){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_hint_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_hint_team->cols;
+
+        $qw = array();
+        $qw[] = $c->show_at." > now()";
+        $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+        $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
+                     ".$c->hint_id." 
+              from ".$t_name.$qw;
+
+        $q .= " order by ".$c->show_at;
+        $q .= $data->get_sql_limit_phrase(0, 1);
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = null;
+        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out=array("show_at"     => $row[$c->show_at],
+                       "hint_id" => $row[$c->hint_id]);
+        }
+        $res->free();
+        
+        return $out;
+    }
+
     function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
@@ -929,6 +964,41 @@ class Iquest_Solution extends Iquest_file{
         if ($data->dbIsError($res)) throw new DBException($res);
     
         return true;
+    }
+
+    static function get_next_scheduled($team_id){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_solution_team->cols;
+
+        $qw = array();
+        $qw[] = $c->show_at." > now()";
+        $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+        $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
+                     ".$c->solution_id." 
+              from ".$t_name.$qw;
+
+        $q .= " order by ".$c->show_at;
+        $q .= $data->get_sql_limit_phrase(0, 1);
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = null;
+        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out=array("show_at"     => $row[$c->show_at],
+                       "solution_id" => $row[$c->solution_id]);
+        }
+        $res->free();
+        
+        return $out;
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, $cgrp_id, $timeout, $key, $show_at=null){

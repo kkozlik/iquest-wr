@@ -12,6 +12,11 @@ $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 
+$lang_str['iquest_l_back'] =                            "Zpět";
+
+$lang_str['iquest_txt_next_hint'] =                     "Další nápovědu získáte za";
+$lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozradíme za";
+
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";
 $lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";
