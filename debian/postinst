@@ -20,6 +20,11 @@ set -e
 
 case "$1" in
     configure)
+        chmod 700 /var/lib/iquest
+        chown www-data:www-data /var/lib/iquest
+
+        chmod 600 /etc/iquest/config.php
+        chown www-data:www-data /etc/iquest/config.php
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

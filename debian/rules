@@ -24,9 +24,7 @@ install: build
 	mkdir -p $(DESTDIR)/usr/share/doc/iquest
 	mkdir -p $(DESTDIR)/etc/iquest
 	mkdir -p $(DESTDIR)/var/lib/iquest
-	chown www-data:www-data $(DESTDIR)/var/lib/iquest
-	chmod 500 $(DESTDIR)/var/lib/iquest
-	cp -r $(CURDIR)/config      $(DESTDIR)/etc/iquest
+	cp -r $(CURDIR)/config/*    $(DESTDIR)/etc/iquest
 	cp -r $(CURDIR)/doc/*       $(DESTDIR)/usr/share/doc/iquest
 	cp -r $(CURDIR)/lang        $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/modules     $(DESTDIR)/usr/share/iquest
