@@ -15,7 +15,7 @@
 
 		<ul class="nav pull-right">
 			<li><a href='#'>{$lang_str.iquest_l_give_it_up}</a></li>
-			<li><a href='#'>{$lang_str.iquest_l_logout}</a></li>
+			<li><a href='{$parameters.logout_url|escape}'>{$lang_str.iquest_l_logout}</a></li>
 	  	</ul>
 
         <div class="navinfo {($next_hint and $next_solution)?"double":""}">
