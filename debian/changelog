@@ -1,0 +1,5 @@
+iquest (0.0.1.git12b129f-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Karel Kozlík <kk@unknown>  Sun, 30 Jun 2013 19:30:28 +0200

@@ -1,0 +1,16 @@
+Source: iquest
+Section: php
+Priority: extra
+Maintainer: Karel Kozlík <kozlik@kufr.cz>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://kufr.cz/i.quest
+#Vcs-Git: git://git.debian.org/collab-maint/iquest.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/iquest.git;a=summary
+
+Package: iquest
+Architecture: all
+Depends: php5, php-pear, php-log, php-mdb2, php5-mysql, serweb-frmwrk, ${misc:Depends}
+Recommends: graphviz
+Description: Web interface for i.quest contest
+ Web interface for i.quest contest

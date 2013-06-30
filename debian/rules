@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DESTDIR=$(CURDIR)/debian/iquest
+
+%:
+	dh $@ 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+	echo destdir: $(DESTDIR)
+	mkdir -p $(DESTDIR)/usr/share/iquest
+	mkdir -p $(DESTDIR)/usr/share/doc/iquest
+	mkdir -p $(DESTDIR)/etc/iquest
+	mkdir -p $(DESTDIR)/var/lib/iquest
+	chown www-data:www-data $(DESTDIR)/var/lib/iquest
+	chmod 500 $(DESTDIR)/var/lib/iquest
+	cp -r $(CURDIR)/config      $(DESTDIR)/etc/iquest
+	cp -r $(CURDIR)/doc/*       $(DESTDIR)/usr/share/doc/iquest
+	cp -r $(CURDIR)/lang        $(DESTDIR)/usr/share/iquest
+	cp -r $(CURDIR)/modules     $(DESTDIR)/usr/share/iquest
+	cp -r $(CURDIR)/pages       $(DESTDIR)/usr/share/iquest
+	cp -r $(CURDIR)/templates   $(DESTDIR)/usr/share/iquest
+	cp -r $(CURDIR)/utils       $(DESTDIR)/usr/share/iquest
+	cp -r $(CURDIR)/TODO $(CURDIR)/README $(CURDIR)/COPYING $(DESTDIR)/usr/share/doc/iquest
+	ln -sf /etc/iquest $(DESTDIR)/usr/share/iquest/config
+	ln -sf /var/lib/iquest $(DESTDIR)/usr/share/iquest/data
+
+binary-indep: install
+
+binary: binary-indep binary-arch
+

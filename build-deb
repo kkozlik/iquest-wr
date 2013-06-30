@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# script for building deb package of iquest
+
+# stop on any error
+set -e
+
+dpkg-buildpackage -uc -us -tc -sn -A
+
