@@ -23,5 +23,6 @@ function iquest_init(){
 
 require_once( dirname(__FILE__)."/classes.php" );
 require_once( dirname(__FILE__)."/options.php" );
+require_once( dirname(__FILE__)."/events.php" );
 
 ?>

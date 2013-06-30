@@ -163,6 +163,11 @@ class apu_iquest extends apu_base_class{
      */
     function action_solve(){
 
+        Iquest_Events::add(Iquest_Events::KEY,
+                           true,
+                           array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,
+                                 "solution" => $this->solution));
+
         Iquest::solution_found($this->solution, $this->team_id);
 
         action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
@@ -348,6 +353,9 @@ class apu_iquest extends apu_base_class{
     function form_invalid(){
         if ($this->action['action'] == "solve"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Key entering failed", false, array("errors"=>$this->controler->errors));
+            Iquest_Events::add(Iquest_Events::KEY,
+                               false,
+                               array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null));
             if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "view_grp"){

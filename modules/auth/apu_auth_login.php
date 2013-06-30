@@ -128,6 +128,10 @@ class apu_auth_login extends apu_base_class{
 
         sw_log("User login: redirecting to page: ".$this->opt['redirect_on_login'], PEAR_LOG_DEBUG);
 
+        Iquest_Events::add(Iquest_Events::LOGGED,
+                           true,
+                           array("uname" => $this->username));
+
         $this->controler->change_url_for_reload($this->opt['redirect_on_login']);
         return true;
     }
@@ -190,6 +194,13 @@ class apu_auth_login extends apu_base_class{
         
     }
 
+
+    function form_invalid(){
+        Iquest_Events::add(Iquest_Events::LOGGED,
+                           false,
+                           array("uname" => isset($_POST['uname']) ? $_POST['uname'] : null,
+                                 "passw" => isset($_POST['passw']) ? $_POST['passw'] : null));
+    }
 
     /* validate html form */
     function validate_form(&$errors){

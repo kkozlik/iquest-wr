@@ -135,4 +135,20 @@ $config->data_sql->iquest_option->table_name =          "options";
 $config->data_sql->iquest_option->cols->name =          "name";
 $config->data_sql->iquest_option->cols->value =         "value";
 
+
+/**
+ *      event
+ */ 
+$config->data_sql->iquest_event = new stdClass();
+$config->data_sql->iquest_event->cols = new stdClass();
+        
+$config->data_sql->iquest_event->table_name =           "event";
+
+$config->data_sql->iquest_event->cols->id =             "event_id";
+$config->data_sql->iquest_event->cols->team_id =        "team_id";
+$config->data_sql->iquest_event->cols->timestamp =      "timestamp";
+$config->data_sql->iquest_event->cols->type =           "type";
+$config->data_sql->iquest_event->cols->success =        "success";
+$config->data_sql->iquest_event->cols->data =           "data";
+
 ?>

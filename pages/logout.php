@@ -6,8 +6,11 @@ $_required_modules = array('auth', 'iquest');
 require dirname(__FILE__)."/prepend.php";
 
 if (!empty($_SESSION['auth'])){
-    $_SESSION['auth']->logout();
 
+    Iquest_Events::add(Iquest_Events::LOGOUT,
+                       true);
+
+    $_SESSION['auth']->logout();
     action_log(null, null, "Logged out");
 } 
 
