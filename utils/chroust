@@ -255,6 +255,7 @@ class Iquest_Metadata{
 
 class Chroust{
 
+    static $summary = array();
 
     static function prune_data_dir(){
         global $config;
@@ -360,6 +361,9 @@ class Chroust{
         $key = $metadata->get_solution_key_canon();
         $timeout = $metadata->get_solution_timeout();
         $next_cgrp_id = $metadata->get_solution_next_cgrp();
+
+        self::$summary[] = array("name" => $name,
+                                 "key"  => $metadata->get_solution_key());
         
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key);
@@ -613,6 +617,16 @@ class Chroust{
         }
         if ($e->getPrevious()) self::report_errors($e->getPrevious());
     }
+
+    static function utf_8_sprintf ($format) {
+        $args = func_get_args();
+        
+        for ($i = 1; $i < count($args); $i++) {
+            $args [$i] = iconv('UTF-8', 'ISO-8859-2', $args [$i]);
+        }
+        
+        return iconv('ISO-8859-2', 'UTF-8', call_user_func_array('sprintf', $args));
+    }
     
     static function usage(){
         echo "Usage: ".$_SERVER['argv'][0]." <datadir> \n\n";
@@ -648,6 +662,11 @@ class Chroust{
             self::process_data_dir($src_dir);
 
             self::verify();
+
+            echo "Keys summary:\n\n";
+            foreach(self::$summary as $row){
+                echo self::utf_8_sprintf("|%-20s|%-40s|\n", $row['name'], $row['key']);
+            }
         }
         catch (exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
