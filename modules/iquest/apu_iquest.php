@@ -109,6 +109,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_main_url'] =         'main_url';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
+        $this->opt['form_submit']['class'] = "btn btn-primary";
         
     }
 

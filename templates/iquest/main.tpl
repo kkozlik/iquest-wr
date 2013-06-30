@@ -4,33 +4,19 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-{if $contest_over}
-    <div>
-    <h1>{$lang_str.iquest_txt_contest_over}</h1>
-    <a href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
-    </div>
-{/if}
-
-{if $next_hint}
-    <div>
-    {$lang_str.iquest_txt_next_hint}: {$next_hint}
-    </div>
-{/if}
-
-{if $next_solution}
-    <div>
-    {$lang_str.iquest_txt_next_solution}: {$next_solution}
-    </div>
-{/if}
 
 {if $action=='view_grp'}
 
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
     {foreach $clues as $clue}
     <div class="datatable clue">
-    <table>
+    <table class="table table-bordered">
     <tr>
         <th>{$clue.filename}</th>
-        <th><a href="{$clue.file_url|escape}">{$lang_str.iquest_download}</a></th>
+        <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$clue}
     </table>
@@ -38,10 +24,10 @@
 
     {foreach $clue.hints as $hint}
     <div class="datatable hint">
-    <table>
+    <table class="table table-bordered">
     <tr>
-        <th>Hint: {$hint.filename}</th>
-        <th><a href="{$hint.file_url|escape}">{$lang_str.iquest_download}</a></th>
+        <th>{$lang_str.iquest_hint}: {$hint.filename}</th>
+        <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$hint}
     </table>
@@ -49,36 +35,47 @@
     {/foreach}
     {/foreach}
 
-    <a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a>
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
 
 {elseif $action=='view_solution'}
 
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
     <div class="datatable solution">
-    <table>
+    <table class="table table-bordered">
     <tr>
         <th>{$solutions.name}</th>
-        <th>&nbsp;</th>
+        <th class="link">&nbsp;</th>
     </tr>
     {call iquestRenderFile file=$solutions}
     </table>
     </div>
 
-    <a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a>
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
 
 {else}
-    
+
+    <div class="form-inline well">
     {$form.start}
-    <div>
-    <label for="solution_key">{$lang_str.iquest_solution_key}:</label>
+    <div class="text-center">
+    <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
     {$form.solution_key}
     {$form.okey}
     </div>
     {$form.finish}
+    </div>
     
     
     
-    <div class="datatable">
-    <table>
+    <div class="row">
+    <div class="span6">
+    <table class="table table-bordered">
     <tr><th>{$lang_str.iquest_avail_tasks}</th></tr>
     {foreach $clue_groups as $group}
     <tr><td><a href="{$group.detail_url|escape}">{$group.name}</a></td></tr>
@@ -88,8 +85,8 @@
 
     {foreach $solutions as $solution}
         {if $solution@first}
-        <div class="datatable">
-        <table>
+        <div class="span6">
+        <table class="table table-bordered">
         <tr><th>{$lang_str.iquest_avail_solutions}</th></tr>
         {/if}
 
@@ -101,6 +98,7 @@
         {/if}
     {/foreach}
 
+    </div>
 {/if}
 <br>
 {include file='_tail.tpl'}

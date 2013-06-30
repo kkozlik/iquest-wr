@@ -27,4 +27,5 @@
     
     $config->custom_act_log_function = "iquest_action_log";
 
+    $config->html_doctype = "html";
 ?>

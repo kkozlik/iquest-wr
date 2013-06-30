@@ -67,6 +67,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
         
         /*** names of variables assigned to smarty ***/
         $this->opt['smarty_clues'] =        'clues';
+        $this->opt['smarty_main_url'] =     'main_url';
         
     }
 
@@ -201,6 +202,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
         global $smarty;
 
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
+        $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($this->opt['main_url']));
     }
     
 }

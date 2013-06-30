@@ -24,7 +24,16 @@ function set_page_attributes(){
         'separator'=>"",
         'epilog'=>"",
         'ie_selects' => true,
-        'css_file'=>array($config->style_src_path."styles.css")
+        'css_file'=>array(
+                    $config->style_src_path."styles.css",
+                    $config->style_src_path."bootstrap.css",
+                    $config->style_src_path."bootstrap-responsive.css",
+        ),
+        'required_javascript' => array(
+                    "jquery-1.10.1.js",
+                    "bootstrap.js",
+                    "functions.js"
+        )
     );
 }
 

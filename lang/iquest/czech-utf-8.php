@@ -4,6 +4,7 @@ $lang_str['iquest_avail_tasks'] =                       "Dostupné úkoly";
 $lang_str['iquest_avail_solutions'] =                   "Řešení úkolů";
 $lang_str['iquest_solution_key'] =                      "Kód řešení úkolu";
 $lang_str['iquest_download'] =                          "Stáhnout";
+$lang_str['iquest_hint'] =                              "Nápověda";
 
 $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není správně.";
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
@@ -13,6 +14,8 @@ $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
+$lang_str['iquest_l_give_it_up'] =                      "Vzdát to";
+$lang_str['iquest_l_logout'] =                          "Odhlásit se";
 
 $lang_str['iquest_txt_next_hint'] =                     "Další nápovědu získáte za";
 $lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozradíme za";
