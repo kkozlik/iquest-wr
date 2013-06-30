@@ -25,7 +25,7 @@ function resize_images(){
     });
 }
 
-$(document).ready(function() {
+$(window).load(function() {
     resize_images();
 });
 
