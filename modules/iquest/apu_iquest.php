@@ -143,6 +143,7 @@ class apu_iquest extends apu_base_class{
                 $show_after < self::COUNTDOWN_LIMIT){
                 
                 $this->smarty_next_solution = gmdate("H:i:s", $show_after);
+                $this->controler->set_onload_js("enable_countdown('#solution_countdown', $show_after);");
             }
         }
 
@@ -152,6 +153,7 @@ class apu_iquest extends apu_base_class{
                 $show_after < self::COUNTDOWN_LIMIT){
                 
                 $this->smarty_next_hint = gmdate("H:i:s", $show_after);
+                $this->controler->set_onload_js("enable_countdown('#hint_countdown', $show_after);");
             }
         }
     }

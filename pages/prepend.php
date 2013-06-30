@@ -32,6 +32,7 @@ function set_page_attributes(){
         'required_javascript' => array(
                     "jquery-1.10.1.js",
                     "bootstrap.js",
+                    "jquery.countdown.js",
                     "functions.js"
         )
     );

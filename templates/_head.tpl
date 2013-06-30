@@ -19,8 +19,8 @@
 	  	</ul>
 
         <div class="navinfo {($next_hint and $next_solution)?"double":""}">
-        {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: {$next_hint}</div>{/if}
-        {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: {$next_solution}</div>{/if}
+        {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: <span id="hint_countdown">{$next_hint}</span></div>{/if}
+        {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: <span id="solution_countdown">{$next_solution}</span></div>{/if}
         </div>
     </div>
   </div>

@@ -25,6 +25,21 @@ function resize_images(){
     });
 }
 
+function reload(){
+     location.reload();
+}
+
+
+function enable_countdown(selector, secs){
+    $(selector).countdown({
+                    until: '+'+secs, 
+                    compact: true, 
+                    description: '',
+                    onExpiry: reload
+                });
+}
+
+
 $(window).load(function() {
     resize_images();
 });

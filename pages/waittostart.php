@@ -21,6 +21,8 @@ $sec_remaining = $start_time - time();
 $smarty->assign("start_time", $start_time);
 $smarty->assign("time_remaining", gmdate("H:i:s", $sec_remaining));
 
+$controler->set_onload_js("enable_countdown('#start_coundown', $sec_remaining);");
+
 $controler->set_template_name('iquest/waittostart.tpl');
 $controler->start();
 
