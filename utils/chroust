@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+//@todo: jak tohle vyresit nejak inteligentne?
 putenv('SERWEB_DIR='.dirname(__FILE__)."/../../serweb-frmwrk/serweb-frmwrk/serweb-frmwrk/");
 putenv('SERWEB_SET_DIRS='.dirname(__FILE__)."/../config/set_dirs.php");
 if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
@@ -258,7 +259,7 @@ class Chroust{
     static function prune_data_dir(){
         global $config;
 
-        if ($config->iquest_data_dir){
+        if ($config->iquest_data_dir and $config->iquest_data_dir != "/"){
             echo "Erasing content of directory: ".$config->iquest_data_dir."\n";
 
             // make sure the destination directory is empty
@@ -622,6 +623,11 @@ class Chroust{
         if ($_SERVER['argc'] < 2){
             self::usage();
             exit;
+        }
+
+        if (posix_getuid() == 0){
+            fwrite(STDERR, "Execution as root is not allowed\n");
+            exit(1);
         }
     
         $src_dir = $_SERVER['argv'][1];
