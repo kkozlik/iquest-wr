@@ -25,6 +25,9 @@ case "$1" in
 
         chmod 600 /etc/iquest/config.php
         chown www-data:www-data /etc/iquest/config.php
+
+        touch /var/log/iquest
+        chown www-data:www-data /var/log/iquest
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
