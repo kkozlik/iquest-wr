@@ -17,7 +17,7 @@ $GLOBALS["_SERWEB"]["hookpreauth"] = "set_page_attributes";
  *  (where the file is located) could be located outside the application tree
  *  e.g. in /etc dir. Hence the __FILE__ variable return wrong path.     
  */ 
-$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";;
+$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";
 
 function set_page_attributes(){
     global $config;

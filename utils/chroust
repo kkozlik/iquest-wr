@@ -7,7 +7,7 @@
  *  (where the file is located) could be located outside the application tree
  *  e.g. in /etc dir. Hence the __FILE__ variable return wrong path.     
  */ 
-$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";;
+$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";
 
 if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
 

@@ -10,15 +10,15 @@
 global $_SERWEB, $config;
 
 // directory that should be accesible directly from the web
-$_SERWEB["pagesdir"] =      $_SERWEB["approotdir"]."/pages/";
+$_SERWEB["pagesdir"] =      $_SERWEB["approotdir"]."pages/";
 // directory containing configuration
-$_SERWEB["configdir"] =     $_SERWEB["approotdir"]."/config/";
+$_SERWEB["configdir"] =     $_SERWEB["approotdir"]."config/";
 // directory containing language strings
-$_SERWEB["langdir"] =       $_SERWEB["approotdir"]."/lang/";
+$_SERWEB["langdir"] =       $_SERWEB["approotdir"]."lang/";
 // directory containing modules
-$_SERWEB["modulesdir"] =    $_SERWEB["approotdir"]."/modules/";
+$_SERWEB["modulesdir"] =    $_SERWEB["approotdir"]."modules/";
 // directory containing smarty templates
-$_SERWEB["templatesdir"] =  $_SERWEB["approotdir"]."/templates/";
+$_SERWEB["templatesdir"] =  $_SERWEB["approotdir"]."templates/";
 
 
 // if you need customize page controler specify here its class name and file
