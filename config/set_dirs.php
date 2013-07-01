@@ -6,22 +6,20 @@
 // This file should configure paths to application directories, so framework 
 // knows where to search for them.
 
-$thisdir = dirname(__FILE__);
 
 global $_SERWEB, $config;
 
 // directory that should be accesible directly from the web
-$_SERWEB["pagesdir"] =      realpath($thisdir."/../pages")."/";
+$_SERWEB["pagesdir"] =      $_SERWEB["approotdir"]."/pages/";
 // directory containing configuration
-$_SERWEB["configdir"] =     realpath($thisdir)."/";
+$_SERWEB["configdir"] =     $_SERWEB["approotdir"]."/config/";
 // directory containing language strings
-$_SERWEB["langdir"] =       realpath($thisdir."/../lang")."/";
+$_SERWEB["langdir"] =       $_SERWEB["approotdir"]."/lang/";
 // directory containing modules
-$_SERWEB["modulesdir"] =    realpath($thisdir."/../modules")."/";
+$_SERWEB["modulesdir"] =    $_SERWEB["approotdir"]."/modules/";
 // directory containing smarty templates
-$_SERWEB["templatesdir"] =  realpath($thisdir."/../templates")."/";
+$_SERWEB["templatesdir"] =  $_SERWEB["approotdir"]."/templates/";
 
-unset($thisdir);
 
 // if you need customize page controler specify here its class name and file
 // containing it.

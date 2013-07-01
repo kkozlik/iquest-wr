@@ -10,6 +10,15 @@
  *  if re-login screen is displayed
  */
 $GLOBALS["_SERWEB"]["hookpreauth"] = "set_page_attributes";
+
+/*
+ *  Save the application root directory into $_SERWEB variable.
+ *  This can't be done later in set_dirs.php file because the config directory
+ *  (where the file is located) could be located outside the application tree
+ *  e.g. in /etc dir. Hence the __FILE__ variable return wrong path.     
+ */ 
+$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";;
+
 function set_page_attributes(){
     global $config;
     
