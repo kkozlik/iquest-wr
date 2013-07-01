@@ -32,6 +32,7 @@ install: build
 	cp -r $(CURDIR)/templates   $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/utils       $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/TODO $(CURDIR)/README $(CURDIR)/COPYING $(DESTDIR)/usr/share/doc/iquest
+	rm $(DESTDIR)/etc/iquest/set_env.developer.php
 	ln -sf /etc/iquest $(DESTDIR)/usr/share/iquest/config
 	ln -sf /var/lib/iquest $(DESTDIR)/usr/share/iquest/data
 
