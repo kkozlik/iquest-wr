@@ -277,7 +277,7 @@ class Chroust{
         }
     }
 
-    static function prune_db(){
+    static function prune_db($option){
         global $data, $config;
     
         $tables = array(
@@ -287,12 +287,14 @@ class Chroust{
             $config->data_sql->iquest_hint->table_name,
             $config->data_sql->iquest_solution->table_name,
 
-            $config->data_sql->iquest_cgrp_open->table_name,
-            $config->data_sql->iquest_hint_team->table_name,
-            $config->data_sql->iquest_solution_team->table_name,
-
 //            $config->data_sql->iquest_option->table_name,
         );
+
+        if (empty($option['preserve-user-data'])){
+            $tables[] = $config->data_sql->iquest_cgrp_open->table_name;
+            $tables[] = $config->data_sql->iquest_hint_team->table_name;
+            $tables[] = $config->data_sql->iquest_solution_team->table_name;
+        }
 
         foreach($tables as $table){
             echo "Erasing DB table: ".$table."\n";
@@ -635,23 +637,45 @@ class Chroust{
     }
     
     static function usage(){
-        echo "Usage: ".$_SERVER['argv'][0]." <datadir> \n\n";
+        echo "Usage: ".$_SERVER['argv'][0]." [--preserve-user-data] <datadir> \n\n";
     }
     
     static function main(){
     
+        if (posix_getuid() == 0){
+            fwrite(STDERR, "Execution as root is not allowed\n");
+            exit(1);
+        }
+
         if ($_SERVER['argc'] < 2){
             self::usage();
             exit;
         }
 
-        if (posix_getuid() == 0){
-            fwrite(STDERR, "Execution as root is not allowed\n");
-            exit(1);
+        $option = array();
+        $src_dir = null;
+
+        for ($i = 1; $i < $_SERVER["argc"]; $i++){
+            switch($_SERVER["argv"][$i]){
+            case "--preserve-user-data":
+                $option['preserve-user-data'] = true;
+                break;
+
+            default:
+                if ($src_dir){  // src dir is already set - it acnnot be set twice
+                    self::usage();
+                    exit;
+                }
+                $src_dir = $_SERVER["argv"][$i];
+            }
         }
-    
-        $src_dir = $_SERVER['argv'][1];
-    
+
+        if (!$src_dir){  // src dir is not set, exit
+            self::usage();
+            fwrite(STDERR, "The src_dir is not set.\n");
+            exit;
+        }
+        
         if (!is_dir($src_dir)){
             fwrite(STDERR, "The directory does not exists ($src_dir)\n");
             exit(1);
@@ -664,7 +688,7 @@ class Chroust{
 
         try{
             self::prune_data_dir();
-            self::prune_db();
+            self::prune_db($option);
             self::process_data_dir($src_dir);
 
             self::verify();
