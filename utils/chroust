@@ -1,13 +1,19 @@
 #!/usr/bin/env php
 <?php
 
-//@todo: jak tohle vyresit nejak inteligentne?
-putenv('SERWEB_DIR='.dirname(__FILE__)."/../../serweb-frmwrk/serweb-frmwrk/serweb-frmwrk/");
-putenv('SERWEB_SET_DIRS='.dirname(__FILE__)."/../config/set_dirs.php");
+/*
+ *  Save the application root directory into $_SERWEB variable.
+ *  This can't be done later in set_dirs.php file because the config directory
+ *  (where the file is located) could be located outside the application tree
+ *  e.g. in /etc dir. Hence the __FILE__ variable return wrong path.     
+ */ 
+$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";;
+
 if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
 
 $_required_modules = array('iquest', 'auth');
 
+require_once(dirname(__FILE__)."/../config/set_env.php");
 require_once(dirname(__FILE__)."/../pages/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 

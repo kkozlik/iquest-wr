@@ -8,12 +8,6 @@ Alias /i.quest/contest              /mnt/iquest/contest/pages
     Order allow,deny
     allow from all
     
-#    SetEnv SERWEB_DIR       "/usr/share/serweb-frmwrk/"
-
-## @todo: just for test
-    SetEnv SERWEB_DIR       "/mnt/iquest/serweb-frmwrk/serweb-frmwrk/serweb-frmwrk/"
-
-    SetEnv SERWEB_SET_DIRS  "/mnt/iquest/contest/config/set_dirs.php"
     SetEnv IQUEST_ROOT_PATH "/i.quest/contest/"
 </Directory>
 

@@ -47,6 +47,7 @@ function set_page_attributes(){
     );
 }
 
+require_once($GLOBALS["_SERWEB"]["approotdir"]."config/set_env.php");
 require_once(dirname(__FILE__)."/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
