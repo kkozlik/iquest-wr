@@ -74,13 +74,18 @@ td.statusmsg {
 }
 
 .plaintext{
+    background-color: transparent;
+    border: none;
     display: block;
     line-height: 20px;
     padding: 5px;
     white-space: pre-wrap;
+    white-space: -pre-wrap; /* ancient Opera */
+    white-space: -o-pre-wrap; /* newer Opera */
     word-break: normal;
     word-wrap: normal;
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+    font-size: 14px;
 }
 
 .datatable td.fileimg{
@@ -114,3 +119,4 @@ td.statusmsg {
     font-size:16px;
     margin-bottom: 15px;
 }
+

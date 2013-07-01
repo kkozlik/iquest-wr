@@ -4,9 +4,6 @@
 
 {literal}
 <style type="text/css">
-	#uname {width:97%;}
-	#passw {width:97%;}
-
     body {
         background-color: #F5F5F5;
         padding-bottom: 40px;

@@ -15,7 +15,7 @@
     <div class="datatable clue">
     <table class="table table-bordered">
     <tr>
-        <th>{$clue.filename}</th>
+        <th class="filename">{$clue.filename}</th>
         <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$clue}
@@ -26,7 +26,7 @@
     <div class="datatable hint">
     <table class="table table-bordered">
     <tr>
-        <th>{$lang_str.iquest_hint}: {$hint.filename}</th>
+        <th class="filename">{$lang_str.iquest_hint}: {$hint.filename}</th>
         <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$hint}
@@ -48,7 +48,7 @@
     <div class="datatable solution">
     <table class="table table-bordered">
     <tr>
-        <th>{$solutions.name}</th>
+        <th class="filename">{$solutions.name}</th>
         <th class="link">&nbsp;</th>
     </tr>
     {call iquestRenderFile file=$solutions}

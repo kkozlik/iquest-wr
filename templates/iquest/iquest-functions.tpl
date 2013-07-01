@@ -3,7 +3,7 @@
 {function iquestRenderFile file=0}
     {if $file.content_type == "text/plain"}
         <tr>
-            <td colspan="2"><span class="plaintext">{$file.content}</span>
+            <td colspan="2"><pre class="plaintext">{$file.content}</pre>
             </td>
         </tr>
     {elseif $file.content_type|truncate:6:"" == "image/"}
