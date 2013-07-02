@@ -355,9 +355,16 @@ class apu_iquest extends apu_base_class{
     function form_invalid(){
         if ($this->action['action'] == "solve"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Key entering failed", false, array("errors"=>$this->controler->errors));
+
+            $event_data = array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null);
+            if (isset($_POST['solution_key'])){
+                $event_data["diacritics_key"] = remove_diacritics($_POST['solution_key']);
+                $event_data["cannon_key"] = Iquest_Solution::canonicalize_key($_POST['solution_key']);
+            }
+
             Iquest_Events::add(Iquest_Events::KEY,
                                false,
-                               array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null));
+                               $event_data);
             if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "view_grp"){

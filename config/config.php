@@ -17,6 +17,10 @@
     $config->use_rpc = false;
 
     $config->force_lang = 'cs-utf-8';
+    
+    // Following is needed by function remove_diacritics(). It should be set to 
+    // some UTF8 charset installed on the system.
+    $config->iquest_locale = 'cs_CZ.UTF-8';
 
 
     $config->iquest_data_dir = realpath($_SERWEB["configdir"]."../data")."/";
