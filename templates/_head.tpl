@@ -11,7 +11,7 @@
     <div class="container">
         <span class="brand">I.Quest</span>
 
-        <div class="nav"><span class="navbar-text">&lt;jmeno tymu&gt;</span></div>
+        <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
 		<ul class="nav pull-right">
 			<li><a href='#'>{$lang_str.iquest_l_give_it_up}</a></li>

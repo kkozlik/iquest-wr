@@ -53,4 +53,10 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 $GLOBALS['page_attributes']['logout_url'] = $controler->url('logout.php');
 
+
+if (!empty($_SESSION['auth']) and 
+    $_SESSION['auth']->is_authenticated()){
+
+    $smarty->assign("team_name", $_SESSION['auth']->get_team_name());
+}
 ?>

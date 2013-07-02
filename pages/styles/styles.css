@@ -36,6 +36,9 @@ td.statusmsg {
     padding: 5px 0
 }
 
+.team-name {
+    white-space: nowrap;
+}
 
 .navbar .navinfo {
     display: block;
