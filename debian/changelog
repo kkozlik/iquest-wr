@@ -1,3 +1,9 @@
+iquest (0.0.3) precise; urgency=low
+
+  * Give up the contest by a team
+
+ -- Karel Kozlík <kk@kk-nb>  Tue, 02 Jul 2013 23:15:05 +0200
+
 iquest (0.0.2) precise; urgency=low
 
   * Fixing IE bugs 
