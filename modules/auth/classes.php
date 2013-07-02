@@ -169,6 +169,86 @@ class iquest_auth extends auth{
         
         return $this->team_name;
     }
+
+    /**
+     *  Check password of logged team
+     */         
+    public function checkpass($password){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_team->cols;
+
+        $team_id = $this->get_uid();
+
+        $q = "select ".$c->id." 
+              from ". $t_name."  
+              where ".$c->id."=".$data->sql_format($team_id, "n")." and
+                    ".$c->passwd."=".$data->sql_format($password, "s");
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $rows = $res->numRows();
+		$res->free();
+
+        return (bool)$rows;
+    }
+
+    
+    /**
+     *  Check whether logged team is active
+     */         
+    public function is_active(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_team->cols;
+
+        $team_id = $this->get_uid();
+
+        $q = "select t.".$c->active." 
+              from ". $t_name." t 
+              where t.".$c->id."=".$data->sql_format($team_id, "n");
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        if (!$res->numRows()){
+            sw_log("get_team_name: Team name for team ID=$team_id not found ", PEAR_LOG_ERROR);
+            return null;
+        }
+
+		$row = $res->fetchRow(MDB2_FETCHMODE_ASSOC);
+		$res->free();
+        
+        return (bool)$row[$c->active];;
+    }
+
+    /**
+     *  Activate or deactivate logged team
+     */         
+    public function activate($activate){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_team->cols;
+
+        $team_id = $this->get_uid();
+
+        $q = "update $t_name 
+              set ".$c->active."=".$data->sql_format($activate, "n")."
+              where ".$c->id."=".$data->sql_format($team_id, "n");
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    }
 }
 
 

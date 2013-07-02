@@ -52,6 +52,7 @@ require_once(dirname(__FILE__)."/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 $GLOBALS['page_attributes']['logout_url'] = $controler->url('logout.php');
+$GLOBALS['page_attributes']['giveitup_url'] = $controler->url('giveitup.php');
 
 
 if (!empty($_SESSION['auth']) and 

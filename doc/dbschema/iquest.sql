@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `event` (
   `event_id` int(11) NOT NULL AUTO_INCREMENT,
   `team_id` int(11) DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  `type` enum('team_logged','key_entered','logout') COLLATE utf8_czech_ci NOT NULL,
+  `type` enum('team_logged','key_entered','logout','giveitup') COLLATE utf8_czech_ci NOT NULL,
   `success` int(11) NOT NULL,
   `data` text COLLATE utf8_czech_ci,
   PRIMARY KEY (`event_id`),

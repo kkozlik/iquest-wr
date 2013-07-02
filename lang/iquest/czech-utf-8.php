@@ -1,5 +1,7 @@
 <?php
 
+$lang_str['b_giveitup'] =                               "Vzdávám to!";
+
 $lang_str['iquest_avail_tasks'] =                       "Dostupné úkoly";
 $lang_str['iquest_avail_solutions'] =                   "Řešení úkolů";
 $lang_str['iquest_solution_key'] =                      "Kód řešení úkolu";
@@ -10,6 +12,10 @@ $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";
 $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
+
+$lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
+$lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
+
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 
@@ -26,5 +32,9 @@ $lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";
 
 $lang_str['iquest_txt_contest_over'] =                  "Soutěž skončila!";
 $lang_str['iquest_txt_show_goal'] =                     "Ukaž mi kde je cíl";
+
+$lang_str['iquest_txt_giveitup_heading'] =              "Je nám líto že jste se rozhodli soutěž předčasně ukončit";
+$lang_str['iquest_txt_giveitup_p1'] =                   "Pokud soutěž vzdáte prozradíme vám polohu cíle, ale již není cesty zpět a v soutěži nebudete moci dále pokračovat.";
+$lang_str['iquest_txt_giveitup_p2'] =                   "Své rozhodnutí potvrďte napsáním vašeho hesla pro přihlášení.";
 
 ?>

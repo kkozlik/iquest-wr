@@ -6,6 +6,7 @@ class Iquest_Events{
     const LOGGED = "team_logged";
     const KEY    = "key_entered";
     const LOGOUT = "logout";
+    const GIVEITUP = "giveitup";
 
     static function add_remote_ip(&$data){
         $data['ip'] = $_SERVER["REMOTE_ADDR"];

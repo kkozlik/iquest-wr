@@ -16,11 +16,4 @@ $config->data_sql->iquest_team->cols->active =      "active";
 
 
 
-
-
-
-
-
-
-
 ?>

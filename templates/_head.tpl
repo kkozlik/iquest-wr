@@ -14,7 +14,7 @@
         <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
 		<ul class="nav pull-right">
-			<li><a href='#'>{$lang_str.iquest_l_give_it_up}</a></li>
+			<li><a href='{$parameters.giveitup_url|escape}'>{$lang_str.iquest_l_give_it_up}</a></li>
 			<li><a href='{$parameters.logout_url|escape}'>{$lang_str.iquest_l_logout}</a></li>
 	  	</ul>
 
