@@ -9,7 +9,7 @@
 <div class="navbar navbar-inverse navbar-static-top">
   <div class="navbar-inner">
     <div class="container">
-        <span class="brand">I.Quest</span>
+        <span class="brand logo"><img src="img/logo.png" alt="I.Quest"></span>
 
         <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
