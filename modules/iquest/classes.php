@@ -522,25 +522,32 @@ class Iquest_Hint extends Iquest_file{
         $data->connect_to_db();
 
         /* table's name */
-        $tc_name  = &$config->data_sql->iquest_hint->table_name;
+        $th_name  = &$config->data_sql->iquest_hint->table_name;
+        $tc_name  = &$config->data_sql->iquest_clue->table_name;
         $tt_name  = &$config->data_sql->iquest_hint_team->table_name;
         /* col names */
-        $cc      = &$config->data_sql->iquest_hint->cols;
+        $ch      = &$config->data_sql->iquest_hint->cols;
+        $cc      = &$config->data_sql->iquest_clue->cols;
         $ct      = &$config->data_sql->iquest_hint_team->cols;
 
         $qw = array();
         $join = array();
         $cols = "";
-        if (isset($opt['clue_id'])) $qw[] = "c.".$cc->clue_id." = ".$data->sql_format($opt['clue_id'], "s");
-        if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
+        if (isset($opt['clue_id'])) $qw[] = "h.".$ch->clue_id." = ".$data->sql_format($opt['clue_id'], "s");
+        if (isset($opt['ref_id']))  $qw[] = "h.".$ch->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['team_id'])){
             $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
-            $join[] = " join ".$tt_name." t on c.".$cc->id." = t.".$ct->hint_id;
+            $join[] = " join ".$tt_name." t on h.".$ch->id." = t.".$ct->hint_id;
             $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
 
             if (!empty($opt['accessible'])){
                 $qw[] = "t.".$ct->show_at." < now()";
             }
+        }
+
+        if (isset($opt['cgrp_id'])){
+            $qw[] = "c.".$cc->cgrp_id." = ".$data->sql_format($opt['cgrp_id'], "s");
+            $join[] = " join ".$tc_name." c on c.".$cc->id." = h.".$ch->clue_id;
         }
 
         if (isset($opt['unscheduled_team_id'])){
@@ -549,7 +556,7 @@ class Iquest_Hint extends Iquest_file{
                    from ".$tt_name." 
                    where ".$ct->team_id." = ".$data->sql_format($opt['unscheduled_team_id'], "s");
                    
-            $qw[] = "c.".$cc->id." not in (".$q2.")";
+            $qw[] = "h.".$ch->id." not in (".$q2.")";
         }
 
 
@@ -557,17 +564,17 @@ class Iquest_Hint extends Iquest_file{
         else $qw = "";
 
 
-        $q = "select c.".$cc->id.",
-                     c.".$cc->ref_id.",
-                     c.".$cc->clue_id.",
-                     c.".$cc->filename.",
-                     c.".$cc->content_type.",
-                     time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
-                     c.".$cc->comment.
+        $q = "select h.".$ch->id.",
+                     h.".$ch->ref_id.",
+                     h.".$ch->clue_id.",
+                     h.".$ch->filename.",
+                     h.".$ch->content_type.",
+                     time_to_sec(h.".$ch->timeout.") as ".$ch->timeout.", 
+                     h.".$ch->comment.
                      $cols." 
-              from ".$tc_name." c ".implode(" ", $join).
+              from ".$th_name." h ".implode(" ", $join).
               $qw."
-              order by c.".$cc->timeout;
+              order by h.".$ch->timeout;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -576,13 +583,13 @@ class Iquest_Hint extends Iquest_file{
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
             
-            $out[$row[$cc->id]] =  new Iquest_Hint($row[$cc->id], 
-                                                   $row[$cc->ref_id],
-                                                   $row[$cc->filename],
-                                                   $row[$cc->content_type],
-                                                   $row[$cc->comment],
-                                                   $row[$cc->clue_id],
-                                                   $row[$cc->timeout],
+            $out[$row[$ch->id]] =  new Iquest_Hint($row[$ch->id], 
+                                                   $row[$ch->ref_id],
+                                                   $row[$ch->filename],
+                                                   $row[$ch->content_type],
+                                                   $row[$ch->comment],
+                                                   $row[$ch->clue_id],
+                                                   $row[$ch->timeout],
                                                    $row[$ct->show_at]);
         }
         $res->free();

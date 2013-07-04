@@ -41,6 +41,10 @@
 }
 
 
+.datatable .filename{
+    line-height: 30px;
+}
+
 .datatable .link{
     width: 130px;
     text-align: center;
@@ -54,9 +58,35 @@
     background-color: #d9edf7;
 }
 
+.datatable.hint tr.new th{
+    background-color: #fcf8e3;
+}
+
 .datatable.solution th{
     background-color: #f2dede;
 }
+
+.table td.new{
+    background-color: #fcf8e3;
+    line-height: 30px;
+    padding: 3px 8px;    
+}
+
+span.new,
+span.newhint{
+    display: block;
+    float: right;
+    width: 30px;
+    height: 30px;
+}
+
+span.new{
+    background-image: url("../img/nove.png");
+}
+span.newhint{
+    background-image: url("../img/hint.png");
+}
+
 
 .plaintext{
     background-color: transparent;

@@ -98,7 +98,6 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_action'] =       'action';
         /* name of html form */
         $this->opt['form_name'] =           '';
-        $this->opt['smarty_name'] =         'name';
         $this->opt['smarty_groups'] =       'clue_groups';
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_solutions'] =    'solutions';
@@ -127,9 +126,9 @@ class apu_iquest extends apu_base_class{
         
         $this->session = &$_SESSION['apu_iquest'][$this->opt['instance_id']];
         
-        if (!isset($this->session['name'])){
-            $this->session['name'] = '';
-        }
+        if (!isset($this->session['known_cgrps']))      $this->session['known_cgrps'] = array();
+        if (!isset($this->session['known_hints']))      $this->session['known_hints'] = array();
+        if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();
     }
     
     function get_timeouts(){
@@ -209,18 +208,21 @@ class apu_iquest extends apu_base_class{
 
         $this->smarty_clues = array();
         foreach($clues as $k => $v){
-            $clues[$k]->get_accessible_hints($this->team_id);
+            $hints = $clues[$k]->get_accessible_hints($this->team_id);
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
 
             foreach($smarty_clue['hints'] as $hk => $hv){
                 $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+                $smarty_clue['hints'][$hk]['new'] = !isset($this->session['known_hints'][$hv['id']]);
+                $this->session['known_hints'][$hv['id']] = true;
             }
 
             $this->smarty_clues[$k] = $smarty_clue;
         }
 
         $this->get_timeouts();
+        $this->session['known_cgrps'][$this->clue_grp->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View clue group screen");
         return true;
@@ -240,6 +242,7 @@ class apu_iquest extends apu_base_class{
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
 
         $this->get_timeouts();
+        $this->session['known_solutions'][$this->solution->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
         return true;
@@ -267,8 +270,24 @@ class apu_iquest extends apu_base_class{
 
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
+            $new_hints = false;
+            
+            $opt = array("cgrp_id" => $v->id,
+                         "team_id" => $this->team_id,
+                         "accessible" => true);
+            $hints = Iquest_Hint::fetch($opt);
+
+            foreach($hints as $hint){
+                if (!isset($this->session['known_hints'][$hint->id])){
+                    $new_hints = true;
+                    break;
+                }
+            }
+
             $smarty_group = $v->to_smarty();
             $smarty_group['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
+            $smarty_group['new'] = !isset($this->session['known_cgrps'][$v->id]);
+            $smarty_group['new_hints'] = $new_hints;
             $this->smarty_groups[$k] = $smarty_group;
         }
 
@@ -278,6 +297,7 @@ class apu_iquest extends apu_base_class{
         foreach($solutions as $k => $v){
             $smarty_solution = $v->to_smarty();
             $smarty_solution['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_solution=".RawURLEncode($v->ref_id));
+            $smarty_solution['new'] = !isset($this->session['known_solutions'][$v->id]);
             $this->smarty_solutions[$k] = $smarty_solution;
         }
 
@@ -517,7 +537,6 @@ class apu_iquest extends apu_base_class{
         global $smarty;
 
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
-        $smarty->assign($this->opt['smarty_name'], $this->session['name']);
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);

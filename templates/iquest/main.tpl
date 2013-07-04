@@ -25,8 +25,11 @@
     {foreach $clue.hints as $hint}
     <div class="datatable hint">
     <table class="table table-bordered">
-    <tr>
-        <th class="filename">{$lang_str.iquest_hint}: {$hint.filename}</th>
+    <tr {if $hint.new}class="new"{/if}>
+        <th class="filename">
+            {$lang_str.iquest_hint}: {$hint.filename}
+            {if $hint.new}<span class="new"></span>{/if}
+        </th>
         <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$hint}
@@ -78,7 +81,11 @@
     <table class="table table-bordered">
     <tr><th>{$lang_str.iquest_avail_tasks}</th></tr>
     {foreach $clue_groups as $group}
-    <tr><td><a href="{$group.detail_url|escape}">{$group.name}</a></td></tr>
+    <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
+        <a href="{$group.detail_url|escape}">{$group.name}</a>
+        {if $group.new}<span class="new"></span>{/if}
+        {if $group.new_hints}<span class="newhint"></span>{/if}
+    </td></tr>
     {/foreach}
     </table>
     </div>
@@ -90,7 +97,10 @@
         <tr><th>{$lang_str.iquest_avail_solutions}</th></tr>
         {/if}
 
-        <tr><td><a href="{$solution.detail_url|escape}">{$solution.name}</a></td></tr>
+        <tr><td {if $solution.new}class="new"{/if}>
+            <a href="{$solution.detail_url|escape}">{$solution.name}</a>
+            {if $solution.new}<span class="new"></span>{/if}
+        </td></tr>
 
         {if $solution@last}
         </table>
