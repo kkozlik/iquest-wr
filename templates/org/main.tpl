@@ -5,8 +5,9 @@
 {include file="iquest/iquest-functions.tpl"}
 
 
-     
-    <table class="table table-bordered">
+
+    <div class="horizontal-scrollbar">     
+    <table class="table table-bordered summary">
     <tr>
     <th>&nbsp;</th>
     {foreach $clue_groups as $group}
@@ -18,7 +19,7 @@
     <tr>
     <th>{$team.name|escape}</th>
         {foreach $clue_groups as $group}
-        <td >
+        <td {if $cgrp_team[$group.id][$team.id]}class="solved"{/if}>
         {$cgrp_team[$group.id][$team.id]}
         </td>
         {/foreach}
@@ -26,7 +27,7 @@
     {/foreach}
 
     </table>
-
+    </div>
 
 <br>
 {include file='_tail.tpl'}

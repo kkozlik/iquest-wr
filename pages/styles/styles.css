@@ -135,3 +135,20 @@ span.newhint{
     margin-bottom: 15px;
 }
 
+.table.summary th{
+    background-color: #F5F5F5;
+}
+
+.table.summary td{
+    background-color: #F2DEDE;
+    color: #B94A48;
+}
+
+.table.summary td.solved{
+    background-color: #DFF0D8;
+    color: #468847;
+}
+
+.horizontal-scrollbar{
+    overflow-x: auto;
+}
