@@ -44,6 +44,8 @@
 
 class apu_iquest_org extends apu_base_class{
 
+    protected $team_id;
+
     protected $smarty_groups;
     protected $smarty_teams;
     protected $smarty_cgrp_team;
@@ -73,14 +75,21 @@ class apu_iquest_org extends apu_base_class{
     function init(){
         parent::init();
 
-        $this->team_id = $this->user_id->get_uid();
-
         if (!isset($_SESSION['apu_iquest_org'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest_org'][$this->opt['instance_id']] = array();
         }
         
         $this->session = &$_SESSION['apu_iquest_org'][$this->opt['instance_id']];
         
+    }
+
+    function action_get_graph(){
+        $this->controler->disable_html_output();
+
+        $graph = new Iquest_solution_graph($this->team_id);
+        $graph->image_graph();
+
+        return true;
     }
     
 
@@ -105,6 +114,7 @@ class apu_iquest_org extends apu_base_class{
         $this->smarty_teams = array();
         foreach($teams as $k => $v){
             $this->smarty_teams[$k] = $v->to_smarty();
+            $this->smarty_teams[$k]['graph_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_graph=".RawURLEncode($v->id));
         }
 
         $this->smarty_cgrp_team = array();
@@ -127,6 +137,21 @@ class apu_iquest_org extends apu_base_class{
     }
     
 
+    /**
+     *  check _get and _post arrays and determine what we will do 
+     */
+    function determine_action(){
+        if (isset($_GET['get_graph'])){
+            $this->team_id = $_GET['get_graph'];
+            $this->action=array('action'=>"get_graph",
+                                 'validate_form'=>false,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        else $this->action=array('action'=>"default",
+                                 'validate_form'=>false,
+                                 'reload'=>false);
+    }
 
     
 

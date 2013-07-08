@@ -17,7 +17,7 @@
 
     {foreach $teams as $team}
     <tr>
-    <th>{$team.name|escape}</th>
+    <th><a href="{$team.graph_url|escape}">{$team.name|escape}</a></th>
         {foreach $clue_groups as $group}
         <td {if $cgrp_team[$group.id][$team.id]}class="solved"{/if}>
         {$cgrp_team[$group.id][$team.id]}
