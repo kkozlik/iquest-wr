@@ -249,6 +249,15 @@ class Iquest_Clue extends Iquest_file{
         return $this->hints;
     }
 
+    function get_all_hints(){
+        if (!is_null($this->hints)) return $this->hints;
+
+        $opt = array("clue_id" => $this->id);
+        $this->hints = Iquest_Hint::fetch($opt);
+
+        return $this->hints;
+    }
+
     function to_smarty(){
         $out = parent::to_smarty();
         $out['hints'] = array();
@@ -764,6 +773,15 @@ class Iquest_Hint extends Iquest_file{
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
     }
+
+
+    function to_smarty(){
+        $out = parent::to_smarty();
+        $out['timeout'] = gmdate("H:i:s", $this->timeout);
+
+        return $out;
+    }
+
 }
 
 
