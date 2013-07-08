@@ -110,6 +110,16 @@ class Iquest_Metadata{
 
         return $this->data['cgrp']['name'];
     }
+    
+    function get_cgrp_order(){
+
+        if (!isset($this->data['cgrp']['order'])){
+            echo "*** WARNING: order for clue group is not set.\n";
+            return 0;
+        }
+
+        return $this->data['cgrp']['order'];
+    }
 
     function is_start_cgrp(){
         return !empty($this->data['cgrp']['start']);
@@ -308,9 +318,10 @@ class Chroust{
     static function insert_cgrp($metadata){
         $cgrp_id = $metadata->get_cgrp_id();
         $cgrp_name = $metadata->get_cgrp_name();
+        $cgrp_order = $metadata->get_cgrp_order();
         $ref_id = rfc4122_uuid();
         
-        $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name);
+        $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name, $cgrp_order);
         $cgrp->insert();
         return $cgrp;
     }
@@ -372,7 +383,8 @@ class Chroust{
         $next_cgrp_id = $metadata->get_solution_next_cgrp();
 
         self::$summary[] = array("name" => $name,
-                                 "key"  => $metadata->get_solution_key());
+                                 "key"  => $metadata->get_solution_key(),
+                                 "ordering" => $metadata->get_cgrp_order());
         
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key);
@@ -693,6 +705,12 @@ class Chroust{
             self::process_data_dir($src_dir);
 
             self::verify();
+
+            // sort the keys summary by 'ordering' attribute
+            usort(self::$summary, create_function('$a,$b','
+                if ($a["ordering"] == $b["ordering"]) {return 0;}
+                return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
+            '));
 
             echo "Keys summary:\n\n";
             foreach(self::$summary as $row){

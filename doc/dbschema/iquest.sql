@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `clue_grp` (
   `cgrp_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `ref_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `name` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
+  `ordering` int(11) NOT NULL,
   PRIMARY KEY (`cgrp_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;

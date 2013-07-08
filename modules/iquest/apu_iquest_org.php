@@ -94,7 +94,7 @@ class apu_iquest_org extends apu_base_class{
 
 
         $teams = Iquest_Team::fetch();
-        $clue_groups = Iquest_ClueGrp::fetch();
+        $clue_groups = Iquest_ClueGrp::fetch(array("orderby"=>"ordering"));
         $open_cgrps = Iquest_ClueGrp::fetch_cgrp_open();
 
         $this->smarty_groups = array();

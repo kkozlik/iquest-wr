@@ -269,6 +269,7 @@ class Iquest_ClueGrp{
     public $id;
     public $ref_id;
     public $name;
+    public $ordering;
     public $gained_at;
 
     protected $clues=null;
@@ -327,6 +328,11 @@ class Iquest_ClueGrp{
         if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
 
+        // default ordering
+        $order_by = $co->gained_at." desc";
+        if (isset($opt['orderby'])) $order_by = $cc->$opt['orderby'];
+
+
         // If team_id is specified, set the gained_at attribute of clue group
         if (isset($opt['team_id'])){
             $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.") 
@@ -349,10 +355,11 @@ class Iquest_ClueGrp{
         $q = "select c.".$cc->id.",
                      c.".$cc->ref_id.",
                      c.".$cc->name.",
+                     c.".$cc->ordering.",
                      (".$q2.") as ".$co->gained_at." 
               from ".$tc_name." c ".
               $qw." 
-              order by ".$co->gained_at." desc";
+              order by ".$order_by;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -362,6 +369,7 @@ class Iquest_ClueGrp{
             $out[$row[$cc->id]] =  new Iquest_ClueGrp($row[$cc->id], 
                                                       $row[$cc->ref_id],
                                                       $row[$cc->name],
+                                                      $row[$cc->ordering],
                                                       $row[$co->gained_at]);
         }
         $res->free();
@@ -454,6 +462,7 @@ class Iquest_ClueGrp{
         $q = "select g.".$cg->id.",
                      g.".$cg->ref_id.",
                      g.".$cg->name.",
+                     g.".$cg->ordering.",
                      (".$q2.") as ".$co->gained_at." 
               from ".$ts_name." s
                 join ".$tc_name." c on c.".$cc->id."=s.".$cs->clue_id."
@@ -469,17 +478,19 @@ class Iquest_ClueGrp{
             $out[$row[$cg->id]] =  new Iquest_ClueGrp($row[$cg->id], 
                                                       $row[$cg->ref_id],
                                                       $row[$cg->name],
+                                                      $row[$cg->ordering],
                                                       $row[$co->gained_at]);
         }
         $res->free();
         return $out;
     }
 
-    function __construct($id, $ref_id, $name, $gained_at=null){
+    function __construct($id, $ref_id, $name, $ordering, $gained_at=null){
 
         $this->id =         $id;
         $this->ref_id =     $ref_id;
         $this->name =       $name;
+        $this->ordering =   $ordering;
         $this->gained_at =  $gained_at;
     }
 
@@ -495,12 +506,14 @@ class Iquest_ClueGrp{
         $q = "insert into ".$t_name."(
                     ".$c->id.",
                     ".$c->ref_id.",
-                    ".$c->name."
+                    ".$c->name.",
+                    ".$c->ordering."
               )
               values(
                     ".$data->sql_format($this->id,              "s").",
                     ".$data->sql_format($this->ref_id,          "s").",
-                    ".$data->sql_format($this->name,            "s")."
+                    ".$data->sql_format($this->name,            "s").",
+                    ".$data->sql_format($this->ordering,        "n")."
               )";
 
         $res=$data->db->query($q);
