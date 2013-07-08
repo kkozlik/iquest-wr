@@ -395,6 +395,30 @@ class Iquest_ClueGrp{
         return $out;
     }
 
+    static function fetch_cgrp_open(){
+        global $data, $config;
+
+        /* table's name */
+        $to_name = &$config->data_sql->iquest_cgrp_open->table_name;
+        /* col names */
+        $co      = &$config->data_sql->iquest_cgrp_open->cols;
+
+        $q = "select o.".$co->team_id.", 
+                     o.".$co->cgrp_id.",
+                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
+              from ".$to_name." o ";
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$co->cgrp_id]][$row[$co->team_id]] = $row[$co->gained_at];
+        }
+        $res->free();
+        return $out;
+    }
+
     /**
      *  Fetch all clue groups that leads to the solution
      *  
@@ -1641,6 +1665,56 @@ class Iquest_solution_graph{
 
         echo $image_data;
     }
+}
+
+class Iquest_Team{
+    public $id;
+    public $name;
+
+    static function fetch($opt=array()){
+        global $data, $config;
+
+        /* table's name */
+        $tt_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $ct      = &$config->data_sql->iquest_team->cols;
+
+        $qw = array();
+        if (isset($opt['id']))      $qw[] = "t.".$ct->id." = ".$data->sql_format($opt['id'], "n");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        $q = "select t.".$ct->id.",
+                     t.".$ct->name."
+              from ".$tt_name." t ".
+              $qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$ct->id]] =  new Iquest_Team($row[$ct->id], 
+                                                   $row[$ct->name]);
+        }
+        $res->free();
+        return $out;
+    }
+
+    function __construct($id, $name){
+        $this->id =         $id;
+        $this->name =       $name;
+    }
+
+    function to_smarty(){
+        $out = array();
+        $out['id'] = $this->id;
+        $out['name'] = $this->name;
+        return $out;
+    }
+
 }
 
 ?>

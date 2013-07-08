@@ -19,6 +19,8 @@ class iquest_auth extends auth{
 
     private $team_name = null;
 
+    protected $apu_opts = array();
+
     /**
      *  Function is called when user is not authenticated
      *
@@ -51,6 +53,10 @@ class iquest_auth extends auth{
         // Instantiate the apu_auth_login and run the controler
         $apu = new apu_auth_login();
         $apu->set_opt("relogin", true);
+
+        foreach($this->apu_opts as $k => $v){
+            $apu->set_opt($k, $v);
+        }
 
         $GLOBALS['controler']->add_apu($apu);
         $GLOBALS['controler']->set_template_name('auth/index.tpl');
@@ -252,6 +258,47 @@ class iquest_auth extends auth{
 }
 
 
+class iquest_org_auth extends iquest_auth{
+    protected $apu_opts = array("auth_class", "iquest_org_auth");
+
+
+    /**
+     *  Validate given credentials and return UID if they are valid
+     *
+     *  @static
+     *  @param  string  $username   
+     *  @param  string  $did        
+     *  @param  string  $password   
+     *  @param  array   $optionals      
+     *  @return string              UID if credentials are valid, false otherwise
+     */
+    static function validate_credentials($username, $did, $password, &$optionals){
+        global $lang_str, $config;
+
+        // chceck credentials
+        sw_log("validate_credentials: checking credentials for username: ".$username, PEAR_LOG_DEBUG);
+
+
+        if (!isset($config->iquest_auth->admin_login[$username]) or
+            $config->iquest_auth->admin_login[$username] != $password){
+            
+            sw_log("validate_credentials: authentication failed: bad username or password ", PEAR_LOG_INFO);
+            ErrorHandler::add_error($lang_str['auth_err_bad_username']);
+            return false;
+        }
+
+		return $username;
+    }
+
+    /**
+     *  Get name of logged team
+     */         
+    public function get_team_name(){
+        return "HQ: ".$this->get_uid();
+    }
+}
+
+
 /**
  *  Override SerwebUser class with own version
  */ 
@@ -268,7 +315,7 @@ class Iquest_user extends SerwebUser{
  *	
  *	@package   PHPLib
  */
- 
+
 class iquest_session extends Session {
 	var $classname = "iquest_session";
 	
@@ -278,6 +325,14 @@ class iquest_session extends Session {
 	var $fallback_mode  = "get";
 	var $allowcache     = "no";              ## "public", "private", or "no"
 	var $lifetime       = 2880;              ## 0 = do session cookies, else minutes
+}
+
+
+/**
+ *  Session for admin interface - just to have different session name
+ */
+class iquest_org_session extends iquest_session {
+	var $classname = "iquest_org_session";
 }
 
 ?>

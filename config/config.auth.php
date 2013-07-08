@@ -1,5 +1,16 @@
 <?php
 
+
+/**
+ *  Credentials for admin users.
+ *  Array of credentials in format: "username" => "password" 
+ */ 
+$config->iquest_auth->admin_login = array(
+    "admin" => "admin",
+    "hq"    => "hq",
+);
+
+
 /*
  *  Definition of table team
  */                                                             
