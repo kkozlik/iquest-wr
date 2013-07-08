@@ -1386,10 +1386,10 @@ class Iquest_solution_graph_node{
         }
 
         if ($this->visited){
-            $dot .= ",label=<<FONT color=\"#990000\">Visited: </FONT>".$this->obj->id.">";
+            $dot .= ",label=<<FONT color=\"#990000\">Visited: </FONT>\"".$this->obj->id."\">";
         }
         else{
-            $dot .= ",label=".$this->obj->id;
+            $dot .= ",label=\"".$this->obj->id."\"";
         }
 
         $dot .= "]";
@@ -1609,6 +1609,10 @@ class Iquest_solution_graph{
     }
 
 
+    public static function escape_dot($str){
+        return '"'.str_replace('"', '\"', $str).'"';
+    }
+
     /**
      *  Generate graph representation in DOT language (for graphviz)
      */         
@@ -1616,12 +1620,12 @@ class Iquest_solution_graph{
         $out = "digraph G {\n";
 
         foreach($this->nodes as $k => $node){
-            $out .= $k." ".$node->to_dot().";\n";
+            $out .= self::escape_dot($k)." ".$node->to_dot().";\n";
         }
 
         foreach($this->edges as $k1 => $v1){
             foreach($this->edges[$k1] as $v2){
-                $out .= $k1." -> ".$v2.";\n";
+                $out .= self::escape_dot($k1)." -> ".self::escape_dot($v2).";\n";
             }
         }
 
