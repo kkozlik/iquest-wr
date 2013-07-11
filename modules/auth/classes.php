@@ -294,7 +294,7 @@ class iquest_org_auth extends iquest_auth{
      *  Get name of logged team
      */         
     public function get_team_name(){
-        return "HQ: ".$this->get_uid();
+        return "HeadQuarters: ".$this->get_uid();
     }
 }
 

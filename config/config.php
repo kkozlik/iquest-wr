@@ -23,6 +23,7 @@
     $config->iquest_locale = 'cs_CZ.UTF-8';
 
 
+    $config->img_src_path =     $config->root_path."img/";
     $config->iquest_data_dir = realpath($_SERWEB["configdir"]."../data")."/";
 
     $config->enable_logging = true;

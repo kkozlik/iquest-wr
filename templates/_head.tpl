@@ -9,12 +9,20 @@
 <div class="navbar navbar-inverse navbar-static-top">
   <div class="navbar-inner">
     <div class="container">
-        <span class="brand logo"><img src="img/logo.png" alt="I.Quest"></span>
+        <span class="brand logo"><img src="{$cfg->img_src_path}logo.png" alt="I.Quest"></span>
 
         <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
 		<ul class="nav pull-right">
+            {if $parameters.overview_url|default:0}
+			<li><a href='{$parameters.overview_url|escape}'>{$lang_str.iquest_l_overview}</a></li>
+            {/if}
+            {if $parameters.events_url|default:0}
+			<li><a href='{$parameters.events_url|escape}'>{$lang_str.iquest_l_events}</a></li>
+            {/if}
+            {if $parameters.giveitup_url|default:0}
 			<li><a href='{$parameters.giveitup_url|escape}'>{$lang_str.iquest_l_give_it_up}</a></li>
+            {/if}
 			<li><a href='{$parameters.logout_url|escape}'>{$lang_str.iquest_l_logout}</a></li>
 	  	</ul>
 

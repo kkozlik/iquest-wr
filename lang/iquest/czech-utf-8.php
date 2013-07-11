@@ -20,6 +20,8 @@ $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
+$lang_str['iquest_l_overview'] =                        "Přehled";
+$lang_str['iquest_l_events'] =                          "Log událostí";
 $lang_str['iquest_l_give_it_up'] =                      "Vzdát to";
 $lang_str['iquest_l_logout'] =                          "Odhlásit se";
 
