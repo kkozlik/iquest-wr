@@ -24,7 +24,9 @@ case "$1" in
         chown www-data:www-data /var/lib/iquest
 
         chmod 600 /etc/iquest/config.php
+        chmod 600 /etc/iquest/config.auth.php
         chown www-data:www-data /etc/iquest/config.php
+        chown www-data:www-data /etc/iquest/config.auth.php
 
         touch /var/log/iquest
         chown www-data:www-data /var/log/iquest
