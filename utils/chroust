@@ -6,7 +6,7 @@ if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
 $_required_modules = array('iquest', 'auth');
 
 require_once(dirname(__FILE__)."/../config/set_env.php");
-require_once(dirname(__FILE__)."/../pages/functions.php");
+require_once(dirname(__FILE__)."/../functions/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 class Iquest_noMetaDataException extends RuntimeException {}
