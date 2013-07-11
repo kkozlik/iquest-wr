@@ -37,4 +37,17 @@ $lang_str['iquest_txt_giveitup_heading'] =              "Je nám líto že jste 
 $lang_str['iquest_txt_giveitup_p1'] =                   "Pokud soutěž vzdáte prozradíme vám polohu cíle, ale již není cesty zpět a v soutěži nebudete moci dále pokračovat.";
 $lang_str['iquest_txt_giveitup_p2'] =                   "Své rozhodnutí potvrďte napsáním vašeho hesla pro přihlášení.";
 
+
+$lang_str['iquest_event_all'] =                         "-- Vše --";
+$lang_str['iquest_event_time'] =                        "Čas";
+$lang_str['iquest_event_team'] =                        "Tým";
+$lang_str['iquest_event_type'] =                        "Typ";
+$lang_str['iquest_event_data'] =                        "Data";
+
+$lang_str['iquest_event_date_from'] =                   "Od";
+$lang_str['iquest_event_date_to'] =                     "Do";
+
+$lang_str['iquest_event_err_inv_datetime'] =            "Špatně zadaný datum a čas (<value>)";
+$lang_str['iquest_event_err_datetime_intersect'] =      "'Od' je větší než 'Do'";
+
 ?>

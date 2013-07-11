@@ -15,3 +15,19 @@
         </tr>
     {/if}
 {/function}
+
+
+{function iquestPager}
+    <div class="pagination pagination-right"><ul><li>
+        {pager page=$pager 
+               class_text='' 
+               class_num='' 
+               class_numon='active' 
+               txt_first='&laquo;&laquo;' 
+               txt_prev='&laquo;' 
+               txt_next='&raquo;' 
+               txt_last='&raquo;&raquo;' 
+               display='always' 
+               separator='</li><li>'}
+    </li></ul></div>
+{/function}

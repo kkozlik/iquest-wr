@@ -8,6 +8,20 @@ class Iquest_Events{
     const LOGOUT = "logout";
     const GIVEITUP = "giveitup";
 
+    public static $supported_types = array(self::LOGGED,
+                                           self::KEY,
+                                           self::LOGOUT,
+                                           self::GIVEITUP); 
+
+    public $id;
+    public $team_id;
+    public $timestamp;
+    public $type;
+    public $success;
+    public $data;
+    public $team_name;
+
+
     static function add_remote_ip(&$data){
         $data['ip'] = $_SERVER["REMOTE_ADDR"];
         if (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
@@ -56,6 +70,107 @@ class Iquest_Events{
         if ($data->dbIsError($res)) throw new DBException($res);
 
     }
+    
+    static function fetch($opt=array()){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_event->table_name;
+        $tt_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_event->cols;
+        $ct      = &$config->data_sql->iquest_team->cols;
+
+        $o_order_by = (!empty($opt['order_by'])) ? $opt['order_by'] : "timestamp";
+        $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : ""; 
+
+        $qw = array();
+        if (isset($opt['id']))                      $qw[] = "e.".$c->id." = ".$data->sql_format($opt['id'], "n");
+
+        if (isset($opt['filter']['team_id']))       $qw[] = $opt['filter']['team_id']->to_sql("e.".$c->team_id);
+        if (isset($opt['filter']['type']))          $qw[] = $opt['filter']['type']->to_sql("e.".$c->type);
+
+        if (isset($opt['filter']['date_from']))     $qw[] = $opt['filter']['date_from']->to_sql("UNIX_TIMESTAMP(e.".$c->timestamp.")");
+        if (isset($opt['filter']['date_to']))       $qw[] = $opt['filter']['date_to']->to_sql("UNIX_TIMESTAMP(e.".$c->timestamp.")");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+
+        if (!empty($opt['use_pager']) or !empty($opt['count_only'])){
+            $q="select count(*) from ".$t_name." e
+                    join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
+            
+            $res=$data->db->query($q);
+            if (MDB2::isError($res)) throw new DBException($res);
+            $row=$res->fetchRow(MDB2_FETCHMODE_ORDERED);
+            $data->set_num_rows($row[0]);
+            $res->free();
+
+            if (!empty($opt['count_only'])) return $row[0];
+            
+            /* if act_row is bigger then num_rows, correct it */
+            $data->correct_act_row();
+        }
+
+
+        $q="select e.".$c->id.",
+                   e.".$c->team_id.",
+                   UNIX_TIMESTAMP(e.".$c->timestamp.") as ".$c->timestamp.", 
+                   e.".$c->type.",
+                   e.".$c->success.",
+                   e.".$c->data.",
+                   t.".$ct->name."
+            from ".$t_name." e
+                join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
+
+
+        if ($o_order_by) $q .= " order by ".$c->$o_order_by." ".$o_order_desc;
+
+        $q .= !empty($opt['use_pager']) ? $data->get_sql_limit_phrase() : "";
+            
+        $res=$data->db->query($q);
+        if (MDB2::isError($res)) throw new DBException($res);
+    
+        $out=array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+
+            $out[] =  new Iquest_Events($row[$c->id], 
+                                        $row[$c->team_id],
+                                        $row[$c->timestamp],
+                                        $row[$c->type],
+                                        $row[$c->success],
+                                        $row[$c->data],
+                                        $row[$ct->name]);
+
+        }
+        $res->free();
+        return $out;    
+    }
+
+    function __construct($id, $team_id, $timestamp, $type, $success, $data, $team_name){
+        $this->id =         $id;
+        $this->team_id =    $team_id;
+        $this->timestamp =  $timestamp;
+        $this->type =       $type;
+        $this->success =    $success;
+        $this->data =       $data;
+        $this->team_name =  $team_name;
+    }
+
+    function to_smarty(){
+        $out = array();
+        $out['id'] = $this->id;
+        $out['team_id'] = $this->team_id;
+        $out['timestamp'] = date("d.m.Y H:i:s", $this->timestamp);
+        $out['type'] = $this->type;
+        $out['success'] = $this->success;
+        $out['data'] = $this->data;
+        $out['team_name'] = $this->team_name;
+
+        return $out;
+    }
+
 }
 
 ?>
