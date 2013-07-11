@@ -13,6 +13,24 @@
                 <div>Velikost: <span class="img_size"></span></div>
             </td>
         </tr>
+    {elseif $file.content_type|truncate:6:"" == "audio/"}
+        <tr>
+            <td colspan="2">
+                <div class="text-center">{$lang_str.iquest_file_audio_content}</div>
+            </td>
+        </tr>
+    {elseif $file.content_type|truncate:6:"" == "video/"}
+        <tr>
+            <td colspan="2" class="text-center">
+                <div class="text-center">{$lang_str.iquest_file_video_content}</div>
+            </td>
+        </tr>
+    {else}
+        <tr>
+            <td colspan="2" class="text-center">
+                <div class="text-center">{$lang_str.iquest_file_general_content}</div>
+            </td>
+        </tr>
     {/if}
 {/function}
 

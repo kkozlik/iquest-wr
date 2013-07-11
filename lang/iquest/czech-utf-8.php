@@ -39,6 +39,9 @@ $lang_str['iquest_txt_giveitup_heading'] =              "Je nám líto že jste 
 $lang_str['iquest_txt_giveitup_p1'] =                   "Pokud soutěž vzdáte prozradíme vám polohu cíle, ale již není cesty zpět a v soutěži nebudete moci dále pokračovat.";
 $lang_str['iquest_txt_giveitup_p2'] =                   "Své rozhodnutí potvrďte napsáním vašeho hesla pro přihlášení.";
 
+$lang_str['iquest_file_audio_content'] =                "Audio soubor nelze přehrát v prohlížeči. Stáhněte si jej a přehrajte jiným programem.";
+$lang_str['iquest_file_video_content'] =                "Video soubor nelze přehrát v prohlížeči. Stáhněte si jej a přehrajte jiným programem.";
+$lang_str['iquest_file_general_content'] =              "Soubor nelze zobrazit. Stáhněte si jej a zobrazte jiným programem.";
 
 $lang_str['iquest_event_all'] =                         "-- Vše --";
 $lang_str['iquest_event_time'] =                        "Čas";
