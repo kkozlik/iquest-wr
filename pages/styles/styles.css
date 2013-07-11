@@ -152,3 +152,11 @@ span.newhint{
 .horizontal-scrollbar{
     overflow-x: auto;
 }
+
+div.popover{
+    max-width: none;
+}
+
+.nowrap{
+    white-space:nowrap;
+}

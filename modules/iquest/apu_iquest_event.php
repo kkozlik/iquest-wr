@@ -226,6 +226,9 @@ class apu_iquest_event extends apu_base_class{
             $opt['order_by']   = $this->sorter->get_sort_col();
             $opt['order_desc'] = $this->sorter->get_sort_dir();
         }
+        else{
+            $opt['order_desc'] = true;
+        }
 
 
         $data->set_showed_rows(50);

@@ -49,18 +49,18 @@
     </tr>
 
     {foreach $events as $event}
+    {$data_content="<pre>`$event.data_formated`</pre>"}
     <tr class="{if $event.success}success{else}error{/if}">
-        <td >{$event.timestamp}</td>
+        <td class="nowrap">{$event.timestamp}</td>
         <td >{$event.team_name}</td>
         <td >{$event.type}</td>
-        <td >{$event.data}</td>
+        <td class="event-data" data-toggle="popover" data-content="{$data_content|escape}">{$event.data}</td>
     </tr>
     {/foreach}
 
     </table>
 
     {call iquestPager pager=$pager}
-
 
 <br>
 {include file='_tail.tpl'}
@@ -78,4 +78,10 @@
       pick12HourFormat: false
     });
   });
+
+    $(".event-data").popover({
+        placement: "top",
+        trigger: "hover",
+        html: true
+    });
 </script>

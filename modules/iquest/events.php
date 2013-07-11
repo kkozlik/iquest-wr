@@ -166,6 +166,7 @@ class Iquest_Events{
         $out['type'] = $this->type;
         $out['success'] = $this->success;
         $out['data'] = $this->data;
+        $out['data_formated'] = print_r(json_decode($this->data), true);
         $out['team_name'] = $this->team_name;
 
         return $out;
