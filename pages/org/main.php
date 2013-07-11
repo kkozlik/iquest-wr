@@ -7,7 +7,7 @@ $_data_layer_required_methods=array();
 $_required_modules = array('iquest', 'auth');
 $_required_apu = array('apu_iquest_org'); 
 
-require dirname(__FILE__)."/../prepend.php";
+require dirname(__FILE__)."/prepend.php";
 
 
 $apu    = new apu_iquest_org();
