@@ -26,6 +26,7 @@ install: build
 	mkdir -p $(DESTDIR)/var/lib/iquest
 	cp -r $(CURDIR)/config/*    $(DESTDIR)/etc/iquest
 	cp -r $(CURDIR)/doc/*       $(DESTDIR)/usr/share/doc/iquest
+	cp -r $(CURDIR)/functions   $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/lang        $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/modules     $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/pages       $(DESTDIR)/usr/share/iquest
@@ -33,6 +34,7 @@ install: build
 	cp -r $(CURDIR)/utils       $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/TODO $(CURDIR)/README $(CURDIR)/COPYING $(DESTDIR)/usr/share/doc/iquest
 	rm $(DESTDIR)/etc/iquest/set_env.developer.php
+	rm $(DESTDIR)/etc/iquest/iquest.apache.developer
 	ln -sf /etc/iquest $(DESTDIR)/usr/share/iquest/config
 	ln -sf /var/lib/iquest $(DESTDIR)/usr/share/iquest/data
 
