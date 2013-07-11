@@ -9,6 +9,9 @@
 
 global $_SERWEB, $config;
 
+$_SERWEB["approotdir"] = realpath(dirname(__FILE__)."/..")."/";
+
+
 // directory that should be accesible directly from the web
 $_SERWEB["pagesdir"] =      $_SERWEB["approotdir"]."pages/";
 // directory containing configuration

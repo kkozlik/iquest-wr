@@ -5,7 +5,7 @@
 // in this php file.
 
 putenv('SERWEB_DIR=/usr/share/serweb-frmwrk/');
-putenv('SERWEB_SET_DIRS=/usr/share/iquest/config/set_dirs.php');
+putenv('SERWEB_SET_DIRS=/usr/share/iquest/functions/set_dirs.php');
 
 if (file_exists(dirname(__FILE__)."/set_env.developer.php")){
 	require_once (dirname(__FILE__)."/set_env.developer.php");

@@ -11,13 +11,6 @@
  */
 $GLOBALS["_SERWEB"]["hookpreauth"] = "set_page_attributes";
 
-/*
- *  Save the application root directory into $_SERWEB variable.
- *  This can't be done later in set_dirs.php file because the config directory
- *  (where the file is located) could be located outside the application tree
- *  e.g. in /etc dir. Hence the __FILE__ variable return wrong path.     
- */ 
-$GLOBALS["_SERWEB"]["approotdir"] = realpath(dirname(__FILE__)."/..")."/";
 
 function set_page_attributes(){
     global $config;
@@ -47,7 +40,7 @@ function set_page_attributes(){
     );
 }
 
-require_once($GLOBALS["_SERWEB"]["approotdir"]."config/set_env.php");
+require_once(realpath(dirname(__FILE__)."/..")."/config/set_env.php");
 require_once(dirname(__FILE__)."/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
