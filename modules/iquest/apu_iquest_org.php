@@ -155,6 +155,12 @@ class apu_iquest_org extends apu_base_class{
         $teams = Iquest_Team::fetch();
         $clue_groups = Iquest_ClueGrp::fetch(array("orderby"=>"ordering"));
         $open_cgrps = Iquest_ClueGrp::fetch_cgrp_open();
+        $solutions = Iquest_Solution::fetch();
+
+        $cgrp_from_sol = array();
+        foreach($solutions as $solution){
+            $cgrp_from_sol[$solution->cgrp_id] = $solution->id;
+        }
 
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
@@ -173,14 +179,30 @@ class apu_iquest_org extends apu_base_class{
             $this->smarty_cgrp_team[$cgrp->id] = array();
 
             foreach($teams as $team){
-                $this->smarty_cgrp_team[$cgrp->id][$team->id] = "";
+                $this->smarty_cgrp_team[$cgrp->id][$team->id] = array("gained_at" => "",
+                                                                      "solved" => false);
                 if (!empty($open_cgrps[$cgrp->id][$team->id])){
-                    $this->smarty_cgrp_team[$cgrp->id][$team->id] = 
+                    $this->smarty_cgrp_team[$cgrp->id][$team->id]["gained_at"] = 
                         date("H:i:s", $open_cgrps[$cgrp->id][$team->id]);
                 }
+                
+                // $solutions[$cgrp->id] is tricky!! Solutions are indexed by 
+                // solution_id not cgrp_id. However these two are same, at least
+                // if the contest is linear.
+                // 
+                // Maybe it would be better to display list of solutions on 
+                // the screen instead of list of clue groups. This is a subject to change
+                //
+                // @todo: The HQ overview screen may not work correctly if the contest is not linear
+                if (isset($solutions[$cgrp->id])){
+                    $cgrp_id = $solutions[$cgrp->id]->cgrp_id;
+                    $solved = !empty($open_cgrps[$cgrp_id][$team->id]);
+
+                    $this->smarty_cgrp_team[$cgrp->id][$team->id]["solved"] = $solved;
+                }
+
             }
         }
-
 
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
