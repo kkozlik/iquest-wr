@@ -1,7 +1,7 @@
 <?php
 
-$_phplib_page_open = array("sess" => "iquest_org_session",
-                           "auth" => "iquest_org_auth");
+$_phplib_page_open = array("sess" => "iquest_hq_session",
+                           "auth" => "iquest_hq_auth");
 
 $_data_layer_required_methods=array();
 $_required_modules = array('iquest', 'auth', 'widgets');

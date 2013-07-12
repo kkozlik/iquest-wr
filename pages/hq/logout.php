@@ -1,6 +1,6 @@
 <?php
 
-$_phplib_page_open = array("sess" => "iquest_org_session");
+$_phplib_page_open = array("sess" => "iquest_hq_session");
 $_required_modules = array('auth', 'iquest');
 
 require dirname(__FILE__)."/prepend.php";

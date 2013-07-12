@@ -1,6 +1,6 @@
 <?php
 $_data_layer_required_methods=array();
-$_phplib_page_open = array("sess" => "iquest_org_session");
+$_phplib_page_open = array("sess" => "iquest_hq_session");
 $_required_modules = array('auth', 'iquest');
 $_required_apu = array('apu_auth_login'); 
 
@@ -17,7 +17,7 @@ if (!empty($_SESSION['auth']) and
 
 $apu = new apu_auth_login();
 $apu->set_opt("redirect_on_login", "main.php");
-$apu->set_opt("auth_class", "iquest_org_auth");
+$apu->set_opt("auth_class", "iquest_hq_auth");
 
 $apu->set_opt("form_submit", array('type' => 'button',
                                    'class' => "btn btn-primary btn-large",

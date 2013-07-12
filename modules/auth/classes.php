@@ -258,8 +258,8 @@ class iquest_auth extends auth{
 }
 
 
-class iquest_org_auth extends iquest_auth{
-    protected $apu_opts = array("auth_class", "iquest_org_auth");
+class iquest_hq_auth extends iquest_auth{
+    protected $apu_opts = array("auth_class", "iquest_hq_auth");
 
 
     /**
@@ -331,8 +331,8 @@ class iquest_session extends Session {
 /**
  *  Session for admin interface - just to have different session name
  */
-class iquest_org_session extends iquest_session {
-	var $classname = "iquest_org_session";
+class iquest_hq_session extends iquest_session {
+	var $classname = "iquest_hq_session";
 }
 
 ?>
