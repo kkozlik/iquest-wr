@@ -27,7 +27,7 @@ $filter->set_opt('form_clear',  array('type' => 'button',
 
 $controler->add_apu($apu);
 $controler->add_apu($filter);
-$controler->set_template_name('org/event.tpl');
+$controler->set_template_name('hq/event.tpl');
 $controler->start();
 
 

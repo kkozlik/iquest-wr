@@ -14,7 +14,7 @@ $apu    = new apu_iquest_org();
 
 
 $controler->add_apu($apu);
-$controler->set_template_name('org/main.tpl');
+$controler->set_template_name('hq/main.tpl');
 $controler->start();
 
 
