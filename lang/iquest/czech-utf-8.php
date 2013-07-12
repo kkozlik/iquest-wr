@@ -48,6 +48,7 @@ $lang_str['iquest_event_time'] =                        "Čas";
 $lang_str['iquest_event_team'] =                        "Tým";
 $lang_str['iquest_event_type'] =                        "Typ";
 $lang_str['iquest_event_data'] =                        "Data";
+$lang_str['iquest_event_success'] =                     "Stav";
 
 $lang_str['iquest_event_date_from'] =                   "Od";
 $lang_str['iquest_event_date_to'] =                     "Do";

@@ -160,3 +160,12 @@ div.popover{
 .nowrap{
     white-space:nowrap;
 }
+
+.form-search select{
+    width: 220px;
+}
+
+.form-search #datetimepicker1 input,
+.form-search #datetimepicker2 input{
+    width: 179px;
+}

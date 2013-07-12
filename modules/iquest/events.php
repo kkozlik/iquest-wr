@@ -89,6 +89,7 @@ class Iquest_Events{
 
         if (isset($opt['filter']['team_id']))       $qw[] = $opt['filter']['team_id']->to_sql("e.".$c->team_id);
         if (isset($opt['filter']['type']))          $qw[] = $opt['filter']['type']->to_sql("e.".$c->type);
+        if (isset($opt['filter']['success']))       $qw[] = $opt['filter']['success']->to_sql("e.".$c->success);
 
         if (isset($opt['filter']['date_from']))     $qw[] = $opt['filter']['date_from']->to_sql("UNIX_TIMESTAMP(e.".$c->timestamp.")");
         if (isset($opt['filter']['date_to']))       $qw[] = $opt['filter']['date_to']->to_sql("UNIX_TIMESTAMP(e.".$c->timestamp.")");

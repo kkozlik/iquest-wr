@@ -10,6 +10,8 @@
     <label for="team_id"><div>{$lang_str.iquest_event_team}:</div>{$filter_form.team_id}</label>
 
     <label for="type"><div>{$lang_str.iquest_event_type}:</div>{$filter_form.type}</label>
+
+    <label for="success"><div>{$lang_str.iquest_event_success}:</div>{$filter_form.success}</label>
           
     <label for="date_from"> 
     <div>{$lang_str.iquest_event_date_from}:</div>   

@@ -124,6 +124,11 @@ class apu_iquest_event extends apu_base_class{
             $type_options[] = array("value" => $v, "label" => $v);
         }
         
+        $succes_options = array();
+        $succes_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
+        $succes_options[] = array("value" => "1", "label" => "OK");
+        $succes_options[] = array("value" => "0", "label" => "Error");
+        
         $f = array();
 
         $f[] = array("type"=>"select",
@@ -137,6 +142,12 @@ class apu_iquest_event extends apu_base_class{
                      "size"=>1,
                      "label"=>$lang_str['iquest_event_type'],
                      "options"=>$type_options);
+
+        $f[] = array("type"=>"select",
+                     "name"=>"success",
+                     "size"=>1,
+                     "label"=>$lang_str['iquest_event_success'],
+                     "options"=>$succes_options);
 
         $f[] = array("type"=>"text",
                      "name"=>"date_from",
