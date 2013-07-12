@@ -66,6 +66,30 @@ function enable_countdown(selector, secs){
                 });
 }
 
+/**
+ *  set clock showing server time
+ */ 
+function set_clock(selector, time){
+    
+    // First get difference between client and server time and store it into 
+    // diff variable.
+    var client_time = new Date();
+    var server_time = new Date();
+    server_time.setTime(time*1000);
+
+    var diff = server_time.getTime() - client_time.getTime();
+
+    setInterval(function() {
+        // Every second get actual client time and shift it of time difference
+        // so we will gain the server time.
+        var current_time = new Date();
+        current_time.setTime(current_time.getTime() + diff);
+        
+        // Format the time to string
+        $(selector).text(current_time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"));
+    }, 1000);
+}
+
 
 $(window).load(function() {
     resize_images();

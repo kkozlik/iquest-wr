@@ -13,6 +13,8 @@
 
         <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
+        <div class="nav pull-right clock">{$lang_str.iquest_txt_current_time}<br /><span id="current_time">{$current_time}</span></div>
+
 		<ul class="nav pull-right">
             {if $parameters.overview_url|default:0}
 			<li><a href='{$parameters.overview_url|escape}'>{$lang_str.iquest_l_overview}</a></li>

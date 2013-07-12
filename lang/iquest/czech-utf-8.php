@@ -27,6 +27,7 @@ $lang_str['iquest_l_logout'] =                          "Odhlásit se";
 
 $lang_str['iquest_txt_next_hint'] =                     "Další nápovědu získáte za";
 $lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozradíme za";
+$lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
 
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";

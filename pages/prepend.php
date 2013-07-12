@@ -53,4 +53,8 @@ if (!empty($_SESSION['auth']) and
 
     $smarty->assign("team_name", $_SESSION['auth']->get_team_name());
 }
+
+$controler->set_onload_js("set_clock('#current_time', ".time().");");
+$smarty->assign("current_time", date("H:i:s"));
+
 ?>
