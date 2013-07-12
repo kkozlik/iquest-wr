@@ -5,12 +5,12 @@ $_phplib_page_open = array("sess" => "iquest_org_session",
 
 $_data_layer_required_methods=array();
 $_required_modules = array('iquest', 'auth');
-$_required_apu = array('apu_iquest_org'); 
+$_required_apu = array('apu_iquest_hq'); 
 
 require dirname(__FILE__)."/prepend.php";
 
 
-$apu    = new apu_iquest_org();
+$apu    = new apu_iquest_hq();
 
 
 $controler->add_apu($apu);

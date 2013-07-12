@@ -42,7 +42,7 @@
  *  
  */
 
-class apu_iquest_org extends apu_base_class{
+class apu_iquest_hq extends apu_base_class{
 
     protected $ref_id;
     protected $team_id;
@@ -87,11 +87,11 @@ class apu_iquest_org extends apu_base_class{
     function init(){
         parent::init();
 
-        if (!isset($_SESSION['apu_iquest_org'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest_org'][$this->opt['instance_id']] = array();
+        if (!isset($_SESSION['apu_iquest_hq'][$this->opt['instance_id']])){
+            $_SESSION['apu_iquest_hq'][$this->opt['instance_id']] = array();
         }
         
-        $this->session = &$_SESSION['apu_iquest_org'][$this->opt['instance_id']];
+        $this->session = &$_SESSION['apu_iquest_hq'][$this->opt['instance_id']];
         
     }
 
