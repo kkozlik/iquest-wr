@@ -41,7 +41,7 @@
 
 {else}
 
-    <div class="horizontal-scrollbar">     
+    <div class="horizontal-scrollbar" id="iscroll">     
     <table class="table table-bordered summary">
     <tr>
     <th>&nbsp;</th>
@@ -69,3 +69,20 @@
 <br>
 {include file='_tail.tpl'}
 
+{if $action=='default'}
+{literal}
+    <script type="text/javascript">
+
+    var ua = navigator.userAgent.toLowerCase();
+    var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+    var isIphone = ((ua.indexOf("iphone") > -1) || (ua.indexOf("ipod") > -1));
+    
+    if (isAndroid || isIphone){
+        var myScroll = new iScroll('iscroll', {
+                                        momentum: false,
+                                        bounce: false
+                                });
+    }
+    </script>
+{/literal}
+{/if}

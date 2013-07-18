@@ -15,6 +15,7 @@ $apu    = new apu_iquest_hq();
 
 $controler->add_apu($apu);
 $controler->set_template_name('hq/main.tpl');
+$controler->add_required_javascript('iscroll.js');
 $controler->start();
 
 

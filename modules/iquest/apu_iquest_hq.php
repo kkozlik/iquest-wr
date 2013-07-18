@@ -55,7 +55,7 @@ class apu_iquest_hq extends apu_base_class{
     protected $smarty_teams;
     protected $smarty_cgrp_team;
     protected $smarty_clues;
-    protected $smarty_action;
+    protected $smarty_action = "default";
 
     /**
      *  constructor 
