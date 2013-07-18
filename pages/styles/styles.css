@@ -157,6 +157,12 @@ span.newhint{
     color: #468847;
 }
 
+.table.summary th.deactivated,
+.table.summary th.deactivated a{
+    background-color: #FAA732;
+    color: #FFFFFF;
+}
+
 .horizontal-scrollbar{
     overflow-x: auto;
 }

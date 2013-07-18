@@ -52,7 +52,8 @@
 
     {foreach $teams as $team}
     <tr>
-    <th><a href="{$team.graph_url|escape}">{$team.name|escape}</a></th>
+    <th {if !$team.active}class="deactivated"{/if}>
+        <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a></th>
         {foreach $clue_groups as $group}
         <td {if $cgrp_team[$group.id][$team.id].solved}class="solved"{/if}>
         {$cgrp_team[$group.id][$team.id].gained_at|escape}
@@ -76,12 +77,21 @@
     var ua = navigator.userAgent.toLowerCase();
     var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
     var isIphone = ((ua.indexOf("iphone") > -1) || (ua.indexOf("ipod") > -1));
-    
+
     if (isAndroid || isIphone){
+        /*
+        iscroll do nto work well on android. It's quite slow.
+            
         var myScroll = new iScroll('iscroll', {
                                         momentum: false,
                                         bounce: false
+                                        //hideScrollbar: true
                                 });
+        */
+
+        // Instead of using iscroll remove the scrolling capability from
+        // the elemenet on devices that do not support it. 
+        $("#iscroll").attr('class', '');
     }
     </script>
 {/literal}

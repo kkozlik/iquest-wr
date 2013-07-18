@@ -1707,6 +1707,7 @@ class Iquest_solution_graph{
 class Iquest_Team{
     public $id;
     public $name;
+    public $active;
 
     static function fetch($opt=array()){
         global $data, $config;
@@ -1724,7 +1725,8 @@ class Iquest_Team{
 
 
         $q = "select t.".$ct->id.",
-                     t.".$ct->name."
+                     t.".$ct->name.",
+                     t.".$ct->active."
               from ".$tt_name." t ".
               $qw;
 
@@ -1734,21 +1736,24 @@ class Iquest_Team{
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             $out[$row[$ct->id]] =  new Iquest_Team($row[$ct->id], 
-                                                   $row[$ct->name]);
+                                                   $row[$ct->name],
+                                                   $row[$ct->active]);
         }
         $res->free();
         return $out;
     }
 
-    function __construct($id, $name){
+    function __construct($id, $name, $active){
         $this->id =         $id;
         $this->name =       $name;
+        $this->active =     $active;
     }
 
     function to_smarty(){
         $out = array();
         $out['id'] = $this->id;
         $out['name'] = $this->name;
+        $out['active'] = $this->active;
         return $out;
     }
 

@@ -1,3 +1,15 @@
+iquest (0.0.8) precise; urgency=low
+
+  * removing scrolling capability from HQ overwiev screen on mobile devices
+
+ -- Karel Kozlík <kk@kk-nb>  Thu, 18 Jul 2013 22:37:06 +0200
+
+iquest (0.0.7) precise; urgency=low
+
+  * Minor fixes
+
+ -- Karel Kozlík <kk@kk-nb>  Thu, 18 Jul 2013 22:10:55 +0200
+
 iquest (0.0.6) precise; urgency=low
 
   * Minor fixes
