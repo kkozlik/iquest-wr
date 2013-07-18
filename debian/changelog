@@ -1,3 +1,9 @@
+iquest (0.0.6) precise; urgency=low
+
+  * Minor fixes
+
+ -- Karel Kozlík <kk@kk-nb>  Fri, 12 Jul 2013 23:06:05 +0200
+
 iquest (0.0.5) precise; urgency=low
 
   * Headquoters interface

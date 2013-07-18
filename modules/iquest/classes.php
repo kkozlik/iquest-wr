@@ -37,6 +37,7 @@ class Iquest_file{
         case "jpg":     return "image/jpeg";
         case "mp3":     return "audio/mpeg";
         case "avi":     return "video/x-msvideo";
+        case "mp4":     return "video/mp4";
         default:        return "application/octet-string";
         }
         
