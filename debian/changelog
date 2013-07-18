@@ -1,3 +1,9 @@
+iquest (0.0.9) precise; urgency=low
+
+  * Highlight deactivated teams on HQ
+
+ -- Karel Kozlík <kk@kk-nb>  Thu, 18 Jul 2013 22:56:12 +0200
+
 iquest (0.0.8) precise; urgency=low
 
   * removing scrolling capability from HQ overwiev screen on mobile devices
