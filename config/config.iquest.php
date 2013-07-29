@@ -1,6 +1,6 @@
 <?php
 
-
+if (!isset($config->iquest)) $config->iquest = new stdclass();
 $config->iquest->graphviz_cmd = "dot";
 
 

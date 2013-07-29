@@ -1,6 +1,8 @@
 <?php
 
 
+if (!isset($config->iquest_auth)) $config->iquest_auth = new stdclass();
+
 /**
  *  Credentials for admin users.
  *  Array of credentials in format: "username" => "password" 
