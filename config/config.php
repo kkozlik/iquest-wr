@@ -24,7 +24,7 @@
 
 
     $config->img_src_path =     $config->root_path."img/";
-    $config->iquest_data_dir = realpath($_SERWEB["configdir"]."../data")."/";
+    $config->iquest_data_dir = realpath($_SERWEB["approotdir"]."data")."/";
 
     $config->enable_logging = true;
     $config->log_file = "/var/log/iquest";

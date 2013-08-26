@@ -1,3 +1,9 @@
+iquest (0.0.10) precise; urgency=low
+
+  * Surpress php5.4 warnings
+
+ -- Karel Kozlík <kk@kk-nb>  Mon, 29 Jul 2013 21:17:49 +0200
+
 iquest (0.0.9) precise; urgency=low
 
   * Highlight deactivated teams on HQ
