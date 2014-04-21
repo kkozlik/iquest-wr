@@ -3,6 +3,15 @@
 /* This file can redefine any config value from framework
  */
 
+    /** 
+     *  Default timezone:
+     *         
+     *  List of supported timezones:
+     *  http://www.php.net/manual/en/timezones.php
+     */ 
+    $config->timezone = "Europe/Prague";
+
+
     $config->data_sql->abstraction_layer="MDB2";
 
     $config->data_sql->type="mysqli";            //type of db host, enter "mysql" for MySQL or "pgsql" for PostgreSQL
