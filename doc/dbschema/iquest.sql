@@ -1,9 +1,9 @@
 # --------------------------------------------------------
 # Host:                         kk-iquest
-# Server version:               5.1.66-0+squeeze1
+# Server version:               5.5.31-0+wheezy1
 # Server OS:                    debian-linux-gnu
 # HeidiSQL version:             6.0.0.3603
-# Date/time:                    2013-06-30 19:11:24
+# Date/time:                    2014-04-22 20:56:45
 # --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -23,11 +23,12 @@ CREATE TABLE IF NOT EXISTS `clue` (
   `cgrp_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `filename` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `content_type` varchar(45) COLLATE utf8_czech_ci NOT NULL,
+  `type` enum('regular','coin') COLLATE utf8_czech_ci NOT NULL DEFAULT 'regular',
   `comment` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
   `ordering` int(11) NOT NULL,
   PRIMARY KEY (`clue_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
-  KEY `fk_task_part_task1` (`cgrp_id`)
+  KEY `fk_task_part_task` (`cgrp_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -51,8 +52,33 @@ CREATE TABLE IF NOT EXISTS `clue_point_to_solution` (
   `clue_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `solution_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   PRIMARY KEY (`clue_id`,`solution_id`),
-  KEY `fk_clue_has_task_solution_task_solution1` (`solution_id`),
-  KEY `fk_clue_has_task_solution_clue1` (`clue_id`)
+  KEY `fk_clue_has_task_solution_task_solution` (`solution_id`),
+  KEY `fk_clue_has_task_solution_clue` (`clue_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table iquest.coin
+CREATE TABLE IF NOT EXISTS `coin` (
+  `coin_id` int(11) NOT NULL AUTO_INCREMENT,
+  `coin_key` varchar(64) COLLATE utf8_czech_ci NOT NULL,
+  `value` decimal(5,2) NOT NULL,
+  PRIMARY KEY (`coin_id`),
+  UNIQUE KEY `coin_key_UNIQUE` (`coin_key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+# Data exporting was unselected.
+
+
+# Dumping structure for table iquest.coin_team
+CREATE TABLE IF NOT EXISTS `coin_team` (
+  `coin_id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `gained_at` datetime NOT NULL,
+  PRIMARY KEY (`coin_id`,`team_id`),
+  KEY `fk_coin_has_team_team` (`team_id`),
+  KEY `fk_coin_has_team_coin` (`coin_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -80,7 +106,9 @@ CREATE TABLE IF NOT EXISTS `hint` (
   `clue_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `filename` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `content_type` varchar(45) COLLATE utf8_czech_ci NOT NULL,
-  `timeout` time NOT NULL,
+  `timeout` time DEFAULT NULL,
+  `price` decimal(5,2) DEFAULT NULL,
+  `ordering` int(11) NOT NULL,
   `comment` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
   PRIMARY KEY (`hint_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
@@ -96,8 +124,10 @@ CREATE TABLE IF NOT EXISTS `hint_team` (
   `hint_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `show_at` datetime NOT NULL,
   PRIMARY KEY (`team_id`,`hint_id`),
-  KEY `fk_hint_has_team_team1` (`team_id`),
-  KEY `fk_hint_has_team_hint1` (`hint_id`)
+  KEY `fk_hint_has_team_team` (`team_id`),
+  KEY `fk_hint_has_team_hint` (`hint_id`),
+  CONSTRAINT `fk_hint_team_hint` FOREIGN KEY (`hint_id`) REFERENCES `hint` (`hint_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_hint_team_team` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -110,7 +140,8 @@ CREATE TABLE IF NOT EXISTS `message` (
   `text` text COLLATE utf8_czech_ci NOT NULL,
   `for_team_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`message_id`),
-  KEY `fk_message_team1` (`for_team_id`)
+  KEY `fk_message_team` (`for_team_id`),
+  CONSTRAINT `fk_message_team` FOREIGN KEY (`for_team_id`) REFERENCES `team` (`team_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -121,8 +152,10 @@ CREATE TABLE IF NOT EXISTS `message_accepted` (
   `team_id` int(11) NOT NULL,
   `message_id` int(11) NOT NULL,
   PRIMARY KEY (`team_id`,`message_id`),
-  KEY `fk_message_has_team_team1` (`team_id`),
-  KEY `fk_message_has_team_message1` (`message_id`)
+  KEY `fk_message_has_team_team` (`team_id`),
+  KEY `fk_message_has_team_message` (`message_id`),
+  CONSTRAINT `fk_message_accepted_team` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_message_accepted_message` FOREIGN KEY (`message_id`) REFERENCES `message` (`message_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -134,8 +167,10 @@ CREATE TABLE IF NOT EXISTS `open_cgrp_team` (
   `cgrp_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `gained_at` datetime NOT NULL COMMENT 'timestamp specifing when the task has been opened\n',
   PRIMARY KEY (`team_id`,`cgrp_id`),
-  KEY `fk_team_has_task_task1` (`cgrp_id`),
-  KEY `fk_team_has_task_team1` (`team_id`)
+  KEY `fk_team_has_task_task` (`cgrp_id`),
+  KEY `fk_team_has_task_team` (`team_id`),
+  CONSTRAINT `fk_open_cgrp_team_team` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_open_cgrp_team_clue_grp` FOREIGN KEY (`cgrp_id`) REFERENCES `clue_grp` (`cgrp_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci COMMENT='list of open tasks for each team';
 
 # Data exporting was unselected.
@@ -165,7 +200,8 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `cgrp_id_UNIQUE` (`cgrp_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
-  KEY `fk_task_solution_clue_grp1` (`cgrp_id`)
+  UNIQUE KEY `solution_key_UNIQUE` (`solution_key`),
+  KEY `fk_task_solution_clue_grp` (`cgrp_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -177,8 +213,10 @@ CREATE TABLE IF NOT EXISTS `task_solution_team` (
   `solution_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `show_at` datetime NOT NULL,
   PRIMARY KEY (`team_id`,`solution_id`),
-  KEY `fk_task_solution_has_team_team1` (`team_id`),
-  KEY `fk_task_solution_has_team_task_solution1` (`solution_id`)
+  KEY `fk_task_solution_has_team_team` (`team_id`),
+  KEY `fk_task_solution_has_team_task_solution` (`solution_id`),
+  CONSTRAINT `fk_task_solution_team_task_solution` FOREIGN KEY (`solution_id`) REFERENCES `task_solution` (`solution_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_task_solution_team_team` FOREIGN KEY (`team_id`) REFERENCES `team` (`team_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
@@ -191,6 +229,7 @@ CREATE TABLE IF NOT EXISTS `team` (
   `username` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `passwd` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
+  `wallet` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`team_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
