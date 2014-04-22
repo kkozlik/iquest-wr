@@ -323,9 +323,11 @@ class Chroust{
         $ref_id = rfc4122_uuid();
         $content_type = Iquest_file::get_mime_type($filename);
         $point_to = $metadata->get_clue_point_to($clue_nr);
-        
+
+// @todo: set correct type        
         $clue = new Iquest_Clue($cgrp_id."-".$clue_nr, $ref_id, 
-                $filename, $content_type, null, $cgrp_id, $clue_nr, $point_to);
+                $filename, $content_type, Iquest_Clue::TYPE_REGULAR,
+                null, $cgrp_id, $clue_nr, $point_to);
 
         $clue->insert();
         return $clue;
@@ -350,9 +352,10 @@ class Chroust{
         if (!isset($clues[$clue_id])){
             throw new exception("Invalid clue_ID '$clue_id' specified for a hint.");
         }
-        
+
+// @todo: set price and ordering        
         $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
-                $filename, $content_type, null, $clue_id, $timeout);
+                $filename, $content_type, null, $clue_id, $timeout, 0, 0);
 
         $hint->insert();
         return $hint;

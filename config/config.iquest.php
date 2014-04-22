@@ -46,6 +46,7 @@ $config->data_sql->iquest_clue->cols->ref_id =          "ref_id";
 $config->data_sql->iquest_clue->cols->cgrp_id =         "cgrp_id";
 $config->data_sql->iquest_clue->cols->filename =        "filename";
 $config->data_sql->iquest_clue->cols->content_type =    "content_type";
+$config->data_sql->iquest_clue->cols->type =            "type";
 $config->data_sql->iquest_clue->cols->comment =         "comment";
 $config->data_sql->iquest_clue->cols->ordering =        "ordering";
 
@@ -77,6 +78,8 @@ $config->data_sql->iquest_hint->cols->clue_id =         "clue_id";
 $config->data_sql->iquest_hint->cols->filename =        "filename";
 $config->data_sql->iquest_hint->cols->content_type =    "content_type";
 $config->data_sql->iquest_hint->cols->timeout =         "timeout";
+$config->data_sql->iquest_hint->cols->price =           "price";
+$config->data_sql->iquest_hint->cols->ordering =        "ordering";
 $config->data_sql->iquest_hint->cols->comment =         "comment";
 
 

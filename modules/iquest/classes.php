@@ -130,9 +130,13 @@ class Iquest_file{
 class Iquest_Clue extends Iquest_file{
     public $cgrp_id;
     public $ordering;
+    public $type;
     public $point_to; // point to solution
     
     private $hints = null;
+
+    const TYPE_REGULAR = "regular";
+    const TYPE_COIN    = "coin";
 
     /**
      *  Fetch clues form DB
@@ -160,6 +164,7 @@ class Iquest_Clue extends Iquest_file{
                      c.".$cc->cgrp_id.",
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
+                     c.".$cc->type.", 
                      c.".$cc->comment.", 
                      c.".$cc->ordering." 
               from ".$tc_name." c ".
@@ -175,6 +180,7 @@ class Iquest_Clue extends Iquest_file{
                                                    $row[$cc->ref_id],
                                                    $row[$cc->filename],
                                                    $row[$cc->content_type],
+                                                   $row[$cc->type],
                                                    $row[$cc->comment],
                                                    $row[$cc->cgrp_id],
                                                    $row[$cc->ordering]);
@@ -183,10 +189,11 @@ class Iquest_Clue extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $cgrp_id, $ordering, $point_to=array()){
+    function __construct($id, $ref_id, $filename, $content_type, $type, $comment, $cgrp_id, $ordering, $point_to=array()){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->cgrp_id = $cgrp_id;
+        $this->type = $type;
         $this->ordering = $ordering;
         $this->point_to = $point_to;
     }
@@ -206,6 +213,7 @@ class Iquest_Clue extends Iquest_file{
                     ".$cc->ref_id.",
                     ".$cc->filename.",
                     ".$cc->content_type.",
+                    ".$cc->type.",
                     ".$cc->comment.", 
                     ".$cc->cgrp_id.",
                     ".$cc->ordering."
@@ -215,6 +223,7 @@ class Iquest_Clue extends Iquest_file{
                     ".$data->sql_format($this->ref_id,          "s").",
                     ".$data->sql_format($this->filename,        "s").",
                     ".$data->sql_format($this->content_type,    "s").",
+                    ".$data->sql_format($this->type,            "s").",
                     ".$data->sql_format($this->comment,         "S").",
                     ".$data->sql_format($this->cgrp_id,         "s").",
                     ".$data->sql_format($this->ordering,        "n")."
@@ -262,6 +271,7 @@ class Iquest_Clue extends Iquest_file{
 
     function to_smarty(){
         $out = parent::to_smarty();
+        $out['type'] = $this->type;
         $out['hints'] = array();
 
         if (!is_null($this->hints)){
@@ -560,6 +570,8 @@ class Iquest_Hint extends Iquest_file{
     public $clue_id;
     public $timeout;
     public $show_at;
+    public $price;
+    public $ordering;
 
     /**
      *  Fetch hits form DB
@@ -618,6 +630,8 @@ class Iquest_Hint extends Iquest_file{
                      h.".$ch->filename.",
                      h.".$ch->content_type.",
                      time_to_sec(h.".$ch->timeout.") as ".$ch->timeout.", 
+                     h.".$ch->price.",
+                     h.".$ch->ordering.",
                      h.".$ch->comment.
                      $cols." 
               from ".$th_name." h ".implode(" ", $join).
@@ -638,6 +652,8 @@ class Iquest_Hint extends Iquest_file{
                                                    $row[$ch->comment],
                                                    $row[$ch->clue_id],
                                                    $row[$ch->timeout],
+                                                   $row[$ch->price],
+                                                   $row[$ch->ordering],
                                                    $row[$ct->show_at]);
         }
         $res->free();
@@ -737,11 +753,13 @@ class Iquest_Hint extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $show_at=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->clue_id = $clue_id;
         $this->timeout = $timeout;
+        $this->price = $price;
+        $this->ordering = $ordering;
         $this->show_at = $show_at;
     }
 
@@ -760,7 +778,9 @@ class Iquest_Hint extends Iquest_file{
                     ".$c->content_type.",
                     ".$c->comment.", 
                     ".$c->clue_id.",
-                    ".$c->timeout."
+                    ".$c->timeout.",
+                    ".$c->price.",
+                    ".$c->ordering."
               )
               values(
                     ".$data->sql_format($this->id,              "s").",
@@ -769,7 +789,9 @@ class Iquest_Hint extends Iquest_file{
                     ".$data->sql_format($this->content_type,    "s").",
                     ".$data->sql_format($this->comment,         "S").",
                     ".$data->sql_format($this->clue_id,         "s").",
-                    sec_to_time(".$data->sql_format($this->timeout, "n").")
+                    sec_to_time(".$data->sql_format($this->timeout, "n").",
+                    ".$data->sql_format($this->price,           "n").",
+                    ".$data->sql_format($this->ordering,        "n").")
               )";
 
         $res=$data->db->query($q);
@@ -1708,6 +1730,7 @@ class Iquest_Team{
     public $id;
     public $name;
     public $active;
+    public $wallet;
 
     static function fetch($opt=array()){
         global $data, $config;
@@ -1726,7 +1749,8 @@ class Iquest_Team{
 
         $q = "select t.".$ct->id.",
                      t.".$ct->name.",
-                     t.".$ct->active."
+                     t.".$ct->active.",
+                     t.".$ct->wallet."
               from ".$tt_name." t ".
               $qw;
 
@@ -1737,16 +1761,18 @@ class Iquest_Team{
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             $out[$row[$ct->id]] =  new Iquest_Team($row[$ct->id], 
                                                    $row[$ct->name],
-                                                   $row[$ct->active]);
+                                                   $row[$ct->active],
+                                                   $row[$ct->wallet]);
         }
         $res->free();
         return $out;
     }
 
-    function __construct($id, $name, $active){
+    function __construct($id, $name, $active, $wallet){
         $this->id =         $id;
         $this->name =       $name;
         $this->active =     $active;
+        $this->wallet =     $wallet;
     }
 
     function to_smarty(){
@@ -1756,6 +1782,8 @@ class Iquest_Team{
         $out['active'] = $this->active;
         return $out;
     }
+
+    //@todo: update wallet
 
 }
 

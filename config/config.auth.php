@@ -26,6 +26,7 @@ $config->data_sql->iquest_team->cols->name =        "name";
 $config->data_sql->iquest_team->cols->username =    "username";
 $config->data_sql->iquest_team->cols->passwd =      "passwd";
 $config->data_sql->iquest_team->cols->active =      "active";     
+$config->data_sql->iquest_team->cols->wallet =      "wallet";     
 
 
 
