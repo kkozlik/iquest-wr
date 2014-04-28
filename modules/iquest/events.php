@@ -7,11 +7,15 @@ class Iquest_Events{
     const KEY    = "key_entered";
     const LOGOUT = "logout";
     const GIVEITUP = "giveitup";
+    const COIN_GAIN  = "coin_gain";
+    const COIN_SPEND = "coin_spend";
 
     public static $supported_types = array(self::LOGGED,
                                            self::KEY,
                                            self::LOGOUT,
-                                           self::GIVEITUP); 
+                                           self::GIVEITUP,
+                                           self::COIN_GAIN,
+                                           self::COIN_SPEND); 
 
     public $id;
     public $team_id;

@@ -1246,6 +1246,8 @@ class Iquest{
         // 2. Open new clue group
         self::_open_cgrp($solution->cgrp_id, $team_id, $log_prefix);
 
+        self::gain_coins($team_id, $solution->coin_value);
+
         // 3. Schedule show time for new hints
         self::_schedule_new_hints($solution->cgrp_id, $team_id, $log_prefix);
 
@@ -1284,6 +1286,30 @@ class Iquest{
         
     }
 
+    /**
+     *  Add coins to the wallet of the team
+     */         
+    public static function gain_coins($team_id, $value){
+        global $lang_str;
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
+        
+        if ($value > 0){
+            sw_log($log_prefix."*** Gained coins ($value)", PEAR_LOG_INFO);
+
+            Iquest_Events::add(Iquest_Events::COIN_GAIN,
+                               true,
+                               array("gained_coins" => $value));
+            
+            Iquest_info_msg::add_msg(
+                str_replace("<value>", 
+                            $value, 
+                            $lang_str['iquest_msg_coin_gained']));
+
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $team->wallet_add_money($value);
+        }
+    }
 
     /**
      *  Open new clue group
@@ -1741,6 +1767,10 @@ class Iquest_Team{
     public $active;
     public $wallet;
 
+    static function fetch_by_id($id){
+        return reset(static::fetch(array("id" => $id)));
+    }
+    
     static function fetch($opt=array()){
         global $data, $config;
 
@@ -1783,6 +1813,37 @@ class Iquest_Team{
         $this->active =     $active;
         $this->wallet =     $wallet;
     }
+    
+    function wallet_add_money($value){
+        $this->wallet += $value;
+        $this->update();
+    }
+
+    function wallet_spend_money($value){
+        
+        if ($this->wallet < $value) {
+            throw new UnderflowException("Cannot spend $value, not enought money in the wallet. Wallet value: {$this->wallet}");
+        }
+        
+        $this->wallet -= $value;
+        $this->update();
+    }
+    
+    private function update(){
+        global $data, $config;
+
+        /* table's name */
+        $tt_name = &$config->data_sql->iquest_team->table_name;
+        /* col names */
+        $ct      = &$config->data_sql->iquest_team->cols;
+        
+        $q = "update ".$tt_name." set 
+                ".$ct->wallet." = ".$data->sql_format($this->wallet, "n")."
+              where ".$ct->id." = ".$data->sql_format($this->id, "n");
+        
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    }
 
     function to_smarty(){
         $out = array();
@@ -1792,8 +1853,19 @@ class Iquest_Team{
         return $out;
     }
 
-    //@todo: update wallet
+}
+
+class Iquest_info_msg{
+
+    public static function add_msg($msg){
+        global $controler;
+        
+        $info_msg['long'] = $msg;
+        $controler->add_message($info_msg);
+    }
+
 
 }
+
 
 ?>

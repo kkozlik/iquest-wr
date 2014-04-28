@@ -18,6 +18,7 @@ $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
+$lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> iqc)";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";
