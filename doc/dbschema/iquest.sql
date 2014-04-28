@@ -3,7 +3,7 @@
 # Server version:               5.5.31-0+wheezy1
 # Server OS:                    debian-linux-gnu
 # HeidiSQL version:             6.0.0.3603
-# Date/time:                    2014-04-22 20:56:45
+# Date/time:                    2014-04-28 19:28:10
 # --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -197,6 +197,7 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `content_type` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `comment` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
   `timeout` time NOT NULL,
+  `coin_value` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `cgrp_id_UNIQUE` (`cgrp_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),

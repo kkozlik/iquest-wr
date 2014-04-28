@@ -380,9 +380,10 @@ class Chroust{
         self::$summary[] = array("name" => $name,
                                  "key"  => $metadata->get_solution_key(),
                                  "ordering" => $metadata->get_cgrp_order());
-        
+
+// @todo: add proper coin_value        
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
-                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key);
+                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key, 0);
 
         $solution->insert();
         return $solution;

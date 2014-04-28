@@ -815,6 +815,7 @@ class Iquest_Solution extends Iquest_file{
     public $key;
     public $timeout;
     public $show_at;
+    public $coin_value;
 
     /**
      *  Instantiate solution by key
@@ -901,7 +902,8 @@ class Iquest_Solution extends Iquest_file{
                      time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
                      c.".$cc->comment.",
                      c.".$cc->name.",
-                     c.".$cc->key.
+                     c.".$cc->key.",
+                     c.".$cc->coin_value.
                      $cols." 
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
@@ -922,6 +924,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->cgrp_id],
                                                        $row[$cc->timeout],
                                                        $row[$cc->key],
+                                                       $row[$cc->coin_value],
                                                        $row[$ct->show_at]);
         }
         $res->free();
@@ -970,6 +973,7 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->comment.",
                      s.".$cs->name.",
                      s.".$cs->key.",
+                     s.".$cs->coin_value.",
                      (".$q2.") as ".$ct->show_at."  
               from ".$ts_name." s
                 join ".$tcs_name." cs on cs.".$ccs->solution_id."=s.".$cs->id."
@@ -990,6 +994,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->cgrp_id],
                                                        $row[$cs->timeout],
                                                        $row[$cs->key],
+                                                       $row[$cc->coin_value],
                                                        $row[$ct->show_at]);
         }
         $res->free();
@@ -1087,13 +1092,15 @@ class Iquest_Solution extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $name, $cgrp_id, $timeout, $key, $show_at=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
+                         $cgrp_id, $timeout, $key, $coin_value, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
         $this->cgrp_id = $cgrp_id;
         $this->timeout = $timeout;
         $this->key = $key;
+        $this->coin_value = $coin_value;
         $this->show_at = $show_at;
     }
 
@@ -1114,6 +1121,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->cgrp_id.",
                     ".$c->name.",
                     ".$c->key.",
+                    ".$c->coin_value.",
                     ".$c->timeout."
               )
               values(
@@ -1125,6 +1133,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->cgrp_id,         "s").",
                     ".$data->sql_format($this->name,            "s").",
                     ".$data->sql_format($this->key,             "s").",
+                    ".$data->sql_format($this->coin_value,      "n").",
                     sec_to_time(".$data->sql_format($this->timeout, "n").")
               )";
 
