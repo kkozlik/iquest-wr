@@ -130,6 +130,32 @@ $config->data_sql->iquest_solution_team->cols->show_at =        "show_at";
 
 
 /**
+ *      coin
+ */ 
+$config->data_sql->iquest_coin = new stdClass();
+$config->data_sql->iquest_coin->cols = new stdClass();
+        
+$config->data_sql->iquest_coin->table_name =            "coin";
+
+$config->data_sql->iquest_coin->cols->id =              "coin_id";
+$config->data_sql->iquest_coin->cols->key =             "coin_key";
+$config->data_sql->iquest_coin->cols->value =           "value";
+
+
+/**
+ *      coin_team
+ */ 
+$config->data_sql->iquest_coin_team = new stdClass();
+$config->data_sql->iquest_coin_team->cols = new stdClass();
+        
+$config->data_sql->iquest_coin_team->table_name =           "coin_team";
+
+$config->data_sql->iquest_coin_team->cols->team_id =        "team_id";
+$config->data_sql->iquest_coin_team->cols->coin_id =        "coin_id";
+$config->data_sql->iquest_coin_team->cols->gained_at =      "gained_at";
+
+
+/**
  *      option
  */ 
 $config->data_sql->iquest_option = new stdClass();

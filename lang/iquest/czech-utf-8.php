@@ -11,6 +11,7 @@ $lang_str['iquest_hint'] =                              "Nápověda";
 $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není správně.";
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";
+$lang_str['iquest_err_coin_key_dup'] =                  "To na nás nezkoušejte :-). Tuto minci jste již získali.";
 $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
 
 $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
