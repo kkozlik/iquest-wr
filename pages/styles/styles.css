@@ -81,7 +81,8 @@
 }
 
 span.new,
-span.newhint{
+span.newhint,
+span.coin{
     display: block;
     float: right;
     width: 30px;
@@ -93,6 +94,9 @@ span.new{
 }
 span.newhint{
     background-image: url("../img/hint.png");
+}
+span.coin{
+    background-image: url("../img/coin.png");
 }
 
 

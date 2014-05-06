@@ -15,7 +15,9 @@
     <div class="datatable clue">
     <table class="table table-bordered">
     <tr>
-        <th class="filename">{$clue.filename}</th>
+        <th class="filename">{$clue.filename}
+            {if $clue.type=="coin"}<span class="coin"></span>{/if}
+        </th>
         <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
     </tr>
     {call iquestRenderFile file=$clue}

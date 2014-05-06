@@ -1,9 +1,9 @@
-table clue.type
 
 CHROUST
 -------
 
 * plnit tabulku coin, vyprazdnovat coint_team
+* v tabulce clue spravne vyplnovat type
 
 NICE TO HAVE
 ------------
