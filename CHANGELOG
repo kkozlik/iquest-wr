@@ -1,6 +1,7 @@
 rel 0.1.0
 
 * Set timezone in config file
+* New config option $config->iquest->wallet_active
 
  
 rel 0.0.10

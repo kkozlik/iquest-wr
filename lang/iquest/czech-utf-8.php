@@ -31,6 +31,9 @@ $lang_str['iquest_txt_next_hint'] =                     "Další nápovědu zís
 $lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozradíme za";
 $lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
 
+$lang_str['iquest_txt_wallet_state'] =                  "Vaše peněženka";
+$lang_str['iquest_txt_coin_symbol'] =                   "iqc";
+
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";
 $lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";

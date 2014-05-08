@@ -13,6 +13,10 @@
 
         <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
 
+        {if $parameters.display_wallet|default:0 and $team|default:0}
+        <div class="nav pull-right wallet">{$lang_str.iquest_txt_wallet_state}<br />{$team.wallet|string_format:"%.2f"} {$lang_str.iquest_txt_coin_symbol}</div>
+        {/if}
+
         <div class="nav pull-right clock">{$lang_str.iquest_txt_current_time}<br /><span id="current_time">{$current_time}</span></div>
 
 		<ul class="nav pull-right">

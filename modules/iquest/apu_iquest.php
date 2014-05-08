@@ -59,6 +59,7 @@ class apu_iquest extends apu_base_class{
     protected $smarty_solutions;
     protected $smarty_next_solution = null;
     protected $smarty_next_hint = null;
+    protected $smarty_team = null;
 
     /** 
      *  return required data layer methods - static class 
@@ -102,6 +103,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_groups'] =       'clue_groups';
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_solutions'] =    'solutions';
+        $this->opt['smarty_team'] =         'team';
 
         $this->opt['smarty_next_solution'] =    'next_solution';
         $this->opt['smarty_next_hint'] =        'next_hint';
@@ -156,6 +158,11 @@ class apu_iquest extends apu_base_class{
                 $this->controler->set_onload_js("enable_countdown('#hint_countdown', $show_after);");
             }
         }
+    }
+    
+    function get_team_info(){
+        $team = Iquest_Team::fetch_by_id($this->team_id);
+        $this->smarty_team = $team->to_smarty();
     }
     
     /**
@@ -240,6 +247,7 @@ class apu_iquest extends apu_base_class{
         }
 
         $this->get_timeouts();
+        $this->get_team_info();
         $this->session['known_cgrps'][$this->clue_grp->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View clue group screen");
@@ -260,6 +268,7 @@ class apu_iquest extends apu_base_class{
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
 
         $this->get_timeouts();
+        $this->get_team_info();
         $this->session['known_solutions'][$this->solution->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
@@ -320,6 +329,7 @@ class apu_iquest extends apu_base_class{
         }
 
         $this->get_timeouts();
+        $this->get_team_info();
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
@@ -553,6 +563,8 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);
+
+        $smarty->assign($this->opt['smarty_team'], $this->smarty_team);
 
         $smarty->assign($this->opt['smarty_next_solution'], $this->smarty_next_solution);
         $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);

@@ -2043,6 +2043,7 @@ class Iquest_Team{
         $out['id'] = $this->id;
         $out['name'] = $this->name;
         $out['active'] = $this->active;
+        $out['wallet'] = $this->wallet;
         return $out;
     }
 
