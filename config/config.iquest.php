@@ -94,6 +94,7 @@ $config->data_sql->iquest_hint_team->table_name =           "hint_team";
 $config->data_sql->iquest_hint_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_hint_team->cols->hint_id =        "hint_id";
 $config->data_sql->iquest_hint_team->cols->show_at =        "show_at";
+$config->data_sql->iquest_hint_team->cols->for_sale =       "for_sale";
 
 
 /**

@@ -7,11 +7,14 @@
 
 {if $action=='view_grp'}
 
-    <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <ul class="breadcrumb breadcrumb-btn">
+    <li class="no-btn"><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    {if $clue_grp.hints_for_sale}
+    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn">{$lang_str.iquest_btn_buy_hint}</a></li>
+    {/if}
     </ul>
 
-    {foreach $clues as $clue}
+    {foreach $clue_grp.clues as $clue}
     <div class="datatable clue">
     <table class="table table-bordered">
     <tr>
@@ -80,11 +83,12 @@
     
     <div class="row">
     <div class="span6">
-    <table class="table table-bordered">
+    <table class="table table-bordered clue-list">
     <tr><th>{$lang_str.iquest_avail_tasks}</th></tr>
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right">{$lang_str.iquest_btn_buy_hint}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>

@@ -552,6 +552,21 @@ class Iquest_ClueGrp{
         return $this->clues;
     }
 
+    function get_next_hint_for_sale($team_id){
+
+        $opt = array("cgrp_id" => $this->id,
+                     "team_id" => $team_id,
+                     "for_sale" => true,
+                     "order_by" => "ordering");
+
+        $hints = Iquest_Hint::fetch($opt);
+
+        if (!$hints) return null;
+        
+        return reset($hints);
+    }
+
+
     function to_smarty($opt = array()){
         $out = array();
         $out['id'] = $this->id;
@@ -570,6 +585,7 @@ class Iquest_Hint extends Iquest_file{
     public $clue_id;
     public $timeout;
     public $show_at;
+    public $for_sale;
     public $price;
     public $ordering;
 
@@ -598,10 +614,15 @@ class Iquest_Hint extends Iquest_file{
         if (isset($opt['team_id'])){
             $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
             $join[] = " join ".$tt_name." t on h.".$ch->id." = t.".$ct->hint_id;
-            $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
+            $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at."
+                      , ".$ct->for_sale;
 
             if (!empty($opt['accessible'])){
-                $qw[] = "t.".$ct->show_at." < now()";
+                $qw[] = "t.".$ct->show_at." <= now()";
+            }
+
+            if (!empty($opt['for_sale'])){
+                $qw[] = "t.".$ct->for_sale." = 1";
             }
         }
 
@@ -623,6 +644,8 @@ class Iquest_Hint extends Iquest_file{
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
+        $o_order_by = (isset($opt['order_by'])) ? $opt['order_by'] : "timeout";
+        $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : "";
 
         $q = "select h.".$ch->id.",
                      h.".$ch->ref_id.",
@@ -635,15 +658,19 @@ class Iquest_Hint extends Iquest_file{
                      h.".$ch->comment.
                      $cols." 
               from ".$th_name." h ".implode(" ", $join).
-              $qw."
-              order by h.".$ch->timeout;
+              $qw;
+
+        if ($o_order_by) {
+            $q .= " order by ".$ch->$o_order_by." ".$o_order_desc;
+        }
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
 
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
+            if (!isset($row[$ct->show_at]))  $row[$ct->show_at] = null;
+            if (!isset($row[$ct->for_sale])) $row[$ct->for_sale] = null;
             
             $out[$row[$ch->id]] =  new Iquest_Hint($row[$ch->id], 
                                                    $row[$ch->ref_id],
@@ -654,7 +681,8 @@ class Iquest_Hint extends Iquest_file{
                                                    $row[$ch->timeout],
                                                    $row[$ch->price],
                                                    $row[$ch->ordering],
-                                                   $row[$ct->show_at]);
+                                                   $row[$ct->show_at],
+                                                   $row[$ct->for_sale]);
         }
         $res->free();
         return $out;
@@ -664,7 +692,7 @@ class Iquest_Hint extends Iquest_file{
      *  Schedule time to show new hint for team $team_id.
      *  This function do not check whether it is already scheduled!     
      */         
-    static function schedule($id, $team_id, $timeout){
+    static function schedule($id, $team_id, $timeout, $for_sale){
         global $data, $config;
 
         /* table's name */
@@ -672,13 +700,18 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
+        // if timeout is not specified set it to far future, the hint has to be buyed then
+        if (!$timeout) $timeout = 2147483647; // (2^31)-1 - max integer value on 32bit systems
+
         $q="insert into ".$t_name." (
                     ".$c->hint_id.", 
                     ".$c->team_id.", 
-                    ".$c->show_at.")
+                    ".$c->show_at.",
+                    ".$c->for_sale.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")))";
+                    addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")),
+                    ".$data->sql_format($for_sale,  "n").")";
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -707,10 +740,40 @@ class Iquest_Hint extends Iquest_file{
         $qw = array();
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
         $qw[] = $ct->hint_id." in (".$q2.")";
-        $qw[] = $ct->show_at." >= now()";
+        $qw[] = $ct->show_at." > now()";
         $qw = " where ".implode(' and ', $qw);
 
         $q = "delete from ".$tt_name.$qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+    
+        return true;
+    }
+
+    /**
+     *  Buy the hint.    
+     *  Change scheduled time to show the hint for team $team_id to NOW and
+     *  mark the hint it is not longer for sale.
+     *       
+     *  The hint must be already scheduled. This function do not check whether 
+     *  it is already scheduled!
+     *  
+     *  This function also do not check price of the hint               
+     */         
+    static function buy($id, $team_id){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_hint_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_hint_team->cols;
+
+        $q = "update ".$t_name." set 
+                ".$c->show_at." = now(),
+                ".$c->for_sale." = 0
+              where ".$c->hint_id." = ".$data->sql_format($id,      "s")." and 
+                    ".$c->team_id." = ".$data->sql_format($team_id, "n");
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -753,7 +816,7 @@ class Iquest_Hint extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null, $for_sale=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->clue_id = $clue_id;
@@ -761,6 +824,7 @@ class Iquest_Hint extends Iquest_file{
         $this->price = $price;
         $this->ordering = $ordering;
         $this->show_at = $show_at;
+        $this->for_sale = $for_sale;
     }
 
     function insert(){
@@ -898,7 +962,7 @@ class Iquest_Solution extends Iquest_file{
             $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
 
             if (!empty($opt['accessible'])){
-                $qw[] = "t.".$ct->show_at." < now()";
+                $qw[] = "t.".$ct->show_at." <= now()";
             }
 
             $order = " order by ".$ct->show_at." desc";
@@ -1034,7 +1098,7 @@ class Iquest_Solution extends Iquest_file{
         else                $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
         
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $ct->show_at." >= now()";
+        $qw[] = $ct->show_at." > now()";
         $qw = " where ".implode(' and ', $qw);
 
         $q = "delete from ".$tt_name.$qw;
@@ -1380,6 +1444,27 @@ class Iquest{
     }
 
 
+    static function buy_hint($hint, $team_id){
+        global $data;
+
+        $data->transaction_start();
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
+
+        // 1. Spend coin from wallet
+        sw_log($log_prefix."*** Spending coins ({$hint->price})", PEAR_LOG_INFO);
+
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team->wallet_spend_money($hint->price);
+
+        // 2. Mark the hint as bought
+        sw_log($log_prefix."*** Marking the hint as bought (ID={$hint->id})", PEAR_LOG_INFO);
+
+        Iquest_Hint::buy($hint->id, $team_id);
+    
+        $data->transaction_commit();
+    }
+
 
     static function coin_found($coin, $team_id){
         global $data;
@@ -1534,7 +1619,7 @@ class Iquest{
 
             foreach($hints as $hk=>$hv){
                 sw_log($log_prefix."    scheduling to show hint (ID={$hv->id}) after ".gmdate('H:i:s', $hv->timeout), PEAR_LOG_INFO);
-                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout);
+                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout, !empty($hv->price));
             }
 
             unset($hints);

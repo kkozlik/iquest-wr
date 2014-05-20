@@ -76,11 +76,19 @@
     background-color: #f2dede;
 }
 
-.table td.new{
-    background-color: #fcf8e3;
+table.clue-list td{
     line-height: 30px;
     padding: 3px 8px;    
 }
+
+table.clue-list td.new{
+    background-color: #fcf8e3;
+}
+
+table.clue-list .btn{
+    margin-left:3px;
+}
+
 
 span.new,
 span.newhint,
@@ -89,6 +97,7 @@ span.coin{
     float: right;
     width: 30px;
     height: 30px;
+    margin: 0 1px;
 }
 
 span.new{
@@ -99,6 +108,19 @@ span.newhint{
 }
 span.coin{
     background-image: url("../img/coin.png");
+}
+
+.breadcrumb.breadcrumb-btn{
+    padding: 0 15px;
+}
+
+.breadcrumb.breadcrumb-btn li{
+    line-height: 30px;
+    padding: 0px 8px;    
+}
+
+.breadcrumb.breadcrumb-btn li.no-btn{
+    padding: 3px 8px;    
 }
 
 

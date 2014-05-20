@@ -1,4 +1,5 @@
 <?php
+$lang_str['iquest_txt_coin_symbol'] =                   "iqc";
 
 $lang_str['b_giveitup'] =                               "Vzdávám to!";
 
@@ -13,13 +14,15 @@ $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód ře
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";
 $lang_str['iquest_err_coin_key_dup'] =                  "To na nás nezkoušejte :-). Tuto minci jste již získali.";
 $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
+$lang_str['iquest_err_no_hint_for_sale'] =              "Žádná další nápověda pro tento úkol není na prodej.";
+$lang_str['iquest_err_hint_no_money'] =                 "Nemáte dostatek peněz pro získání další nápovědy. Její cena je <price> {$lang_str['iquest_txt_coin_symbol']}.";
 
 $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
-$lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> iqc)";
+$lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> {$lang_str['iquest_txt_coin_symbol']})";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";
@@ -32,8 +35,8 @@ $lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozrad�
 $lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
 
 $lang_str['iquest_txt_wallet_state'] =                  "Vaše peněženka";
-$lang_str['iquest_txt_coin_symbol'] =                   "iqc";
 
+$lang_str['iquest_btn_buy_hint'] =                      "Kup hint!";
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";
 $lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";
