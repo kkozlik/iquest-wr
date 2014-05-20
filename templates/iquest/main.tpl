@@ -99,7 +99,7 @@
     {foreach $solutions as $solution}
         {if $solution@first}
         <div class="span6">
-        <table class="table table-bordered">
+        <table class="table table-bordered clue-list">
         <tr><th>{$lang_str.iquest_avail_solutions}</th></tr>
         {/if}
 
