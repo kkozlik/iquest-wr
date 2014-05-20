@@ -35,6 +35,7 @@ function set_page_attributes(){
                     "jquery-1.10.1.min.js",
                     "bootstrap.min.js",
                     "jquery.countdown.min.js",
+                    "core/functions.js",
                     "functions.js"
         )
     );

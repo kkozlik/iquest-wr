@@ -252,17 +252,20 @@ class apu_iquest extends apu_base_class{
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
     function action_view_grp(){
+        global $lang_str;
 
-        $opt = array("cgrp_id" => $this->clue_grp->id,
-                     "team_id" => $this->team_id,
-                     "for_sale" => true);
-        $hints_for_sale = Iquest_Hint::fetch($opt);
+        $hint_for_sale = $this->clue_grp->get_next_hint_for_sale($this->team_id);
 
         $this->smarty_cgrp = $this->clue_grp->to_smarty();
-        $this->smarty_cgrp['hints_for_sale'] = !empty($hints_for_sale);
-        $this->smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
-                                                               "?buy_hint=".RawURLEncode($this->clue_grp->ref_id).
-                                                               "&view_grp_detail=1");
+        $this->smarty_cgrp['hints_for_sale'] = !empty($hint_for_sale);
+        if ($this->smarty_cgrp['hints_for_sale']){
+            $this->smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
+                                                                   "?buy_hint=".RawURLEncode($this->clue_grp->ref_id).
+                                                                   "&view_grp_detail=1");
+            $this->smarty_cgrp['buy_confirmation'] = str_replace("<price>",
+                                                                 $hint_for_sale->price,
+                                                                 $lang_str['iquest_conf_buy_hint']);
+        }
 
 
         $clues = $this->clue_grp->get_clues();
@@ -319,6 +322,7 @@ class apu_iquest extends apu_base_class{
      */
 
     function action_default(){
+        global $lang_str;
 
         $opt = array("team_id" => $this->team_id,
                      "available_only" => true);
@@ -348,17 +352,19 @@ class apu_iquest extends apu_base_class{
                 }
             }
 
-            $opt = array("cgrp_id" => $v->id,
-                         "team_id" => $this->team_id,
-                         "for_sale" => true);
-            $hints_for_sale = Iquest_Hint::fetch($opt);
+            $hint_for_sale = $clue_groups[$k]->get_next_hint_for_sale($this->team_id);
 
             $smarty_group = $v->to_smarty();
             $smarty_group['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
             $smarty_group['new'] = !isset($this->session['known_cgrps'][$v->id]);
             $smarty_group['new_hints'] = $new_hints;
-            $smarty_group['hints_for_sale'] = !empty($hints_for_sale);
-            $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF']."?buy_hint=".RawURLEncode($v->ref_id));
+            $smarty_group['hints_for_sale'] = !empty($hint_for_sale);
+            if ($smarty_group['hints_for_sale']){
+                $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF']."?buy_hint=".RawURLEncode($v->ref_id));
+                $smarty_group['buy_confirmation'] = str_replace("<price>",
+                                                                $hint_for_sale->price,
+                                                                $lang_str['iquest_conf_buy_hint']);
+            }
             $this->smarty_groups[$k] = $smarty_group;
         }
 

@@ -1,9 +1,8 @@
 
-- moznost nakupovat hinty
-   - dodelat kupovani - obsluha tlacitka
-   - po kliku na tlacitko by to chtelo potvrzeni (zobrazovat cenu)
 - mozna zlikvidovat tabulky coin a coin_team a misto nich pouzivat tabulku solution
    - upravit algoritmus na zjisteni (ne)potrebnych hintu
+- upravit chrousta
+   - pridat moznost specifikovat odmenu iqc u solution
 - zbavit se $config->iquest->wallet_active, nahradit ji hodnotou v tabulce 
   options a tu nastavovat automaticky chroustem v zavislosti na tom jestli
   jsou definovane nejake placene napovedy nebo existujou coiny k ziskani
@@ -17,6 +16,8 @@ CHROUST
 
 * plnit tabulku coin, vyprazdnovat coint_team
 * v tabulce clue spravne vyplnovat type
+* v tabulce solution vyplnovat coin_value
+* v tabulce hint vyplnovat price a ordering
 
 NICE TO HAVE
 ------------

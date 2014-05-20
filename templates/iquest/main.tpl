@@ -10,7 +10,7 @@
     <ul class="breadcrumb breadcrumb-btn">
     <li class="no-btn"><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     {if $clue_grp.hints_for_sale}
-    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn">{$lang_str.iquest_btn_buy_hint}</a></li>
+    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></li>
     {/if}
     </ul>
 
@@ -88,7 +88,7 @@
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
-        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right">{$lang_str.iquest_btn_buy_hint}</a>{/if}
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>
