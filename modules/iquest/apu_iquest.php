@@ -182,7 +182,7 @@ class apu_iquest extends apu_base_class{
     
             action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
             
-            Iquest_info_msg::add_msg($this->opt['msg_solve']);
+            Iquest_info_msg::add_msg($this->opt['msg_solve']['long']);
         }
 
         if ($this->coin){

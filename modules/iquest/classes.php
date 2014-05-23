@@ -853,9 +853,9 @@ class Iquest_Hint extends Iquest_file{
                     ".$data->sql_format($this->content_type,    "s").",
                     ".$data->sql_format($this->comment,         "S").",
                     ".$data->sql_format($this->clue_id,         "s").",
-                    sec_to_time(".$data->sql_format($this->timeout, "n").",
+                    sec_to_time(".$data->sql_format($this->timeout, "n")."),
                     ".$data->sql_format($this->price,           "n").",
-                    ".$data->sql_format($this->ordering,        "n").")
+                    ".$data->sql_format($this->ordering,        "n")."
               )";
 
         $res=$data->db->query($q);
@@ -1072,7 +1072,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->cgrp_id],
                                                        $row[$cs->timeout],
                                                        $row[$cs->key],
-                                                       $row[$cc->coin_value],
+                                                       $row[$cs->coin_value],
                                                        $row[$ct->show_at]);
         }
         $res->free();
@@ -1619,7 +1619,7 @@ class Iquest{
 
             foreach($hints as $hk=>$hv){
                 sw_log($log_prefix."    scheduling to show hint (ID={$hv->id}) after ".gmdate('H:i:s', $hv->timeout), PEAR_LOG_INFO);
-                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout, !empty($hv->price));
+                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout, ($hv->price > 0));
             }
 
             unset($hints);
