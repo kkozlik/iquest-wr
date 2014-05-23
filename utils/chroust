@@ -19,9 +19,10 @@ class Iquest_Metadata{
     private $parent_metadata;
 
     private static $default_cfg = array(
-        "clue_pattern"      => "indicie.*",
-        "hint_pattern"      => "napoveda.*",
-        "solution_pattern"  => "deadline.*",
+        "clue_pattern"      => "indicie[0-9-]+\\..*",
+        "clue_coin_pattern" => "indicie[0-9-]+c\\..*",
+        "hint_pattern"      => "napoveda[0-9-]+.*",
+        "solution_pattern"  => "reseni.*",
     );
 
     function __construct($dir, $parent_metadata=null){
@@ -168,6 +169,14 @@ class Iquest_Metadata{
         return 60*(int)$this->data['solution']['timeout']; // minutes to seconds
     }
 
+    function get_solution_coin_value(){
+        if (!isset($this->data['solution']['coin_value'])){
+            echo "*** INFO: coin_value for solution is not set. No coins are gained on this waypoint.\n";
+            return 0;
+        }
+        return round($this->data['solution']['coin_value'],2);
+    }
+
     function get_solution_next_cgrp(){
         if (!isset($this->data['solution']['next_cgrp_id'])){
             throw new exception("next_cgrp_id is not set.");
@@ -191,6 +200,19 @@ class Iquest_Metadata{
         // Otherwise create array from the comma separated list
         return explode(",", $point_to); 
     }
+
+
+    function get_clue_type($clue_nr, $filename){
+        $cfg = $this->get_cfg();
+
+        $clue_type = Iquest_Clue::TYPE_REGULAR;
+        if (preg_match("/".$cfg["clue_coin_pattern"]."/", basename($filename))){
+            $clue_type = Iquest_Clue::TYPE_COIN;
+        }
+
+        return $clue_type;
+    }
+
 
     /**
      *  Retrieve the clue ID for given hint number
@@ -225,28 +247,55 @@ class Iquest_Metadata{
     function get_hint_timeout($hint_nr){
         if (!isset($this->data['hint']['timeouts']) or 
             trim($this->data['hint']['timeouts']) == ""){
-            throw new exception("Timeouts for hints are not specified.");
+
+            $this->data['hint']['timeouts'] = "";
         }
         
         $timeouts = explode(",", $this->data['hint']['timeouts']);
 
-        if (trim($timeouts[0]) == ""){
-            throw new exception("Timeouts for hints are not specified.");
-        }
 
         if (!isset($timeouts[$hint_nr])){
             $timeout = end($timeouts);
+            if (!$timeout) $timeout=0; // for the case the array is empty
             echo "*** WARNING: timeout for hint '$hint_nr' is not specified. Useing '$timeout'\n";
         }
         else{
             $timeout = $timeouts[$hint_nr];
         }
 
+        if ($timeout == "") $timeout = 0;
+
         if (!is_numeric($timeout)){
             throw new exception("Invalid timeout value: '$timeout' for hint $hint_nr");
         }
 
         return 60*(int)$timeout; // minutes to seconds
+    }
+
+    function get_hint_price($hint_nr){
+        if (!isset($this->data['hint']['prices']) or 
+            trim($this->data['hint']['prices']) == ""){
+
+            $this->data['hint']['prices'] = "";
+        }
+        
+        $prices = explode(",", $this->data['hint']['prices']);
+
+        if (!isset($prices[$hint_nr])){
+            $price = 0;
+            echo "*** INFO: Price for hint '$hint_nr' is not specified. Asuming it is not for sale.\n";
+        }
+        else{
+            $price = $prices[$hint_nr];
+        }
+        
+        if ($price == "") $price = 0;
+
+        if (!is_numeric($price)){
+            throw new exception("Invalid price value: '$price' for hint $hint_nr");
+        }
+
+        return round($price, 2);
     }
 
     
@@ -323,10 +372,10 @@ class Chroust{
         $ref_id = rfc4122_uuid();
         $content_type = Iquest_file::get_mime_type($filename);
         $point_to = $metadata->get_clue_point_to($clue_nr);
+        $clue_type = $metadata->get_clue_type($clue_nr, $filename);
 
-// @todo: set correct type        
         $clue = new Iquest_Clue($cgrp_id."-".$clue_nr, $ref_id, 
-                $filename, $content_type, Iquest_Clue::TYPE_REGULAR,
+                $filename, $content_type, $clue_type,
                 null, $cgrp_id, $clue_nr, $point_to);
 
         $clue->insert();
@@ -339,6 +388,7 @@ class Chroust{
         $content_type = Iquest_file::get_mime_type($filename);
         $clue_id = $metadata->get_hint_clueid($hint_nr);
         $timeout = $metadata->get_hint_timeout($hint_nr);
+        $price = $metadata->get_hint_price($hint_nr);
 
         // if clue ID is not specified, use the ID of last clue
         if (is_null($clue_id)){
@@ -353,9 +403,12 @@ class Chroust{
             throw new exception("Invalid clue_ID '$clue_id' specified for a hint.");
         }
 
-// @todo: set price and ordering        
+        if (!$timeout and !$price){
+            throw new exception("Neither timeout nor price is specified for hint '$hint_nr'. This hint will never be shown.");
+        }
+
         $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
-                $filename, $content_type, null, $clue_id, $timeout, 0, 0);
+                $filename, $content_type, null, $clue_id, $timeout, $price, $hint_nr);
 
         $hint->insert();
         return $hint;
@@ -376,14 +429,14 @@ class Chroust{
         $key = $metadata->get_solution_key_canon();
         $timeout = $metadata->get_solution_timeout();
         $next_cgrp_id = $metadata->get_solution_next_cgrp();
+        $coin_value = $metadata->get_solution_coin_value();
 
         self::$summary[] = array("name" => $name,
                                  "key"  => $metadata->get_solution_key(),
                                  "ordering" => $metadata->get_cgrp_order());
 
-// @todo: add proper coin_value        
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
-                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key, 0);
+                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key, $coin_value);
 
         $solution->insert();
         return $solution;
@@ -500,7 +553,8 @@ class Chroust{
         
             $dest_file = self::canonicalize_name($entry);
 
-            if (preg_match("/".$cfg["clue_pattern"]."/", $dest_file)){
+            if (preg_match("/".$cfg["clue_pattern"]."/", $dest_file) or
+                preg_match("/".$cfg["clue_coin_pattern"]."/", $dest_file)){
                 $entries['clues'][$entry] = $dest_file;
             }
             elseif (preg_match("/".$cfg["hint_pattern"]."/", $dest_file)){
@@ -646,7 +700,7 @@ class Chroust{
     }
     
     static function usage(){
-        echo "Usage: ".$_SERVER['argv'][0]." [--preserve-user-data] <datadir> \n\n";
+        echo "Usage: ".$_SERVER['argv'][0]." [--preserve-user-data|--clear-user-data] <datadir> \n\n";
     }
     
     static function main(){
@@ -661,13 +715,17 @@ class Chroust{
             exit;
         }
 
-        $option = array();
+        $option = array('preserve-user-data' => true);
         $src_dir = null;
 
         for ($i = 1; $i < $_SERVER["argc"]; $i++){
             switch($_SERVER["argv"][$i]){
             case "--preserve-user-data":
                 $option['preserve-user-data'] = true;
+                break;
+
+            case "--clear-user-data":
+                $option['preserve-user-data'] = false;
                 break;
 
             default:

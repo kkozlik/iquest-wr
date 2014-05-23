@@ -15,12 +15,19 @@ CHROUST
 -------
 
 * plnit tabulku coin, vyprazdnovat coint_team
-* v tabulce clue spravne vyplnovat type
-* v tabulce solution vyplnovat coin_value
-* v tabulce hint vyplnovat price a ordering
+* umoznit vytvaret solution: coin-only
+* volba clear-user-data by mela mazat i stav penezenky
 
 NICE TO HAVE
 ------------
 
 * posilani zprav
 * download everything as a zip
+
+
+Do startovnich instrukci dopsat:
+--------------------------------
+- Ikona mince u indicie znamena ze vyreseni teto indicie tym NEposune v soutezi
+  smerem k cili, ale pomuze tymu ziskat minci.
+- Pokud ikona mince u indicie chybi, znamena jeji vyreseni posunuti tymu smerem
+  do cile. Soucasne vsak jejim vyresenim muze tym ziskat i minci. 
