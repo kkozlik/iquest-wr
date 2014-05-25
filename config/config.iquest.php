@@ -115,6 +115,7 @@ $config->data_sql->iquest_solution->cols->content_type =    "content_type";
 $config->data_sql->iquest_solution->cols->timeout =         "timeout";
 $config->data_sql->iquest_solution->cols->comment =         "comment";
 $config->data_sql->iquest_solution->cols->coin_value =      "coin_value";
+$config->data_sql->iquest_solution->cols->stub =            "stub";
 
 
 /**

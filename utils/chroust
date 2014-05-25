@@ -154,6 +154,10 @@ class Iquest_Metadata{
         return $this->data['solution']['key'];
     }
 
+    function is_key_set(){
+        return !empty($this->data['solution']['key']);
+    }
+
     /**
      *  Get canonicalized key
      */         
@@ -179,7 +183,8 @@ class Iquest_Metadata{
 
     function get_solution_next_cgrp(){
         if (!isset($this->data['solution']['next_cgrp_id'])){
-            throw new exception("next_cgrp_id is not set.");
+            echo "*** WARNING: next_cgrp_id for solution is not set. Is it just a 'bonus' waypoint?\n";
+            return null;
         }
         return $this->data['solution']['next_cgrp_id'];
     }
@@ -431,12 +436,26 @@ class Chroust{
         $next_cgrp_id = $metadata->get_solution_next_cgrp();
         $coin_value = $metadata->get_solution_coin_value();
 
+        if (!$filename and $timeout > 0){
+            throw new exception("No solution file exists, but timeout (for displaying it) is set.");
+        }
+
+        $stub = false;
+        if (!$next_cgrp_id){
+            $stub = true;
+            $next_cgrp_id = $cgrp_id."#STUB"; // generate and ID for clue group.
+                                              // This ID does not exists in clue_group table
+                                              // but is used in open_cgrp table to mark
+                                              // gained solutions. 
+        }
+
         self::$summary[] = array("name" => $name,
                                  "key"  => $metadata->get_solution_key(),
                                  "ordering" => $metadata->get_cgrp_order());
 
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
-                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, $key, $coin_value);
+                $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
+                $key, $coin_value, $stub);
 
         $solution->insert();
         return $solution;
@@ -621,6 +640,15 @@ class Chroust{
             }
         }
 
+        // If there is no solution file in the directory, but a key is set in metadata...
+        if (!$entries['solutions'] and $metadata->is_key_set()){
+            // Create the solution record
+            $solution = self::insert_solution(null, $solution_nr, $metadata);
+            if ($solution){
+                $solutions[$solution->id] = $solution;
+            }
+        }
+
         
     }
 
@@ -633,7 +661,7 @@ class Chroust{
         
         // verify that next_cgrp_id for each solution is valid (exists)
         foreach($solutions as $solution){
-            if (!isset($cgrps[$solution->cgrp_id])){
+            if (!$solution->stub and !isset($cgrps[$solution->cgrp_id])){
                 throw new Exception("Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.");            
             }
         }

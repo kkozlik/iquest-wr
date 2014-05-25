@@ -35,6 +35,8 @@ class Iquest_file{
         case "html":    return "text/html";
         case "jpeg":
         case "jpg":     return "image/jpeg";
+        case "png":     return "image/png";
+        case "gif":     return "image/gif";
         case "mp3":     return "audio/mpeg";
         case "avi":     return "video/x-msvideo";
         case "mp4":     return "video/mp4";
@@ -424,7 +426,7 @@ class Iquest_ClueGrp{
         return $out;
     }
 
-    static function fetch_cgrp_open(){
+    static function fetch_cgrp_open($opt=array()){
         global $data, $config;
 
         /* table's name */
@@ -432,10 +434,17 @@ class Iquest_ClueGrp{
         /* col names */
         $co      = &$config->data_sql->iquest_cgrp_open->cols;
 
+        $qw = array();
+
+        if (isset($opt['team_id']))  $qw[] = "o.".$co->team_id." = ".$data->sql_format($opt['team_id'], "n");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
         $q = "select o.".$co->team_id.", 
                      o.".$co->cgrp_id.",
                      UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
-              from ".$to_name." o ";
+              from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -915,6 +924,7 @@ class Iquest_Solution extends Iquest_file{
     public $timeout;
     public $show_at;
     public $coin_value;
+    public $stub;
 
     /**
      *  Instantiate solution by key
@@ -968,6 +978,10 @@ class Iquest_Solution extends Iquest_file{
             $order = " order by ".$ct->show_at." desc";
         }
 
+
+        if (isset($opt['filter']['coin_value']))  $qw[] = $opt['filter']['coin_value']->to_sql("c.".$cc->coin_value);
+
+
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
@@ -981,7 +995,8 @@ class Iquest_Solution extends Iquest_file{
                      c.".$cc->comment.",
                      c.".$cc->name.",
                      c.".$cc->key.",
-                     c.".$cc->coin_value.
+                     c.".$cc->coin_value.",
+                     c.".$cc->stub.
                      $cols." 
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
@@ -1003,6 +1018,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->timeout],
                                                        $row[$cc->key],
                                                        $row[$cc->coin_value],
+                                                       $row[$cc->stub],
                                                        $row[$ct->show_at]);
         }
         $res->free();
@@ -1052,6 +1068,7 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->name.",
                      s.".$cs->key.",
                      s.".$cs->coin_value.",
+                     s.".$cs->stub.",
                      (".$q2.") as ".$ct->show_at."  
               from ".$ts_name." s
                 join ".$tcs_name." cs on cs.".$ccs->solution_id."=s.".$cs->id."
@@ -1073,6 +1090,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->timeout],
                                                        $row[$cs->key],
                                                        $row[$cs->coin_value],
+                                                       $row[$cs->stub],
                                                        $row[$ct->show_at]);
         }
         $res->free();
@@ -1171,7 +1189,7 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
-                         $cgrp_id, $timeout, $key, $coin_value, $show_at=null){
+                         $cgrp_id, $timeout, $key, $coin_value, $stub, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
@@ -1179,6 +1197,7 @@ class Iquest_Solution extends Iquest_file{
         $this->timeout = $timeout;
         $this->key = $key;
         $this->coin_value = $coin_value;
+        $this->stub = $stub;
         $this->show_at = $show_at;
     }
 
@@ -1200,6 +1219,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->name.",
                     ".$c->key.",
                     ".$c->coin_value.",
+                    ".$c->stub.",
                     ".$c->timeout."
               )
               values(
@@ -1212,6 +1232,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->name,            "s").",
                     ".$data->sql_format($this->key,             "s").",
                     ".$data->sql_format($this->coin_value,      "n").",
+                    ".$data->sql_format($this->stub,            "n").",
                     sec_to_time(".$data->sql_format($this->timeout, "n").")
               )";
 
@@ -1527,11 +1548,15 @@ class Iquest{
         self::gain_coins($team_id, $solution->coin_value);
 
         // 3. Schedule show time for new hints
-        self::_schedule_new_hints($solution->cgrp_id, $team_id, $log_prefix);
+        if (!$solution->stub){
+            self::_schedule_new_hints($solution->cgrp_id, $team_id, $log_prefix);
+        }
 
         // 4. If team gained all clues that lead to some task_solution
         //    schedule showing of the solution
-        self::_schedule_solution($solution->cgrp_id, $team_id, $log_prefix);
+        if (!$solution->stub){
+            self::_schedule_solution($solution->cgrp_id, $team_id, $log_prefix);
+        }
                 
         // 5. Hints that has not been displayed and are not needed any more
         //    should not be never showed:          
@@ -1775,6 +1800,7 @@ class Iquest_solution_graph{
         // fetch clue groups and solutions
         $opt = array("team_id" => $this->team_id);
         $this->cgroups = Iquest_ClueGrp::fetch($opt);
+        $this->cgrp_open = Iquest_ClueGrp::fetch_cgrp_open($opt);
         $this->solutions = Iquest_Solution::fetch();
 
         // create clue => solution edges
@@ -1805,6 +1831,12 @@ class Iquest_solution_graph{
                     if (!isset($this->reverse_edges["C_".$clue->id])) $this->reverse_edges["C_".$clue->id] = array();
                     $this->reverse_edges["C_".$clue->id][] = "S_".$solution->id;
                 }
+            }
+
+            // For dead-end waypoints there is no real clue group defined. 
+            // So check directly the open_cgrp table so we know whether it is solved. 
+            elseif (isset($this->cgrp_open[$solution->cgrp_id])){
+                $this->nodes["S_".$solution->id]->solved = true;
             }
         }
 
@@ -1863,8 +1895,11 @@ class Iquest_solution_graph{
      *  meeting already solved tasks in the way.
      *            
      *  It is done by walking the graph in reversed order from the final task.
+     *  
+     *  If the $include_coin_waypoints is set to TRUE, include also nodes
+     *  from which any waypoint valuated by coins could be reached.               
      */         
-    protected function mark_accessible_nodes(){
+    protected function mark_accessible_nodes($include_coin_waypoints){
 
         // reset all nodes visited flag
         foreach($this->nodes as &$node) $node->visited = false;
@@ -1878,6 +1913,30 @@ class Iquest_solution_graph{
 
         //add final task node to the queue
         $queue[] = "S_".$final_task_id;
+
+
+        // if we should include also nodes accessible from waypoints with coins
+        if ($include_coin_waypoints){
+
+            // get the solutions that gain some coins
+            $opt = array();
+            $opt['filter']['coin_value'] = new Filter("coin_value", 0, ">");
+            $solutions = Iquest_Solution::fetch($opt);
+            
+            // add the related nodes to the queue too
+            foreach($solutions as $solution){
+                if (!isset($this->nodes["S_".$solution->id])){
+                    throw new UnexpectedValueException("Node for solution ID='{$solution->id}' does not exists in the graph.");
+                }
+                
+                // but only if they are not solved yet
+                if ($this->nodes["S_".$solution->id]->solved) continue;
+                
+                //add node to the queue
+                $queue[] = "S_".$solution->id;
+            }
+        }
+
         
         // as long as there are nodes in in the queue, fetch node from the queue...
         while(!is_null($node_id = array_shift($queue))){
@@ -1910,12 +1969,12 @@ class Iquest_solution_graph{
      *  but that are not needed anymore (has been used to solve a task solution).
      *  
      *  It is done by walking the graph in reversed order from the final task.
-     *  All clues that are rachable from the final task (not meeting a solved task)
-     *  are still needed.                         
+     *  All clues that are reachable from the final task or from any waypoint
+     *  valuated by coins (not meeting a solved task) are still needed.                         
      */         
     public function get_unneded_clues(){
 
-        $this->mark_accessible_nodes();
+        $this->mark_accessible_nodes(true);
 
         // create the list of unneded clues, walk through all nodes
         $unneded_clues = array();
@@ -1946,7 +2005,7 @@ class Iquest_solution_graph{
      */         
     public function get_unneded_solutions(){
 
-        $this->mark_accessible_nodes();
+        $this->mark_accessible_nodes(false);
 
         // create the list of unneded solutions, walk through all nodes
         $unneded_solutions = array();
