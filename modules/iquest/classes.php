@@ -875,6 +875,7 @@ class Iquest_Hint extends Iquest_file{
     function to_smarty(){
         $out = parent::to_smarty();
         $out['timeout'] = gmdate("H:i:s", $this->timeout);
+        $out['price'] = $this->price;
 
         return $out;
     }
