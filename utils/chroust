@@ -122,8 +122,8 @@ class Iquest_Metadata{
         return !empty($this->data['cgrp']['reveal_goal']);
     }
 
-    function is_final_solution(){
-        return !empty($this->data['solution']['final']);
+    function is_final_cgrp(){
+        return !empty($this->data['cgrp']['final']);
     }
 
     function get_solution_name(){
@@ -599,6 +599,10 @@ class Chroust{
             Iquest_Options::set(Iquest_Options::REVEAL_GOAL_CGRP_ID, $metadata->get_cgrp_id());
         }
 
+        if ($metadata->is_final_cgrp()){
+            Iquest_Options::set(Iquest_Options::FINAL_CGRP_ID, $metadata->get_cgrp_id());
+        }
+
 
         $clue_nr = $hint_nr = $solution_nr = 0;
 
@@ -633,11 +637,6 @@ class Chroust{
 
             $solutions[$solution->id] = $solution;
             $solution_nr++;
-
-
-            if ($metadata->is_final_solution()){
-                Iquest_Options::set(Iquest_Options::FINAL_TASK_ID, $solution->id);
-            }
         }
 
         // If there is no solution file in the directory, but a key is set in metadata...
@@ -696,6 +695,7 @@ class Chroust{
         }
         $res->free();
 
+//@TODO: check that all Iquest_Options are set
     
     }
 

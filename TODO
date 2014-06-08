@@ -2,21 +2,23 @@
 - mozna zlikvidovat tabulky coin a coin_team a misto nich pouzivat tabulku solution
    - upravit algoritmus na zjisteni (ne)potrebnych hintu
 - upravit chrousta
-   - pridat moznost specifikovat odmenu iqc u solution
 - zbavit se $config->iquest->wallet_active, nahradit ji hodnotou v tabulce 
   options a tu nastavovat automaticky chroustem v zavislosti na tom jestli
   jsou definovane nejake placene napovedy nebo existujou coiny k ziskani
+- posilani notifikaci mailem - kdyz nejaky tym zada urcity kod
 - vylepsit chovani navbaru na uzkem displayi 
   (predevsim pri zobrazenem odpocitavani do napovedy)
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
 - povolit cachovani souboru (hint, clue, solution)
+- onload - focus na pole pro zadavani kodu
 
 CHROUST
 -------
 
-* plnit tabulku coin, vyprazdnovat coint_team
-* umoznit vytvaret solution: coin-only
 * volba clear-user-data by mela mazat i stav penezenky
+* varovat kdyz v adresari najde soubor co nematchne na hint/indicie/reseni
+* mozna nevytvaret prazdne clue-grp
+* verifikovat ze jsou nastavene vsechny Iquest_Options
 
 NICE TO HAVE
 ------------

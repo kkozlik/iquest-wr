@@ -3,6 +3,7 @@ rel 0.1.0
 * Set timezone in config file
 * New config option $config->iquest->wallet_active
 * Adding ability to gain coins and buy hints
+* metadata.ini: attribute solution.final renamed to cgrp.final
 
  
 rel 0.0.10

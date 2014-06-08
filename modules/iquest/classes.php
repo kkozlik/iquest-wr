@@ -961,6 +961,9 @@ class Iquest_Solution extends Iquest_file{
         $cc      = &$config->data_sql->iquest_solution->cols;
         $ct      = &$config->data_sql->iquest_solution_team->cols;
 
+        sw_log("Iquest_Solution::fetch: options: ".json_encode($opt), PEAR_LOG_DEBUG);
+
+
         $qw = array();
         $join = array();
         $cols = "";
@@ -980,7 +983,7 @@ class Iquest_Solution extends Iquest_file{
         }
 
 
-        if (isset($opt['filter']['coin_value']))  $qw[] = $opt['filter']['coin_value']->to_sql("c.".$cc->coin_value);
+        if (isset($opt['filter']['coin_value']))  $qw[] = $opt['filter']['coin_value']->to_sql_float("c.".$cc->coin_value);
 
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
@@ -1001,6 +1004,8 @@ class Iquest_Solution extends Iquest_file{
                      $cols." 
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
+
+        sw_log("Iquest_Solution::fetch: query: $q", PEAR_LOG_DEBUG);
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -1905,16 +1910,25 @@ class Iquest_solution_graph{
         // reset all nodes visited flag
         foreach($this->nodes as &$node) $node->visited = false;
 
-        $final_task_id = Iquest_Options::get(Iquest_Options::FINAL_TASK_ID);
         $queue = array();
 
-        if (!isset($this->nodes["S_".$final_task_id])){
-            throw new UnexpectedValueException("Invalid ID of final task: '$final_task_id'");
+        $final_cgrp_id = Iquest_Options::get(Iquest_Options::FINAL_CGRP_ID);
+
+        if (!isset($this->cgroups[$final_cgrp_id])){
+            throw new UnexpectedValueException("Invalid ID of final clue group: '$final_cgrp_id'");
         }
 
-        //add final task node to the queue
-        $queue[] = "S_".$final_task_id;
+        $clues = $this->cgroups[$final_cgrp_id]->get_clues();
 
+        if (!$clues){
+            throw new UnexpectedValueException("Final clue group: '$final_cgrp_id' does not contain any clues");
+        }
+
+        //add nodes of final clue group to the queue
+        foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
+
+
+        sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
 
         // if we should include also nodes accessible from waypoints with coins
         if ($include_coin_waypoints){
@@ -1938,11 +1952,14 @@ class Iquest_solution_graph{
             }
         }
 
+        sw_log("mark_accessible_nodes: queue2: ".json_encode($queue), PEAR_LOG_DEBUG);
         
         // as long as there are nodes in in the queue, fetch node from the queue...
         while(!is_null($node_id = array_shift($queue))){
             // and set it's visited flag to true
             $this->nodes[$node_id]->visited = true;
+
+            sw_log("mark_accessible_nodes: visited node: $node_id", PEAR_LOG_DEBUG);
 
             // We are walking the graph in reversed order. If there are any
             // edges leading TO this node walk through them. Get all nodes
@@ -1959,8 +1976,10 @@ class Iquest_solution_graph{
 
                     // add node to queue
                     $queue[] = $from_node_id;
+                    sw_log("mark_accessible_nodes: adding node: $from_node_id", PEAR_LOG_DEBUG);
                 }
             }
+            sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
         }
     
     }

@@ -8,13 +8,13 @@ class Iquest_Options{
     const START_TIME      = "start_time";
     const END_TIME        = "end_time";
     const INITIAL_CGRP_ID = "initial_cgrp_id";
-    const FINAL_TASK_ID   = "final_task_id";
+    const FINAL_CGRP_ID   = "final_cgrp_id";
     const REVEAL_GOAL_CGRP_ID = "reveal_goal_cgrp_id";
 
     public static $supported_options = array(self::START_TIME,
                                              self::END_TIME,
                                              self::INITIAL_CGRP_ID,
-                                             self::FINAL_TASK_ID,
+                                             self::FINAL_CGRP_ID,
                                              self::REVEAL_GOAL_CGRP_ID); 
 
     /** Options cache */
