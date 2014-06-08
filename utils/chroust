@@ -25,6 +25,29 @@ class Iquest_Metadata{
         "solution_pattern"  => "reseni.*",
     );
 
+    private static function timeout_to_sec($timeout, $what){
+
+        $timeout = trim($timeout);
+
+        if (!preg_match("/^([0-9]+)([hms]?)$/", $timeout, $matches)){
+            throw new exception("Invalid timeout value: '$timeout' for $what");
+        }
+
+        $value = $matches[1];
+        $unit = $matches[2];
+
+        if (!$unit) $unit = "m";
+
+        switch($unit){
+        case "s": return (int)$value;
+        case "m": return 60*(int)$value;
+        case "h": return 3600*(int)$value;
+        default:
+            throw new exception("Invalid unit of timeout: '$timeout' for $what");
+        }
+
+    }
+
     function __construct($dir, $parent_metadata=null){
         $this->data             = $this->get_metadata($dir.self::METADATA_FILE);
         $this->parent_metadata  = $parent_metadata;
@@ -170,7 +193,7 @@ class Iquest_Metadata{
             echo "*** WARNING: timeout for solution is not set. It will not be displayed to teams.\n";
             return 0;
         }
-        return 60*(int)$this->data['solution']['timeout']; // minutes to seconds
+        return self::timeout_to_sec($this->data['solution']['timeout'], "solution"); 
     }
 
     function get_solution_coin_value(){
@@ -270,11 +293,7 @@ class Iquest_Metadata{
 
         if ($timeout == "") $timeout = 0;
 
-        if (!is_numeric($timeout)){
-            throw new exception("Invalid timeout value: '$timeout' for hint $hint_nr");
-        }
-
-        return 60*(int)$timeout; // minutes to seconds
+        return self::timeout_to_sec($timeout, "hint $hint_nr"); 
     }
 
     function get_hint_price($hint_nr){

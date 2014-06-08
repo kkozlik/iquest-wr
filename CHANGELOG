@@ -4,6 +4,8 @@ rel 0.1.0
 * New config option $config->iquest->wallet_active
 * Adding ability to gain coins and buy hints
 * metadata.ini: attribute solution.final renamed to cgrp.final
+* metadata.ini: Unit (h, m or s) could be specified for timeouts
+
 
  
 rel 0.0.10
