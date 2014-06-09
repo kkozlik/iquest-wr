@@ -362,6 +362,7 @@ class Iquest_Metadata{
 class Chroust{
 
     static $summary = array();
+    static $unknown_files = array();
 
     static function prune_data_dir(){
         global $config;
@@ -628,6 +629,9 @@ class Chroust{
             elseif (preg_match("/".$cfg["solution_pattern"]."/", $dest_file)){
                 $entries['solutions'][$entry] = $dest_file;
             }
+            else{
+                self::$unknown_files[] = $task_dir.$entry;
+            }
         }
         $dir->close();
 
@@ -860,6 +864,15 @@ class Chroust{
                             $row['key'], 
                             $row['coin_value']>0?$row['coin_value']:"---");
             }
+            
+            if (self::$unknown_files){
+                echo "\nUnknown files:\n\n";
+                foreach(self::$unknown_files as $file){
+                    echo "  * $file\n";
+                }
+            }
+            
+            
         }
         catch (exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
