@@ -386,8 +386,7 @@ class Chroust{
             $config->data_sql->iquest_clue2solution->table_name,
             $config->data_sql->iquest_hint->table_name,
             $config->data_sql->iquest_solution->table_name,
-
-//            $config->data_sql->iquest_option->table_name,
+            $config->data_sql->iquest_option->table_name,
         );
 
         if (empty($option['preserve-user-data'])){
@@ -402,7 +401,14 @@ class Chroust{
             $res=$data->db->query("delete from ".$table);
             if ($data->dbIsError($res)) throw new DBException($res);
         }
-    
+
+        if (empty($option['preserve-user-data'])){
+            echo "Wiping user wallets\n";
+            $res=$data->db->query(
+                "update {$config->data_sql->iquest_team->table_name} 
+                 set {$config->data_sql->iquest_team->cols->wallet}=0");
+            if ($data->dbIsError($res)) throw new DBException($res);
+        }    
     }
 
     static function insert_cgrp($metadata){
@@ -758,8 +764,27 @@ class Chroust{
         }
         $res->free();
 
-//@TODO: check that all Iquest_Options are set
-    
+
+        //check that all Iquest_Options are set
+        foreach(Iquest_Options::$supported_options as $option_name){
+            try{
+                $option_value = Iquest_Options::get($option_name);
+            }
+            catch(RuntimeException $e){
+                echo "\n*** ERROR: Option $option_name is not set.\n";
+                
+                if ($option_name == Iquest_Options::START_TIME or
+                    $option_name == Iquest_Options::END_TIME) {
+
+                    echo "It should be specified in [options] section of metadata in top directory.\n";
+                }
+                else{
+                    echo "It should be specified in [cgrp] section of metadata in the appropriate clue-grp directory.\n";
+                }
+                
+                throw $e;
+            }
+        }
     }
 
     static function canonicalize_name($str){
