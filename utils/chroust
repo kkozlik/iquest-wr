@@ -196,6 +196,21 @@ class Iquest_Metadata{
         return self::timeout_to_sec($this->data['solution']['timeout'], "solution"); 
     }
 
+    function get_solution_countdown_start(){
+        if (!isset($this->data['solution']['countdown_start'])){
+            return Iquest_Solution::CD_START_ALL;
+        }
+
+        if (!in_array($this->data['solution']['countdown_start'],
+                      array(Iquest_Solution::CD_START_ALL,
+                            Iquest_Solution::CD_START_SINGLE))){
+
+            throw new exception("Invalid value '{$this->data['solution']['countdown_start']}' for countdown_start.");
+        }
+
+        return $this->data['solution']['countdown_start']; 
+    }
+
     function get_solution_coin_value(){
         if (!isset($this->data['solution']['coin_value'])){
             echo "*** INFO: coin_value for solution is not set. No coins are gained on this waypoint.\n";
@@ -463,6 +478,7 @@ class Chroust{
         $name = $metadata->get_solution_name();
         $key = $metadata->get_solution_key_canon();
         $timeout = $metadata->get_solution_timeout();
+        $countdown_start = $metadata->get_solution_countdown_start();
         $next_cgrp_id = $metadata->get_solution_next_cgrp();
         $coin_value = $metadata->get_solution_coin_value();
 
@@ -485,7 +501,7 @@ class Chroust{
 
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
-                $key, $coin_value, $stub);
+                $countdown_start, $key, $coin_value, $stub);
 
         $solution->insert();
         return $solution;

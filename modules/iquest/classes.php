@@ -920,10 +920,15 @@ class Iquest_key{
 }
 
 class Iquest_Solution extends Iquest_file{
+
+    const CD_START_ALL =    "all";
+    const CD_START_SINGLE = "single";
+
     public $cgrp_id;
     public $name;
     public $key;
     public $timeout;
+    public $countdown_start;
     public $show_at;
     public $coin_value;
     public $stub;
@@ -997,6 +1002,7 @@ class Iquest_Solution extends Iquest_file{
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
                      time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
+                     c.".$cc->countdown_start.",
                      c.".$cc->comment.",
                      c.".$cc->name.",
                      c.".$cc->key.",
@@ -1023,6 +1029,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->name],
                                                        $row[$cc->cgrp_id],
                                                        $row[$cc->timeout],
+                                                       $row[$cc->countdown_start],
                                                        $row[$cc->key],
                                                        $row[$cc->coin_value],
                                                        $row[$cc->stub],
@@ -1071,6 +1078,7 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->filename.",
                      s.".$cs->content_type.",
                      time_to_sec(s.".$cs->timeout.") as ".$cs->timeout.", 
+                     s.".$cs->countdown_start.",
                      s.".$cs->comment.",
                      s.".$cs->name.",
                      s.".$cs->key.",
@@ -1095,6 +1103,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->name],
                                                        $row[$cs->cgrp_id],
                                                        $row[$cs->timeout],
+                                                       $row[$cs->countdown_start],
                                                        $row[$cs->key],
                                                        $row[$cs->coin_value],
                                                        $row[$cs->stub],
@@ -1196,12 +1205,13 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
-                         $cgrp_id, $timeout, $key, $coin_value, $stub, $show_at=null){
+                         $cgrp_id, $timeout, $countdown_start, $key, $coin_value, $stub, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
         $this->cgrp_id = $cgrp_id;
         $this->timeout = $timeout;
+        $this->countdown_start = $countdown_start;
         $this->key = $key;
         $this->coin_value = $coin_value;
         $this->stub = $stub;
@@ -1227,6 +1237,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->key.",
                     ".$c->coin_value.",
                     ".$c->stub.",
+                    ".$c->countdown_start.",
                     ".$c->timeout."
               )
               values(
@@ -1240,6 +1251,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->key,             "s").",
                     ".$data->sql_format($this->coin_value,      "n").",
                     ".$data->sql_format($this->stub,            "n").",
+                    ".$data->sql_format($this->countdown_start,   "s").",
                     sec_to_time(".$data->sql_format($this->timeout, "n").")
               )";
 
@@ -1691,6 +1703,7 @@ class Iquest{
 
 
             $schedule_solution = true;
+        if ($opening_solution->countdown_start==Iquest_Solution::CD_START_ALL){
             // fetch list of all clue groups that opens the solution
             $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($opening_solution->id, $team_id);
             foreach($clue_grps as $clue_grp){
@@ -1702,6 +1715,7 @@ class Iquest{
                     break;
                 }
             }
+        }
             
             unset($clue_grps);
             
