@@ -213,7 +213,6 @@ class Iquest_Metadata{
 
     function get_solution_coin_value(){
         if (!isset($this->data['solution']['coin_value'])){
-            echo "*** INFO: coin_value for solution is not set. No coins are gained on this waypoint.\n";
             return 0;
         }
         return round($this->data['solution']['coin_value'],2);
@@ -497,7 +496,8 @@ class Chroust{
 
         self::$summary[] = array("name" => $name,
                                  "key"  => $metadata->get_solution_key(),
-                                 "ordering" => $metadata->get_cgrp_order());
+                                 "ordering" => $metadata->get_cgrp_order(),
+                                 "coin_value" => $coin_value);
 
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
@@ -851,8 +851,14 @@ class Chroust{
             '));
 
             echo "Keys summary:\n\n";
+            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|\n", 
+                        "Name", "Key", "Coin");
+                        
             foreach(self::$summary as $row){
-                echo self::utf_8_sprintf("|%-20s|%-40s|\n", $row['name'], $row['key']);
+                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|\n", 
+                            $row['name'], 
+                            $row['key'], 
+                            $row['coin_value']>0?$row['coin_value']:"---");
             }
         }
         catch (exception $e){
