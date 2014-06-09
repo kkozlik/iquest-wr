@@ -272,6 +272,9 @@ class apu_iquest extends apu_base_class{
         $this->smarty_cgrp['clues'] = array();
 
         foreach($clues as $k => $v){
+            // skip hidden clues
+            if ($v->type == Iquest_Clue::TYPE_HIDDEN) continue;
+            
             $hints = $clues[$k]->get_accessible_hints($this->team_id);
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
@@ -555,6 +558,12 @@ class apu_iquest extends apu_base_class{
             if (!$this->clue){
                 ErrorHandler::add_error("Unknown clue!");
                 sw_log("Unknown clue: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+
+            if ($this->clue->type == Iquest_Clue::TYPE_HIDDEN){
+                ErrorHandler::add_error("Unknown clue!");
+                sw_log("Hidden clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
             

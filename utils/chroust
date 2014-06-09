@@ -212,7 +212,15 @@ class Iquest_Metadata{
         return $this->data['solution']['next_cgrp_id'];
     }
 
-
+    /**
+     *  Return number of hidden clues
+     */         
+    function get_clue_hidden_nr(){
+        if (!isset($this->data['cgrp']['hidden_clues'])) return 0;
+        
+        return (int)$this->data['cgrp']['hidden_clues'];
+    }
+    
     function get_clue_point_to($clue_nr){
         // If no point_to is specifed for the clue, assume it point to 
         // solution specified in this directory 
@@ -234,7 +242,10 @@ class Iquest_Metadata{
         $cfg = $this->get_cfg();
 
         $clue_type = Iquest_Clue::TYPE_REGULAR;
-        if (preg_match("/".$cfg["clue_coin_pattern"]."/", basename($filename))){
+        if (!$filename){
+            $clue_type = Iquest_Clue::TYPE_HIDDEN;
+        }
+        elseif (preg_match("/".$cfg["clue_coin_pattern"]."/", basename($filename))){
             $clue_type = Iquest_Clue::TYPE_COIN;
         }
 
@@ -631,6 +642,16 @@ class Chroust{
             if (!$clue) continue;
 
             self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue, $metadata);
+
+            $clues[$clue->id] = $clue;
+            $clue_nr++;
+        }
+
+        // generate hidden clues
+        $hidden_clues = $metadata->get_clue_hidden_nr();
+        for($i=0; $i<$hidden_clues; $i++){
+            $clue = self::insert_clue(null, $clue_nr, $metadata);
+            if (!$clue) continue;
 
             $clues[$clue->id] = $clue;
             $clue_nr++;

@@ -127,6 +127,9 @@ class apu_iquest_hq extends apu_base_class{
 
         $this->smarty_clues = array();
         foreach($clues as $k => $v){
+            // skip hidden clues
+            if ($v->type == Iquest_Clue::TYPE_HIDDEN) continue;
+
             $hints = $clues[$k]->get_all_hints();
 
             $smarty_clue = $clues[$k]->to_smarty();

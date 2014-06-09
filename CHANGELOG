@@ -5,6 +5,7 @@ rel 0.1.0
 * Adding ability to gain coins and buy hints
 * metadata.ini: attribute solution.final renamed to cgrp.final
 * metadata.ini: Unit (h, m or s) could be specified for timeouts
+* Introducing hidden clues
 
 
  
