@@ -639,7 +639,7 @@ class Chroust{
         asort($entries['hints']);
         asort($entries['solutions']);
 
-        self::insert_cgrp($metadata);
+        if ($entries['clues']) self::insert_cgrp($metadata);
 
         if ($metadata->is_start_cgrp()){
             Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
