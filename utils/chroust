@@ -190,7 +190,6 @@ class Iquest_Metadata{
 
     function get_solution_timeout(){
         if (!isset($this->data['solution']['timeout'])){
-            echo "*** WARNING: timeout for solution is not set. It will not be displayed to teams.\n";
             return 0;
         }
         return self::timeout_to_sec($this->data['solution']['timeout'], "solution"); 
@@ -498,7 +497,8 @@ class Chroust{
         self::$summary[] = array("name" => $name,
                                  "key"  => $metadata->get_solution_key(),
                                  "ordering" => $metadata->get_cgrp_order(),
-                                 "coin_value" => $coin_value);
+                                 "coin_value" => $coin_value,
+                                 "timeout" =>    $timeout);
 
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
@@ -639,18 +639,21 @@ class Chroust{
         asort($entries['hints']);
         asort($entries['solutions']);
 
-        if ($entries['clues']) self::insert_cgrp($metadata);
+        //Create clue group only if it contain at least one clue
+        if ($entries['clues']) {
+            self::insert_cgrp($metadata);
 
-        if ($metadata->is_start_cgrp()){
-            Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
-        }
-
-        if ($metadata->is_reveal_goal_cgrp()){
-            Iquest_Options::set(Iquest_Options::REVEAL_GOAL_CGRP_ID, $metadata->get_cgrp_id());
-        }
-
-        if ($metadata->is_final_cgrp()){
-            Iquest_Options::set(Iquest_Options::FINAL_CGRP_ID, $metadata->get_cgrp_id());
+            if ($metadata->is_start_cgrp()){
+                Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
+            }
+    
+            if ($metadata->is_reveal_goal_cgrp()){
+                Iquest_Options::set(Iquest_Options::REVEAL_GOAL_CGRP_ID, $metadata->get_cgrp_id());
+            }
+    
+            if ($metadata->is_final_cgrp()){
+                Iquest_Options::set(Iquest_Options::FINAL_CGRP_ID, $metadata->get_cgrp_id());
+            }
         }
 
 
@@ -855,14 +858,15 @@ class Chroust{
             '));
 
             echo "Keys summary:\n\n";
-            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|\n", 
-                        "Name", "Key", "Coin");
+            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|\n", 
+                        "Name", "Key", "Coin", "Timeout");
                         
             foreach(self::$summary as $row){
-                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|\n", 
+                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|\n", 
                             $row['name'], 
                             $row['key'], 
-                            $row['coin_value']>0?$row['coin_value']:"---");
+                            $row['coin_value']>0?$row['coin_value']:"---",
+                            $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---");
             }
             
             if (self::$unknown_files){

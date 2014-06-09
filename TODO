@@ -16,8 +16,6 @@ CHROUST
 -------
 
 * volba clear-user-data by mela mazat i stav penezenky
-* varovat kdyz v adresari najde soubor co nematchne na hint/indicie/reseni
-* mozna nevytvaret prazdne clue-grp
 * verifikovat ze jsou nastavene vsechny Iquest_Options
 
 NICE TO HAVE
