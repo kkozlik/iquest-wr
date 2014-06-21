@@ -10,12 +10,14 @@ class Iquest_Options{
     const INITIAL_CGRP_ID = "initial_cgrp_id";
     const FINAL_CGRP_ID   = "final_cgrp_id";
     const REVEAL_GOAL_CGRP_ID = "reveal_goal_cgrp_id";
+    const WALLET_ACTIVE   = "wallet_active";
 
     public static $supported_options = array(self::START_TIME,
                                              self::END_TIME,
                                              self::INITIAL_CGRP_ID,
                                              self::FINAL_CGRP_ID,
-                                             self::REVEAL_GOAL_CGRP_ID); 
+                                             self::REVEAL_GOAL_CGRP_ID,
+                                             self::WALLET_ACTIVE); 
 
     /** Options cache */
     private static $options = null;

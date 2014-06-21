@@ -5,12 +5,6 @@
 
     if (!isset($config->iquest)) $config->iquest = new stdclass();
 
-    /** 
-     *  Specify whether wallet is active
-     *         
-     *  Change to false if no paid hints are used in the contest
-     */ 
-    $config->iquest->wallet_active = true;
 
 
     /** 

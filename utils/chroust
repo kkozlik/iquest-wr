@@ -720,6 +720,20 @@ class Chroust{
         
     }
 
+    /**
+     *  Set value of WALLET_ACTIVE option in dependency whether 
+     *  there are defined any coins
+     */         
+    static function set_wallet_active(){
+        $coin_value = 0;
+    
+        foreach(self::$summary as $row){
+            $coin_value += $row['coin_value'];
+        }
+        
+        Iquest_Options::set(Iquest_Options::WALLET_ACTIVE, ($coin_value>0) ? 1 : 0);
+    }
+
     static function verify(){
         global $data, $config;
 
@@ -873,6 +887,8 @@ class Chroust{
             self::prune_data_dir();
             self::prune_db($option);
             self::process_data_dir($src_dir);
+
+            self::set_wallet_active();
 
             self::verify();
 
