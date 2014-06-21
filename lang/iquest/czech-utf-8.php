@@ -12,7 +12,6 @@ $lang_str['iquest_hint'] =                              "Nápověda";
 $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není správně.";
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";
-$lang_str['iquest_err_coin_key_dup'] =                  "To na nás nezkoušejte :-). Tuto minci jste již získali.";
 $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
 $lang_str['iquest_err_no_hint_for_sale'] =              "Žádná další nápověda pro tento úkol není na prodej.";
 $lang_str['iquest_err_hint_no_money'] =                 "Nemáte dostatek peněz pro získání další nápovědy. Její cena je <price> {$lang_str['iquest_txt_coin_symbol']}.";

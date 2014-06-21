@@ -52,7 +52,6 @@ class apu_iquest extends apu_base_class{
     protected $clue_grp;
     protected $hint;
     protected $solution;
-    protected $coin;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_cgrp;
@@ -172,31 +171,16 @@ class apu_iquest extends apu_base_class{
      */
     function action_solve(){
 
-        if ($this->solution){
-            Iquest_Events::add(Iquest_Events::KEY,
-                               true,
-                               array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,
-                                     "solution" => $this->solution));
-    
-            Iquest::solution_found($this->solution, $this->team_id);
-    
-            action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
-            
-            Iquest_info_msg::add_msg($this->opt['msg_solve']['long']);
-        }
+        Iquest_Events::add(Iquest_Events::KEY,
+                           true,
+                           array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,
+                                 "solution" => $this->solution));
 
-        if ($this->coin){
-            Iquest_Events::add(Iquest_Events::KEY,
-                               true,
-                               array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,
-                                     "coin" => $this->coin));
-    
-            Iquest::coin_found($this->coin, $this->team_id);
-    
-            action_log($this->opt['screen_name'], $this->action, " Coin gained: ".$this->coin->id);
-            
-            // Iquest_info_msg is added by the Iquest::coin_found() function
-        }
+        Iquest::solution_found($this->solution, $this->team_id);
+
+        action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
+        
+        Iquest_info_msg::add_msg($this->opt['msg_solve']['long']);
 
         $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
         return $get;
@@ -642,20 +626,14 @@ class apu_iquest extends apu_base_class{
         }
 
         $this->solution = Iquest_Solution::by_key($_POST['solution_key']);
-        $this->coin     = Iquest_Coin::by_key($_POST['solution_key']);
 
-        if (!$this->solution and !$this->coin){
+        if (!$this->solution){
             ErrorHandler::add_error($lang_str['iquest_err_key_invalid']);
             return false; 
         }
 
-        if ($this->solution and Iquest_ClueGrp::is_accessible($this->solution->cgrp_id, $this->team_id)){
+        if (Iquest_ClueGrp::is_accessible($this->solution->cgrp_id, $this->team_id)){
             ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
-            return false; 
-        }
-
-        if ($this->coin and !Iquest_Coin::is_available($this->coin->id, $this->team_id)){
-            ErrorHandler::add_error($lang_str['iquest_err_coin_key_dup']);
             return false; 
         }
 

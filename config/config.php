@@ -6,6 +6,14 @@
     if (!isset($config->iquest)) $config->iquest = new stdclass();
 
 
+    $config->iquest->notifications = array();
+    /**
+     *  Configure send email notifications when team find a solution
+     *  
+     *  $config->iquest->notifications['solution-id'] = array("foo@bar.cz", 
+     *                                                        "bagr@bagr.com");           
+     */         
+    
 
     /** 
      *  Default timezone:

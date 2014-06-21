@@ -1,8 +1,4 @@
 
-- mozna zlikvidovat tabulky coin a coin_team a misto nich pouzivat tabulku solution
-   - upravit algoritmus na zjisteni (ne)potrebnych hintu
-- upravit chrousta
-- posilani notifikaci mailem - kdyz nejaky tym zada urcity kod
 - vylepsit chovani navbaru na uzkem displayi 
   (predevsim pri zobrazenem odpocitavani do napovedy)
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)

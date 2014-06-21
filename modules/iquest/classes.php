@@ -1268,169 +1268,6 @@ class Iquest_Solution extends Iquest_file{
 }
 
 
-class Iquest_coin{
-    public $id;
-    public $key;
-    public $value;
-    public $gained_at;
-
-
-    /**
-     *  Instantiate coin by key
-     */         
-    static function &by_key($key){
-        return Iquest_key::obj_by_key($key, get_called_class());
-    }
-
-    static function canonicalize_key($key){
-        return Iquest_key::canonicalize_key($key, get_called_class());
-    }
-
-
-    /**
-     *  Fetch coin from DB
-     */         
-    static function fetch($opt=array()){
-        global $data, $config;
-
-        /* table's name */
-        $tc_name  = &$config->data_sql->iquest_coin->table_name;
-        $tt_name  = &$config->data_sql->iquest_coin_team->table_name;
-        /* col names */
-        $cc      = &$config->data_sql->iquest_coin->cols;
-        $ct      = &$config->data_sql->iquest_coin_team->cols;
-
-        $qw = array();
-        $join = array();
-        $cols = "";
-        $order = "";
-
-        if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
-        if (isset($opt['team_id'])){
-            $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
-            $join[] = " left join ".$tt_name." t on c.".$cc->id." = t.".$ct->coin_id;
-            $cols .= ", UNIX_TIMESTAMP(t.".$ct->gained_at.") as ".$ct->gained_at." ";
-
-            if (!empty($opt['available'])){
-                $qw[] = "ISNULL(t.".$ct->gained_at.")";
-            }
-        }
-
-        if ($qw) $qw = " where ".implode(' and ', $qw);
-        else $qw = "";
-
-
-        $q = "select c.".$cc->id.",
-                     c.".$cc->key.",
-                     c.".$cc->value.
-                     $cols." 
-              from ".$tc_name." c ".implode(" ", $join).
-              $qw.$order;
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-
-        $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            if (!isset($row[$ct->gained_at])) $row[$ct->gained_at] = null;
-            
-            $out[$row[$cc->id]] =  new Iquest_coin($row[$cc->id], 
-                                                   $row[$cc->key],
-                                                   $row[$cc->value],
-                                                   $row[$ct->gained_at]);
-        }
-        $res->free();
-        return $out;
-    }
-
-    static function is_available($coin_id, $team_id){
-        global $data, $config;
-
-        /* table's name */
-        $tt_name = &$config->data_sql->iquest_coin_team->table_name;
-        /* col names */
-        $ct      = &$config->data_sql->iquest_coin_team->cols;
-
-        $qw = array();
-        $qw[] = "t.".$ct->team_id."=".$data->sql_format($team_id, "n");
-        $qw[] = "t.".$ct->coin_id."=".$data->sql_format($coin_id, "n");
-
-        $qw = " where ".implode(' and ', $qw);
-
-        $q = "select count(*) 
-              from ".$tt_name." t ".$qw;
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-
-        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
-
-        $out = empty($row[0]);
-        $res->free();
-
-        return $out;
-    }
-
-    /**
-     *  Mark the coin as gained by team $team_id.
-     *  This function do not check whether coin is already gained!     
-     */         
-    static function gain($id, $team_id){
-        global $data, $config;
-
-        /* table's name */
-        $t_name  = &$config->data_sql->iquest_coin_team->table_name;
-        /* col names */
-        $c       = &$config->data_sql->iquest_coin_team->cols;
-
-        $q="insert into ".$t_name." (
-                    ".$c->coin_id.", 
-                    ".$c->team_id.", 
-                    ".$c->gained_at.")
-            values (".$data->sql_format($id,        "s").",
-                    ".$data->sql_format($team_id,   "n").",
-                    now())";
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-    
-        return true;
-    }
-
-    function __construct($id, $key, $value, $gained_at=null){
-        
-        $this->id = $id;
-        $this->key = $key;
-        $this->value = $value;
-        $this->gained_at = $gained_at;
-    }
-
-    function insert(){
-        global $data, $config;
-
-        /* table's name */
-        $t_name = &$config->data_sql->iquest_coin->table_name;
-        /* col names */
-        $c      = &$config->data_sql->iquest_coin->cols;
-    
-        $q = "insert into ".$t_name."(
-                    ".$c->id.",
-                    ".$c->key.",
-                    ".$c->value."
-              )
-              values(
-                    ".$data->sql_format($this->id,              "s").",
-                    ".$data->sql_format($this->key,             "s").",
-                    ".$data->sql_format($this->value,           "n")."
-              )";
-
-        $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-    }
-
-
-}
-
 class Iquest{
 
     /**
@@ -1502,24 +1339,6 @@ class Iquest{
 
         Iquest_Hint::buy($hint->id, $team_id);
     
-        $data->transaction_commit();
-    }
-
-
-    static function coin_found($coin, $team_id){
-        global $data;
-
-        $data->transaction_start();
-
-        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
-    
-        // 1. Mark coin as gained by team
-        sw_log($log_prefix."*** Gaining coin (ID={$coin->id}, value={$coin->value})", PEAR_LOG_INFO);
-        Iquest_Coin::gain($coin->id, $team_id);    
-
-        // 2. Add coin to wallet
-        self::gain_coins($team_id, $coin->value);
-
         $data->transaction_commit();
     }
 
@@ -1605,7 +1424,10 @@ class Iquest{
         unset($graph);
         
         $data->transaction_commit();
-        
+
+
+        // send notification that team solved the task
+        self::_send_notifications($solution, $team_id);
     }
 
     /**
@@ -1731,6 +1553,34 @@ class Iquest{
         }
         
         unset($opening_solutions);
+    }
+    
+    
+    /**
+     *  Send notifications to email once a team found a solution
+     */         
+    private static function _send_notifications($solution, $team_id){
+        global $config;
+
+        // if notification for the solution is not configured, exit
+        if (!isset($config->iquest->notifications[$solution->id])) return;
+        
+        // get team name
+        $team = Iquest_Team::fetch_by_id($team_id);
+
+
+        // prepare email
+        $to = implode(",", $config->iquest->notifications[$solution->id]);
+        $subject = "Team {$team->name} solved task {$solution->name}";
+        $body = $subject."\n At: ".date("H:i:s");
+    
+        // set UTF-8 headers
+        $subject = "=?UTF-8?B?".base64_encode($subject)."?=";
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .='Content-type: text/plain; charset=utf-8'."\r\n";
+    
+        // send the email
+        mail($to, $subject, $body, $headers);
     }
 }
 
