@@ -41,12 +41,12 @@ function resize_images(){
         var maxWidth = Math.min( $( "#page_container" ).width() - 18,
                                  naturalwidth);
     
-        ratio = maxWidth / width;   // get ratio for scaling image
+        ratio = maxWidth / naturalwidth;   // get ratio for scaling image
         $(this).css("width", maxWidth); // Set new width
-        $(this).css("height", height * ratio);  // Scale height based on ratio
-        height = height * ratio;    // Reset height to match scaled image
+        $(this).css("height", naturalheight * ratio);  // Scale height based on ratio
 
-        width = $(this).width();    // Current image width
+//         height = height * ratio;    // Reset height to match scaled image
+//         width = $(this).width();    // Current image width
         
         $(this).parent().find('span.img_size').html(naturalwidth+"×"+naturalheight);
     });
