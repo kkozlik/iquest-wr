@@ -5,7 +5,7 @@ rel 0.1.0
 * metadata.ini: attribute solution.final renamed to cgrp.final
 * metadata.ini: Unit (h, m or s) could be specified for timeouts
 * Introducing hidden clues
-
+* Ability to send email notification when a team find solution
 
  
 rel 0.0.10

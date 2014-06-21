@@ -78,7 +78,11 @@
     </div>
     {$form.finish}
     </div>
-    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#solution_key").focus();
+        });
+    </script>
     
     
     <div class="row">
