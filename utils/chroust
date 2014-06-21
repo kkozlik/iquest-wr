@@ -152,7 +152,6 @@ class Iquest_Metadata{
     function get_solution_name(){
 
         if (!isset($this->data['solution']['name'])){
-            echo "*** WARNING: name for solution is not set.\n";
             return $this->get_cgrp_name();
         }
 
@@ -219,7 +218,6 @@ class Iquest_Metadata{
 
     function get_solution_next_cgrp(){
         if (!isset($this->data['solution']['next_cgrp_id'])){
-            echo "*** WARNING: next_cgrp_id for solution is not set. Is it just a 'bonus' waypoint?\n";
             return null;
         }
         return $this->data['solution']['next_cgrp_id'];
@@ -286,7 +284,6 @@ class Iquest_Metadata{
         if (!isset($clue_IDs[$hint_nr])){
             $clue_ID = (int)end($clue_IDs);
             $clue_ID = $this->get_cgrp_id()."-".$clue_ID; 
-            echo "*** WARNING: clue_ID for hint '$hint_nr' is not specified. Useing '$clue_ID'\n";
         }
         else{
             $clue_ID = (int)$clue_IDs[$hint_nr];
@@ -309,7 +306,6 @@ class Iquest_Metadata{
         if (!isset($timeouts[$hint_nr])){
             $timeout = end($timeouts);
             if (!$timeout) $timeout=0; // for the case the array is empty
-            echo "*** WARNING: timeout for hint '$hint_nr' is not specified. Useing '$timeout'\n";
         }
         else{
             $timeout = $timeouts[$hint_nr];
@@ -331,7 +327,6 @@ class Iquest_Metadata{
 
         if (!isset($prices[$hint_nr])){
             $price = 0;
-            echo "*** INFO: Price for hint '$hint_nr' is not specified. Asuming it is not for sale.\n";
         }
         else{
             $price = $prices[$hint_nr];
@@ -360,7 +355,10 @@ class Iquest_Metadata{
 
 class Chroust{
 
-    static $summary = array();
+    static $summary = array(
+                        'keys'  => array(),
+                        'hints' => array(),
+                      );
     static $unknown_files = array();
 
     static function prune_data_dir(){
@@ -462,6 +460,14 @@ class Chroust{
             throw new exception("Neither timeout nor price is specified for hint '$hint_nr'. This hint will never be shown.");
         }
 
+        self::$summary['hints'][] = array("cgrp_name" => $metadata->get_cgrp_name(),
+                                          "ordering"  => $metadata->get_cgrp_order(),
+                                          "clue_id"   => $clue_id,
+                                          "hint_nr"   => $hint_nr,
+                                          "price"     => $price,
+                                          "timeout"   => $timeout);
+
+
         $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
                 $filename, $content_type, null, $clue_id, $timeout, $price, $hint_nr);
 
@@ -500,11 +506,12 @@ class Chroust{
                                               // gained solutions. 
         }
 
-        self::$summary[] = array("name" => $name,
-                                 "key"  => $metadata->get_solution_key(),
-                                 "ordering" => $metadata->get_cgrp_order(),
-                                 "coin_value" => $coin_value,
-                                 "timeout" =>    $timeout);
+        self::$summary['keys'][] = array("name" => $name,
+                                         "key"  => $metadata->get_solution_key(),
+                                         "ordering" => $metadata->get_cgrp_order(),
+                                         "coin_value" => $coin_value,
+                                         "timeout" =>    $timeout,
+                                         "next_cgrp_id" => $stub ? null : $next_cgrp_id);
 
         $solution = new Iquest_Solution($cgrp_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
@@ -600,7 +607,7 @@ class Chroust{
             $metadata = new Iquest_Metadata($task_dir, $top_metadata);
         }
         catch (Iquest_noMetaDataException $e){
-            echo "No metadata. Skipping!!! \n";
+            echo "*** No metadata. Skipping!!! \n";
             return;
         }
 
@@ -727,7 +734,7 @@ class Chroust{
     static function set_wallet_active(){
         $coin_value = 0;
     
-        foreach(self::$summary as $row){
+        foreach(self::$summary['keys'] as $row){
             $coin_value += $row['coin_value'];
         }
         
@@ -829,6 +836,13 @@ class Chroust{
         return iconv('ISO-8859-2', 'UTF-8', call_user_func_array('sprintf', $args));
     }
     
+    static function format_time($t){
+        return sprintf("%02d%s%02d%s%02d", 
+                            floor($t/3600), ':', 
+                            ($t/60)%60,     ':', 
+                            $t%60);
+    }
+    
     static function usage(){
         echo "Usage: ".$_SERVER['argv'][0]." [--preserve-user-data|--clear-user-data] <datadir> \n\n";
     }
@@ -893,30 +907,73 @@ class Chroust{
             self::verify();
 
             // sort the keys summary by 'ordering' attribute
-            usort(self::$summary, create_function('$a,$b','
+            usort(self::$summary['hints'], create_function('$a,$b','
+                if ($a["ordering"] == $b["ordering"]) {
+                    if ($a["clue_id"] == $b["clue_id"]) {
+                        if ($a["hint_nr"] == $b["hint_nr"]) {return 0;}
+                        return ($a["hint_nr"] < $b["hint_nr"]) ? -1 : 1;
+                    }
+                    return ($a["clue_id"] < $b["clue_id"]) ? -1 : 1;
+                }
+                return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
+            '));
+
+            echo "\nHint summary:\n\n";
+            echo self::utf_8_sprintf("|%-20s|%-20s|%-8s|%-10s|%-10s|\n", 
+                        "Cgrp Name", "Clue ID", "Hint Nr", "Price", "Timeout");
+            echo "--------------------------------------------------------------------------\n";
+
+            foreach(self::$summary['hints'] as $row){
+                echo self::utf_8_sprintf("|%-20s|%-20s|%-8s|%-10s|%-10s|\n", 
+                            $row['cgrp_name'], 
+                            $row['clue_id'], 
+                            $row['hint_nr'], 
+                            $row['price']>0?$row['price']:"---",
+                            $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---");
+            }
+
+            echo "--------------------------------------------------------------------------\n";
+
+
+            // sort the keys summary by 'ordering' attribute
+            usort(self::$summary['keys'], create_function('$a,$b','
                 if ($a["ordering"] == $b["ordering"]) {return 0;}
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
             '));
 
-            echo "Keys summary:\n\n";
-            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|\n", 
-                        "Name", "Key", "Coin", "Timeout");
-                        
-            foreach(self::$summary as $row){
-                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|\n", 
+            echo "\nKeys summary:\n\n";
+            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|%-20s|\n", 
+                        "Name", "Key", "Coin", "Timeout", "Next Cgrp");
+            echo "----------------------------------------------------------------------------------------------------------\n";
+
+            $total_coins = $total_timeout = 0;
+            foreach(self::$summary['keys'] as $row){
+                $total_coins += $row['coin_value'];
+                $total_timeout += $row['timeout'];
+                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|%-20s|\n", 
                             $row['name'], 
                             $row['key'], 
                             $row['coin_value']>0?$row['coin_value']:"---",
-                            $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---");
+                            $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---",
+                            $row['next_cgrp_id']?$row['next_cgrp_id']:"---");
             }
+
+            echo "----------------------------------------------------------------------------------------------------------\n";
+            echo self::utf_8_sprintf("|%-61s|%-10s|%-10s|%-20s|\n", 
+                        "Total:", 
+                        $total_coins,
+                        self::format_time($total_timeout),
+                        "");
+
             
             if (self::$unknown_files){
-                echo "\nUnknown files:\n\n";
+                echo "\nNot recognized files:\n";
                 foreach(self::$unknown_files as $file){
                     echo "  * $file\n";
                 }
             }
             
+            echo "\n";
             
         }
         catch (exception $e){
