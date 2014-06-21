@@ -2,8 +2,6 @@
 - vylepsit chovani navbaru na uzkem displayi 
   (predevsim pri zobrazenem odpocitavani do napovedy)
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
-- povolit cachovani souboru (hint, clue, solution)
-- onload - focus na pole pro zadavani kodu
 
 CHROUST
 -------

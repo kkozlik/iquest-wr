@@ -81,12 +81,14 @@ class Iquest_file{
         
         $filename = $config->iquest_data_dir.$this->filename;
 
+        $offset = 60 * 60 * 24;
+
         header('Content-Description: File Transfer');
         header('Content-Type: '.$this->content_type);
         header('Content-Disposition: attachment; filename='.basename($filename));
         header('Content-Transfer-Encoding: binary');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT");
+        header("Cache-Control: max-age=$offset, must-revalidate");
         header('Pragma: public');
         header('Content-Length: ' . filesize($filename));
         ob_clean();
