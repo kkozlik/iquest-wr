@@ -108,6 +108,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_next_hint'] =        'next_hint';
 
         $this->opt['smarty_main_url'] =         'main_url';
+        $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
@@ -132,6 +133,7 @@ class apu_iquest extends apu_base_class{
         if (!isset($this->session['known_hints']))      $this->session['known_hints'] = array();
         if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();
         if (!isset($this->session['hidden_ref_ids']))   $this->session['hidden_ref_ids'] = array();
+        if (!isset($this->session['view_all']))         $this->session['view_all'] = false;
     }
     
     function get_timeouts(){
@@ -349,10 +351,6 @@ class apu_iquest extends apu_base_class{
                      "available_only" => true);
         $clue_groups = Iquest_ClueGrp::fetch($opt);
 
-        $this->smarty_groups = array();
-        foreach($clue_groups as &$cgrp){
-            $this->smarty_groups[$cgrp->id] = $this->cgrp_to_smarty($cgrp);
-        }
 
         $this->get_timeouts();
         $this->get_team_info();
@@ -383,37 +381,53 @@ class apu_iquest extends apu_base_class{
             $clue_groups = Iquest_ClueGrp::fetch($opt);
         }
 
-        $this->smarty_groups = array();
-        foreach($clue_groups as $k => $v){
-            $new_hints = false;
-            
-            $opt = array("cgrp_id" => $v->id,
-                         "team_id" => $this->team_id,
-                         "accessible" => true);
-            $hints = Iquest_Hint::fetch($opt);
-
-            foreach($hints as $hint){
-                if (!isset($this->session['known_hints'][$hint->id])){
-                    $new_hints = true;
-                    break;
-                }
-            }
-
-            $hint_for_sale = $clue_groups[$k]->get_next_hint_for_sale($this->team_id);
-
-            $smarty_group = $v->to_smarty();
-            $smarty_group['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
-            $smarty_group['new'] = !isset($this->session['known_cgrps'][$v->id]);
-            $smarty_group['new_hints'] = $new_hints;
-            $smarty_group['hints_for_sale'] = !empty($hint_for_sale);
-            if ($smarty_group['hints_for_sale']){
-                $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF']."?buy_hint=".RawURLEncode($v->ref_id));
-                $smarty_group['buy_confirmation'] = str_replace("<price>",
-                                                                $hint_for_sale->price,
-                                                                $lang_str['iquest_conf_buy_hint']);
-            }
-            $this->smarty_groups[$k] = $smarty_group;
+        if (isset($_GET['view_all'])){
+            $this->session['view_all'] = (bool)$_GET['view_all'];
         }
+
+
+        $this->smarty_groups = array();
+
+        if ($this->session['view_all']){
+            $this->smarty_action = 'view_all';
+
+            foreach($clue_groups as &$cgrp){
+                $this->smarty_groups[$cgrp->id] = $this->cgrp_to_smarty($cgrp);
+            }
+        }
+        else{
+            foreach($clue_groups as $k => $v){
+                $new_hints = false;
+                
+                $opt = array("cgrp_id" => $v->id,
+                             "team_id" => $this->team_id,
+                             "accessible" => true);
+                $hints = Iquest_Hint::fetch($opt);
+    
+                foreach($hints as $hint){
+                    if (!isset($this->session['known_hints'][$hint->id])){
+                        $new_hints = true;
+                        break;
+                    }
+                }
+    
+                $hint_for_sale = $clue_groups[$k]->get_next_hint_for_sale($this->team_id);
+    
+                $smarty_group = $v->to_smarty();
+                $smarty_group['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
+                $smarty_group['new'] = !isset($this->session['known_cgrps'][$v->id]);
+                $smarty_group['new_hints'] = $new_hints;
+                $smarty_group['hints_for_sale'] = !empty($hint_for_sale);
+                if ($smarty_group['hints_for_sale']){
+                    $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF']."?buy_hint=".RawURLEncode($v->ref_id));
+                    $smarty_group['buy_confirmation'] = str_replace("<price>",
+                                                                    $hint_for_sale->price,
+                                                                    $lang_str['iquest_conf_buy_hint']);
+                }
+                $this->smarty_groups[$k] = $smarty_group;
+            }
+        }
+
 
         $solutions = Iquest_Solution::fetch_accessible($this->team_id);
 
@@ -495,12 +509,6 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false,
                                  'alone'=>true);
-        }
-        elseif (isset($_GET['view_all'])){
-            $this->smarty_action = 'view_all';
-            $this->action=array('action'=>"view_all",
-                                 'validate_form'=>false,
-                                 'reload'=>false);
         }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
@@ -738,6 +746,9 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
+        $smarty->assign($this->opt['smarty_all_in_1_url'], 
+                        $this->controler->url($_SERVER['PHP_SELF'].
+                            "?view_all=".($this->session['view_all']?"0":"1")));
     }
     
     /**

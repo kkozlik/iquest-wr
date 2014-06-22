@@ -8,6 +8,10 @@ $lang_str['iquest_avail_solutions'] =                   "Řešení úkolů";
 $lang_str['iquest_solution_key'] =                      "Kód řešení úkolu";
 $lang_str['iquest_download'] =                          "Stáhnout";
 $lang_str['iquest_hint'] =                              "Nápověda";
+$lang_str['iquest_solution'] =                          "Řešení";
+$lang_str['iquest_all_in_1'] =                          "Vše v jednom";
+$lang_str['iquest_view'] =                              "Zobrazit";
+
 
 $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není správně.";
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
@@ -35,7 +39,7 @@ $lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
 
 $lang_str['iquest_txt_wallet_state'] =                  "Vaše peněženka";
 
-$lang_str['iquest_btn_buy_hint'] =                      "Kup hint!";
+$lang_str['iquest_btn_buy_hint'] =                      "Kup nápovědu!";
 $lang_str['iquest_conf_buy_hint'] =                     "Opravdu si přejete utratit <price> {$lang_str['iquest_txt_coin_symbol']} za další nápovědu?";
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";

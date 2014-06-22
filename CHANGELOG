@@ -6,6 +6,7 @@ rel 0.1.0
 * metadata.ini: Unit (h, m or s) could be specified for timeouts
 * Introducing hidden clues
 * Ability to send email notification when a team find solution
+* Adding new view showing all clues and hints on single screen
 
  
 rel 0.0.10

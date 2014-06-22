@@ -4,6 +4,11 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
+
+{**
+ *  Print clues and hints of a clue group
+ *  @param  clue_grp
+ *}
 {function print_clue_grp}
     {foreach $clue_grp.clues as $clue}
     <div class="datatable clue" id="{$clue.ref_id|escape}" {if $clue.hidden}style="display: none;"{/if}>
@@ -41,6 +46,11 @@
     {/foreach}
 {/function}
 
+
+{**
+ *  Print title of a clue group
+ *  @param  clue_grp
+ *}
 {function print_clue_grp_title}
     <div class="navbar" id="{$clue_grp.ref_id}">
         <div class="navbar-inner {if $clue_grp.new}new{/if}">
@@ -56,6 +66,11 @@
     </div>
 {/function}
 
+
+{**
+ *  Print minimized clues and hints (as part of clue grp title)
+ *  @param  clue_grp
+ *}
 {function print_minimized_clues}
     <ul class="navbar-text inline shrinked-grp">
     {foreach $clue_grp.clues as $clue}
@@ -72,13 +87,19 @@
 {/function}
 
 
+{**
+ *  Print the block containing input elements for entering key 
+ *}
 {function print_key_input}
     <div class="form-inline well">
     {$form.start}
-    <div class="text-center">
-    <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
-    {$form.solution_key}
-    {$form.okey}
+    <div class="row-fluid">
+        <div class="span2"><a href="{$all_in_1_url|escape}" class="nowrap btn {if $action=='view_all'}btn-inverse{/if}">{$lang_str.iquest_all_in_1}</a></div>
+        <div class="span8 text-center">
+        <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
+        {$form.solution_key}
+        {$form.okey}
+        </div>
     </div>
     {$form.finish}
     </div>
@@ -88,6 +109,9 @@
         });
     </script>
 {/function}
+
+
+
 
 {if $action=='view_grp'}
 
@@ -110,6 +134,19 @@
         {call print_clue_grp_title clue_grp=$group}
         {call print_clue_grp clue_grp=$group}
     {/foreach}
+
+    {foreach $solutions as $solution}
+        <div class="navbar" id="{$solution.ref_id}">
+            <div class="navbar-inner {if $solution.new}new{/if}">
+            <div class="brand">{$lang_str.iquest_solution}: {$solution.name|escape}</div>
+            <div class="pull-right"><a href="{$solution.detail_url|escape}" class="btn">{$lang_str.iquest_view}</a></div>
+            {if $solution.new}
+            <div class="pull-right"><span class="new"></span></div>
+            {/if}
+            </div>
+        </div>
+    {/foreach}
+
     
 {elseif $action=='view_solution'}
 
