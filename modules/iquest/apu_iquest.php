@@ -163,6 +163,49 @@ class apu_iquest extends apu_base_class{
         $team = Iquest_Team::fetch_by_id($this->team_id);
         $this->smarty_team = $team->to_smarty();
     }
+
+
+    function cgrp_to_smarty(&$clue_grp){
+        global $lang_str;
+
+        $hint_for_sale = $clue_grp->get_next_hint_for_sale($this->team_id);
+
+        $smarty_cgrp = $clue_grp->to_smarty();
+        $smarty_cgrp['hints_for_sale'] = !empty($hint_for_sale);
+        if ($smarty_cgrp['hints_for_sale']){
+            $smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
+                                                            "?buy_hint=".RawURLEncode($clue_grp->ref_id).
+                                                            "&view_grp_detail=1");
+            $smarty_cgrp['buy_confirmation'] = str_replace("<price>",
+                                                           $hint_for_sale->price,
+                                                           $lang_str['iquest_conf_buy_hint']);
+        }
+
+
+        $clues = $clue_grp->get_clues();
+        $smarty_cgrp['clues'] = array();
+
+        foreach($clues as $k => $v){
+            // skip hidden clues
+            if ($v->type == Iquest_Clue::TYPE_HIDDEN) continue;
+            
+            $hints = $clues[$k]->get_accessible_hints($this->team_id);
+            $smarty_clue = $clues[$k]->to_smarty();
+            $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+
+            foreach($smarty_clue['hints'] as $hk => $hv){
+                $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+                $smarty_clue['hints'][$hk]['new'] = !isset($this->session['known_hints'][$hv['id']]);
+                $this->session['known_hints'][$hv['id']] = true;
+            }
+
+
+            $smarty_cgrp['clues'][$k] = $smarty_clue;
+        }
+    
+        return $smarty_cgrp;
+    }
+
     
     /**
      *  Method perform action solve
@@ -240,38 +283,7 @@ class apu_iquest extends apu_base_class{
 
         $hint_for_sale = $this->clue_grp->get_next_hint_for_sale($this->team_id);
 
-        $this->smarty_cgrp = $this->clue_grp->to_smarty();
-        $this->smarty_cgrp['hints_for_sale'] = !empty($hint_for_sale);
-        if ($this->smarty_cgrp['hints_for_sale']){
-            $this->smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
-                                                                   "?buy_hint=".RawURLEncode($this->clue_grp->ref_id).
-                                                                   "&view_grp_detail=1");
-            $this->smarty_cgrp['buy_confirmation'] = str_replace("<price>",
-                                                                 $hint_for_sale->price,
-                                                                 $lang_str['iquest_conf_buy_hint']);
-        }
-
-
-        $clues = $this->clue_grp->get_clues();
-        $this->smarty_cgrp['clues'] = array();
-
-        foreach($clues as $k => $v){
-            // skip hidden clues
-            if ($v->type == Iquest_Clue::TYPE_HIDDEN) continue;
-            
-            $hints = $clues[$k]->get_accessible_hints($this->team_id);
-            $smarty_clue = $clues[$k]->to_smarty();
-            $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
-
-            foreach($smarty_clue['hints'] as $hk => $hv){
-                $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
-                $smarty_clue['hints'][$hk]['new'] = !isset($this->session['known_hints'][$hv['id']]);
-                $this->session['known_hints'][$hv['id']] = true;
-            }
-
-
-            $this->smarty_cgrp['clues'][$k] = $smarty_clue;
-        }
+        $this->smarty_cgrp = $this->cgrp_to_smarty($this->clue_grp);
 
         $this->get_timeouts();
         $this->get_team_info();
@@ -299,6 +311,26 @@ class apu_iquest extends apu_base_class{
         $this->session['known_solutions'][$this->solution->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution");
+        return true;
+    }
+
+    function action_view_all(){
+        global $lang_str;
+
+        $opt = array("team_id" => $this->team_id,
+                     "available_only" => true);
+        $clue_groups = Iquest_ClueGrp::fetch($opt);
+
+        $this->smarty_groups = array();
+        foreach($clue_groups as &$cgrp){
+            $this->smarty_groups[$cgrp->id] = $this->cgrp_to_smarty($cgrp);
+        }
+
+        $this->get_timeouts();
+        $this->get_team_info();
+//        $this->session['known_cgrps'][$this->clue_grp->id] = true;
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View all clue groups screen");
         return true;
     }
 
@@ -421,6 +453,12 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false,
                                  'alone'=>true);
+        }
+        elseif (isset($_GET['view_all'])){
+            $this->smarty_action = 'view_all';
+            $this->action=array('action'=>"view_all",
+                                 'validate_form'=>false,
+                                 'reload'=>false);
         }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,

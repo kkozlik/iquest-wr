@@ -4,16 +4,7 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-
-{if $action=='view_grp'}
-
-    <ul class="breadcrumb breadcrumb-btn">
-    <li class="no-btn"><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
-    {if $clue_grp.hints_for_sale}
-    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></li>
-    {/if}
-    </ul>
-
+{function print_clue_grp}
     {foreach $clue_grp.clues as $clue}
     <div class="datatable clue">
     <table class="table table-bordered">
@@ -42,11 +33,54 @@
     </div>
     {/foreach}
     {/foreach}
+{/function}
+
+{function print_key_input}
+    <div class="form-inline well">
+    {$form.start}
+    <div class="text-center">
+    <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
+    {$form.solution_key}
+    {$form.okey}
+    </div>
+    {$form.finish}
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#solution_key").focus();
+        });
+    </script>
+{/function}
+
+{if $action=='view_grp'}
+
+    <ul class="breadcrumb breadcrumb-btn">
+    <li class="no-btn"><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    {if $clue_grp.hints_for_sale}
+    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></li>
+    {/if}
+    </ul>
+
+    {call print_clue_grp clue_grp=$clue_grp}
 
     <ul class="breadcrumb">
     <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+{elseif $action=='view_all'}
+
+    {call print_key_input}
+
+    {foreach $clue_groups as $group}
+        <div class="well">
+            {$group.name|escape}
+            {if $group.hints_for_sale}
+            <div class="pull-right"><a href="{$group.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></div>
+            {/if}
+        </div>
+        {call print_clue_grp clue_grp=$group}
+    {/foreach}
+    
 {elseif $action=='view_solution'}
 
     <ul class="breadcrumb">
@@ -69,20 +103,7 @@
 
 {else}
 
-    <div class="form-inline well">
-    {$form.start}
-    <div class="text-center">
-    <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
-    {$form.solution_key}
-    {$form.okey}
-    </div>
-    {$form.finish}
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#solution_key").focus();
-        });
-    </script>
+    {call print_key_input}
     
     
     <div class="row">
