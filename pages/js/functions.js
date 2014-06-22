@@ -91,6 +91,50 @@ function set_clock(selector, time){
 }
 
 
+$(document).ready(function() {
+
+    /**
+     *  Click handler for minimize buttons for clues/hints
+     */         
+    $(".shrinkable .minimize-btn").click(function(e) {
+        e.preventDefault();
+        
+        var obj_id = $(this).attr("data-obj-id");
+
+        $("#"+obj_id).slideUp(
+             150,
+             function() {
+                $("#min"+obj_id).removeClass("minimized-hidden");
+        });
+
+        // let the server know about the change and make it persistent
+        $.ajax({
+            url: $(this).attr("data-url-hide"),
+            cache: false
+        });
+    });
+
+
+    /**
+     *  Click handler for restore buttons for clues/hints
+     */         
+    $(".shrinked-grp .restore-btn").click(function(e) {
+        e.preventDefault();
+        
+        var obj_id = $(this).attr("data-obj-id");
+        $("#min"+obj_id).addClass("minimized-hidden");
+        $("#"+obj_id).slideDown(150);
+
+        // let the server know about the change and make it persistent
+        $.ajax({
+            url: $(this).attr("data-url-unhide"),
+            cache: false
+        });
+    });
+
+});
+
+
 $(window).load(function() {
     resize_images();
 });

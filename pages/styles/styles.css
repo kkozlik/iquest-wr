@@ -60,6 +60,11 @@
     text-align: center;
 }
 
+.datatable .buttons{
+    width: 44px;
+    text-align: center;
+}
+
 .datatable.clue th{
     background-color: #dff0d8;
 }
@@ -100,14 +105,30 @@ span.coin{
     margin: 0 1px;
 }
 
+.navbar span.new,
+.navbar span.newhint,
+.navbar span.coin{
+    margin: 5px;
+}
+
+.navbar span.new,
 span.new{
     background-image: url("../img/nove.png");
 }
+.navbar span.newhint,
 span.newhint{
     background-image: url("../img/hint.png");
 }
+.navbar span.coin,
 span.coin{
     background-image: url("../img/coin.png");
+}
+
+
+.navbar .new{
+    background-color: #fcf8e3;
+    background-image: linear-gradient(to bottom, #fcfcf8, #fcf8da);
+    background-repeat: repeat-x;
 }
 
 .breadcrumb.breadcrumb-btn{
@@ -211,3 +232,12 @@ div.popover{
 .form-search #datetimepicker2 input{
     width: 179px;
 }
+
+
+
+
+.minimized-hidden{
+    display: none !important;
+}
+
+

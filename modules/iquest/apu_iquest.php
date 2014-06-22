@@ -131,6 +131,7 @@ class apu_iquest extends apu_base_class{
         if (!isset($this->session['known_cgrps']))      $this->session['known_cgrps'] = array();
         if (!isset($this->session['known_hints']))      $this->session['known_hints'] = array();
         if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();
+        if (!isset($this->session['hidden_ref_ids']))   $this->session['hidden_ref_ids'] = array();
     }
     
     function get_timeouts(){
@@ -172,6 +173,8 @@ class apu_iquest extends apu_base_class{
 
         $smarty_cgrp = $clue_grp->to_smarty();
         $smarty_cgrp['hints_for_sale'] = !empty($hint_for_sale);
+        $smarty_cgrp['new'] = !isset($this->session['known_cgrps'][$clue_grp->id]);
+
         if ($smarty_cgrp['hints_for_sale']){
             $smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
                                                             "?buy_hint=".RawURLEncode($clue_grp->ref_id).
@@ -191,19 +194,45 @@ class apu_iquest extends apu_base_class{
             
             $hints = $clues[$k]->get_accessible_hints($this->team_id);
             $smarty_clue = $clues[$k]->to_smarty();
+            $smarty_clue['hidden'] = isset($this->session['hidden_ref_ids'][$v->ref_id]);
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+            $smarty_clue['hide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?hide=".RawURLEncode($clues[$k]->ref_id));
+            $smarty_clue['unhide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?unhide=".RawURLEncode($clues[$k]->ref_id));
 
             foreach($smarty_clue['hints'] as $hk => $hv){
                 $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+                $smarty_clue['hints'][$hk]['hide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?hide=".RawURLEncode($hv['ref_id']));
+                $smarty_clue['hints'][$hk]['unhide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?unhide=".RawURLEncode($hv['ref_id']));
                 $smarty_clue['hints'][$hk]['new'] = !isset($this->session['known_hints'][$hv['id']]);
+                $smarty_clue['hints'][$hk]['hidden'] = isset($this->session['hidden_ref_ids'][$hv['ref_id']]);
                 $this->session['known_hints'][$hv['id']] = true;
             }
 
-
             $smarty_cgrp['clues'][$k] = $smarty_clue;
         }
+
+        $this->session['known_cgrps'][$clue_grp->id] = true;
     
         return $smarty_cgrp;
+    }
+
+
+    function action_ajax_hide(){
+        $this->controler->disable_html_output();
+        header("Content-Type: text/plain");
+        
+        $this->session['hidden_ref_ids'][$this->ref_id] = true;
+        
+        return true;
+    }
+
+    function action_ajax_unhide(){
+        $this->controler->disable_html_output();
+        header("Content-Type: text/plain");
+        
+        unset($this->session['hidden_ref_ids'][$this->ref_id]);
+        
+        return true;
     }
 
     
@@ -287,7 +316,6 @@ class apu_iquest extends apu_base_class{
 
         $this->get_timeouts();
         $this->get_team_info();
-        $this->session['known_cgrps'][$this->clue_grp->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View clue group screen");
         return true;
@@ -412,6 +440,20 @@ class apu_iquest extends apu_base_class{
             $this->action=array('action'=>"solve",
                                 'validate_form'=>true,
                                 'reload'=>true);
+        }
+        elseif (isset($_GET['hide'])){
+            $this->ref_id = $_GET['hide'];
+            $this->action=array('action'=>"ajax_hide",
+                                 'validate_form'=>false,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['unhide'])){
+            $this->ref_id = $_GET['unhide'];
+            $this->action=array('action'=>"ajax_unhide",
+                                 'validate_form'=>false,
+                                 'reload'=>false,
+                                 'alone'=>true);
         }
         elseif (isset($_GET['buy_hint'])){
             $this->ref_id = $_GET['buy_hint'];

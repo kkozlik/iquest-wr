@@ -1,33 +1,33 @@
 
 
-{function iquestRenderFile file=0}
+{function iquestRenderFile file=0 colspan=2}
     {if $file.content_type == "text/plain"}
         <tr>
-            <td colspan="2"><pre class="plaintext">{$file.content}</pre>
+            <td colspan="{$colspan}"><pre class="plaintext">{$file.content}</pre>
             </td>
         </tr>
     {elseif $file.content_type|truncate:6:"" == "image/"}
         <tr>
-            <td colspan="2" class="text-center fileimg">
+            <td colspan="{$colspan}" class="text-center fileimg">
                 <img src="{$file.file_url|escape}" />
                 <div>Velikost: <span class="img_size"></span></div>
             </td>
         </tr>
     {elseif $file.content_type|truncate:6:"" == "audio/"}
         <tr>
-            <td colspan="2">
+            <td colspan="{$colspan}">
                 <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_audio_content}</span></div>
             </td>
         </tr>
     {elseif $file.content_type|truncate:6:"" == "video/"}
         <tr>
-            <td colspan="2" class="text-center">
+            <td colspan="{$colspan}" class="text-center">
                 <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_video_content}</span></div>
             </td>
         </tr>
     {else}
         <tr>
-            <td colspan="2" class="text-center">
+            <td colspan="{$colspan}" class="text-center">
                 <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_general_content}</span></div>
             </td>
         </tr>
