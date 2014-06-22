@@ -26,7 +26,7 @@
     <table class="table table-bordered shrinkable">
     <tr {if $hint.new}class="new"{/if}>
         <th class="filename">
-            {$lang_str.iquest_hint}: {$hint.filename}
+            {$lang_str.iquest_hint}: {$hint.filename|escape}
             {if $hint.new}<span class="new"></span>{/if}
         </th>
         <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
@@ -39,6 +39,21 @@
     </div>
     {/foreach}
     {/foreach}
+{/function}
+
+{function print_clue_grp_title}
+    <div class="navbar" id="{$clue_grp.ref_id}">
+        <div class="navbar-inner {if $clue_grp.new}new{/if}">
+        <div class="brand">{$clue_grp.name|escape}</div>
+        <div class="pull-left">{call print_minimized_clues clue_grp=$clue_grp}</div>
+        {if $clue_grp.hints_for_sale}
+        <div class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></div>
+        {/if}
+        {if $clue_grp.new}
+        <div class="pull-right"><span class="new"></span></div>
+        {/if}
+        </div>
+    </div>
 {/function}
 
 {function print_minimized_clues}
@@ -76,13 +91,11 @@
 
 {if $action=='view_grp'}
 
-    <ul class="breadcrumb breadcrumb-btn">
-    <li class="no-btn"><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
-    {if $clue_grp.hints_for_sale}
-    <li class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></li>
-    {/if}
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+    {call print_clue_grp_title clue_grp=$clue_grp}
     {call print_clue_grp clue_grp=$clue_grp}
 
     <ul class="breadcrumb">
@@ -94,19 +107,7 @@
     {call print_key_input}
 
     {foreach $clue_groups as $group}
-        <div class="navbar" id="{$group.ref_id}">
-            <div class="navbar-inner {if $group.new}new{/if}">
-            <div class="brand">{$group.name|escape}</div>
-            <div class="pull-left">{call print_minimized_clues clue_grp=$group}</div>
-            {if $group.hints_for_sale}
-            <div class="pull-right"><a href="{$group.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></div>
-            {/if}
-            {if $group.new}
-            <div class="pull-right"><span class="new"></span></div>
-            {/if}
-            </div>
-        </div>
-
+        {call print_clue_grp_title clue_grp=$group}
         {call print_clue_grp clue_grp=$group}
     {/foreach}
     

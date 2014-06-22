@@ -178,7 +178,7 @@ class apu_iquest extends apu_base_class{
         if ($smarty_cgrp['hints_for_sale']){
             $smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
                                                             "?buy_hint=".RawURLEncode($clue_grp->ref_id).
-                                                            "&view_grp_detail=1");
+                                                            ($this->action['action'] == "view_grp" ? "&view_grp_detail=1" : ""));
             $smarty_cgrp['buy_confirmation'] = str_replace("<price>",
                                                            $hint_for_sale->price,
                                                            $lang_str['iquest_conf_buy_hint']);
