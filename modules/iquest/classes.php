@@ -1224,6 +1224,27 @@ class Iquest_Solution extends Iquest_file{
         $this->stub = $stub;
         $this->show_at = $show_at;
     }
+    
+    /**
+     *  Check whether the solution is reachable by given team.
+     *  The solution is reachable if the team gained at least one clue leading 
+     *  to the solution.
+     *  
+     *  @return bool                     
+     */         
+    function is_reachable($team_id){
+    
+        $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($this->id, $team_id);
+
+        foreach($clue_grps as $clue_grp){
+            // if any of the clue groups is gained the solution is reachable
+            if (!is_null($clue_grp->gained_at)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     function insert(){
         global $data, $config;

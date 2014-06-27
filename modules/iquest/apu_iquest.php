@@ -725,6 +725,15 @@ class apu_iquest extends apu_base_class{
             return false; 
         }
 
+        // Check that the keys are entered in correct order, check that 
+        // the team has a clue to this key
+        if (Iquest_Options::get(Iquest_Options::CHECK_KEY_ORDER) and
+            !$this->solution->is_reachable($this->team_id)){
+            
+            ErrorHandler::add_error($lang_str['iquest_err_key_not_reachable']);
+            return false; 
+        }
+        
         return $form_ok;
     }
     

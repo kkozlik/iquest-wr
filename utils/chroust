@@ -432,6 +432,13 @@ class Chroust{
         }    
     }
 
+    /**
+     *  Set default values for options
+     */         
+    static function set_defaults(){
+        Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
+    }
+    
     static function insert_cgrp($metadata){
         $cgrp_id = $metadata->get_cgrp_id();
         $cgrp_name = $metadata->get_cgrp_name();
@@ -923,6 +930,7 @@ class Chroust{
         try{
             self::prune_data_dir();
             self::prune_db($option);
+            self::set_defaults();
             self::process_data_dir($src_dir);
 
             self::set_wallet_active();
