@@ -569,6 +569,7 @@ class Iquest_ClueGrp{
         $opt = array("cgrp_id" => $this->id,
                      "team_id" => $team_id,
                      "for_sale" => true,
+                     "not_accessible" => true, // hint to be sold can't be accessible yet
                      "order_by" => "ordering");
 
         $hints = Iquest_Hint::fetch($opt);
@@ -631,6 +632,10 @@ class Iquest_Hint extends Iquest_file{
 
             if (!empty($opt['accessible'])){
                 $qw[] = "t.".$ct->show_at." <= now()";
+            }
+
+            if (!empty($opt['not_accessible'])){
+                $qw[] = "t.".$ct->show_at." > now()";
             }
 
             if (!empty($opt['for_sale'])){
