@@ -106,6 +106,22 @@ class Iquest_Metadata{
         throw new exception("Charset not specified in metadata file.");
     }
 
+    /**
+     *  Return MIME type used in for specific file
+     *  
+     *  Function first look to [$filename] section and if it do not contain 
+     *  the MIME type it call Iquest_file::get_mime_type()               
+     */         
+    function get_mime_type($filename){
+        
+        $filename = basename($filename);
+        if (isset($this->data["file:".$filename]['mime_type'])){
+            return $this->data["file:".$filename]['mime_type'];
+        }
+
+        return Iquest_file::get_mime_type($filename);
+    }
+
     function get_cgrp_id(){
         if (!isset($this->data['general']['id'])){
             throw new exception("ID not specified in metadata file.");
@@ -147,6 +163,13 @@ class Iquest_Metadata{
 
     function is_final_cgrp(){
         return !empty($this->data['cgrp']['final']);
+    }
+
+    function get_solution_id(){
+        if (isset($this->data['solution']['id'])){
+            return $this->data['solution']['id'];
+        }
+        return $this->get_cgrp_id();
     }
 
     function get_solution_name(){
@@ -236,7 +259,7 @@ class Iquest_Metadata{
         // If no point_to is specifed for the clue, assume it point to 
         // solution specified in this directory 
         if (!isset($this->data['clue']['point_to'][$clue_nr])){
-            return array($this->get_cgrp_id());
+            return array($this->get_solution_id());
         } 
         
         $point_to = $this->data['clue']['point_to'][$clue_nr];
@@ -423,7 +446,7 @@ class Chroust{
     static function insert_clue($filename, $clue_nr, $metadata){
         $cgrp_id = $metadata->get_cgrp_id();
         $ref_id = rfc4122_uuid();
-        $content_type = Iquest_file::get_mime_type($filename);
+        $content_type = $metadata->get_mime_type($filename);
         $point_to = $metadata->get_clue_point_to($clue_nr);
         $clue_type = $metadata->get_clue_type($clue_nr, $filename);
 
@@ -438,7 +461,7 @@ class Chroust{
     static function insert_hint($filename, $hint_nr, $metadata, $clues){
         $cgrp_id = $metadata->get_cgrp_id();
         $ref_id = rfc4122_uuid();
-        $content_type = Iquest_file::get_mime_type($filename);
+        $content_type = $metadata->get_mime_type($filename);
         $clue_id = $metadata->get_hint_clueid($hint_nr);
         $timeout = $metadata->get_hint_timeout($hint_nr);
         $price = $metadata->get_hint_price($hint_nr);
@@ -482,9 +505,9 @@ class Chroust{
             return null; 
         }
 
-        $cgrp_id = $metadata->get_cgrp_id();
+        $solution_id = $metadata->get_solution_id();
         $ref_id = rfc4122_uuid();
-        $content_type = Iquest_file::get_mime_type($filename);
+        $content_type = $metadata->get_mime_type($filename);
 
         $name = $metadata->get_solution_name();
         $key = $metadata->get_solution_key_canon();
@@ -500,7 +523,7 @@ class Chroust{
         $stub = false;
         if (!$next_cgrp_id){
             $stub = true;
-            $next_cgrp_id = $cgrp_id."#STUB"; // generate and ID for clue group.
+            $next_cgrp_id = $solution_id."#STUB"; // generate and ID for clue group.
                                               // This ID does not exists in clue_group table
                                               // but is used in open_cgrp table to mark
                                               // gained solutions. 
@@ -513,7 +536,7 @@ class Chroust{
                                          "timeout" =>    $timeout,
                                          "next_cgrp_id" => $stub ? null : $next_cgrp_id);
 
-        $solution = new Iquest_Solution($cgrp_id, $ref_id, 
+        $solution = new Iquest_Solution($solution_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
                 $countdown_start, $key, $coin_value, $stub);
 
