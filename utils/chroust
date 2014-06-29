@@ -415,6 +415,7 @@ class Chroust{
             $tables[] = $config->data_sql->iquest_hint_team->table_name;
             $tables[] = $config->data_sql->iquest_solution_team->table_name;
             $tables[] = $config->data_sql->iquest_event->table_name;
+            $tables[] = $config->data_sql->iquest_team_rank->table_name;
         }
 
         foreach($tables as $table){
@@ -437,6 +438,33 @@ class Chroust{
      */         
     static function set_defaults(){
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
+    }
+
+    /**
+     *  Create initial record for team ranking.
+     */         
+    static function init_team_rank($option){
+
+        // Do it only when user data are not preserved
+        if (!empty($option['preserve-user-data'])){
+            return;
+        }
+        
+        $teams = Iquest_Team::fetch();
+
+        $team_nr = count($teams);
+        $distances = array();
+        $rank = array();
+
+        foreach($teams as $team){
+            $distances[$team->id] = "999999";
+            $rank[$team->id] = $team_nr;
+        }
+
+        $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
+
+        $team_rank = new Iquest_team_rank($start_time, $distances, $rank);
+        $team_rank->insert();
     }
     
     static function insert_cgrp($metadata){
@@ -936,6 +964,8 @@ class Chroust{
             self::set_wallet_active();
 
             self::verify();
+
+            self::init_team_rank($option);
 
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['hints'], create_function('$a,$b','

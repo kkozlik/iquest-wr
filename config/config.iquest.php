@@ -160,4 +160,18 @@ $config->data_sql->iquest_event->cols->type =           "type";
 $config->data_sql->iquest_event->cols->success =        "success";
 $config->data_sql->iquest_event->cols->data =           "data";
 
+
+/**
+ *      team rank
+ */ 
+$config->data_sql->iquest_team_rank = new stdClass();
+$config->data_sql->iquest_team_rank->cols = new stdClass();
+        
+$config->data_sql->iquest_team_rank->table_name =       "team_rank";
+
+$config->data_sql->iquest_team_rank->cols->timestamp =  "timestamp";
+$config->data_sql->iquest_team_rank->cols->distance =   "distance";
+$config->data_sql->iquest_team_rank->cols->rank =       "rank";
+
+
 ?>

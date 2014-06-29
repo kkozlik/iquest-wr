@@ -1,4 +1,10 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
+- Mozna mensi problem v pocitani poradi tymu. V nelinearni soutezi muze byt 
+  dosazeni waypointu s vice indiciemi hodnoceno vice nez dosazeni waypointu 
+  s mene indiciemy. Duvod je ten ze pri vypoctu hodnoceni se zapocitava uzel za 
+  kazdou jednotlivou indicii misto za cgrp jako celek. Tohle je treba overit/opravit.
+
+
 
 CHROUST
 -------
