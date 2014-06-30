@@ -241,6 +241,11 @@ div.popover{
 }
 
 
+/* Filter form on events screen */
+.filterForm{
+    background-color: #F5F5F5;
+}
+
 
 
 .minimized-hidden{
