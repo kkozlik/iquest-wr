@@ -172,6 +172,7 @@ $config->data_sql->iquest_team_rank->table_name =       "team_rank";
 $config->data_sql->iquest_team_rank->cols->timestamp =  "timestamp";
 $config->data_sql->iquest_team_rank->cols->distance =   "distance";
 $config->data_sql->iquest_team_rank->cols->rank =       "rank";
+$config->data_sql->iquest_team_rank->cols->team_id =    "team_id";
 
 
 ?>

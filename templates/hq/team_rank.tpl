@@ -46,7 +46,18 @@ $(function () {
                     // that in JavaScript, months start at 0 for January, 1 for February etc.
                     data: [
                         {foreach $team_rank.data as $rank_data}  
-                            [{$rank_data.timestamp * 1000}, {$rank_data.rank}]{if !$rank_data@last},{/if}
+                            {
+                             {if $rank_data.origin}
+                                marker: {
+                                    fillColor: '#FFFFFF',
+                                    lineColor: '#FF3333',
+                                    lineWidth: 2,
+                                    symbol:    'circle'
+                                },
+                             {/if}
+                                x:{$rank_data.timestamp * 1000}, 
+                                y:{$rank_data.rank} 
+                            }{if !$rank_data@last},{/if}
                         {/foreach}  
                     ]
                 }{if !$team_rank@last},{/if}

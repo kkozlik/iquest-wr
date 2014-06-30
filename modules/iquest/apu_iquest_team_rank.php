@@ -97,7 +97,8 @@ class apu_iquest_team_rank extends apu_base_class{
             foreach($rank->rank as $team_id => $team_rank){
                 $this->smarty_ranks[$team_id]['data'][] = 
                             array("timestamp"   => $rank->timestamp, 
-                                  "rank"        => $team_rank);
+                                  "rank"        => $team_rank,
+                                  "origin"      => ($team_id == $rank->team_id));
             }
         }
 

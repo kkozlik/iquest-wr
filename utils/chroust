@@ -463,7 +463,7 @@ class Chroust{
 
         $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
 
-        $team_rank = new Iquest_team_rank($start_time, $distances, $rank);
+        $team_rank = new Iquest_team_rank($start_time, $distances, $rank, null);
         $team_rank->insert();
     }
     

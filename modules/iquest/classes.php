@@ -2137,6 +2137,7 @@ class Iquest_team_rank{
     public $timestamp;
     public $distance;
     public $rank;
+    public $team_id;
 
 
     /**
@@ -2160,7 +2161,8 @@ class Iquest_team_rank{
 
         $q = "select UNIX_TIMESTAMP(".$c->timestamp.") as ".$c->timestamp.",
                      ".$c->distance.", 
-                     ".$c->rank." 
+                     ".$c->rank.", 
+                     ".$c->team_id." 
               from ".$t_name.
               $qw."
               order by ".$c->timestamp;
@@ -2178,7 +2180,8 @@ class Iquest_team_rank{
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             $out[$row[$c->timestamp]] =  new Iquest_team_rank($row[$c->timestamp], 
                                                               json_decode($row[$c->distance], true),
-                                                              json_decode($row[$c->rank], true));
+                                                              json_decode($row[$c->rank], true),
+                                                              $row[$c->team_id]);
         }
         $res->free();
         return $out;
@@ -2221,13 +2224,15 @@ class Iquest_team_rank{
         }
 
         $last_rank_obj->timestamp = time();
+        $last_rank_obj->team_id = $team_id;
         $last_rank_obj->insert();
     }
 
-    function __construct($timestamp, $distance, $rank){
+    function __construct($timestamp, $distance, $rank, $team_id=null){
         $this->timestamp = $timestamp;
         $this->distance = $distance;
         $this->rank = $rank;
+        $this->team_id = $team_id;
     }
 
     function insert(){
@@ -2241,12 +2246,14 @@ class Iquest_team_rank{
         $q = "insert into ".$t_name."(
                     ".$c->timestamp.",
                     ".$c->distance.",
-                    ".$c->rank."
+                    ".$c->rank.",
+                    ".$c->team_id."
               )
               values(
                     FROM_UNIXTIME(".$data->sql_format($this->timestamp, "n")."),
                     ".$data->sql_format(json_encode($this->distance),   "s").",
-                    ".$data->sql_format(json_encode($this->rank),       "s")."
+                    ".$data->sql_format(json_encode($this->rank),       "s").",
+                    ".$data->sql_format($this->team_id,                 "N")."
               )";
 
         $res=$data->db->query($q);
