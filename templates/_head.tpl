@@ -40,6 +40,9 @@
                 {if $parameters.overview_url|default:0}
     			<li><a href='{$parameters.overview_url|escape}'>{$lang_str.iquest_l_overview}</a></li>
                 {/if}
+                {if $parameters.team_rank_url|default:0}
+    			<li><a href='{$parameters.team_rank_url|escape}'>{$lang_str.iquest_l_team_rank}</a></li>
+                {/if}
                 {if $parameters.events_url|default:0}
     			<li><a href='{$parameters.events_url|escape}'>{$lang_str.iquest_l_events}</a></li>
                 {/if}

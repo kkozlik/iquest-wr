@@ -30,6 +30,7 @@ $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";
+$lang_str['iquest_l_team_rank'] =                       "Průběžné pořadí";
 $lang_str['iquest_l_events'] =                          "Log událostí";
 $lang_str['iquest_l_give_it_up'] =                      "Vzdát to";
 $lang_str['iquest_l_logout'] =                          "Odhlásit se";
@@ -69,5 +70,10 @@ $lang_str['iquest_event_date_to'] =                     "Do";
 
 $lang_str['iquest_event_err_inv_datetime'] =            "Špatně zadaný datum a čas (<value>)";
 $lang_str['iquest_event_err_datetime_intersect'] =      "'Od' je větší než 'Do'";
+
+$lang_str['iquest_rank_title'] =                        "Průběžné pořadí týmů";
+$lang_str['iquest_rank_x_axes']=                        "Čas";
+$lang_str['iquest_rank_y_axes']=                        "Pořadí";
+
 
 ?>
