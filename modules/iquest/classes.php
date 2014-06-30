@@ -1478,7 +1478,7 @@ class Iquest{
 
             Iquest_Events::add(Iquest_Events::COIN_GAIN,
                                true,
-                               array("gained_coins" => $value));
+                               array("value" => $value));
             
             Iquest_info_msg::add_msg(
                 str_replace("<value>", 

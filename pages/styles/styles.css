@@ -247,6 +247,12 @@ div.popover{
 }
 
 
+.eventLogDataKey{
+}
+
+.eventLogDataValue{
+    font-weight: bold;
+}
 
 .minimized-hidden{
     display: none !important;

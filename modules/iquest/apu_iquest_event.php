@@ -159,6 +159,11 @@ class apu_iquest_event extends apu_base_class{
                      "maxlength"=>32,
                      "label"=>$lang_str['iquest_event_date_to']);
 
+        $f[] = array("type"=>"checkbox",
+                     "name"=>"raw_data",
+                     "value"=>1,
+                     "label"=>$lang_str['iquest_event_raw_data']);
+
         return $f;
     }
     

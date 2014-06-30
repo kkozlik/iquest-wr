@@ -145,7 +145,7 @@ class Iquest_Events{
                                         $row[$c->timestamp],
                                         $row[$c->type],
                                         $row[$c->success],
-                                        $row[$c->data],
+                                        json_decode($row[$c->data], true),
                                         $row[$ct->name]);
 
         }
@@ -163,6 +163,25 @@ class Iquest_Events{
         $this->team_name =  $team_name;
     }
 
+    function get_filtered_data(){
+        
+        $out = array();
+        switch($this->type){
+        case self::KEY:
+            if (isset($this->data['key']))          $out['key'] = $this->data['key'];
+            if (isset($this->data['solution']['id']))   $out['solution'] = $this->data['solution']['id'];
+            break;
+        case self::COIN_SPEND:
+            if (isset($this->data['hint']['id']))   $out['hint'] = $this->data['hint']['id'];
+            break;
+        case self::COIN_GAIN:
+            if (isset($this->data['value']))        $out['value'] = $this->data['value'];
+            break;
+        }
+        
+        return $out;
+    }
+
     function to_smarty(){
         $out = array();
         $out['id'] = $this->id;
@@ -171,7 +190,8 @@ class Iquest_Events{
         $out['type'] = $this->type;
         $out['success'] = $this->success;
         $out['data'] = $this->data;
-        $out['data_formated'] = print_r(json_decode($this->data), true);
+        $out['data_formated'] = print_r($this->data, true);
+        $out['data_filtered'] = $this->get_filtered_data();
         $out['team_name'] = $this->team_name;
 
         return $out;

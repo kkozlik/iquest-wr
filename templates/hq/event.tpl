@@ -40,6 +40,11 @@
         </label>
     
         <br />
+
+        <div class="pull-right">
+        <label for="raw_data" class="checkbox"> {$lang_str.iquest_event_raw_data}{$filter_form.raw_data}</label>
+        </div>
+        
         {$filter_form.okey}{$filter_form.f_clear}
         {$filter_form.finish}
     
@@ -48,8 +53,6 @@
     </div>
     
     </div>
-
-
 
     {call iquestPager pager=$pager}
 
@@ -67,7 +70,16 @@
         <td class="nowrap">{$event.timestamp}</td>
         <td >{$event.team_name}</td>
         <td >{$event.type}</td>
-        <td class="event-data" data-toggle="popover" data-content="{$data_content|escape}">{$event.data}</td>
+        {if $filter_values.raw_data}
+        <td class="event-data" data-toggle="popover" data-content="{$data_content|escape}">{$event.data|json_encode|escape}</td>
+        {else}
+        <td >
+            {foreach $event.data_filtered as $key=>$value}
+                <span class="eventLogDataKey">{$key|escape}</span>:
+                <span class="eventLogDataValue">{$value|escape}</span>{if !$value@last},{/if}
+            {/foreach}
+        </td>
+        {/if}
     </tr>
     {/foreach}
 
