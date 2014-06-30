@@ -1,3 +1,15 @@
+iquest (0.1.0) stable; urgency=low
+
+  * Set timezone in config file
+  * Adding ability to gain coins and buy hints
+  * metadata.ini: attribute solution.final renamed to cgrp.final
+  * metadata.ini: Unit (h, m or s) could be specified for timeouts
+  * Introducing hidden clues
+  * Ability to send email notification when a team find solution
+  * Adding new view showing all clues and hints on single screen
+
+ -- Karel Kozlík <kk@kk-nb>  Mon, 30 Jun 2014 21:21:16 +0200
+
 iquest (0.0.10) precise; urgency=low
 
   * Surpress php5.4 warnings
