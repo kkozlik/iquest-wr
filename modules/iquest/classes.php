@@ -1955,9 +1955,26 @@ class Iquest_solution_graph{
         $this->mark_accessible_nodes(false);
 
         $dist = 0;
+        $cgrps_visited = array();
         foreach($this->nodes as &$node){
-            if ($node->visited) $dist++;
+            // do not count nodes that are not visited
+            if (!$node->visited) continue;
+
+            if ($node->is_clue()){
+                // Whole clue-group should be counted only once. 
+                // Therefore the $dist should not be incremented on every clue.
+                // Visited clue groups are counted in separate array
+                $clue = $node->get_obj();
+                $cgrps_visited[$clue->cgrp_id] = true;
+                continue;
+            }
+            
+            // node is a solution
+            $dist++;
         }
+        
+        // add the number of visited clue groups
+        $dist += count($cgrps_visited);
         
         return $dist;
     }
