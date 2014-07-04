@@ -158,6 +158,12 @@ span.finder{
 }
 
 
+.btn input[type="radio"], 
+.btn input[type="checkbox"]{
+    margin-top: 0px; 
+    margin-bottom: 2px; 
+}
+
 .plaintext{
     background-color: transparent;
     border: none;

@@ -132,6 +132,16 @@ $(document).ready(function() {
         });
     });
 
+
+    /**
+     *  Click handler for checkbox on the 'All-in-one' button
+     */         
+    $("#allInOneChk").click(function(e) {
+        e.preventDefault();
+
+        var link = $(this).parent();
+        window.location = link.attr("href");
+    });
 });
 
 

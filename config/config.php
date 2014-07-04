@@ -55,5 +55,5 @@
 
     $config->html_doctype = "html";
     
-    $config->html_headers[] = "<!--[if IE]><LINK REL=\"StyleSheet\" HREF=\"".htmlspecialchars($config->style_src_path."ie.css")."\" TYPE=\"text/css\" /><![endif]-->\n";
+    $config->html_headers[] = "<!--[if lt IE 9]><LINK REL=\"StyleSheet\" HREF=\"".htmlspecialchars($config->style_src_path."ie.css")."\" TYPE=\"text/css\" /><![endif]-->\n";
 ?>

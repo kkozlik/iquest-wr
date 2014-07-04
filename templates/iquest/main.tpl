@@ -94,7 +94,7 @@
     <div class="form-inline well">
     {$form.start}
     <div class="row-fluid">
-        <div class="span2"><a href="{$all_in_1_url|escape}" class="nowrap btn {if $action=='view_all'}btn-inverse{/if}">{$lang_str.iquest_all_in_1}</a></div>
+        <div class="span2"><a href="{$all_in_1_url|escape}" class="nowrap btn {if $action=='view_all'}btn-inverse{/if}"><input type="checkbox" id="allInOneChk" {if $action=='view_all'}checked{/if}> {$lang_str.iquest_all_in_1}</a></div>
         <div class="span8 text-center">
         <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
         {$form.solution_key}
