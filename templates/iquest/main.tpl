@@ -15,7 +15,7 @@
     <table class="table table-bordered shrinkable">
     <tr>
         <th class="filename">{$clue.filename|escape}
-            {if $clue.type=="coin"}<span class="coin"></span>{/if}
+            {if $clue.type=="coin"}<span class="coin"></span>{else}<span class="finder"></span>{/if}
         </th>
         <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">

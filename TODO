@@ -1,10 +1,40 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
+- pridat hint na minimalizacni tlacitko
+- serweb predelat smarty adresar do /var/lib/smarty....
+- debian balicek by mel instalovat 30-iquest.ini
+- otestovat zacatek/konec souteze (na kufru)
+- graf prubezne poradi zobrazuje cas v UTC
+
+
+1. Vse v jednom je super ... ten screen s temi collaps/expand boxy ... naprosto zuzo.
+Jenom, kdyz kliknu to Vse v jednom, zpet je to sice jinou barvou, ale opet 
+psano "vse v jednom" - Mozna to nazvat nejak srozumitelneji - Jednotlivě, nebo 
+treba skrtnout ten font  (priorita - nice to have)
+
+ 
+2. Vice oddelit vizualne mincovni/powerwaypointukoly/napovedy ... nemohly by mit 
+treba tu listu jine barvy?
+    Jinak piktogram mince super, mozna u napovedy mit ten Hint vzdy .. 
+    a u powerwaypoiont ukolu mel byt tusim zamerovac ... to asi jeste dodelas .... 
+    (priorita - nizka)
+
+
+4. Neslo by mit Policko pro zadavani kodu i na screene s jednotlivymi ukoly? 
+Aby nemuseli prepinat do uvodni obrazovky, nebo vse v jednom? (priorita nizka)
+
+5. Aktualni cas v pravo nahore ... nebylo by lepe mit tam cas souteze, nebo 
+jeste lepe countdown do konce souteze? (nice to have)
+
+6. Vsiml jsem si, ze kdyz zadam kod jednoho ze sesti, tak zaroven ziskavam 
+indicii a zaroven ziskavam minci ... a napis nahore o zisku mince je ponekud 
+zastinen ... nevim, jestli treba pro zisk mince by byl pop-up dobry napad, 
+ale nejak durazneji upozornit na ziskanou minci? (nice to have)
 
 
 
 CHROUST
 -------
-
+vytvaret zaznam v team_rank pokud je tato tabulka prazdna
 
 NICE TO HAVE
 ------------

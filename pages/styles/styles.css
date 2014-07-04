@@ -104,7 +104,8 @@ table.clue-list .btn{
 
 span.new,
 span.newhint,
-span.coin{
+span.coin,
+span.finder{
     display: block;
     float: right;
     width: 30px;
@@ -114,7 +115,8 @@ span.coin{
 
 .navbar span.new,
 .navbar span.newhint,
-.navbar span.coin{
+.navbar span.coin,
+.navbar span.finder{
     margin: 5px;
 }
 
@@ -129,6 +131,10 @@ span.newhint{
 .navbar span.coin,
 span.coin{
     background-image: url("../img/coin.png");
+}
+.navbar span.finder,
+span.finder{
+    background-image: url("../img/finder.png");
 }
 
 
