@@ -1,3 +1,9 @@
+iquest (0.1.1) stable; urgency=low
+
+  * minor fixes
+
+ -- Karel Kozlík <kk@kk-nb>  Fri, 04 Jul 2014 23:33:33 +0200
+
 iquest (0.1.0) stable; urgency=low
 
   * Set timezone in config file
