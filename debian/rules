@@ -23,8 +23,10 @@ install: build
 	mkdir -p $(DESTDIR)/usr/share/iquest
 	mkdir -p $(DESTDIR)/usr/share/doc/iquest
 	mkdir -p $(DESTDIR)/etc/iquest
+	mkdir -p $(DESTDIR)/etc/php5/conf.d
 	mkdir -p $(DESTDIR)/var/lib/iquest
 	cp -r $(CURDIR)/config/*    $(DESTDIR)/etc/iquest
+	cp -r $(CURDIR)/doc/php/*   $(DESTDIR)/etc/php5/conf.d
 	cp -r $(CURDIR)/doc/*       $(DESTDIR)/usr/share/doc/iquest
 	cp -r $(CURDIR)/functions   $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/lang        $(DESTDIR)/usr/share/iquest
