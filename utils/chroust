@@ -445,8 +445,10 @@ class Chroust{
      */         
     static function init_team_rank($option){
 
-        // Do it only when user data are not preserved
-        if (!empty($option['preserve-user-data'])){
+        $ranks = Iquest_team_rank::fetch();
+
+        // Do it only when user data are not preserved or team_rank DB table is empty
+        if (!empty($option['preserve-user-data']) and count($ranks)){
             return;
         }
         

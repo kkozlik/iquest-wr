@@ -19,7 +19,7 @@
         </th>
         <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
-            <a href="#" class="btn minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
+            <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>
     </tr>
     {call iquestRenderFile file=$clue colspan=3}
@@ -36,7 +36,7 @@
         </th>
         <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
-            <a href="#" class="btn minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
+            <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>
     </tr>
     {call iquestRenderFile file=$hint colspan=3}
