@@ -9,7 +9,13 @@
 {include file='_tail.tpl'}
 
 <script type="text/javascript">
-$(function () {
+    $(function () {
+        Highcharts.setOptions({
+            global : {
+                useUTC : false
+            }
+        });
+        
         $('#team-ranks').highcharts({
             chart: {
                 type: 'spline',
