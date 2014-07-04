@@ -1,5 +1,4 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
-- serweb predelat smarty adresar do /var/lib/smarty....
 - otestovat zacatek/konec souteze (na kufru)
 
 
@@ -13,10 +12,6 @@ Aby nemuseli prepinat do uvodni obrazovky, nebo vse v jednom? (priorita nizka)
 5. Aktualni cas v pravo nahore ... nebylo by lepe mit tam cas souteze, nebo 
 jeste lepe countdown do konce souteze? (nice to have)
 
-6. Vsiml jsem si, ze kdyz zadam kod jednoho ze sesti, tak zaroven ziskavam 
-indicii a zaroven ziskavam minci ... a napis nahore o zisku mince je ponekud 
-zastinen ... nevim, jestli treba pro zisk mince by byl pop-up dobry napad, 
-ale nejak durazneji upozornit na ziskanou minci? (nice to have)
 
 
 

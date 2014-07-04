@@ -1483,7 +1483,7 @@ class Iquest{
             Iquest_info_msg::add_msg(
                 str_replace("<value>", 
                             $value, 
-                            $lang_str['iquest_msg_coin_gained']));
+                            $lang_str['iquest_msg_coin_gained']), "coin");
 
             $team = Iquest_Team::fetch_by_id($team_id);
             $team->wallet_add_money($value);
@@ -2282,10 +2282,12 @@ class Iquest_team_rank{
 
 class Iquest_info_msg{
 
-    public static function add_msg($msg){
+    public static function add_msg($msg, $type = null){
         global $controler;
         
+        $info_msg=array();
         $info_msg['long'] = $msg;
+        $info_msg['type'] = $type;
         $controler->add_message($info_msg);
     }
 

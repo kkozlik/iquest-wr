@@ -137,6 +137,16 @@ span.finder{
     background-image: url("../img/finder.png");
 }
 
+span.coin-animated{
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url("../img/coin-animated.gif");
+    margin-bottom: -5px;
+    margin-left: 4px;
+}
+
+
 
 .navbar .new{
     background-color: #fcf8e3;

@@ -10,7 +10,7 @@
     <button class="close" data-dismiss="alert" type="button">×</button>
 	<ul class="unstyled">
 {/if}
-	<li>{$row.long|escape}</li>
+	<li>{$row.long|escape}{if "coin"==$row.type|default:false}<span class="coin-animated"></span>{/if}</li>
 {if $row@last}
 	</ul>
 	</div>
