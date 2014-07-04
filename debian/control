@@ -10,7 +10,7 @@ Homepage: http://kufr.cz/i.quest
 
 Package: iquest
 Architecture: all
-Depends: php5, php-pear, php-log, php-mdb2, php5-mysql, serweb-frmwrk, ${misc:Depends}
+Depends: php5, php-pear, php-log, php-mdb2, php5-mysql, serweb-frmwrk (>= 1.0.8), ${misc:Depends}
 Recommends: graphviz
 Description: Web interface for i.quest contest
  Web interface for i.quest contest
