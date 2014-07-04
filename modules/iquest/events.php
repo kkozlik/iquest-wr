@@ -170,6 +170,11 @@ class Iquest_Events{
         case self::KEY:
             if (isset($this->data['key']))          $out['key'] = $this->data['key'];
             if (isset($this->data['solution']['id']))   $out['solution'] = $this->data['solution']['id'];
+            if (isset($this->data['solution']['show_at'])){
+                if ($this->data['solution']['show_at'] < $this->timestamp){
+                    $out['timeout'] = "expired";
+                }
+            }   
             break;
         case self::COIN_SPEND:
             if (isset($this->data['hint']['id']))   $out['hint'] = $this->data['hint']['id'];

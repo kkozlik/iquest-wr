@@ -245,6 +245,9 @@ class apu_iquest extends apu_base_class{
      */
     function action_solve(){
 
+        // make sure the show_at value is present in the solution object
+        $this->solution->get_show_at($this->team_id);
+
         Iquest_Events::add(Iquest_Events::KEY,
                            true,
                            array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,

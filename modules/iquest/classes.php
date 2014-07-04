@@ -1246,6 +1246,42 @@ class Iquest_Solution extends Iquest_file{
         return false;
     }
 
+    /**
+     *  Retrieve the show_at value for given team
+     */         
+    function get_show_at($team_id){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_solution_team->cols;
+
+        $qw = array();
+        $qw[] = $c->solution_id." = ".$data->sql_format($this->id, "s");
+        $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+        $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at."
+              from ".$t_name.$qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $this->show_at = $row[$c->show_at];
+        }
+        else{
+            $this->show_at = null;
+        }
+        $res->free();
+        
+        return $this->show_at;
+    }
+
+
     function insert(){
         global $data, $config;
 
