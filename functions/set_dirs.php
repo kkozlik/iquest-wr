@@ -37,6 +37,7 @@ $_SERWEB["templatesdir"] =  $_SERWEB["approotdir"]."templates/";
 // $config->style_src_path do it rather in config.php file. Otherwise your
 // setting will be rewriten by the framework.
 
+if (!isset($config)) $config = new stdclass();
 $config->root_path=getenv('IQUEST_ROOT_PATH');
 
 ?>
