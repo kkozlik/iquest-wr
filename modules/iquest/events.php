@@ -183,6 +183,8 @@ class Iquest_Events{
             if (isset($this->data['value']))        $out['value'] = $this->data['value'];
             break;
         }
+
+        if (isset($this->data['errors']))           $out['errors'] = implode("; ", $this->data['errors']);
         
         return $out;
     }
