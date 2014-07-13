@@ -54,7 +54,9 @@ class apu_iquest_hq extends apu_base_class{
     protected $smarty_groups;
     protected $smarty_teams;
     protected $smarty_cgrp_team;
+    protected $smarty_solution_team;
     protected $smarty_clues;
+    protected $smarty_solutions;
     protected $smarty_action = "default";
 
     /**
@@ -72,8 +74,10 @@ class apu_iquest_hq extends apu_base_class{
         /*** names of variables assigned to smarty ***/
         /* name of html form */
         $this->opt['smarty_groups'] =       'clue_groups';
+        $this->opt['smarty_solutions'] =    'solutions';
         $this->opt['smarty_teams'] =        'teams';
         $this->opt['smarty_cgrp_team'] =    'cgrp_team';
+        $this->opt['smarty_solution_team'] ='solution_team';
 
         $this->opt['smarty_action'] =       'action';
         $this->opt['smarty_clues'] =        'clues';
@@ -160,15 +164,32 @@ class apu_iquest_hq extends apu_base_class{
         $open_cgrps = Iquest_ClueGrp::fetch_cgrp_open();
         $solutions = Iquest_Solution::fetch();
 
-        $cgrp_from_sol = array();
+        $this->smarty_solutions = array();
         foreach($solutions as $solution){
-            $cgrp_from_sol[$solution->cgrp_id] = $solution->id;
+            $this->smarty_solutions[$solution->id] = $solution->to_smarty();
         }
 
         $this->smarty_groups = array();
         foreach($clue_groups as $k => $v){
+            $cgrp_solutions = Iquest_Solution::fetch_by_opening_cgrp($v->id);
+            $solution_ids = array_keys($cgrp_solutions);
+            usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
+                if (!isset($clue_groups[$solutions[$a]->cgrp_id]) and
+                    !isset($clue_groups[$solutions[$b]->cgrp_id])){
+                    
+                    return $solutions[$a]->name > $solutions[$b]->name;
+                }
+
+                if (!isset($clue_groups[$solutions[$a]->cgrp_id])) return 1;
+                if (!isset($clue_groups[$solutions[$b]->cgrp_id])) return -1;
+
+                return $clue_groups[$solutions[$a]->cgrp_id]->ordering - 
+                       $clue_groups[$solutions[$b]->cgrp_id]->ordering;
+            });
+
             $this->smarty_groups[$k] = $v->to_smarty();
             $this->smarty_groups[$k]['view_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
+            $this->smarty_groups[$k]['solution_ids'] = $solution_ids;
         }
 
         $this->smarty_teams = array();
@@ -183,30 +204,30 @@ class apu_iquest_hq extends apu_base_class{
 
             foreach($teams as $team){
                 $this->smarty_cgrp_team[$cgrp->id][$team->id] = array("gained_at" => "",
-                                                                      "solved" => false);
+                                                                      "gained" => false);
                 if (!empty($open_cgrps[$cgrp->id][$team->id])){
-                    $this->smarty_cgrp_team[$cgrp->id][$team->id]["gained_at"] = 
-                        date("H:i:s", $open_cgrps[$cgrp->id][$team->id]);
+                    $this->smarty_cgrp_team[$cgrp->id][$team->id] = 
+                        array("gained_at" => date("H:i:s", $open_cgrps[$cgrp->id][$team->id]),
+                              "gained" => true);
                 }
-                
-                // $solutions[$cgrp->id] is tricky!! Solutions are indexed by 
-                // solution_id not cgrp_id. However these two are same, at least
-                // if the contest is linear.
-                // 
-                // Maybe it would be better to display list of solutions on 
-                // the screen instead of list of clue groups. This is a subject to change
-                //
-                // @todo: The HQ overview screen may not work correctly if the contest is not linear
-                if (isset($solutions[$cgrp->id])){
-                    $cgrp_id = $solutions[$cgrp->id]->cgrp_id;
-                    $solved = !empty($open_cgrps[$cgrp_id][$team->id]);
-
-                    $this->smarty_cgrp_team[$cgrp->id][$team->id]["solved"] = $solved;
-                }
-
             }
         }
+        
+        $this->smarty_solution_team = array();
+        foreach($solutions as $solution){
+            $this->smarty_solution_team[$solution->id] = array();
 
+            foreach($teams as $team){
+                $this->smarty_solution_team[$solution->id][$team->id] = array("solved_at" => "",
+                                                                              "solved" => false);
+
+                if (!empty($open_cgrps[$solution->cgrp_id][$team->id])){
+                    $this->smarty_solution_team[$solution->id][$team->id] =
+                        array("solved_at" => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
+                              "solved" => true);
+                }
+            }
+        }
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
@@ -315,6 +336,8 @@ class apu_iquest_hq extends apu_base_class{
         $smarty->assign($this->opt['smarty_teams'], $this->smarty_teams);
         $smarty->assign($this->opt['smarty_groups'], $this->smarty_groups);
         $smarty->assign($this->opt['smarty_cgrp_team'], $this->smarty_cgrp_team);
+        $smarty->assign($this->opt['smarty_solution_team'], $this->smarty_solution_team);
+        $smarty->assign($this->opt['smarty_solutions'], $this->smarty_solutions);
 
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
