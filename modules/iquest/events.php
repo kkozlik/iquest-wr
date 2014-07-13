@@ -182,6 +182,16 @@ class Iquest_Events{
                     $out['timeout'] = gmdate("H:i:s", $this->data['solution']['show_at'] - $this->timestamp)." till expire";
                 }
             }   
+
+            if (isset($this->data['active_solutions'])){
+                $active_solutions = array();
+                foreach($this->data['active_solutions'] as $solution){
+                    $active_solutions[] = $solution['id'];
+                }
+                $out['active tasks'] = implode(", ", $active_solutions);
+            }
+
+
             break;
         case self::COIN_SPEND:
             if (isset($this->data['hint']['id']))   $out['hint'] = $this->data['hint']['id'];

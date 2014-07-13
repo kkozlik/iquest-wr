@@ -544,6 +544,9 @@ class apu_iquest extends apu_base_class{
                 $event_data["cannon_key"] = Iquest_Solution::canonicalize_key($_POST['solution_key']);
             }
 
+            $graph = new Iquest_solution_graph($this->team_id);
+            $event_data["active_solutions"] = $graph->get_active_solutions();
+
             Iquest_Events::add(Iquest_Events::KEY,
                                false,
                                $event_data);

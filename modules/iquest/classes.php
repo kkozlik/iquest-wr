@@ -1688,6 +1688,14 @@ class Iquest_solution_graph_node{
         return $this->obj;
     }
     
+    function get_node_id(){
+    
+        if ($this->is_solution()) return "S_".$this->obj->id;
+        if ($this->is_clue())     return "C_".$this->obj->id;
+        
+        throw new UnexpectedValueException("Unknown type of graph node");
+    }
+    
     /**
      *  Return representation of the node in dot language
      */         
@@ -2010,6 +2018,39 @@ class Iquest_solution_graph{
         
         return $dist;
     }
+
+
+    /**
+     *  Get solutions that are not solved yet, but the team has at least one clue
+     *  to the solution.     
+     */         
+    public function get_active_solutions(){
+        $out = array();
+
+        // walk throught all graph nodes
+        foreach($this->nodes as &$node){
+            // skip those nodes that are not solutions ot that are already solved
+            if (!$node->is_solution()) continue;
+            if ($node->solved) continue;
+
+            // walk through all nodes that points to current node
+            $node_id = $node->get_node_id();
+            if (isset($this->reverse_edges[$node_id])){
+                foreach($this->reverse_edges[$node_id] as $node2_id){
+                    // If the node is not clue or if it is not gained yet, skip it
+                    $node2 = $this->nodes[$node2_id];
+                    if (!$node2->is_clue()) continue;
+                    if (!$node2->gained) continue;
+                    
+                    // add the solution to the output
+                    $out[] = $node->get_obj();
+                }
+            }
+        }
+        
+        return $out;
+    }
+
 
     public static function escape_dot($str){
         return '"'.str_replace('"', '\"', $str).'"';
