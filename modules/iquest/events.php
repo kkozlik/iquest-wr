@@ -7,14 +7,12 @@ class Iquest_Events{
     const KEY    = "key_entered";
     const LOGOUT = "logout";
     const GIVEITUP = "giveitup";
-    const COIN_GAIN  = "coin_gain";
     const COIN_SPEND = "coin_spend";
 
     public static $supported_types = array(self::LOGGED,
                                            self::KEY,
                                            self::LOGOUT,
                                            self::GIVEITUP,
-                                           self::COIN_GAIN,
                                            self::COIN_SPEND); 
 
     public $id;
@@ -170,17 +168,23 @@ class Iquest_Events{
         case self::KEY:
             if (isset($this->data['key']))          $out['key'] = $this->data['key'];
             if (isset($this->data['solution']['id']))   $out['solution'] = $this->data['solution']['id'];
+            if (isset($this->data['solution']['coin_value']) and 
+                $this->data['solution']['coin_value'] > 0){
+
+                $out['coin gained'] = $this->data['solution']['coin_value'];
+            }
+
             if (isset($this->data['solution']['show_at'])){
                 if ($this->data['solution']['show_at'] < $this->timestamp){
                     $out['timeout'] = "expired";
+                }
+                else{
+                    $out['timeout'] = gmdate("H:i:s", $this->data['solution']['show_at'] - $this->timestamp)." till expire";
                 }
             }   
             break;
         case self::COIN_SPEND:
             if (isset($this->data['hint']['id']))   $out['hint'] = $this->data['hint']['id'];
-            break;
-        case self::COIN_GAIN:
-            if (isset($this->data['value']))        $out['value'] = $this->data['value'];
             break;
         }
 

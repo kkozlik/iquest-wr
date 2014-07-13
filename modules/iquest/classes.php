@@ -1512,10 +1512,6 @@ class Iquest{
         if ($value > 0){
             sw_log($log_prefix."*** Gained coins ($value)", PEAR_LOG_INFO);
 
-            Iquest_Events::add(Iquest_Events::COIN_GAIN,
-                               true,
-                               array("value" => $value));
-            
             Iquest_info_msg::add_msg(
                 str_replace("<value>", 
                             $value, 
