@@ -1,3 +1,9 @@
+iquest (0.1.2) stable; urgency=low
+
+  * HQ: Reworked the overview table
+
+ -- Karel Kozlík <kk@kk-nb>  Mon, 14 Jul 2014 17:42:44 +0200
+
 iquest (0.1.1) stable; urgency=low
 
   * minor fixes
