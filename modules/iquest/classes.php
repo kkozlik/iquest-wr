@@ -2286,32 +2286,34 @@ class Iquest_team_rank{
         $last_rank_obj = self::fetch(array("last"=>true));
         $last_rank_obj = reset($last_rank_obj);
 
-        // set the new distance
-        $last_rank_obj->distance[$team_id] = $distance;
-
-        // calculate new rank of the team
-        $new_rank = 1;
-        foreach($last_rank_obj->distance as $t_id => $last_dist){
-            if ($t_id == $team_id) continue; //skip current team
-
-            if ($last_dist <= $distance) $new_rank++;        
-        }
-
-
-        // remember the old rank of the team and set the new one
-        $old_rank = $last_rank_obj->rank[$team_id];
-        $last_rank_obj->rank[$team_id] = $new_rank;
-        
-        // shift the ranks of the teams whose rank was between new_rank and old_rank
-        foreach($last_rank_obj->rank as $t_id => $val){
-            if ($t_id == $team_id) continue; //skip current team
-
-            if ($last_rank_obj->rank[$t_id] >= $new_rank and 
-                $last_rank_obj->rank[$t_id] <  $old_rank and
-                $last_rank_obj->rank[$t_id] <  $team_nr) {  // do not let the ranks grow over the team number
-                
-                $last_rank_obj->rank[$t_id]++;
-            }        
+        if ($last_rank_obj->distance[$team_id] != $distance){
+            // set the new distance
+            $last_rank_obj->distance[$team_id] = $distance;
+    
+            // calculate new rank of the team
+            $new_rank = 1;
+            foreach($last_rank_obj->distance as $t_id => $last_dist){
+                if ($t_id == $team_id) continue; //skip current team
+    
+                if ($last_dist <= $distance) $new_rank++;        
+            }
+    
+    
+            // remember the old rank of the team and set the new one
+            $old_rank = $last_rank_obj->rank[$team_id];
+            $last_rank_obj->rank[$team_id] = $new_rank;
+            
+            // shift the ranks of the teams whose rank was between new_rank and old_rank
+            foreach($last_rank_obj->rank as $t_id => $val){
+                if ($t_id == $team_id) continue; //skip current team
+    
+                if ($last_rank_obj->rank[$t_id] >= $new_rank and 
+                    $last_rank_obj->rank[$t_id] <  $old_rank and
+                    $last_rank_obj->rank[$t_id] <  $team_nr) {  // do not let the ranks grow over the team number
+                    
+                    $last_rank_obj->rank[$t_id]++;
+                }        
+            }
         }
 
         $last_rank_obj->timestamp = time();

@@ -1,8 +1,11 @@
+rel
+* fixing bung in calculating team ranks
+
 rel 0.1.2
 * HQ: Reworked the overview table
 
 rel 0.1.1
-* HQ: display tema rank order
+* HQ: display team rank order
 
 rel 0.1.0
 * Set timezone in config file
