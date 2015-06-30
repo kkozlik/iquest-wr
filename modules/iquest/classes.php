@@ -2299,6 +2299,9 @@ class Iquest_team_rank{
             }
     
     
+            // if the rank for the team is not set yet, use the $team_nr
+            if (!isset($last_rank_obj->rank[$team_id])) $last_rank_obj->rank[$team_id] = $team_nr;
+
             // remember the old rank of the team and set the new one
             $old_rank = $last_rank_obj->rank[$team_id];
             $last_rank_obj->rank[$team_id] = $new_rank;
