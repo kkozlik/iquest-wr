@@ -508,7 +508,7 @@ class Chroust{
             $last_clue = end($clues);
             $clue_id = $last_clue->id;
 
-            echo "*** WARNING: clue_IDs are not specified. Useing '$clue_id'\n";
+            echo "*** WARNING: clue_IDs are not specified for hint. Useing '$clue_id'\n";
         }
 
         // Check whether the clue ID is valid
