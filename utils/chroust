@@ -21,6 +21,7 @@ class Iquest_Metadata{
     private static $default_cfg = array(
         "clue_pattern"      => "indicie[0-9-]+\\..*",
         "clue_coin_pattern" => "indicie[0-9-]+c\\..*",
+        "clue_special_pattern" => "indicie[0-9-]+s\\..*",
         "hint_pattern"      => "napoveda[0-9-]+.*",
         "solution_pattern"  => "reseni.*",
     );
@@ -281,6 +282,9 @@ class Iquest_Metadata{
         }
         elseif (preg_match("/".$cfg["clue_coin_pattern"]."/", basename($filename))){
             $clue_type = Iquest_Clue::TYPE_COIN;
+        }
+        elseif (preg_match("/".$cfg["clue_special_pattern"]."/", basename($filename))){
+            $clue_type = Iquest_Clue::TYPE_SPECIAL;
         }
 
         return $clue_type;
@@ -699,7 +703,8 @@ class Chroust{
             $dest_file = self::canonicalize_name($entry);
 
             if (preg_match("/".$cfg["clue_pattern"]."/", $dest_file) or
-                preg_match("/".$cfg["clue_coin_pattern"]."/", $dest_file)){
+                preg_match("/".$cfg["clue_coin_pattern"]."/", $dest_file) or
+                preg_match("/".$cfg["clue_special_pattern"]."/", $dest_file)){
                 $entries['clues'][$entry] = $dest_file;
             }
             elseif (preg_match("/".$cfg["hint_pattern"]."/", $dest_file)){

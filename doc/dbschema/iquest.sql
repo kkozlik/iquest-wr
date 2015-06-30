@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `clue` (
   `cgrp_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `filename` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `content_type` varchar(45) COLLATE utf8_czech_ci NOT NULL,
-  `type` enum('regular','coin','hidden') COLLATE utf8_czech_ci NOT NULL DEFAULT 'regular',
+  `type` enum('regular','coin','hidden','special') COLLATE utf8_czech_ci NOT NULL DEFAULT 'regular',
   `comment` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
   `ordering` int(11) NOT NULL,
   PRIMARY KEY (`clue_id`),

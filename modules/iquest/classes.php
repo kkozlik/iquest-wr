@@ -143,6 +143,7 @@ class Iquest_Clue extends Iquest_file{
     const TYPE_REGULAR = "regular";
     const TYPE_COIN    = "coin";
     const TYPE_HIDDEN  = "hidden";
+    const TYPE_SPECIAL = "special";
 
     /**
      *  Fetch clues form DB
