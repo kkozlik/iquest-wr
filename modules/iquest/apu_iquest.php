@@ -44,8 +44,6 @@
 
 class apu_iquest extends apu_base_class{
 
-    const   COUNTDOWN_LIMIT = 900; // 15 minutes
-
     protected $team_id;
     protected $ref_id;
     protected $clue;
@@ -141,10 +139,14 @@ class apu_iquest extends apu_base_class{
         $next_solution = Iquest_Solution::get_next_scheduled($this->team_id);
         $next_hint     = Iquest_Hint::get_next_scheduled($this->team_id);
 
+        $countdown_limit_hint = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_HINT);
+        $countdown_limit_solution = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_SOLUTION);
+
         if ($next_solution){
             $show_after = $next_solution['show_at'] - time();
             if ($show_after > 0 and 
-                $show_after < self::COUNTDOWN_LIMIT){
+                ($show_after < $countdown_limit_solution or
+                 $countdown_limit_solution == 0)){
                 
                 $this->smarty_next_solution = gmdate("H:i:s", $show_after);
                 $this->controler->set_onload_js("enable_countdown('#solution_countdown', $show_after);");
@@ -154,7 +156,8 @@ class apu_iquest extends apu_base_class{
         if ($next_hint){
             $show_after = $next_hint['show_at'] - time();
             if ($show_after > 0 and 
-                $show_after < self::COUNTDOWN_LIMIT){
+                ($show_after < $countdown_limit_hint or
+                 $countdown_limit_hint == 0)){
                 
                 $this->smarty_next_hint = gmdate("H:i:s", $show_after);
                 $this->controler->set_onload_js("enable_countdown('#hint_countdown', $show_after);");

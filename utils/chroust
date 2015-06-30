@@ -370,6 +370,12 @@ class Iquest_Metadata{
         if (!is_array($this->data['options'])) return;
 
         foreach($this->data['options'] as $name=>$value){
+            if ($name == Iquest_Options::COUNTDOWN_LIMIT_HINT or
+                $name == Iquest_Options::COUNTDOWN_LIMIT_SOLUTION){
+
+                $value = self::timeout_to_sec($value, "option $name");
+            }
+
             Iquest_Options::set($name, $value);
         }
     }
@@ -854,9 +860,7 @@ class Chroust{
             catch(RuntimeException $e){
                 echo "\n*** ERROR: Option $option_name is not set.\n";
                 
-                if ($option_name == Iquest_Options::START_TIME or
-                    $option_name == Iquest_Options::END_TIME) {
-
+                if (in_array($option_name, Iquest_Options::$set_in_global_ini)){
                     echo "It should be specified in [options] section of metadata in top directory.\n";
                 }
                 else{

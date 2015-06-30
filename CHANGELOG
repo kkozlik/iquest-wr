@@ -1,5 +1,6 @@
 rel
-* fixing bung in calculating team ranks
+* fixing bug in calculating team ranks
+* limit for display countdowns is configurable in global ini file
 
 rel 0.1.2
 * HQ: Reworked the overview table

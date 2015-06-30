@@ -13,14 +13,26 @@ class Iquest_Options{
     const WALLET_ACTIVE   = "wallet_active";
     const CHECK_KEY_ORDER = "check_key_order";
 
+    const COUNTDOWN_LIMIT_HINT     = "countdown_limit_hint";
+    const COUNTDOWN_LIMIT_SOLUTION = "countdown_limit_solution";
+
     public static $supported_options = array(self::START_TIME,
                                              self::END_TIME,
                                              self::INITIAL_CGRP_ID,
                                              self::FINAL_CGRP_ID,
                                              self::REVEAL_GOAL_CGRP_ID,
                                              self::WALLET_ACTIVE,
-                                             self::CHECK_KEY_ORDER); 
+                                             self::CHECK_KEY_ORDER,
+                                             self::COUNTDOWN_LIMIT_HINT,
+                                             self::COUNTDOWN_LIMIT_SOLUTION,
+                                             ); 
 
+    public static $set_in_global_ini = array(self::START_TIME,
+                                             self::END_TIME,
+                                             self::CHECK_KEY_ORDER,
+                                             self::COUNTDOWN_LIMIT_HINT,
+                                             self::COUNTDOWN_LIMIT_SOLUTION,
+                                            );
     /** Options cache */
     private static $options = null;
 
