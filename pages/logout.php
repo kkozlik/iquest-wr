@@ -8,7 +8,8 @@ require dirname(__FILE__)."/prepend.php";
 if (!empty($_SESSION['auth'])){
 
     Iquest_Events::add(Iquest_Events::LOGOUT,
-                       true);
+                       true,
+                       array());
 
     $_SESSION['auth']->logout();
     action_log(null, null, "Logged out");
