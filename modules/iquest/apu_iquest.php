@@ -58,6 +58,10 @@ class apu_iquest extends apu_base_class{
     protected $smarty_next_hint = null;
     protected $smarty_team = null;
 
+
+    const SESS_URL_TOKEN = "url_token";
+    const GET_URL_TOKEN = "token";
+
     /** 
      *  return required data layer methods - static class 
      *
@@ -171,6 +175,19 @@ class apu_iquest extends apu_base_class{
     }
 
 
+    /**
+     *  Get token for URL that is used to detect doubled requests
+     */         
+    function get_url_token(){
+
+        if (empty($this->session[self::SESS_URL_TOKEN])){
+            // The token in not set yet. Generate new one
+            $this->session[self::SESS_URL_TOKEN] = rfc4122_uuid();
+        } 
+
+        return self::GET_URL_TOKEN."=".RawURLEncode($this->session[self::SESS_URL_TOKEN]);
+    }
+
     function cgrp_to_smarty(&$clue_grp){
         global $lang_str;
 
@@ -183,6 +200,7 @@ class apu_iquest extends apu_base_class{
         if ($smarty_cgrp['hints_for_sale']){
             $smarty_cgrp['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
                                                             "?buy_hint=".RawURLEncode($clue_grp->ref_id).
+                                                            "&".$this->get_url_token().
                                                             ($this->action['action'] == "view_grp" ? "&view_grp_detail=1" : ""));
             $smarty_cgrp['buy_confirmation'] = str_replace("<price>",
                                                            $hint_for_sale->price,
@@ -279,6 +297,8 @@ class apu_iquest extends apu_base_class{
                                  "hint" => $this->hint));
 
         Iquest::buy_hint($this->hint, $this->team_id);
+        // Coin is spent, reset the URL token so new one will be generated
+        $this->session[self::SESS_URL_TOKEN] = "";
 
         action_log($this->opt['screen_name'], $this->action, " Hint bought: ".$this->hint->id);
 
@@ -425,7 +445,10 @@ class apu_iquest extends apu_base_class{
                 $smarty_group['new_hints'] = $new_hints;
                 $smarty_group['hints_for_sale'] = !empty($hint_for_sale);
                 if ($smarty_group['hints_for_sale']){
-                    $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF']."?buy_hint=".RawURLEncode($v->ref_id));
+                    $smarty_group['buy_url'] = $this->controler->url($_SERVER['PHP_SELF'].
+                                                                        "?buy_hint=".RawURLEncode($v->ref_id).
+                                                                        "&".$this->get_url_token()
+                                                                    );
                     $smarty_group['buy_confirmation'] = str_replace("<price>",
                                                                     $hint_for_sale->price,
                                                                     $lang_str['iquest_conf_buy_hint']);
@@ -677,6 +700,17 @@ class apu_iquest extends apu_base_class{
         }
 
         if ($this->action['action'] == "buy_hint"){
+
+            // Check that the URL token match to one stored in session
+            if ($this->session[self::SESS_URL_TOKEN] != $_GET[self::GET_URL_TOKEN]){
+                ErrorHandler::add_error("Double request to buy hint!");
+                sw_log("Doubled request to buy hint. Actual valid token: '".$this->session[self::SESS_URL_TOKEN]."'".
+                       ". URL token: '".$_GET[self::GET_URL_TOKEN]."'", PEAR_LOG_INFO);
+                return false;
+            }
+            else{
+                sw_log("Buy hint URL token: '".$_GET[self::GET_URL_TOKEN]."'", PEAR_LOG_INFO);
+            }
 
             $opt = array("ref_id" => $this->ref_id,
                          "team_id" => $this->team_id,
