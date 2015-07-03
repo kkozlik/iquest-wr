@@ -50,6 +50,7 @@ class apu_iquest_hq extends apu_base_class{
     protected $hint;
     protected $clue;
     protected $clue_grp;
+    protected $solution;
 
     protected $smarty_groups;
     protected $smarty_teams;
@@ -111,6 +112,12 @@ class apu_iquest_hq extends apu_base_class{
         return true;
     }
 
+    function action_get_solution(){
+        $this->controler->disable_html_output();
+        $this->solution->flush_content();
+        return true;
+    }
+
     function action_get_graph(){
         $this->controler->disable_html_output();
 
@@ -151,6 +158,20 @@ class apu_iquest_hq extends apu_base_class{
     }
 
     /**
+     *  Method perform action view_solution 
+     *
+     *  @return array           return array of $_GET params fo redirect or FALSE on failure
+     */
+    function action_view_solution(){
+
+        $this->smarty_solutions = $this->solution->to_smarty();
+        $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution screen");
+        return true;
+    }
+
+    /**
      *  Method perform action default 
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
@@ -167,6 +188,9 @@ class apu_iquest_hq extends apu_base_class{
         $this->smarty_solutions = array();
         foreach($solutions as $solution){
             $this->smarty_solutions[$solution->id] = $solution->to_smarty();
+            if ($solution->filename){
+                $this->smarty_solutions[$solution->id]['view_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_solution=".RawURLEncode($solution->ref_id));
+            }
         }
 
         $this->smarty_groups = array();
@@ -245,6 +269,13 @@ class apu_iquest_hq extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
+        elseif (isset($_GET['view_solution'])){
+            $this->smarty_action = 'view_solution';
+            $this->ref_id = $_GET['view_solution'];
+            $this->action=array('action'=>"view_solution",
+                                 'validate_form'=>true,
+                                 'reload'=>false);
+        }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
             $this->action=array('action'=>"get_clue",
@@ -255,6 +286,13 @@ class apu_iquest_hq extends apu_base_class{
         elseif (isset($_GET['get_hint'])){
             $this->ref_id = $_GET['get_hint'];
             $this->action=array('action'=>"get_hint",
+                                 'validate_form'=>true,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['get_solution'])){
+            $this->ref_id = $_GET['get_solution'];
+            $this->action=array('action'=>"get_solution",
                                  'validate_form'=>true,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -294,6 +332,21 @@ class apu_iquest_hq extends apu_base_class{
             return true;
         }
 
+        /* Check that solution exists before showing it */
+        if ($this->action['action'] == "view_solution"){
+            $opt = array("ref_id" => $this->ref_id);
+        
+            $this->solution = Iquest_Solution::fetch($opt);
+            if (!$this->solution){
+                ErrorHandler::add_error("Unknown solution!");
+                sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+            $this->solution = reset($this->solution);
+
+            return true;
+        }
+
         /* Check that clue exists before showing it */
         if ($this->action['action'] == "get_clue"){
 
@@ -308,7 +361,7 @@ class apu_iquest_hq extends apu_base_class{
         }
 
 
-        /* check hint is exists */
+        /* check hint exists */
         if ($this->action['action'] == "get_hint"){
 
             $opt = array("ref_id" => $this->ref_id);
@@ -321,6 +374,22 @@ class apu_iquest_hq extends apu_base_class{
             }
 
             $this->hint = reset($hints);
+            return true;
+        }
+
+        /* check solution exists */
+        if ($this->action['action'] == "get_solution"){
+
+            $opt = array("ref_id" => $this->ref_id);
+            $solutions = Iquest_Solution::fetch($opt);
+
+            if (!$solutions){
+                ErrorHandler::add_error("Unknown solution!");
+                sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+
+            $this->solution = reset($solutions);
             return true;
         }
 

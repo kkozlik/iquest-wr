@@ -43,6 +43,26 @@
     <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+{elseif $action=='view_solution'}
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+    <div class="datatable solution">
+    <table class="table table-bordered">
+    <tr>
+        <th class="filename">{$solutions.name}</th>
+        <th class="link">&nbsp;</th>
+    </tr>
+    {call iquestRenderFile file=$solutions}
+    </table>
+    </div>
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
 {else}
 
     <div class="horizontal-scrollbar" id="iscroll">     
@@ -56,7 +76,10 @@
     <tr>
     {foreach $clue_groups as $group}
         {foreach $group.solution_ids as $solution_id}
-        <th title="{$solutions.$solution_id.id|escape}">{$solutions.$solution_id.name|escape}</th>
+        <th title="{$solutions.$solution_id.id|escape}">
+        {if $solutions.$solution_id.view_url|default:0}<a href="{$solutions.$solution_id.view_url|escape}">{$solutions.$solution_id.name|escape}</a>
+        {else}{$solutions.$solution_id.name|escape}
+        {/if}</th>
         {foreachelse}
         <th >&nbsp;</th>
         {/foreach}
