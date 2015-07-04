@@ -978,6 +978,12 @@ class Chroust{
 
             self::init_team_rank($option);
 
+
+
+
+
+            echo "\nHint summary:\n\n";
+            
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['hints'], create_function('$a,$b','
                 if ($a["ordering"] == $b["ordering"]) {
@@ -990,13 +996,21 @@ class Chroust{
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
             '));
 
-            echo "\nHint summary:\n\n";
-            echo self::utf_8_sprintf("|%-20s|%-20s|%-8s|%-10s|%-10s|\n", 
-                        "Cgrp Name", "Clue ID", "Hint Nr", "Price", "Timeout");
-            echo "--------------------------------------------------------------------------\n";
+            $fields_headers = array('cgrp_name' => "Cgrp Name ", 
+                                    'clue_id'   => "Clue ID ", 
+                                    'hint_nr'   => "Hint Nr ", 
+                                    'price'     => "Price ", 
+                                    'timeout'   => "Timeout ",
+                                    );
+            $fields_widths = self::get_field_widths(self::$summary['hints'], $fields_headers);
+
+            self::print_table_heading($fields_headers, $fields_widths);
+            self::print_table_separator($fields_widths);
+            
+            $fstring = self::get_formating_string($fields_widths, "|");
 
             foreach(self::$summary['hints'] as $row){
-                echo self::utf_8_sprintf("|%-20s|%-20s|%-8s|%-10s|%-10s|\n", 
+                echo self::utf_8_sprintf($fstring, 
                             $row['cgrp_name'], 
                             $row['clue_id'], 
                             $row['hint_nr'], 
@@ -1004,8 +1018,14 @@ class Chroust{
                             $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---");
             }
 
-            echo "--------------------------------------------------------------------------\n";
+            self::print_table_separator($fields_widths);
 
+
+
+
+
+
+            echo "\nKeys summary:\n\n";
 
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['keys'], create_function('$a,$b','
@@ -1013,16 +1033,25 @@ class Chroust{
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
             '));
 
-            echo "\nKeys summary:\n\n";
-            echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|%-20s|\n", 
-                        "Name", "Key", "Coin", "Timeout", "Next Cgrp");
-            echo "----------------------------------------------------------------------------------------------------------\n";
 
+            $fields_headers = array('name'          => "Name ", 
+                                    'key'           => "Key ", 
+                                    'coin_value'    => "Coin ", 
+                                    'timeout'       => "Timeout ",
+                                    'next_cgrp_id'  => "NextCgrp ", 
+                                    );
+            $fields_widths = self::get_field_widths(self::$summary['keys'], $fields_headers);
+
+
+            self::print_table_heading($fields_headers, $fields_widths);
+            self::print_table_separator($fields_widths);
+            
+            $fstring = self::get_formating_string($fields_widths, "|");
             $total_coins = $total_timeout = 0;
             foreach(self::$summary['keys'] as $row){
                 $total_coins += $row['coin_value'];
                 $total_timeout += $row['timeout'];
-                echo self::utf_8_sprintf("|%-20s|%-40s|%-10s|%-10s|%-20s|\n", 
+                echo self::utf_8_sprintf($fstring, 
                             $row['name'], 
                             $row['key'], 
                             $row['coin_value']>0?$row['coin_value']:"---",
@@ -1030,9 +1059,10 @@ class Chroust{
                             $row['next_cgrp_id']?$row['next_cgrp_id']:"---");
             }
 
-            echo "----------------------------------------------------------------------------------------------------------\n";
-            echo self::utf_8_sprintf("|%-61s|%-10s|%-10s|%-20s|\n", 
+            self::print_table_separator($fields_widths);
+            echo self::utf_8_sprintf($fstring, 
                         "Total:", 
+                        "",
                         $total_coins,
                         self::format_time($total_timeout),
                         "");
@@ -1056,6 +1086,48 @@ class Chroust{
 
     
     
+    }
+    
+    static function get_field_widths($fields, $fields_headers){
+        $field_widths = array();
+        foreach($fields_headers as $key => $val){
+            $field_widths[$key] = iconv_strlen($val, "UTF-8");
+            
+            foreach($fields as $field){
+                $width = iconv_strlen($field[$key], "UTF-8");
+                if ($field_widths[$key] < $width) $field_widths[$key] = $width;
+            }
+        }
+        
+        return $field_widths;
+    }
+    
+    static function get_formating_string($fields_widths, $separator){
+        $fstr = $separator;
+        
+        foreach($fields_widths as $width){
+            $fstr .= "%-".$width."s".$separator;
+        }
+        return $fstr."\n";
+    }
+
+    static function print_table_heading($fields_headers, $fields_widths){
+        $format_str = self::get_formating_string($fields_widths, "^");
+        $args = array_merge(array($format_str), $fields_headers);
+        
+        echo call_user_func_array(array('self', 'utf_8_sprintf'), $args);
+    }
+
+    static function print_table_separator($fields_widths){
+        $len = 1;
+        foreach($fields_widths as $width){
+            $len += $width + 1;
+        }
+
+        for($i=0; $i<$len; $i++){
+            echo "-";
+        }
+        echo "\n";
     }
 
 }
