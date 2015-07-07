@@ -1,3 +1,14 @@
+iquest (0.1.3) stable; urgency=medium
+
+  [ Karel Kozlík ]
+  * fixing bug in calculating team ranks
+  * limit for display countdowns is configurable in global ini file
+  * new type of clues - marked with question mark
+  * check doubled request when spending coin
+  * display solutions on HQ screen
+
+ --  <kk@kk-iquest.kufr.cz>  Tue, 07 Jul 2015 15:18:28 +0200
+
 iquest (0.1.2) stable; urgency=low
 
   * HQ: Reworked the overview table
