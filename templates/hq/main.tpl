@@ -65,8 +65,9 @@
 
 {else}
 
-    <div class="horizontal-scrollbar" id="iscroll">     
-    <table class="table table-bordered summary">
+    <div class="horizontal-scrollbar" id="scroll-wrapper">
+    <table class="table table-bordered summary" id="clueTable">
+    <thead>
     <tr>
     <th rowspan="2">&nbsp;</th>
     {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
@@ -85,6 +86,7 @@
         {/foreach}
     {/foreach}
     </tr>
+    </thead>
 
     {foreach $teams as $team}
     <tr>
@@ -127,21 +129,23 @@
     var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
     var isIphone = ((ua.indexOf("iphone") > -1) || (ua.indexOf("ipod") > -1));
 
-    if (isAndroid || isIphone){
-        /*
-        iscroll do nto work well on android. It's quite slow.
-            
-        var myScroll = new iScroll('iscroll', {
-                                        momentum: false,
-                                        bounce: false
-                                        //hideScrollbar: true
-                                });
-        */
+    if (!isAndroid && !isIphone){
+        // floatThead do not work well on android. It's quite slow.
+        // Moreover the table header consumes a lot of space on the small screen.
+        // So enable it only on not mobile device.
 
-        // Instead of using iscroll remove the scrolling capability from
-        // the elemenet on devices that do not support it. 
-        $("#iscroll").attr('class', '');
+        var $table = $('#clueTable');
+        $table.floatThead();
+
+
+        // Kinetic is not needed on android. Its functionality is already in
+        // the mobile browser.
+        // So enable it only on not mobile device too.
+        
+        $('#scroll-wrapper').kinetic();
+        $('#scroll-wrapper').addClass('inselectable'); 
     }
+
     </script>
 {/literal}
 {/if}
