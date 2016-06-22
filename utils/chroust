@@ -972,6 +972,13 @@ class Chroust{
             self::set_defaults();
             self::process_data_dir($src_dir);
 
+            if (self::$unknown_files){
+                echo "\nNot recognized files:\n";
+                foreach(self::$unknown_files as $file){
+                    echo "  * $file\n";
+                }
+            }
+
             self::set_wallet_active();
 
             self::verify();
@@ -1067,14 +1074,7 @@ class Chroust{
                         self::format_time($total_timeout),
                         "");
 
-            
-            if (self::$unknown_files){
-                echo "\nNot recognized files:\n";
-                foreach(self::$unknown_files as $file){
-                    echo "  * $file\n";
-                }
-            }
-            
+                        
             echo "\n";
             
         }
