@@ -11,7 +11,9 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 class Iquest_noMetaDataException extends RuntimeException {}
 
-class Iquest_VerifiFailedException extends Exception {
+class Iquest_InvalidConfigException extends Exception {}
+
+class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
     const SOLUTION_IDS = "Solution IDs";
     const CLUE_IDS = "Clue IDs";
 
@@ -80,7 +82,7 @@ class Iquest_Metadata{
         $timeout = trim($timeout);
 
         if (!preg_match("/^([0-9]+)([hms]?)$/", $timeout, $matches)){
-            throw new exception("Invalid timeout value: '$timeout' for $what");
+            throw new Iquest_InvalidConfigException("Invalid timeout value: '$timeout' for $what");
         }
 
         $value = $matches[1];
@@ -93,7 +95,7 @@ class Iquest_Metadata{
         case "m": return 60*(int)$value;
         case "h": return 3600*(int)$value;
         default:
-            throw new exception("Invalid unit of timeout: '$timeout' for $what");
+            throw new Iquest_InvalidConfigException("Invalid unit of timeout: '$timeout' for $what");
         }
 
     }
@@ -153,7 +155,7 @@ class Iquest_Metadata{
             return $this->parent_metadata->get_charset($filename);
         }
 
-        throw new exception("Charset not specified in metadata file.");
+        throw new Iquest_InvalidConfigException("Charset not specified in metadata file.");
     }
 
     /**
@@ -174,7 +176,7 @@ class Iquest_Metadata{
 
     function get_cgrp_id(){
         if (!isset($this->data['general']['id'])){
-            throw new exception("ID not specified in metadata file.");
+            throw new Iquest_InvalidConfigException("ID not specified in metadata file.");
         }
         return $this->data['general']['id'];
     }
@@ -182,7 +184,7 @@ class Iquest_Metadata{
     function get_cgrp_name(){
 
         if (!isset($this->data['cgrp']['name'])){
-            throw new exception("name for clue group is not set.");
+            throw new Iquest_InvalidConfigException("name for clue group is not set.");
         }
 
         $charset = $this->get_charset(self::METADATA_FILE);
@@ -242,7 +244,7 @@ class Iquest_Metadata{
 
     function get_solution_key(){
         if (!isset($this->data['solution']['key'])){
-            throw new exception("Solution key is not set.");
+            throw new Iquest_InvalidConfigException("Solution key is not set.");
         }
 
         $charset = $this->get_charset(self::METADATA_FILE);
@@ -280,7 +282,7 @@ class Iquest_Metadata{
                       array(Iquest_Solution::CD_START_ALL,
                             Iquest_Solution::CD_START_SINGLE))){
 
-            throw new exception("Invalid value '{$this->data['solution']['countdown_start']}' for countdown_start.");
+            throw new Iquest_InvalidConfigException("Invalid value '{$this->data['solution']['countdown_start']}' for countdown_start.");
         }
 
         return $this->data['solution']['countdown_start']; 
@@ -415,7 +417,7 @@ class Iquest_Metadata{
         if ($price == "") $price = 0;
 
         if (!is_numeric($price)){
-            throw new exception("Invalid price value: '$price' for hint $hint_nr");
+            throw new Iquest_InvalidConfigException("Invalid price value: '$price' for hint $hint_nr");
         }
 
         return round($price, 2);
@@ -576,11 +578,11 @@ class Chroust{
 
         // Check whether the clue ID is valid
         if (!isset($clues[$clue_id])){
-            throw new exception("Invalid clue_ID '$clue_id' specified for a hint.");
+            throw new Iquest_InvalidConfigException("Invalid clue_ID '$clue_id' specified for a hint.");
         }
 
         if (!$timeout and !$price){
-            throw new exception("Neither timeout nor price is specified for hint '$hint_nr'. This hint will never be shown.");
+            throw new Iquest_InvalidConfigException("Neither timeout nor price is specified for hint '$hint_nr'. This hint will never be shown.");
         }
 
         self::$summary['hints'][] = array("cgrp_name" => $metadata->get_cgrp_name(),
@@ -617,7 +619,7 @@ class Chroust{
         $coin_value = $metadata->get_solution_coin_value();
 
         if (!$filename and $timeout > 0){
-            throw new exception("No solution file exists, but timeout (for displaying it) is set.");
+            throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
         }
 
         $stub = false;
@@ -651,14 +653,14 @@ class Chroust{
             $metadata = new Iquest_Metadata($dir);
         }
         catch (Iquest_noMetaDataException $e){
-            throw new Exception("Cannot find top metadata file in directory: ".$dir, 0 ,$e);
+            throw new Iquest_InvalidConfigException("Cannot find top metadata file in directory: ".$dir, 0 ,$e);
         }
     
         try{
             $metadata->save_options();
         }
         catch(Exception $e){
-            throw new Exception("Problem reading metadata of directory: ".$dir, 0 ,$e);
+            throw new Iquest_InvalidConfigException("Problem reading metadata of directory: ".$dir, 0 ,$e);
         }
         
         return $metadata;
@@ -681,7 +683,7 @@ class Chroust{
                 self::process_task_dir($src_dir.$entry.DIRECTORY_SEPARATOR, $dest_dir, $top_metadata);
             }
             catch(Exception $e){
-                throw new Exception("Problem during processing directory: ".$src_dir.$entry.DIRECTORY_SEPARATOR, 0, $e);
+                throw new Iquest_InvalidConfigException("Problem during processing directory: ".$src_dir.$entry.DIRECTORY_SEPARATOR, 0, $e);
             }
         }
     
@@ -880,7 +882,7 @@ class Chroust{
         // verify that next_cgrp_id for each solution is valid (exists)
         foreach($solutions as $solution){
             if (!$solution->stub and !isset($cgrps[$solution->cgrp_id])){
-                throw new Exception("Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.");            
+                throw new Iquest_InvalidConfigException("Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.");            
             }
         }
         
@@ -904,16 +906,16 @@ class Chroust{
         // walk through the rows
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if (!isset($solutions[$row[$c->solution_id]])){
-                throw new Iquest_VerifiFailedException(
+                throw new Iquest_VerifyFailedException(
                             "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.",
-                            array(Iquest_VerifiFailedException::SOLUTION_IDS)
+                            array(Iquest_VerifyFailedException::SOLUTION_IDS)
                 );            
             }
 
             if (!isset($clues[$row[$c->clue_id]])){
-                throw new Iquest_VerifiFailedException(
+                throw new Iquest_VerifyFailedException(
                             "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing clue '{$row[$c->clue_id]}'.",
-                            array(Iquest_VerifiFailedException::CLUE_IDS)
+                            array(Iquest_VerifyFailedException::CLUE_IDS)
                 );
             }
 
@@ -1142,17 +1144,22 @@ class Chroust{
             echo "\n";
             
         }
-        catch (Iquest_VerifiFailedException $e){
+        catch (Iquest_VerifyFailedException $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
             self::report_errors($e);
             fwrite(STDERR, "\n");
             fwrite(STDERR, $e->get_info());
             exit(1);
         }
-        catch (exception $e){
+        catch (Iquest_InvalidConfigException $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
             self::report_errors($e);
             exit(1);
+        }
+        catch (exception $e){
+            fwrite(STDERR, "\nUnexpected exception. See PHP error log for details:\n");
+            self::report_errors($e);
+            throw $e;
         }
 
     
