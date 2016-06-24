@@ -29,7 +29,6 @@ CHROUST
 - moznost pouze aktualizovat soubory - beze zmen ref-id aby bylo mozne 
   bezbolestne aktualizovat indicie v prubehu souteze. Pravdepodobne pri tom neni 
   potreba vubec menit DB ??
-- V textovejch souborech dodelat nahrazovani jmen souboru <fi1>, <fi2>, <fh1>, atd 
 - verbose/debug prepinac - pri zapnuti vypisovat nactena metadata pro jednotlive adresare apod...
 - kontrolovat ze je spravne oznacena startovni/cilova indicie a ze existuje cesta start->cil
 

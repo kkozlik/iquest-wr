@@ -698,7 +698,27 @@ class Chroust{
         $dir->close();
     }
 
-    static function copy_file($from, $to, $file_obj, $metadata){
+    static private function filename_replacement(&$line, &$files, $filename){
+        while (preg_match("/<file-(?P<type>[csh])(?P<nr>[0-9])+>/", $line, $matches)){
+
+            if ($matches['type']=='c') $type='clues';
+            elseif ($matches['type']=='h') $type='hints';
+            elseif ($matches['type']=='s') $type='solutions';
+            else{
+                throw new Iquest_InvalidConfigException("Invalid file replacement '{$matches[0]}' in file '$filename'");
+            }
+            
+            $nr = $matches['nr'] - 1;
+            $filenames = array_keys($files[$type]);
+            if (!isset($filenames[$nr])){
+                throw new Iquest_InvalidConfigException("Cannot find file number '{$matches['nr']}' for file replacement '{$matches[0]}' in file '$filename'");
+            }
+    
+            $line = str_replace($matches[0], $filenames[$nr], $line);
+        }
+    }
+
+    static function copy_file($from, $to, $file_obj, $metadata, $files){
         global $config;
 
         if (substr($file_obj->content_type, 0, 5) == "text/"){
@@ -715,6 +735,8 @@ class Chroust{
                 if (is_a($file_obj, "Iquest_Solution")){
                     $line = str_replace("<key>", $metadata->get_solution_key(), $line);
                 }
+
+                self::filename_replacement($line, $files, basename($from));
 
                 if (false === fwrite($out, $line)){
                     throw new Exception("Copy of file $from failed");
@@ -816,7 +838,7 @@ class Chroust{
             $clue = self::insert_clue($dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue_nr, $metadata);
             if (!$clue) continue;
 
-            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue, $metadata);
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $clue, $metadata, $entries);
 
             $clues[$clue->id] = $clue;
             $clue_nr++;
@@ -837,7 +859,7 @@ class Chroust{
             $hint = self::insert_hint($dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint_nr, $metadata, $clues);
             if (!$hint) continue;
 
-            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint, $metadata);
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $hint, $metadata, $entries);
 
             $hints[$hint->id] = $hint;
             $hint_nr++;
@@ -848,7 +870,7 @@ class Chroust{
             $solution = self::insert_solution($dest_dir.DIRECTORY_SEPARATOR.$to_file, $solution_nr, $metadata);
             if (!$solution) continue;
 
-            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $solution, $metadata);
+            self::copy_file($task_dir.$from_file, $dest_dir.DIRECTORY_SEPARATOR.$to_file, $solution, $metadata, $entries);
 
             $solutions[$solution->id] = $solution;
             $solution_nr++;
