@@ -868,13 +868,13 @@ class Chroust{
 
     /**
      *  Set value of WALLET_ACTIVE option in dependency whether 
-     *  there are defined any coins
+     *  there are any hints that could be bought
      */         
     static function set_wallet_active(){
         $coin_value = 0;
     
-        foreach(self::$summary['keys'] as $row){
-            $coin_value += $row['coin_value'];
+        foreach(self::$summary['hints'] as $row){
+            $coin_value += $row['price'];
         }
         
         Iquest_Options::set(Iquest_Options::WALLET_ACTIVE, ($coin_value>0) ? 1 : 0);
