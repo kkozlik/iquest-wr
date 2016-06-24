@@ -62,6 +62,7 @@ class Iquest_VerifiFailedException extends Exception {
 class Iquest_Metadata{
 
     const METADATA_FILE = "metadata.ini";
+    const SOLUTION_ID_PREFIX = "KEY-";
 
     private $data;
     private $parent_metadata;
@@ -218,6 +219,10 @@ class Iquest_Metadata{
         if (isset($this->data['solution']['id'])){
             return $this->data['solution']['id'];
         }
+
+        $next_cgrp = $this->get_solution_next_cgrp();
+        if ($next_cgrp) return self::SOLUTION_ID_PREFIX.$next_cgrp;
+
         return $this->get_cgrp_id();
     }
 
