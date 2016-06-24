@@ -16,6 +16,7 @@ class Iquest_InvalidConfigException extends Exception {}
 class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
     const SOLUTION_IDS = "Solution IDs";
     const CLUE_IDS = "Clue IDs";
+    const CLUE_GRP_IDS = "Clue Group IDs";
 
     private $gathered_info = array();
 
@@ -39,6 +40,11 @@ class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
         case self::CLUE_IDS:
             $clues = Iquest_Clue::fetch();
             foreach($clues as $clue) $data[]=$clue->id;
+            break;
+
+        case self::CLUE_GRP_IDS:
+            $cluegprs = Iquest_ClueGrp::fetch();
+            foreach($cluegprs as $cluegrp) $data[]=$cluegrp->id;
             break;
 
         default:
@@ -882,7 +888,10 @@ class Chroust{
         // verify that next_cgrp_id for each solution is valid (exists)
         foreach($solutions as $solution){
             if (!$solution->stub and !isset($cgrps[$solution->cgrp_id])){
-                throw new Iquest_InvalidConfigException("Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.");            
+                throw new Iquest_VerifyFailedException(
+                            "Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.",
+                            array(Iquest_VerifyFailedException::CLUE_GRP_IDS)
+                );            
             }
         }
         
