@@ -11,6 +11,54 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 class Iquest_noMetaDataException extends RuntimeException {}
 
+class Iquest_VerifiFailedException extends Exception {
+    const SOLUTION_IDS = "Solution IDs";
+    const CLUE_IDS = "Clue IDs";
+
+    private $gathered_info = array();
+
+    public function __construct($message, $gather_info=array()){
+        parent::__construct($message);
+        
+        foreach($gather_info as $info_type){
+            $this->gather_info($info_type);
+        }
+    }
+
+    private function gather_info($info_type){
+        $data = array();
+
+        switch($info_type){
+        case self::SOLUTION_IDS:
+            $solutions = Iquest_Solution::fetch();
+            foreach($solutions as $solution) $data[]=$solution->id;
+            break;
+
+        case self::CLUE_IDS:
+            $clues = Iquest_Clue::fetch();
+            foreach($clues as $clue) $data[]=$clue->id;
+            break;
+
+        default:
+            throw new Exception(__CLASS__.":".__FUNCTION__." - Invalid value for info_type '$info_type'");
+        }
+
+        $this->gathered_info[$info_type]=$data;
+    }
+
+
+    public function get_info(){
+        $str = "";
+        foreach($this->gathered_info as $label => $data){
+            sort($data);
+            $str .= "$label\n";
+            $str .= str_repeat("=", strlen($label))."\n";
+            $str .= implode(", ", $data)."\n\n";
+        }
+        return $str;
+    }
+}
+
 class Iquest_Metadata{
 
     const METADATA_FILE = "metadata.ini";
@@ -846,11 +894,17 @@ class Chroust{
         // walk through the rows
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if (!isset($solutions[$row[$c->solution_id]])){
-                throw new Exception("Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.");            
+                throw new Iquest_VerifiFailedException(
+                            "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.",
+                            array(Iquest_VerifiFailedException::SOLUTION_IDS)
+                );            
             }
 
             if (!isset($clues[$row[$c->clue_id]])){
-                throw new Exception("Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing clue '{$row[$c->clue_id]}'.");            
+                throw new Iquest_VerifiFailedException(
+                            "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing clue '{$row[$c->clue_id]}'.",
+                            array(Iquest_VerifiFailedException::CLUE_IDS)
+                );
             }
 
         }
@@ -1077,6 +1131,13 @@ class Chroust{
                         
             echo "\n";
             
+        }
+        catch (Iquest_VerifiFailedException $e){
+            fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
+            self::report_errors($e);
+            fwrite(STDERR, "\n");
+            fwrite(STDERR, $e->get_info());
+            exit(1);
         }
         catch (exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
