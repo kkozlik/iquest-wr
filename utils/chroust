@@ -647,7 +647,12 @@ class Chroust{
     
     static function process_top_metadata($dir){
 
-        $metadata = new Iquest_Metadata($dir);
+        try{
+            $metadata = new Iquest_Metadata($dir);
+        }
+        catch (Iquest_noMetaDataException $e){
+            throw new Exception("Cannot find top metadata file in directory: ".$dir, 0 ,$e);
+        }
     
         try{
             $metadata->save_options();
