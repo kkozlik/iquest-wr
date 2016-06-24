@@ -9,9 +9,11 @@ require_once(dirname(__FILE__)."/../config/set_env.php");
 require_once(dirname(__FILE__)."/../functions/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
-class Iquest_noMetaDataException extends RuntimeException {}
+class Iquest_MetadataOpenException extends Exception {}
+class Iquest_noMetaDataException extends Iquest_MetadataOpenException {}
 
 class Iquest_InvalidConfigException extends Exception {}
+class Iquest_ConfigDirOpenException extends Iquest_InvalidConfigException {}
 
 class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
     const SOLUTION_IDS = "Solution IDs";
@@ -116,7 +118,7 @@ class Iquest_Metadata{
         
         $metadata = parse_ini_file($file, true);
         if (false === $metadata){
-            throw new RuntimeException("Cannot open or read metadata file: ".$file);
+            throw new Iquest_MetadataOpenException("Cannot open or read metadata file: ".$file);
         }
         return $metadata;
     }
@@ -465,7 +467,7 @@ class Chroust{
             rm($config->iquest_data_dir."*");
         }
         else {
-            throw new Exception("Iquest datadir is not set.");            
+            throw new Exception("Iquest datadir is not set in config file.");            
         }
     }
 
@@ -665,7 +667,7 @@ class Chroust{
         try{
             $metadata->save_options();
         }
-        catch(Exception $e){
+        catch(Iquest_MetadataOpenException $e){
             throw new Iquest_InvalidConfigException("Problem reading metadata of directory: ".$dir, 0 ,$e);
         }
         
@@ -677,7 +679,7 @@ class Chroust{
         $top_metadata = self::process_top_metadata($src_dir);
 
         $dir = dir($src_dir);
-        if (!$dir) throw new RuntimeException("Cannot open directory: ".$src_dir);
+        if (!$dir) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$src_dir);
 
         while($entry = $dir->read()){
             //skip entries that are not directories
@@ -688,7 +690,7 @@ class Chroust{
                 $dest_dir = self::canonicalize_name($entry);
                 self::process_task_dir($src_dir.$entry.DIRECTORY_SEPARATOR, $dest_dir, $top_metadata);
             }
-            catch(Exception $e){
+            catch(Iquest_MetadataOpenException $e){
                 throw new Iquest_InvalidConfigException("Problem during processing directory: ".$src_dir.$entry.DIRECTORY_SEPARATOR, 0, $e);
             }
         }
@@ -752,7 +754,7 @@ class Chroust{
         RecursiveMkdir($config->iquest_data_dir.$dest_dir);
         
         $dir = dir($task_dir);
-        if (!$dir) throw new RuntimeException("Cannot open directory: ".$task_dir);
+        if (!$dir) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$task_dir);
 
         $cfg = $metadata->get_cfg();
         $entries=array();
@@ -947,7 +949,7 @@ class Chroust{
                     echo "It should be specified in [cgrp] section of metadata in the appropriate clue-grp directory.\n";
                 }
                 
-                throw $e;
+                throw new Iquest_InvalidConfigException($e->getMessage());
             }
         }
     }
