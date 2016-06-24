@@ -1,22 +1,65 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
-- otestovat zacatek/konec souteze (na kufru)
+
+Team
+----
+- druhe heslo pro read-only login pro pratele na telefonu
 
  
+HQ
+--
+- zobrazovat tabulku aktualniho poradi, eventuelne ji aktualizovat klikanim do grafu
+- symboly a barvy v grafu prubezneho poradi se opakuji (pouze 10 kombinaci)
+- auto refresh logu udalosti
+- v logu udalosti udelat klikaci odkazy na HINT, SOLUTION, ...
+- log udalosti -> filtr - tymy radit abecedne 
+- v grafu zvyraznit startovni/cilovou/vzdavaci indicii
 
-
-4. Neslo by mit Policko pro zadavani kodu i na screene s jednotlivymi ukoly? 
-Aby nemuseli prepinat do uvodni obrazovky, nebo vse v jednom? (priorita nizka)
-
-5. Aktualni cas v pravo nahore ... nebylo by lepe mit tam cas souteze, nebo 
-jeste lepe countdown do konce souteze? (nice to have)
-
-
-
-
+HQ - prehledova tabulka
+-----------------------
+- blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
+  po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
+- policka ktera nikdy nebudou obsahovat casovy udaj (reseni ktere nesmeruje 
+  na zadne dalsi cgrp) zobrazovat sede
+- lepe vizualne oddelit jednotlive radky (tymy)
+- po kliknuti (v mobilu) na casovy udaj zobrazit k cemu se vztahuje (jmeno tymu, ukol)  
 
 
 CHROUST
 -------
+- pokud neni u solution zadane ID, pouzit ID od next_cgrp s prefixem "KOD-"
+- moznost pouze aktualizovat soubory - beze zmen ref-id aby bylo mozne 
+  bezbolestne aktualizovat indicie v prubehu souteze. Pravdepodobne pri tom neni 
+  potreba vubec menit DB ??
+- V textovejch souborech dodelat nahrazovani jmen souboru <fi1>, <fi2>, <fh1>, atd 
+- Nejak rozumne reagovat na chyby vznikle pri chroustani ../tmp/indicie-vu2014
+- verbose/debug prepinac - pri zapnuti vypisovat nactena metadata pro jednotlive adresare apod...
+- kontrolovat ze je spravne oznacena startovni/cilova indicie a ze existuje cesta start->cil
+
+- Kdyz mne ten Chroust vykope jakoze SORRY VOLE ERROR
+  chybel mi ten metadata.ini v rootu s nastavenim casu souteze ….
+
+
+INSTALL
+-------
+- vytvorit skupinu 'iquest' tak aby kazdy uzivatel v teto skupine mohl WR konfigurovat a vytvaret soutez
+
+  addgroup iquest
+  adduser ok1cpi iquest
+  adduser rik iquest
+  chown www-data:iquest /var/www/i.quest/dav/
+  chmod 770 /var/www/i.quest/dav/
+  chown www-data:iquest /etc/iquest/*
+  chmod g+rw /etc/iquest/*
+  chown www-data:iquest /var/lib/iquest/
+  chmod 770 /var/lib/iquest/
+  chmod 770 /var/lib/iquest/*
+  chown www-data:iquest /var/lib/iquest/*
+  chown www-data:iquest /var/log/iquest
+  chmod 664 /var/log/iquest
+  chmod g+rwxs /var/lib/iquest
+
+  umask 002 - tohle nastavit v chroustovi 
+
 
 
 NICE TO HAVE
