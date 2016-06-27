@@ -733,10 +733,10 @@ class Chroust{
 
         $top_metadata = self::process_top_metadata($src_dir);
 
-        $dir = dir($src_dir);
-        if (!$dir) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$src_dir);
+        $dir = scandir($src_dir, SCANDIR_SORT_ASCENDING);
+        if ($dir === false) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$src_dir);
 
-        while($entry = $dir->read()){
+        foreach($dir as $entry){
             //skip entries that are not directories
             if (!is_dir($src_dir.$entry)) continue; 
             if (substr($entry, 0, 1) == ".") continue; 
@@ -750,7 +750,6 @@ class Chroust{
             }
         }
     
-        $dir->close();
     }
 
     static private function filename_replacement(&$line, &$files, $filename){
@@ -831,8 +830,8 @@ class Chroust{
         // re-create the dest. dir 
         RecursiveMkdir($config->iquest_data_dir.$dest_dir);
         
-        $dir = dir($task_dir);
-        if (!$dir) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$task_dir);
+        $dir = scandir($task_dir, SCANDIR_SORT_ASCENDING);
+        if ($dir === false) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$task_dir);
 
         $cfg = $metadata->get_cfg();
         $entries=array();
@@ -840,7 +839,7 @@ class Chroust{
         $entries['hints']=array();
         $entries['solutions']=array();
         
-        while($entry = $dir->read()){
+        foreach($dir as $entry){
             //skip entries that are not files
             if (!is_file($task_dir.$entry)) continue;
             // skip metadata file
@@ -863,7 +862,6 @@ class Chroust{
                 self::$unknown_files[] = $task_dir.$entry;
             }
         }
-        $dir->close();
 
         Iquest_Verbose_Output::log($entries, "Read data");
 
