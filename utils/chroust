@@ -3,7 +3,7 @@
 
 if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
 
-$_required_modules = array('iquest', 'auth');
+$_required_modules = array('iquest', 'auth', 'console');
 
 require_once(dirname(__FILE__)."/../config/set_env.php");
 require_once(dirname(__FILE__)."/../functions/functions.php");
@@ -79,8 +79,9 @@ class Iquest_Verbose_Output{
     public static function log($data, $label=""){
         if (!self::$enabled) return;
 
-        if ($label) echo "$label: ";
-        print_r($data);
+        if ($label) Console::log("$label: ", Console::LIGHT_GREEN, false, Console::UNDERLINE);
+        $str = print_r($data, true);
+        Console::log($str, Console::DARK_GRAY);
     }
 }
 
@@ -221,7 +222,7 @@ class Iquest_Metadata{
     function get_cgrp_order(){
 
         if (!isset($this->data['cgrp']['order'])){
-            echo "*** WARNING: order for clue group is not set.\n";
+            Console::log( "*** WARNING: order for clue group is not set.", Console::YELLOW);
             return 0;
         }
 
@@ -516,7 +517,7 @@ class Chroust{
         global $config;
 
         if ($config->iquest_data_dir and $config->iquest_data_dir != "/"){
-            echo "Erasing content of directory: ".$config->iquest_data_dir."\n";
+            Console::log("Erasing content of directory: ".$config->iquest_data_dir, Console::YELLOW);
 
             // make sure the destination directory is empty
             rm($config->iquest_data_dir."*");
@@ -547,13 +548,13 @@ class Chroust{
         }
 
         foreach($tables as $table){
-            echo "Erasing DB table: ".$table."\n";
+            Console::log("Erasing DB table: ".$table, Console::YELLOW);
             $res=$data->db->query("delete from ".$table);
             if ($data->dbIsError($res)) throw new DBException($res);
         }
 
         if (empty($option['preserve-user-data'])){
-            echo "Wiping user wallets\n";
+            Console::log("Wiping user wallets", Console::YELLOW);
             $res=$data->db->query(
                 "update {$config->data_sql->iquest_team->table_name} 
                  set {$config->data_sql->iquest_team->cols->wallet}=0");
@@ -636,7 +637,7 @@ class Chroust{
             $last_clue = end($clues);
             $clue_id = $last_clue->id;
 
-            echo "*** WARNING: clue_IDs are not specified for hint. Useing '$clue_id'\n";
+            Console::log("*** WARNING: clue_IDs are not specified for hint. Useing '$clue_id'", Console::YELLOW);
         }
 
         // Check whether the clue ID is valid
@@ -666,7 +667,7 @@ class Chroust{
     static function insert_solution($filename, $solution_nr, $metadata){
 
         if ($solution_nr > 0){
-            echo "*** WARNING: Only one solution file allowed in a directory. Ignoring the another one: '$filename'\n";
+            Console::log("*** WARNING: Only one solution file allowed in a directory. Ignoring the another one: '$filename'", Console::YELLOW);
             return null; 
         }
 
@@ -815,13 +816,13 @@ class Chroust{
     static function process_task_dir($task_dir, $dest_dir, $top_metadata){
         global $config;
         
-        echo "Reading directory: $task_dir\n";
+        Console::log("Reading directory: $task_dir", Console::GREEN);
 
         try{
             $metadata = new Iquest_Metadata($task_dir, $top_metadata);
         }
         catch (Iquest_noMetaDataException $e){
-            echo "*** No metadata. Skipping!!! \n";
+            Console::log("*** No metadata. Skipping!!!", Console::YELLOW);
             return;
         }
 
@@ -1018,7 +1019,8 @@ class Chroust{
                 $option_value = Iquest_Options::get($option_name);
             }
             catch(RuntimeException $e){
-                echo "\n*** ERROR: Option $option_name is not set.\n";
+                echo "\n";
+                Console::log("\n*** ERROR: Option $option_name is not set.", Console::RED);
                 
                 if (in_array($option_name, Iquest_Options::$set_in_global_ini)){
                     echo "It should be specified in [options] section of metadata in top directory.\n";
@@ -1133,9 +1135,10 @@ class Chroust{
             self::process_data_dir($src_dir);
 
             if (self::$unknown_files){
-                echo "\nNot recognized files:\n";
+                echo "\n";
+                Console::log("\nNot recognized files:\n", Console::YELLOW);
                 foreach(self::$unknown_files as $file){
-                    echo "  * $file\n";
+                    Console::log("  * $file", Console::NORMAL);
                 }
             }
 
@@ -1149,7 +1152,10 @@ class Chroust{
 
 
 
-            echo "\nHint summary:\n\n";
+
+            echo "\n";
+            Console::log("Hint summary:", Console::LIGHT_GREEN, false, Console::UNDERLINE);
+            echo "\n";
             
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['hints'], create_function('$a,$b','
@@ -1192,7 +1198,9 @@ class Chroust{
 
 
 
-            echo "\nKeys summary:\n\n";
+            echo "\n";
+            Console::log("Keys summary:", Console::LIGHT_GREEN, false, Console::UNDERLINE);
+            echo "\n";
 
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['keys'], create_function('$a,$b','
