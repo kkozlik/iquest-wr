@@ -761,7 +761,7 @@ class Chroust{
     }
 
     static private function filename_replacement(&$line, &$files, $filename){
-        while (preg_match("/<file-(?P<type>[csh])(?P<nr>[0-9])+>/", $line, $matches)){
+        while (preg_match("/<file-(?P<type>[a-z])(?P<nr>[0-9])+>/i", $line, $matches)){
 
             if ($matches['type']=='c') $type='clues';
             elseif ($matches['type']=='h') $type='hints';
