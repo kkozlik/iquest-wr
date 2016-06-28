@@ -3,6 +3,7 @@
 * Introducing replacements of <file-[type][number]> tag in text files
 * chroust accept new --verbose switch
 * chroust: adding colored output
+* chroust: check that graph of clues/solutions is continuous
 
 rel 0.1.3
 * fixing bug in calculating team ranks

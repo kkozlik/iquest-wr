@@ -1043,6 +1043,20 @@ class Chroust{
                 throw new Iquest_InvalidConfigException($e->getMessage());
             }
         }
+        
+        // Verify that the graph of clues and solutions is continuous.
+        // Use any fake number as team_id. We do not need to have graph for any team. 
+        $graph = new Iquest_solution_graph(9999);
+        $graph_errors = $graph->check_graph_continuous();
+        if ($graph_errors){
+            Console::log("\n".str_repeat("*", 80), Console::LIGHT_PURPLE);
+            Console::log("The graph of clues and solutions is not continuous.", Console::LIGHT_PURPLE);
+            Console::log("Some nodes are not accessible from initial clue group.", Console::LIGHT_PURPLE);
+            Console::log("It seems your configuration is not correct.", Console::LIGHT_PURPLE);
+            Console::log("You can check the graph in the HQ interface by click on name of any team.\n", Console::LIGHT_PURPLE);
+            Console::log($graph_errors, Console::LIGHT_PURPLE);
+            Console::log(str_repeat("*", 80), Console::LIGHT_PURPLE);
+        }        
     }
 
     static function canonicalize_name($str){

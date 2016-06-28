@@ -1927,6 +1927,99 @@ class Iquest_solution_graph{
     }
 
     /**
+     *  Check whether graph is continuous. I.e. whether all nodes could be 
+     *  accessed from initial clue group.
+     */         
+    public function check_graph_continuous(){
+
+        // reset all nodes visited flag
+        foreach($this->nodes as &$node) $node->visited = false;
+
+        $queue = array();
+
+        $initial_cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+
+        if (!isset($this->cgroups[$initial_cgrp_id])){
+            throw new UnexpectedValueException("Invalid ID of initial clue group: '$initial_cgrp_id'");
+        }
+
+        $clues = $this->cgroups[$initial_cgrp_id]->get_clues();
+
+        if (!$clues){
+            throw new UnexpectedValueException("Initial clue group: '$initial_cgrp_id' does not contain any clues");
+        }
+
+        //add nodes of initial clue group to the queue
+        foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
+
+        sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
+
+        // as long as there are nodes in in the queue, fetch node from the queue...
+        while(!is_null($node_id = array_shift($queue))){
+            // and set it's visited flag to true
+            $this->nodes[$node_id]->visited = true;
+
+            sw_log("mark_accessible_nodes: visited node: $node_id", PEAR_LOG_DEBUG);
+
+            // We are walking the graph in reversed order. If there are any
+            // edges leading TO this node walk through them. Get all nodes
+            // FROM what leads edge TO current node 
+            if (isset($this->edges[$node_id])){
+                foreach($this->edges[$node_id] as $to_node_id){
+
+                    // if the node has been already visited, skip it
+                    if ($this->nodes[$to_node_id]->visited) continue;
+
+                    // add node to queue
+                    $queue[] = $to_node_id;
+                    sw_log("mark_accessible_nodes: adding node: $to_node_id", PEAR_LOG_DEBUG);
+                }
+            }
+            sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
+        }
+
+
+        $reveal_goal_cgrp_id = Iquest_Options::get(Iquest_Options::REVEAL_GOAL_CGRP_ID);
+        if (!isset($this->cgroups[$reveal_goal_cgrp_id])){
+            throw new UnexpectedValueException("Invalid ID of reveal goal clue group: '$reveal_goal_cgrp_id'");
+        }
+
+
+        $unaccessible_cgrps = array();
+        $unaccessible_solutions = array();
+
+        foreach($this->nodes as &$node){
+            if (!$node->visited) {
+                if ($node->is_clue() and 
+                    $node->get_obj()->cgrp_id==$reveal_goal_cgrp_id){
+                    
+                    // It is OK that clue group revaling goal is not accessible.
+                    // Skip it.
+                    continue;
+                } 
+
+                if ($node->is_clue())       $unaccessible_cgrps[]     = $node->get_obj()->cgrp_id;
+                if ($node->is_solution())   $unaccessible_solutions[] = $node->get_obj()->id;
+            }
+        }
+    
+        $err = "";
+        if ($unaccessible_cgrps){
+            $err .= "Clue groups: ".
+                    implode(", ", array_unique($unaccessible_cgrps)).
+                    " are not accessible from the start clue group.\n";
+        }
+
+        if ($unaccessible_solutions){
+            $err .= "Solutions: ".
+                    implode(", ", array_unique($unaccessible_solutions)).
+                    " are not accessible from the start clue group.\n";
+        }
+
+        return $err;
+    }
+
+    /**
      *  Return list of IDs of clues that has been already gained by the team,
      *  but that are not needed anymore (has been used to solve a task solution).
      *  
