@@ -90,6 +90,13 @@ class Iquest_Metadata{
     const METADATA_FILE = "metadata.ini";
     const SOLUTION_ID_PREFIX = "KEY-";
 
+    /** Name of directives in ini file that set the option */
+    public static $option_2_ini_file_directive = array(
+        Iquest_Options::INITIAL_CGRP_ID       => "start",
+        Iquest_Options::FINAL_CGRP_ID         => "final",
+        Iquest_Options::REVEAL_GOAL_CGRP_ID   => "reveal_goal",
+    ); 
+
     private $data;
     private $parent_metadata;
 
@@ -1027,6 +1034,10 @@ class Chroust{
                 }
                 else{
                     echo "It should be specified in [cgrp] section of metadata in the appropriate clue-grp directory.\n";
+                }
+
+                if (isset(Iquest_Metadata::$option_2_ini_file_directive[$option_name])){
+                    echo "You should set the directive '".Iquest_Metadata::$option_2_ini_file_directive[$option_name]."'.\n";
                 }
                 
                 throw new Iquest_InvalidConfigException($e->getMessage());
