@@ -1,3 +1,4 @@
+rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 
   from [solution].next_cgrp_id prefixed with 'KEY-' is used
 * Introducing replacements of <file-[type][number]> tag in text files
