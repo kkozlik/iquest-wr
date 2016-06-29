@@ -40,6 +40,7 @@
 class apu_iquest_team_rank extends apu_base_class{
 
     protected $smarty_ranks;
+    protected $smarty_actual_order;
 
     
     /**
@@ -58,6 +59,8 @@ class apu_iquest_team_rank extends apu_base_class{
         /*** names of variables assigned to smarty ***/
         /* smarty action */
         $this->opt['smarty_ranks'] =       'ranks';
+
+        $this->opt['smarty_actual_order'] =       'actual_order';
     }
 
 
@@ -102,6 +105,21 @@ class apu_iquest_team_rank extends apu_base_class{
             }
         }
 
+
+        $this->smarty_actual_order = array();
+        if ($ranks){
+            $actual_order = end($ranks)->rank;
+            $actual_order_team_name = array();
+
+            foreach($actual_order as $team_id => $team_rank){
+                $team_name = $this->smarty_ranks[$team_id]['name'];
+                $actual_order_team_name[$team_name] = $team_rank;
+            }
+
+            asort($actual_order_team_name);
+            $this->smarty_actual_order = $actual_order_team_name;
+        }
+
         action_log($this->opt['screen_name'], $this->action, "View ranks");
     }
     
@@ -112,6 +130,7 @@ class apu_iquest_team_rank extends apu_base_class{
     function pass_values_to_html(){
         global $smarty;
         $smarty->assign($this->opt['smarty_ranks'], $this->smarty_ranks);
+        $smarty->assign($this->opt['smarty_actual_order'], $this->smarty_actual_order);
     }
 }
 

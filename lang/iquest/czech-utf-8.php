@@ -76,6 +76,8 @@ $lang_str['iquest_event_err_datetime_intersect'] =      "'Od' je větší než '
 $lang_str['iquest_rank_title'] =                        "Průběžné pořadí týmů";
 $lang_str['iquest_rank_x_axes']=                        "Čas";
 $lang_str['iquest_rank_y_axes']=                        "Pořadí";
+$lang_str['iquest_rank_team'] =                         "Tým";
 
+$lang_str['iquest_rank_act_order_title'] =              "Aktuální pořadí týmů";
 
 ?>

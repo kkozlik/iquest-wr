@@ -5,6 +5,32 @@
 {include file="iquest/iquest-functions.tpl"}
 
 <div id="team-ranks" style="width:100%;"></div>
+
+{if $actual_order}
+    <div class="row">
+    <div class="span6 offset3">
+        <h3>{$lang_str.iquest_rank_act_order_title}</h3>
+        
+        <table class="table table-bordered table-striped table-condensed">
+        <thead>
+        <tr>
+        <th>{$lang_str.iquest_rank_y_axes}</th>
+        <th>{$lang_str.iquest_rank_team}</th>
+        </tr>
+        </thead>
+        
+        {foreach $actual_order as $team_name => $rank}
+        <tr>
+        <td>{$rank}</td>
+        <td>{$team_name}</td>
+        </tr>
+        {/foreach}
+        </table>
+    </div>
+    </div>
+{/if}
+
+
 <br>
 {include file='_tail.tpl'}
 
