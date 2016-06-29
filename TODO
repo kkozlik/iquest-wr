@@ -26,9 +26,6 @@ HQ - prehledova tabulka
 
 CHROUST
 -------
-- moznost pouze aktualizovat soubory - beze zmen ref-id aby bylo mozne 
-  bezbolestne aktualizovat indicie v prubehu souteze. Pravdepodobne pri tom neni 
-  potreba vubec menit DB ??
 
 
 
@@ -44,12 +41,13 @@ INSTALL
   chown www-data:iquest /etc/iquest/*
   chmod g+rw /etc/iquest/*
   chown www-data:iquest /var/lib/iquest/
+  chown www-data:iquest /var/lib/iquest/*
   chmod 770 /var/lib/iquest/
   chmod 770 /var/lib/iquest/*
-  chown www-data:iquest /var/lib/iquest/*
+  chmod g+rwxs /var/lib/iquest
+
   chown www-data:iquest /var/log/iquest
   chmod 664 /var/log/iquest
-  chmod g+rwxs /var/lib/iquest
 
   umask 002 - tohle nastavit v chroustovi 
 

@@ -1,3 +1,7 @@
+rel 
+* chroust: do not change ref_ids when the chroust is re-executed 
+
+
 rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 
   from [solution].next_cgrp_id prefixed with 'KEY-' is used

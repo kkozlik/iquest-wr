@@ -520,6 +520,9 @@ class Chroust{
                       );
     static $unknown_files = array();
 
+    static $id2ref_id = array();
+
+
     static function prune_data_dir(){
         global $config;
 
@@ -569,6 +572,24 @@ class Chroust{
         }    
     }
 
+    static function save_ref_ids($option){
+
+        if (empty($option['preserve-user-data'])) return;
+
+        Iquest_Verbose_Output::log("Saving ref_ids from DB tables");
+
+        $cgrps = Iquest_ClueGrp::fetch();
+        $clues = Iquest_Clue::fetch();
+        $hints = Iquest_Hint::fetch();
+        $solutions = Iquest_Solution::fetch();
+        
+        foreach($cgrps as $cgrp)            self::$id2ref_id['cgrp'][$cgrp->id]         = $cgrp->ref_id;
+        foreach($clues as $clue)            self::$id2ref_id['clue'][$clue->id]         = $clue->ref_id;
+        foreach($hints as $hint)            self::$id2ref_id['hint'][$hint->id]         = $hint->ref_id;
+        foreach($solutions as $solution)    self::$id2ref_id['solution'][$solution->id] = $solution->ref_id;
+    }
+
+
     /**
      *  Set default values for options
      */         
@@ -609,7 +630,9 @@ class Chroust{
         $cgrp_id = $metadata->get_cgrp_id();
         $cgrp_name = $metadata->get_cgrp_name();
         $cgrp_order = $metadata->get_cgrp_order();
-        $ref_id = rfc4122_uuid();
+
+        if (isset(self::$id2ref_id['cgrp'][$cgrp_id])) $ref_id = self::$id2ref_id['cgrp'][$cgrp_id];
+        else                                           $ref_id = rfc4122_uuid();
         
         $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name, $cgrp_order);
         $cgrp->insert();
@@ -618,12 +641,16 @@ class Chroust{
 
     static function insert_clue($filename, $clue_nr, $metadata){
         $cgrp_id = $metadata->get_cgrp_id();
-        $ref_id = rfc4122_uuid();
+        $clue_id = $cgrp_id."-".$clue_nr;
+
+        if (isset(self::$id2ref_id['clue'][$clue_id])) $ref_id = self::$id2ref_id['clue'][$clue_id];
+        else                                           $ref_id = rfc4122_uuid();
+
         $content_type = $metadata->get_mime_type($filename);
         $point_to = $metadata->get_clue_point_to($clue_nr);
         $clue_type = $metadata->get_clue_type($clue_nr, $filename);
 
-        $clue = new Iquest_Clue($cgrp_id."-".$clue_nr, $ref_id, 
+        $clue = new Iquest_Clue($clue_id, $ref_id, 
                 $filename, $content_type, $clue_type,
                 null, $cgrp_id, $clue_nr, $point_to);
 
@@ -633,7 +660,11 @@ class Chroust{
 
     static function insert_hint($filename, $hint_nr, $metadata, $clues){
         $cgrp_id = $metadata->get_cgrp_id();
-        $ref_id = rfc4122_uuid();
+        $hint_id = $cgrp_id."-".$hint_nr;
+
+        if (isset(self::$id2ref_id['hint'][$hint_id])) $ref_id = self::$id2ref_id['hint'][$hint_id];
+        else                                           $ref_id = rfc4122_uuid();
+
         $content_type = $metadata->get_mime_type($filename);
         $clue_id = $metadata->get_hint_clueid($hint_nr);
         $timeout = $metadata->get_hint_timeout($hint_nr);
@@ -664,7 +695,7 @@ class Chroust{
                                           "timeout"   => $timeout);
 
 
-        $hint = new Iquest_Hint($cgrp_id."-".$hint_nr, $ref_id, 
+        $hint = new Iquest_Hint($hint_id, $ref_id, 
                 $filename, $content_type, null, $clue_id, $timeout, $price, $hint_nr);
 
         $hint->insert();
@@ -679,7 +710,10 @@ class Chroust{
         }
 
         $solution_id = $metadata->get_solution_id();
-        $ref_id = rfc4122_uuid();
+
+        if (isset(self::$id2ref_id['solution'][$solution_id])) $ref_id = self::$id2ref_id['solution'][$solution_id];
+        else                                                   $ref_id = rfc4122_uuid();
+
         $content_type = $metadata->get_mime_type($filename);
 
         $name = $metadata->get_solution_name();
@@ -1154,6 +1188,7 @@ class Chroust{
 
 
         try{
+            self::save_ref_ids($option);
             self::prune_data_dir();
             self::prune_db($option);
             self::set_defaults();
