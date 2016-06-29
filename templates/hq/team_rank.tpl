@@ -13,7 +13,8 @@
         Highcharts.setOptions({
             global : {
                 useUTC : false
-            }
+            },
+            colors: [ "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1",  "#9100e1", "#00ff24", "#0000fe"]
         });
         
         $('#team-ranks').highcharts({

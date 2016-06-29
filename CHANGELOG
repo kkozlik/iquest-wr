@@ -1,6 +1,6 @@
 rel 
 * chroust: do not change ref_ids when the chroust is re-executed 
-
+* Adding more colors for data seriaes in chart on team-rank screen
 
 rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 
