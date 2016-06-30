@@ -2240,6 +2240,9 @@ class Iquest_Team{
         /* col names */
         $ct      = &$config->data_sql->iquest_team->cols;
 
+        $o_order_by = (isset($opt['order_by'])) ? $opt['order_by'] : "";
+        $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : "";
+
         $qw = array();
         if (isset($opt['id']))      $qw[] = "t.".$ct->id." = ".$data->sql_format($opt['id'], "n");
 
@@ -2253,6 +2256,9 @@ class Iquest_Team{
                      t.".$ct->wallet."
               from ".$tt_name." t ".
               $qw;
+
+        if ($o_order_by) $q .= " order by ".$ct->$o_order_by." ".$o_order_desc;
+
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);

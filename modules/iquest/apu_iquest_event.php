@@ -110,7 +110,7 @@ class apu_iquest_event extends apu_base_class{
     function get_filter_form(){
         global $lang_str;
 
-        $teams = Iquest_Team::fetch();
+        $teams = Iquest_Team::fetch(array('order_by' => 'name'));
         $team_options = array();
         $team_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
         foreach($teams as $v){
