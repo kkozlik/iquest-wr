@@ -63,6 +63,26 @@
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+{elseif $action=='view_hint'}
+
+    <ul class="breadcrumb">
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+    <div class="datatable hint">
+    <table class="table table-bordered">
+    <tr>
+        <th class="filename">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
+        <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+    </tr>
+    {call iquestRenderFile file=$hint}
+    </table>
+    </div>
+
+    <ul class="breadcrumb">
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
 {else}
 
     <div class="horizontal-scrollbar" id="scroll-wrapper">

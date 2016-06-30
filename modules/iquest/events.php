@@ -170,8 +170,8 @@ class Iquest_Events{
             if (isset($this->data['solution']['id'])){   
                 $out['solution']['text'] = $this->data['solution']['id'];
                 
-                if (isset($opt['hint_url'])){
-                    $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['hint_url']);
+                if (isset($opt['solution_url'])){
+                    $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['solution_url']);
                 }
             }
             
@@ -201,7 +201,13 @@ class Iquest_Events{
 
             break;
         case self::COIN_SPEND:
-            if (isset($this->data['hint']['id']))   $out['hint']['text'] = $this->data['hint']['id'];
+            if (isset($this->data['hint']['id']))   {
+                $out['hint']['text'] = $this->data['hint']['id'];
+                
+                if (isset($opt['hint_url'])){
+                    $out['hint']['url']  = str_replace("<id>", RawURLEncode($this->data['hint']['ref_id']), $opt['hint_url']);
+                }
+            }
             break;
         }
 

@@ -57,6 +57,7 @@ class apu_iquest_hq extends apu_base_class{
     protected $smarty_cgrp_team;
     protected $smarty_solution_team;
     protected $smarty_clues;
+    protected $smarty_hint;
     protected $smarty_solutions;
     protected $smarty_action = "default";
 
@@ -82,6 +83,7 @@ class apu_iquest_hq extends apu_base_class{
 
         $this->opt['smarty_action'] =       'action';
         $this->opt['smarty_clues'] =        'clues';
+        $this->opt['smarty_hint'] =         'hint';
     }
 
     /**
@@ -166,6 +168,20 @@ class apu_iquest_hq extends apu_base_class{
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution screen");
+        return true;
+    }
+
+    /**
+     *  Method perform action view_hint 
+     *
+     *  @return array           return array of $_GET params fo redirect or FALSE on failure
+     */
+    function action_view_hint(){
+
+        $this->smarty_hint = $this->hint->to_smarty();
+        $this->smarty_hint['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($this->hint->ref_id), false);
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View hint screen");
         return true;
     }
 
@@ -274,6 +290,13 @@ class apu_iquest_hq extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
+        elseif (isset($_GET['view_hint'])){
+            $this->smarty_action = 'view_hint';
+            $this->ref_id = $_GET['view_hint'];
+            $this->action=array('action'=>"view_hint",
+                                 'validate_form'=>true,
+                                 'reload'=>false);
+        }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
             $this->action=array('action'=>"get_clue",
@@ -360,7 +383,8 @@ class apu_iquest_hq extends apu_base_class{
 
 
         /* check hint exists */
-        if ($this->action['action'] == "get_hint"){
+        if ($this->action['action'] == "get_hint" or
+            $this->action['action'] == "view_hint"){
 
             $opt = array("ref_id" => $this->ref_id);
             $hints = Iquest_Hint::fetch($opt);
@@ -408,6 +432,7 @@ class apu_iquest_hq extends apu_base_class{
 
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
+        $smarty->assign($this->opt['smarty_hint'], $this->smarty_hint);
     }
     
 }

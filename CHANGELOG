@@ -3,6 +3,7 @@ rel
 * Adding more colors for data seriaes in chart on team-rank screen
 * HQ: display table of actual team order
 * HQ: event log - team filter - display teams in alphabetical order
+* HQ: event log - hint IDs and solution IDs are clickable
 
 rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 
