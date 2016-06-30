@@ -252,7 +252,7 @@ class apu_iquest_event extends apu_base_class{
         $events = Iquest_Events::fetch($opt);
         $this->pager=$data->get_pager();
 
-        $opt = null;
+        $opt = array("hint_url" => "main.php?view_solution=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']));
         $this->smarty_realms = array();
         foreach ($events as $k => $v){
             $smarty_event = $v->to_smarty($opt);

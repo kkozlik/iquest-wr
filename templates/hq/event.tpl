@@ -76,7 +76,13 @@
         <td >
             {foreach $event.data_filtered as $key=>$value}
                 <span class="eventLogDataKey">{$key|escape}</span>:
-                <span class="eventLogDataValue">{$value|escape}</span>{if !$value@last},{/if}
+                <span class="eventLogDataValue">
+                    {if $value.url|default:false}
+                        <a href="{$value.url|escape}">{$value.text|escape}</a>
+                    {else}
+                        {$value.text|escape}
+                    {/if}
+                </span>{if !$value@last},{/if}
             {/foreach}
         </td>
         {/if}

@@ -9,6 +9,14 @@ $_required_apu = array('apu_iquest_hq');
 
 require dirname(__FILE__)."/prepend.php";
 
+if (!empty($_GET['back_url'])) {
+    $controler->change_url_for_reload($_GET['back_url']);
+    $controler->set_get_param('back_url');
+    $smarty->assign('back_url', $controler->url($_GET['back_url']));
+}
+else{
+    $smarty->assign('back_url', $controler->url($_SERVER['PHP_SELF']));
+}
 
 $apu    = new apu_iquest_hq();
 

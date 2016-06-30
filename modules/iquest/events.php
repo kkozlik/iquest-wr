@@ -161,25 +161,32 @@ class Iquest_Events{
         $this->team_name =  $team_name;
     }
 
-    function get_filtered_data(){
+    private function get_filtered_data($opt = array()){
         
         $out = array();
         switch($this->type){
         case self::KEY:
-            if (isset($this->data['key']))          $out['key'] = $this->data['key'];
-            if (isset($this->data['solution']['id']))   $out['solution'] = $this->data['solution']['id'];
+            if (isset($this->data['key']))              $out['key']['text'] = $this->data['key'];
+            if (isset($this->data['solution']['id'])){   
+                $out['solution']['text'] = $this->data['solution']['id'];
+                
+                if (isset($opt['hint_url'])){
+                    $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['hint_url']);
+                }
+            }
+            
             if (isset($this->data['solution']['coin_value']) and 
                 $this->data['solution']['coin_value'] > 0){
 
-                $out['coin gained'] = $this->data['solution']['coin_value'];
+                $out['coin gained']['text'] = $this->data['solution']['coin_value'];
             }
 
             if (isset($this->data['solution']['show_at'])){
                 if ($this->data['solution']['show_at'] < $this->timestamp){
-                    $out['timeout'] = "expired";
+                    $out['timeout']['text'] = "expired";
                 }
                 else{
-                    $out['timeout'] = gmdate("H:i:s", $this->data['solution']['show_at'] - $this->timestamp)." till expire";
+                    $out['timeout']['text'] = gmdate("H:i:s", $this->data['solution']['show_at'] - $this->timestamp)." till expire";
                 }
             }   
 
@@ -188,22 +195,22 @@ class Iquest_Events{
                 foreach($this->data['active_solutions'] as $solution){
                     $active_solutions[] = $solution['id'];
                 }
-                $out['active tasks'] = implode(", ", $active_solutions);
+                $out['active tasks']['text'] = implode(", ", $active_solutions);
             }
 
 
             break;
         case self::COIN_SPEND:
-            if (isset($this->data['hint']['id']))   $out['hint'] = $this->data['hint']['id'];
+            if (isset($this->data['hint']['id']))   $out['hint']['text'] = $this->data['hint']['id'];
             break;
         }
 
-        if (isset($this->data['errors']))           $out['errors'] = implode("; ", $this->data['errors']);
+        if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
         
         return $out;
     }
 
-    function to_smarty(){
+    function to_smarty($opt = array()){
         $out = array();
         $out['id'] = $this->id;
         $out['team_id'] = $this->team_id;
@@ -212,7 +219,7 @@ class Iquest_Events{
         $out['success'] = $this->success;
         $out['data'] = $this->data;
         $out['data_formated'] = print_r($this->data, true);
-        $out['data_filtered'] = $this->get_filtered_data();
+        $out['data_filtered'] = $this->get_filtered_data($opt);
         $out['team_name'] = $this->team_name;
 
         return $out;

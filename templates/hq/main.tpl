@@ -8,7 +8,7 @@
 {if $action=='view_grp'}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
     {foreach $clues as $clue}
@@ -40,13 +40,13 @@
     {/foreach}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
 {elseif $action=='view_solution'}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
     <div class="datatable solution">
@@ -60,7 +60,7 @@
     </div>
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
 {else}

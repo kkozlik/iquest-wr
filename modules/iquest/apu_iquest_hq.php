@@ -82,8 +82,6 @@ class apu_iquest_hq extends apu_base_class{
 
         $this->opt['smarty_action'] =       'action';
         $this->opt['smarty_clues'] =        'clues';
-
-        $this->opt['smarty_main_url'] =         'main_url';
     }
 
     /**
@@ -410,8 +408,6 @@ class apu_iquest_hq extends apu_base_class{
 
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
-
-        $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
     }
     
 }
