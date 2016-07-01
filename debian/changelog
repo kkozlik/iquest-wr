@@ -1,3 +1,17 @@
+iquest (0.1.5) stable; urgency=medium
+
+  * chroust: do not change ref_ids when the chroust is re-executed 
+  * Adding more colors for data seriaes in chart on team-rank screen
+  * HQ: display table of actual team order
+  * HQ: event log - team filter - display teams in alphabetical order
+  * HQ: event log - hint IDs and solution IDs are clickable
+  * HQ: table - grey out unused fields
+  * HQ: table - better separate rows for each team
+  * HQ: table - display some popup info on click on time field
+  * HQ: event log - autoupdate
+
+ -- Karel Kozlík <kk@kk-nb>  Fri, 01 Jul 2016 23:43:10 +0200
+
 iquest (0.1.4) stable; urgency=medium
  
   * metadata.ini: In case value for [solution].id is not set, the value 
