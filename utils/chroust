@@ -1186,7 +1186,8 @@ class Chroust{
             $src_dir.=DIRECTORY_SEPARATOR;
         }
 
-
+        umask(002);
+        
         try{
             self::save_ref_ids($option);
             self::prune_data_dir();

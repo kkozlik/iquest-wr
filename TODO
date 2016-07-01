@@ -30,8 +30,10 @@ INSTALL
   adduser rik iquest
   chown www-data:iquest /var/www/i.quest/dav/
   chmod 770 /var/www/i.quest/dav/
+
   chown www-data:iquest /etc/iquest/*
   chmod g+rw /etc/iquest/*
+
   chown www-data:iquest /var/lib/iquest/
   chown www-data:iquest /var/lib/iquest/*
   chmod 770 /var/lib/iquest/
