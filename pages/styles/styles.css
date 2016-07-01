@@ -253,6 +253,10 @@ span.coin-animated{
     color: #FFFFFF;
 }
 
+.table.summary tr.first td{
+    border-top: 1px #ADADAD solid;
+}
+
 .horizontal-scrollbar{
     overflow-x: auto;
 }

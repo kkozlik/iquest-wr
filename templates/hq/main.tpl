@@ -109,7 +109,7 @@
     </thead>
 
     {foreach $teams as $team}
-    <tr>
+    <tr class="first">
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
         ({$team.wallet} {$lang_str.iquest_txt_coin_symbol})
@@ -120,7 +120,7 @@
         </td>
         {/foreach}
     </tr>
-    <tr>
+    <tr class="second">
         {foreach $clue_groups as $group}
             {foreach $group.solution_ids as $solution_id}
             <td {if $solution_team[$solution_id][$team.id].solved}class="solved"{/if} title="{$solutions.$solution_id.id|escape}">
