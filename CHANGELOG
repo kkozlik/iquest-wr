@@ -6,6 +6,7 @@ rel
 * HQ: event log - hint IDs and solution IDs are clickable
 * HQ: table - grey out unused fields
 * HQ: table - better separate rows for each team
+* HQ: table - display some popup info on click on time field
 
 rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 

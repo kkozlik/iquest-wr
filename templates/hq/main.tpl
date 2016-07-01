@@ -115,7 +115,13 @@
         ({$team.wallet} {$lang_str.iquest_txt_coin_symbol})
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
-        <td colspan="{$colspan}" {if $cgrp_team[$group.id][$team.id].gained}class="solved"{/if} title="{$group.id|escape}">
+        {$data_content="<strong>Tým: </strong>`$team.name`<br /><strong>Úkol: </strong>`$group.name`"}
+        <td colspan="{$colspan}" 
+            class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}" 
+            title="{$group.id|escape}"
+            data-toggle="popover" 
+            data-content="{$data_content|escape}"
+        >
         {$cgrp_team[$group.id][$team.id].gained_at|escape}
         </td>
         {/foreach}
@@ -123,7 +129,12 @@
     <tr class="second">
         {foreach $clue_groups as $group}
             {foreach $group.solution_ids as $solution_id}
-            <td {if $solution_team[$solution_id][$team.id].solved}class="solved"{/if} title="{$solutions.$solution_id.id|escape}">
+            {$data_content="<strong>Tým: </strong>`$team.name`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name`"}
+            <td class="time-field {if $solution_team[$solution_id][$team.id].solved}solved{/if}" 
+                title="{$solutions.$solution_id.id|escape}"
+                data-toggle="popover" 
+                data-content="{$data_content|escape}"
+            >
             {$solution_team[$solution_id][$team.id].solved_at|escape}
             </td>
             {foreachelse}
@@ -166,6 +177,19 @@
         $('#scroll-wrapper').addClass('inselectable'); 
     }
 
+    $(".time-field").popover({
+        placement: "top",
+        trigger: "click",
+        html: true,
+        container: 'body'
+    });
+
+    $('.time-field').on('shown.bs.popover', function () {
+        var $pop = $(this);
+        setTimeout(function () {
+            $pop.popover('hide');
+        }, 1000);
+    });
     </script>
 {/literal}
 {/if}

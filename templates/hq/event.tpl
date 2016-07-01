@@ -113,6 +113,7 @@
     $(".event-data").popover({
         placement: "top",
         trigger: "hover",
-        html: true
+        html: true,
+        container: 'body'
     });
 </script>
