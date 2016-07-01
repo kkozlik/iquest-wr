@@ -4,6 +4,7 @@ rel
 * HQ: display table of actual team order
 * HQ: event log - team filter - display teams in alphabetical order
 * HQ: event log - hint IDs and solution IDs are clickable
+* HQ: table - grey out unused fields
 
 rel 0.1.4
 * metadata.ini: In case value for [solution].id is not set, the value 

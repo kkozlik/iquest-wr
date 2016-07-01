@@ -127,7 +127,7 @@
             {$solution_team[$solution_id][$team.id].solved_at|escape}
             </td>
             {foreachelse}
-            <td >&nbsp;</td>
+            <td class="unused">&nbsp;</td>
             {/foreach}
         {/foreach}
     </tr>

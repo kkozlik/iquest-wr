@@ -242,6 +242,11 @@ span.coin-animated{
     color: #468847;
 }
 
+.table.summary td.unused{
+    background-color: #E5E5E5;
+    color: #ADADAD;
+}
+
 .table.summary th.deactivated,
 .table.summary th.deactivated a{
     background-color: #FAA732;
