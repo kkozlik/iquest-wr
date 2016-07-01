@@ -56,39 +56,24 @@
 
     {call iquestPager pager=$pager}
 
-    <table class="table table-bordered">
+    <table class="table table-bordered" id="event-table">
+    <thead>
     <tr>
     <th>{$lang_str.iquest_event_time}</th>
     <th>{$lang_str.iquest_event_team}</th>
     <th>{$lang_str.iquest_event_type}</th>
     <th>{$lang_str.iquest_event_data}</th>
     </tr>
+    </thead>
 
+    <tbody>
     {foreach $events as $event}
-    {$data_content="<pre>`$event.data_formated`</pre>"}
-    <tr class="{if $event.success}success{else}error{/if}">
-        <td class="nowrap">{$event.timestamp}</td>
-        <td >{$event.team_name}</td>
-        <td >{$event.type}</td>
-        {if $filter_values.raw_data}
-        <td class="event-data" data-toggle="popover" data-content="{$data_content|escape}">{$event.data|json_encode|escape}</td>
-        {else}
-        <td >
-            {foreach $event.data_filtered as $key=>$value}
-                <span class="eventLogDataKey">{$key|escape}</span>:
-                <span class="eventLogDataValue">
-                    {if $value.url|default:false}
-                        <a href="{$value.url|escape}">{$value.text|escape}</a>
-                    {else}
-                        {$value.text|escape}
-                    {/if}
-                </span>{if !$value@last},{/if}
-            {/foreach}
-        </td>
-        {/if}
-    </tr>
+        {include file=$row_template 
+                 event=$event 
+                 raw_data=$filter_values.raw_data 
+        }
     {/foreach}
-
+    </tbody>
     </table>
 
     {call iquestPager pager=$pager}
@@ -116,4 +101,32 @@
         html: true,
         container: 'body'
     });
+    
+
+    var EventPoller = {
+        last_id: {$last_event_id},
+        
+        poll: function(){
+            $.getJSON(
+                '{$my_url}',
+                { last_id_ajax: EventPoller.last_id }, 
+                function (response) {
+                    $.each(response.rows, function (i, item) {
+                        $('#event-table tbody').prepend(item);
+                    });
+                    EventPoller.last_id = response.last_id;
+                });
+        },
+        
+        init: function(){
+            window.setInterval(this.poll, 30000);
+        }
+    }
+    
+    
+    $(document).ready(function() {
+        EventPoller.init();
+    });
+
+
 </script>

@@ -24,6 +24,7 @@ $filter->set_opt('form_clear',  array('type' => 'button',
                                       'text' => $lang_str['b_clear_filter'],
                                       'class' => 'btn'));
 
+$apu->set_opt('event_row_template_name', 'hq/event-row.tpl');
 
 $controler->add_apu($apu);
 $controler->add_apu($filter);

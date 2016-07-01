@@ -43,6 +43,7 @@ class apu_iquest_event extends apu_base_class{
     protected $sorter=null;
     protected $filter=null;
     protected $pager;
+    protected $last_id;
 
     
     /**
@@ -56,12 +57,16 @@ class apu_iquest_event extends apu_base_class{
 
         /* set default values to $this->opt */      
         $this->opt['screen_name'] = "IQUEST Events";
+        $this->opt['event_row_template_name'] = "";
 
         
         /*** names of variables assigned to smarty ***/
         /* smarty action */
         $this->opt['smarty_pager'] =        'pager';
         $this->opt['smarty_events'] =       'events';
+        $this->opt['smarty_last_id'] =      'last_event_id';
+        $this->opt['smarty_row_template'] = 'row_template';
+        $this->opt['smarty_my_url'] =       'my_url';
     }
 
     function set_filter(&$filter){
@@ -215,7 +220,59 @@ class apu_iquest_event extends apu_base_class{
         }
     
     }
+
+    function events_to_smarty($events){
+        $opt = array(
+                    "hint_url" => "main.php?view_hint=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
+                    "solution_url" => "main.php?view_solution=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
+                );
+        $this->smarty_events = array();
+        foreach ($events as $k => $v){
+            $smarty_event = $v->to_smarty($opt);
+            $this->smarty_events[] = $smarty_event;
+        }
+    }
+
     
+    function action_ajax_latest_events(){
+        global $data, $config;
+
+        $this->controler->disable_html_output();
+        header("Content-Type: text/html");
+
+        $raw_data = false;
+        if (is_a($this->filter, "apu_base_class")){
+            $opt['filter'] = $this->filter->get_filter();
+            $this->alter_filter_timestamp($opt['filter']);
+            $filter_values = $this->filter->get_filter_values();
+            if (!empty($filter_values['raw_data'])) $raw_data = true;
+        }
+        $opt['filter']['id'] = new Filter("id", $this->last_id, ">");
+
+        $events = Iquest_Events::fetch($opt);
+        $this->events_to_smarty($events);
+
+        $last_id = $this->last_id;
+        $last_event = end($events);
+        if ($last_event) $last_id = $last_event->id;
+
+        $html_rows = array();
+        $sm = new Smarty_Serweb();
+        $sm->assign("raw_data", $raw_data);
+        
+        foreach($this->smarty_events as $event){
+            $sm->assign("event", $event);
+            $html_rows[] = $sm->fetch($this->opt['event_row_template_name']);
+        }
+        
+
+        $response = array(
+                        "rows" => $html_rows,
+                        "last_id" => $last_id,
+                    );
+        echo json_encode($response);
+    }
+
 
     /**
      *  Method perform action default 
@@ -251,23 +308,29 @@ class apu_iquest_event extends apu_base_class{
 
         $events = Iquest_Events::fetch($opt);
         $this->pager=$data->get_pager();
+        $this->events_to_smarty($events);
 
-        $opt = array(
-                    "hint_url" => "main.php?view_hint=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
-                    "solution_url" => "main.php?view_solution=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
-                );
-        $this->smarty_realms = array();
-        foreach ($events as $k => $v){
-            $smarty_event = $v->to_smarty($opt);
-            
-            $this->smarty_events[] = $smarty_event;
-        }
-
+        $last_event = reset($events);
+        $this->last_id = $last_event->id; 
 
         action_log($this->opt['screen_name'], $this->action, "View events");
-
     }
     
+    /**
+     *  check _get and _post arrays and determine what we will do 
+     */
+    function determine_action(){
+        if (isset($_GET['last_id_ajax'])){
+            $this->last_id = $_GET['last_id_ajax'];
+            $this->action=array('action'=>"ajax_latest_events",
+                                'validate_form'=>false,
+                                'reload'=>false,
+                                'alone'=>true);
+        }
+        else $this->action=array('action'=>"default",
+                                 'validate_form'=>false,
+                                 'reload'=>false);
+    }
 
     /**
      *  assign variables to smarty 
@@ -276,6 +339,9 @@ class apu_iquest_event extends apu_base_class{
         global $smarty;
         $smarty->assign($this->opt['smarty_events'], $this->smarty_events);
         $smarty->assign($this->opt['smarty_pager'], $this->pager);
+        $smarty->assign($this->opt['smarty_row_template'], $this->opt['event_row_template_name']);
+        $smarty->assign($this->opt['smarty_last_id'], $this->last_id);
+        $smarty->assign($this->opt['smarty_my_url'], $this->controler->url($_SERVER['PHP_SELF']));
     }
 }
 

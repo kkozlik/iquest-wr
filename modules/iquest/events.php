@@ -89,6 +89,7 @@ class Iquest_Events{
         $qw = array();
         if (isset($opt['id']))                      $qw[] = "e.".$c->id." = ".$data->sql_format($opt['id'], "n");
 
+        if (isset($opt['filter']['id']))            $qw[] = $opt['filter']['id']->to_sql("e.".$c->id);
         if (isset($opt['filter']['team_id']))       $qw[] = $opt['filter']['team_id']->to_sql("e.".$c->team_id);
         if (isset($opt['filter']['type']))          $qw[] = $opt['filter']['type']->to_sql("e.".$c->type);
         if (isset($opt['filter']['success']))       $qw[] = $opt['filter']['success']->to_sql("e.".$c->success);
