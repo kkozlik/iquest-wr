@@ -115,7 +115,7 @@
         ({$team.wallet} {$lang_str.iquest_txt_coin_symbol})
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
-        {$data_content="<strong>Tým: </strong>`$team.name`<br /><strong>Úkol: </strong>`$group.name`"}
+        {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a>"}
         <td colspan="{$colspan}" 
             class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}" 
             title="{$group.id|escape}"
@@ -129,7 +129,11 @@
     <tr class="second">
         {foreach $clue_groups as $group}
             {foreach $group.solution_ids as $solution_id}
-            {$data_content="<strong>Tým: </strong>`$team.name`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name`"}
+            {if $solutions.$solution_id.view_url|default:0}
+            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong><a href='`$solutions.$solution_id.view_url|escape`'>`$solutions.$solution_id.name|escape`</a>"}
+            {else}
+            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`"}
+            {/if}
             <td class="time-field {if $solution_team[$solution_id][$team.id].solved}solved{/if}" 
                 title="{$solutions.$solution_id.id|escape}"
                 data-toggle="popover" 
@@ -188,7 +192,7 @@
         var $pop = $(this);
         setTimeout(function () {
             $pop.popover('hide');
-        }, 1000);
+        }, 1400);
     });
     </script>
 {/literal}

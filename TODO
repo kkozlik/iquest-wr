@@ -1,5 +1,9 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
 
+
+- format kodu (uvodni "I.Q:") by melo byt konfigurovatelne
+- heslo k HQ konfigurovat pomoci ini souboru
+
 Team
 ----
 - druhe heslo pro read-only login pro pratele na telefonu
@@ -19,31 +23,12 @@ HQ - prehledova tabulka
 CHROUST
 -------
 
+viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
 
 
 INSTALL
 -------
-- vytvorit skupinu 'iquest' tak aby kazdy uzivatel v teto skupine mohl WR konfigurovat a vytvaret soutez
 
-  addgroup iquest
-  adduser ok1cpi iquest
-  adduser rik iquest
-  chown www-data:iquest /var/www/i.quest/dav/
-  chmod 770 /var/www/i.quest/dav/
-
-  chown www-data:iquest /etc/iquest/*
-  chmod g+rw /etc/iquest/*
-
-  chown www-data:iquest /var/lib/iquest/
-  chown www-data:iquest /var/lib/iquest/*
-  chmod 770 /var/lib/iquest/
-  chmod 770 /var/lib/iquest/*
-  chmod g+rwxs /var/lib/iquest
-
-  chown www-data:iquest /var/log/iquest
-  chmod 664 /var/log/iquest
-
-  umask 002 - tohle nastavit v chroustovi 
 
 
 
@@ -54,9 +39,3 @@ NICE TO HAVE
 * download everything as a zip
 
 
-Do startovnich instrukci dopsat:
---------------------------------
-- Ikona mince u indicie znamena ze vyreseni teto indicie tym NEposune v soutezi
-  smerem k cili, ale pomuze tymu ziskat minci.
-- Pokud ikona mince u indicie chybi, znamena jeji vyreseni posunuti tymu smerem
-  do cile. Soucasne vsak jejim vyresenim muze tym ziskat i minci. 
