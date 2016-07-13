@@ -16,4 +16,7 @@ Building debian package
 -----------------------
 * run: debchange -i
 * run: debchange -r
-* run: build-deb
+* add release label to CHANGELOG file
+* run: ./build-deb
+* git commit -va
+* git tag release_x.y.z
