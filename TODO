@@ -1,30 +1,36 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
 
 
-- format kodu (uvodni "I.Q:") by melo byt konfigurovatelne
-- heslo k HQ konfigurovat pomoci ini souboru
-
 Team
 ----
 - druhe heslo pro read-only login pro pratele na telefonu
-
+- zobrazovat tymum jak jsou na tom (jejich poradi) s moznosti toto vypnout v ini souboru
  
 HQ
 --
 - tabulku aktualniho poradi aktualizovat klikanim do grafu
 - v grafu zvyraznit startovni/cilovou/vzdavaci indicii
+- log udalosti - kdyz se odstrankuje na dalsi stranku tak autorefresh nacte vse z predchazejicich stranek. 
+  Autorefresh by asi mel byt vypnuty na dalsich strankach
+- Filtr podle tymu: dovolit vybrat vic tymu (select multiple)
 
 HQ - prehledova tabulka
 -----------------------
 - blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
   po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
+- v popup zobrazovat kompletni datum a cas. Datum se muze zobrazovat jen kdyz je z jineho nez aktualniho dne
+- seznam tymu radit abecdne / podle poradi 
 
 
 CHROUST
 -------
 
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
-
+- moznost rucne nastavit wallet_active flag
+- format kodu (uvodni "I.Q:") by melo byt konfigurovatelne
+- heslo k HQ konfigurovat pomoci ini souboru
+- trimovat ID zadane v point_to. Aby point_to[]=ID1, ID2, ID3 bylo to same jako point_to[]=ID1,ID2,ID3
+- u chyby: "neexistuje cgrp_id=foo" pripsat upozorneni ze v adresari musi existovat soubor indicie
 
 INSTALL
 -------
@@ -38,4 +44,5 @@ NICE TO HAVE
 * posilani zprav
 * download everything as a zip
 
+* dovolit pri zadani kodu otevrit nekolik cgrp
 
