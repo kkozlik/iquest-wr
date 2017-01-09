@@ -3,7 +3,7 @@ rel 0.1.6
 
 rel 0.1.5
 * chroust: do not change ref_ids when the chroust is re-executed 
-* Adding more colors for data seriaes in chart on team-rank screen
+* Adding more colors for data series in chart on team-rank screen
 * HQ: display table of actual team order
 * HQ: event log - team filter - display teams in alphabetical order
 * HQ: event log - hint IDs and solution IDs are clickable
