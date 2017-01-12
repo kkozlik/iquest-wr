@@ -1653,6 +1653,67 @@ class Iquest{
     }
 }
 
+abstract class Iquest_graph_abstract{
+
+    public static function escape_dot($str){
+        return '"'.str_replace('"', '\"', $str).'"';
+    }
+
+    /**
+     *  Visualize the graph using graphviz
+     */         
+    public function image_graph(){
+        global $config;
+
+        // prepare specification of file descriptors
+        $descriptorspec = array(
+           0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
+           1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
+           2 => array("file", "/dev/null", "a")                 // no stderr 
+        );
+
+        // execute the graphviz command
+        $cmd = $config->iquest->graphviz_cmd." -Tsvg";
+        $process = proc_open($cmd, $descriptorspec, $pipes);
+
+        if (!is_resource($process)) {
+            throw new RuntimeException("Failed to execute graphviz!");
+        }
+
+        // $pipes now looks like this:
+        // 0 => writeable handle connected to child stdin
+        // 1 => readable handle connected to child stdout
+    
+        // Write DOT representation of the graph to stdin of the graphviz
+        fwrite($pipes[0], $this->get_dot()); 
+        fclose($pipes[0]);
+    
+        // read the image data
+        $image_data = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
+    
+        // It is important that you close any pipes before calling
+        // proc_close in order to avoid a deadlock
+        $return_value = proc_close($process);
+    
+        // Return image to the browser
+        header('Content-Description: File Transfer');
+        header('Content-type: image/svg+xml');
+//      header('Content-Disposition: attachment; filename="graph.png"');
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . strlen($image_data));
+
+        echo $image_data;
+    }
+
+    /**
+     *  Generate graph representation in DOT language (for graphviz)
+     */         
+    abstract protected function get_dot();
+}
 
 /**
  *  Node of the Iquest_solution_graph graph
@@ -1729,14 +1790,13 @@ class Iquest_solution_graph_node{
 /**
  *  Class holding graph of clue/solution dependencies 
  */ 
-class Iquest_solution_graph{
+class Iquest_solution_graph extends Iquest_graph_abstract{
     private $team_id;
     private $cgroups;
     private $solutions;
     private $nodes = array();
     private $edges = array();
     private $reverse_edges = array();
-    private $clue2solution;
 
 
     /**
@@ -2147,14 +2207,10 @@ class Iquest_solution_graph{
     }
 
 
-    public static function escape_dot($str){
-        return '"'.str_replace('"', '\"', $str).'"';
-    }
-
     /**
      *  Generate graph representation in DOT language (for graphviz)
      */         
-    public function get_dot(){
+    protected function get_dot(){
         $out = "digraph G {\n";
 
         foreach($this->nodes as $k => $node){
@@ -2168,59 +2224,135 @@ class Iquest_solution_graph{
         }
 
         $out .= "}\n";
+
+        return $out;
+    }
+}
+
+/**
+ *  Class generate image of simplified contest graph 
+ */ 
+class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
+    private $team_id;
+    private $cgroups;
+    private $solutions;
+    private $clue2solution;
+
+    /**
+     *  Create the graph for a team
+     */         
+    function __construct($team_id){
+        $this->team_id = $team_id;
+
+        // fetch clue groups and solutions
+        $opt = array("team_id" => $this->team_id);
+        $this->cgroups = Iquest_ClueGrp::fetch($opt);
+        $this->solutions = Iquest_Solution::fetch();
+
+        // create clue => solution edges
+        $this->load_clue2solution();
+    }
+
+    protected function get_dot(){
+        $out = "digraph G {\n";
+        $out .= "bgcolor=\"#cccccc\"\n";
+        $out .= "pad=0.3\n";
+        $out .= "rankdir=LR\n";
+        $out .= "nodesep=0.7\n";
+        $out .= "ranksep=0.9\n";
+
+        // generate graph edges
+
+        $connected_cgroups = array();
+        $edges = array();
+        // walk through all clue groups
+        foreach($this->cgroups as &$cgroup){
+            // get clues of the group
+            $clues = $cgroup->get_clues();
+            foreach($clues as &$clue){
+                if (empty($this->clue2solution[$clue->id])) continue;
+                $solution_ids = $this->clue2solution[$clue->id];
+                foreach($solution_ids as $solution_id){
+                    if (empty($this->solutions[$solution_id])) continue;
+                    $solution = $this->solutions[$solution_id];
+                    if (empty($this->cgroups[$solution->cgrp_id])) continue;
+                    $next_cgrp = $this->cgroups[$solution->cgrp_id];
+
+
+                    $edges[] = self::escape_dot($cgroup->ref_id)." -> ".self::escape_dot($next_cgrp->ref_id).";\n";
+                    $connected_cgroups[$cgroup->id] = true;
+                    $connected_cgroups[$next_cgrp->id] = true;
+                }
+            }
+        }
+
+        // output graph nodes from clue groups
+        $reveal_goal_cgrp_id = Iquest_Options::get(Iquest_Options::REVEAL_GOAL_CGRP_ID);
+
+        foreach($this->cgroups as &$cgroup){
+            // skip the "reveal the goal" cgrp if it is not connected by any edge
+            if ($reveal_goal_cgrp_id == $cgroup->id and !isset($connected_cgroups[$cgroup->id])) continue;
+
+            $out .= self::escape_dot($cgroup->ref_id)." ".$this->cgroup2dot($cgroup).";\n";
+        }
+        
+        // output graph edges
+
+        $edges = array_unique($edges);
+        $out .= implode("", $edges);
+
+        $out .= "}\n";
+
         return $out;
     }
 
-    /**
-     *  Visualize the graph using graphviz
-     */         
-    public function image_graph(){
-        global $config;
-
-        // prepare specification of file descriptors
-        $descriptorspec = array(
-           0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
-           1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
-           2 => array("file", "/dev/null", "a")                 // no stderr 
-        );
-
-        // execute the graphviz command
-        $cmd = $config->iquest->graphviz_cmd." -Tsvg";
-        $process = proc_open($cmd, $descriptorspec, $pipes);
-
-        if (!is_resource($process)) {
-            throw new RuntimeException("Failed to execute graphviz!");
-        }
-
-        // $pipes now looks like this:
-        // 0 => writeable handle connected to child stdin
-        // 1 => readable handle connected to child stdout
-    
-        // Write DOT representation of the graph to stdin of the graphviz
-        fwrite($pipes[0], $this->get_dot()); 
-        fclose($pipes[0]);
-    
-        // read the image data
-        $image_data = stream_get_contents($pipes[1]);
-        fclose($pipes[1]);
-    
-        // It is important that you close any pipes before calling
-        // proc_close in order to avoid a deadlock
-        $return_value = proc_close($process);
-    
-        // Return image to the browser
-        header('Content-Description: File Transfer');
-        header('Content-type: image/svg+xml');
-//      header('Content-Disposition: attachment; filename="graph.png"');
-        header('Content-Transfer-Encoding: binary');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        header('Content-Length: ' . strlen($image_data));
-
-        echo $image_data;
+    protected function cgroup2dot($cgroup){
+        $dot = "[";
+        
+        $dot .= "shape=circle,";
+        $dot .= "width=0.3,";
+        $dot .= "penwidth=3.0,";
+        $dot .= "fixedsize=true,";
+        $dot .= "style=filled,";
+        $dot .= "color=black,";
+        $dot .= "fillcolor=white,";
+        $dot .= "label=\" \",";
+        $dot .= "xlabel=".self::escape_dot($cgroup->name);
+        
+        $dot .= "]";
+        
+        return $dot;
     }
+
+    /**
+     *  Load clue2solution linkings and create the clue=>solution graph edges
+     */         
+    private function load_clue2solution(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_clue2solution->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_clue2solution->cols;
+
+        // fetch the whole clue2solution DB table
+        $q = "select ".$c->clue_id.",
+                     ".$c->solution_id."
+              from ".$t_name;
+    
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $this->clue2solution = array();
+
+        // walk through the rows
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $this->clue2solution[$row[$c->clue_id]][] = $row[$c->solution_id];
+        }
+        $res->free();
+    } 
 }
+
 
 class Iquest_Team{
     public $id;
