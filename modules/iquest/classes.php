@@ -2255,7 +2255,8 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
 
     protected function get_dot(){
         $out = "digraph G {\n";
-        $out .= "bgcolor=\"#cccccc\"\n";
+//        $out .= "bgcolor=\"#cccccc\"\n";
+        $out .= "bgcolor=\"transparent\"\n";
         $out .= "pad=0.3\n";
         $out .= "rankdir=LR\n";
         $out .= "nodesep=0.7\n";

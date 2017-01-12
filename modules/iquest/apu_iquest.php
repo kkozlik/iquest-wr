@@ -110,6 +110,8 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_next_hint'] =        'next_hint';
 
         $this->opt['smarty_main_url'] =         'main_url';
+        $this->opt['smarty_get_graph_url'] =    'get_graph_url';
+        $this->opt['smarty_view_graph_url'] =   'view_graph_url';
         $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
         
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
@@ -329,6 +331,13 @@ class apu_iquest extends apu_base_class{
         return true;
     }
 
+    function action_get_graph(){
+        $this->controler->disable_html_output();
+        $graph = new Iquest_contest_graph_simplified($this->team_id);
+        $graph->image_graph();
+        return true;
+    }
+
     
     /**
      *  Method perform action view_grp 
@@ -383,6 +392,15 @@ class apu_iquest extends apu_base_class{
 //        $this->session['known_cgrps'][$this->clue_grp->id] = true;
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View all clue groups screen");
+        return true;
+    }
+
+    function action_view_graph(){
+        
+        $this->get_timeouts();
+        $this->get_team_info();
+
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View graph");
         return true;
     }
 
@@ -518,6 +536,12 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
+        elseif (isset($_GET['view_graph'])){
+            $this->smarty_action = 'view_graph';
+            $this->action=array('action'=>"view_graph",
+                                 'validate_form'=>false,
+                                 'reload'=>false);
+        }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
             $this->action=array('action'=>"get_clue",
@@ -536,6 +560,12 @@ class apu_iquest extends apu_base_class{
             $this->ref_id = $_GET['get_solution'];
             $this->action=array('action'=>"get_solution",
                                  'validate_form'=>true,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['get_graph'])){
+            $this->action=array('action'=>"get_graph",
+                                 'validate_form'=>false,
                                  'reload'=>false,
                                  'alone'=>true);
         }
@@ -798,6 +828,8 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
+        $smarty->assign($this->opt['smarty_get_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_graph=1"));
+        $smarty->assign($this->opt['smarty_view_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?view_graph=1"));
         $smarty->assign($this->opt['smarty_all_in_1_url'], 
                         $this->controler->url($_SERVER['PHP_SELF'].
                             "?view_all=".($this->session['view_all']?"0":"1")));

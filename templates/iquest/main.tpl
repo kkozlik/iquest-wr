@@ -102,6 +102,7 @@
         {$form.solution_key}
         {$form.okey}
         </div>
+        <div class="span2"><a href="{$view_graph_url|escape}" class="nowrap btn">{$lang_str.iquest_graph}</a></div>
     </div>
     {$form.finish}
     </div>
@@ -164,6 +165,20 @@
     </tr>
     {call iquestRenderFile file=$solutions}
     </table>
+    </div>
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+{elseif $action=='view_graph'}
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+    <div class="well">
+        <img src="{$get_graph_url|escape}" />
     </div>
 
     <ul class="breadcrumb">

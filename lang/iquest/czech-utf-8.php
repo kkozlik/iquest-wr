@@ -10,6 +10,7 @@ $lang_str['iquest_download'] =                          "Stáhnout";
 $lang_str['iquest_hint'] =                              "Nápověda";
 $lang_str['iquest_solution'] =                          "Řešení";
 $lang_str['iquest_all_in_1'] =                          "Vše v jednom";
+$lang_str['iquest_graph'] =                             "Struktura soutěže";
 $lang_str['iquest_view'] =                              "Zobrazit";
 $lang_str['iquest_minimize'] =                          "Minimalizovat";
 
