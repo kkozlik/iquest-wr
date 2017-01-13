@@ -1,10 +1,15 @@
 - prejit na bootstrap3 (http://getbootstrap.com/migration/)
 
 
+- PHP ma v nove verzi nastaveno short_open_tags = Off - Adaptovat se
+
+
 Team
 ----
 - druhe heslo pro read-only login pro pratele na telefonu
 - zobrazovat tymum jak jsou na tom (jejich poradi) s moznosti toto vypnout v ini souboru
+- moznost vypnout zobrazeni grafu v ini souboru
+- graf klikaci 
  
 HQ
 --
@@ -13,6 +18,7 @@ HQ
 - log udalosti - kdyz se odstrankuje na dalsi stranku tak autorefresh nacte vse z predchazejicich stranek. 
   Autorefresh by asi mel byt vypnuty na dalsich strankach
 - Filtr podle tymu: dovolit vybrat vic tymu (select multiple)
+- moznost vyberu zda zobrazit zjednoduseny nebo komplexni graf
 
 HQ - prehledova tabulka
 -----------------------
