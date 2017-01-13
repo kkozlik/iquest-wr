@@ -178,7 +178,7 @@
     </ul>
 
     <div class="well">
-        <img src="{$get_graph_url|escape}" />
+        <object data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
     </div>
 
     <ul class="breadcrumb">

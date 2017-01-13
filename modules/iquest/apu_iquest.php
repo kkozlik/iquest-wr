@@ -333,8 +333,13 @@ class apu_iquest extends apu_base_class{
 
     function action_get_graph(){
         $this->controler->disable_html_output();
+
         $graph = new Iquest_contest_graph_simplified($this->team_id);
+        $graph->set_cgrp_url($this->controler->url($_SERVER['PHP_SELF']."?view_grp=<ID>"));
+        $graph->link_unknown_cgrps(false);
+        $graph->hide_names(true);
         $graph->image_graph();
+
         return true;
     }
 

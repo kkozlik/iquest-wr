@@ -2241,6 +2241,13 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
     /* Hide names of not visited clue groups */
     protected $hide_names = true;
 
+    /* URL of the screen that display clue groups */
+    protected $cgrp_url = null;
+    
+    /* Flag indicating that unknown clue groups shall not be displayed as hyperlinks */
+    protected $link_unknown_cgrps = false;
+
+
     /**
      *  Create the graph for a team
      */         
@@ -2254,6 +2261,27 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
 
         // create clue => solution edges
         $this->load_clue2solution();
+    }
+
+    /**
+     *  Set URL of the screen that display clue groups 
+     */
+    public function set_cgrp_url($url){
+        $this->cgrp_url = $url;
+    }
+
+    /** 
+     *  Set flag indicating whether unknown clue groups shall not be displayed as hyperlinks 
+     */
+    public function link_unknown_cgrps($val){
+        $this->link_unknown_cgrps = $val;
+    }
+
+    /** 
+     *  Hide names of not visited clue groups 
+     */
+    public function hide_names($val){
+        $this->hide_names = $val;
     }
 
     protected function get_dot(){
@@ -2311,6 +2339,12 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
     }
 
     protected function cgroup2dot($cgroup){
+
+        $cgrp_url = "";
+        if ($this->cgrp_url){
+            $cgrp_url = str_replace("<ID>", RawURLEncode($cgroup->ref_id), $this->cgrp_url);
+        }
+
         $dot = "[";
         
         $dot .= "shape=circle,";
@@ -2327,6 +2361,12 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
         else{
             $dot .= "fillcolor=grey,";
             if ($this->hide_names) $xlabel = "?";
+            if (!$this->link_unknown_cgrps) $cgrp_url="";
+        }
+
+        if ($cgrp_url){
+            $dot .= "URL=".self::escape_dot(htmlspecialchars($cgrp_url)).",";
+            $dot .= "target=_parent,";
         }
 
         $dot .= "xlabel=".self::escape_dot($xlabel).",";
