@@ -2238,6 +2238,9 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
     private $solutions;
     private $clue2solution;
 
+    /* Hide names of not visited clue groups */
+    protected $hide_names = true;
+
     /**
      *  Create the graph for a team
      */         
@@ -2316,9 +2319,18 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
         $dot .= "fixedsize=true,";
         $dot .= "style=filled,";
         $dot .= "color=black,";
-        $dot .= "fillcolor=white,";
-        $dot .= "label=\" \",";
-        $dot .= "xlabel=".self::escape_dot($cgroup->name);
+
+        $xlabel = $cgroup->name;
+        if ($cgroup->gained_at){
+            $dot .= "fillcolor=white,";
+        }
+        else{
+            $dot .= "fillcolor=grey,";
+            if ($this->hide_names) $xlabel = "?";
+        }
+
+        $dot .= "xlabel=".self::escape_dot($xlabel).",";
+        $dot .= "label=\" \"";
         
         $dot .= "]";
         
