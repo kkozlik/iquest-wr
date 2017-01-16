@@ -102,7 +102,9 @@
         {$form.solution_key}
         {$form.okey}
         </div>
+        {if $graph_enabled}
         <div class="span2"><a href="{$view_graph_url|escape}" class="nowrap btn">{$lang_str.iquest_graph}</a></div>
+        {/if}
     </div>
     {$form.finish}
     </div>
@@ -119,14 +121,14 @@
 {if $action=='view_grp'}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
     {call print_clue_grp_title clue_grp=$clue_grp}
     {call print_clue_grp clue_grp=$clue_grp}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
 {elseif $action=='view_all'}
@@ -154,7 +156,7 @@
 {elseif $action=='view_solution'}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
     <div class="datatable solution">
@@ -168,13 +170,13 @@
     </div>
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
 {elseif $action=='view_graph'}
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
     <div class="well">
@@ -182,7 +184,7 @@
     </div>
 
     <ul class="breadcrumb">
-    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
 {else}
