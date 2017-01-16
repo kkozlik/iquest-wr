@@ -29,6 +29,11 @@
         {* Everything you want hidden at 940px or less, place within here *}
         <div class="nav-collapse collapse">
             <div class="nav"><span class="navbar-text team-name">{$team_name|default:""|escape}</span></div>
+            {if $show_place|default:false}
+            <ul class="nav">
+                <li class="navbar-text">{$lang_str.iquest_txt_your_place}: {$team_place|default:""|escape}</li>
+            </ul>
+            {/if}
     
             {if $parameters.display_wallet|default:0 and $team|default:0}
             <div class="nav pull-right wallet">{$lang_str.iquest_txt_wallet_state}<br />{$team.wallet|string_format:"%.2f"} {$lang_str.iquest_txt_coin_symbol}</div>

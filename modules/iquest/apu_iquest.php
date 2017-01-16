@@ -57,6 +57,8 @@ class apu_iquest extends apu_base_class{
     protected $smarty_next_solution = null;
     protected $smarty_next_hint = null;
     protected $smarty_team = null;
+    protected $smarty_team_place = null;
+    protected $smarty_show_place = false;
 
 
     const SESS_URL_TOKEN = "url_token";
@@ -108,6 +110,9 @@ class apu_iquest extends apu_base_class{
 
         $this->opt['smarty_next_solution'] =    'next_solution';
         $this->opt['smarty_next_hint'] =        'next_hint';
+
+        $this->opt['smarty_team_place'] =       'team_place';
+        $this->opt['smarty_show_place'] =       'show_place';
 
         $this->opt['smarty_graph_enabled'] =    'graph_enabled';
 
@@ -176,6 +181,14 @@ class apu_iquest extends apu_base_class{
     function get_team_info(){
         $team = Iquest_Team::fetch_by_id($this->team_id);
         $this->smarty_team = $team->to_smarty();
+        
+        if (Iquest_Options::get(Iquest_Options::SHOW_PLACE)){
+
+            $ranks = Iquest_team_rank::fetch(array("last"=>1));
+            $actual_order = reset($ranks)->rank;
+            $this->smarty_team_place = $actual_order[$this->team_id];
+            $this->smarty_show_place = true;
+        }
     }
 
 
@@ -837,6 +850,9 @@ class apu_iquest extends apu_base_class{
 
         $smarty->assign($this->opt['smarty_next_solution'], $this->smarty_next_solution);
         $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);
+
+        $smarty->assign($this->opt['smarty_team_place'], $this->smarty_team_place);
+        $smarty->assign($this->opt['smarty_show_place'], $this->smarty_show_place);
 
         $smarty->assign($this->opt['smarty_graph_enabled'], Iquest_Options::get(Iquest_Options::SHOW_GRAPH));
 
