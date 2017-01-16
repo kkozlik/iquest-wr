@@ -109,6 +109,8 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_next_solution'] =    'next_solution';
         $this->opt['smarty_next_hint'] =        'next_hint';
 
+        $this->opt['smarty_graph_enabled'] =    'graph_enabled';
+
         $this->opt['smarty_main_url'] =         'main_url';
         $this->opt['smarty_get_graph_url'] =    'get_graph_url';
         $this->opt['smarty_view_graph_url'] =   'view_graph_url';
@@ -334,10 +336,14 @@ class apu_iquest extends apu_base_class{
     function action_get_graph(){
         $this->controler->disable_html_output();
 
+        $cgrp_url = $_SERVER['PHP_SELF'].
+                        "?view_grp=<ID>".
+                        "&backto=".rawurlencode($_SERVER['PHP_SELF']."?view_graph=1");
+
         $graph = new Iquest_contest_graph_simplified($this->team_id);
-        $graph->set_cgrp_url($this->controler->url($_SERVER['PHP_SELF']."?view_grp=<ID>"));
+        $graph->set_cgrp_url($this->controler->url($cgrp_url));
         $graph->link_unknown_cgrps(false);
-        $graph->hide_names(true);
+        $graph->hide_names(!Iquest_Options::get(Iquest_Options::SHOW_GRAPH_CGRP_NAMES));
         $graph->image_graph();
 
         return true;
@@ -541,7 +547,7 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>false);
         }
-        elseif (isset($_GET['view_graph'])){
+        elseif (isset($_GET['view_graph']) and Iquest_Options::get(Iquest_Options::SHOW_GRAPH)){
             $this->smarty_action = 'view_graph';
             $this->action=array('action'=>"view_graph",
                                  'validate_form'=>false,
@@ -568,7 +574,7 @@ class apu_iquest extends apu_base_class{
                                  'reload'=>false,
                                  'alone'=>true);
         }
-        elseif (isset($_GET['get_graph'])){
+        elseif (isset($_GET['get_graph']) and Iquest_Options::get(Iquest_Options::SHOW_GRAPH)){
             $this->action=array('action'=>"get_graph",
                                  'validate_form'=>false,
                                  'reload'=>false,
@@ -831,6 +837,8 @@ class apu_iquest extends apu_base_class{
 
         $smarty->assign($this->opt['smarty_next_solution'], $this->smarty_next_solution);
         $smarty->assign($this->opt['smarty_next_hint'], $this->smarty_next_hint);
+
+        $smarty->assign($this->opt['smarty_graph_enabled'], Iquest_Options::get(Iquest_Options::SHOW_GRAPH));
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
         $smarty->assign($this->opt['smarty_get_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_graph=1"));

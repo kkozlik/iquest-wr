@@ -13,6 +13,16 @@ class Iquest_Options{
     const WALLET_ACTIVE   = "wallet_active";
     const CHECK_KEY_ORDER = "check_key_order";
 
+    /** Show position of the team among others */
+    const SHOW_PLACE      = "show_place";
+
+    /** Show contest graph to teams */
+    const SHOW_GRAPH            = "show_graph";
+    /** Show names of unknown clue groups in contest graph */
+    const SHOW_GRAPH_CGRP_NAMES = "show_graph_cgrp_names";
+
+
+
     const COUNTDOWN_LIMIT_HINT     = "countdown_limit_hint";
     const COUNTDOWN_LIMIT_SOLUTION = "countdown_limit_solution";
 
@@ -25,6 +35,9 @@ class Iquest_Options{
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
+                                             self::SHOW_PLACE,
+                                             self::SHOW_GRAPH,
+                                             self::SHOW_GRAPH_CGRP_NAMES,
                                              ); 
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -32,6 +45,9 @@ class Iquest_Options{
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
+                                             self::SHOW_PLACE,
+                                             self::SHOW_GRAPH,
+                                             self::SHOW_GRAPH_CGRP_NAMES,
                                             );
     /** Options cache */
     private static $options = null;

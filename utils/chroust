@@ -595,6 +595,9 @@ class Chroust{
      */         
     static function set_defaults(){
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
+        Iquest_Options::set(Iquest_Options::SHOW_PLACE, 1);
+        Iquest_Options::set(Iquest_Options::SHOW_GRAPH, 1);
+        Iquest_Options::set(Iquest_Options::SHOW_GRAPH_CGRP_NAMES, 0);
     }
 
     /**
