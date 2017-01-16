@@ -1,0 +1,19 @@
+Alias /i.quest/contest/js/core      /usr/share/serweb-frmwrk/pages/js
+Alias /i.quest/contest/styles/core  /usr/share/serweb-frmwrk/pages/styles
+Alias /i.quest/contest              /usr/share/iquest/pages
+
+<Directory /usr/share/iquest/pages>
+    Options FollowSymLinks 
+    AllowOverride All
+    Require all granted
+    
+    SetEnv IQUEST_ROOT_PATH "/i.quest/contest/"
+</Directory>
+
+<Directory "/usr/share/serweb-frmwrk/pages">
+    Require all granted
+</Directory>
+
+<Location /i.quest/contest/>
+    SetEnv SERWEB_AUTO_PREPEND "/usr/share/iquest/config/set_env.php"
+</Location>
