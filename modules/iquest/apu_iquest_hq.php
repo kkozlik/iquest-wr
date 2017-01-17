@@ -84,6 +84,8 @@ class apu_iquest_hq extends apu_base_class{
         $this->opt['smarty_action'] =       'action';
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_hint'] =         'hint';
+
+        $this->opt['smarty_get_graph_url'] =    'get_graph_url';
     }
 
     /**
@@ -121,7 +123,19 @@ class apu_iquest_hq extends apu_base_class{
     function action_get_graph(){
         $this->controler->disable_html_output();
 
-        $graph = new Iquest_solution_graph($this->team_id);
+        if (isset($_GET['type']) and $_GET['type'] == "complex"){
+            $graph = new Iquest_solution_graph($this->team_id);
+        }
+        else{
+            $cgrp_url = $_SERVER['PHP_SELF'].
+                            "?view_grp=<ID>".
+                            "&back_url=".rawurlencode($_SERVER['PHP_SELF']."?view_graph=".rawurlencode($this->team_id));
+
+            $graph = new Iquest_contest_graph_simplified($this->team_id);
+            $graph->set_cgrp_url($this->controler->url($cgrp_url));
+            $graph->link_unknown_cgrps(true);
+            $graph->hide_names(false);
+        }
         $graph->image_graph();
 
         return true;
@@ -185,6 +199,12 @@ class apu_iquest_hq extends apu_base_class{
         return true;
     }
 
+    function action_view_graph(){
+        
+        action_log($this->opt['screen_name'], $this->action, "IQUEST: View graph");
+        return true;
+    }
+
     /**
      *  Method perform action default 
      *
@@ -233,7 +253,7 @@ class apu_iquest_hq extends apu_base_class{
         $this->smarty_teams = array();
         foreach($teams as $k => $v){
             $this->smarty_teams[$k] = $v->to_smarty();
-            $this->smarty_teams[$k]['graph_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_graph=".RawURLEncode($v->id));
+            $this->smarty_teams[$k]['graph_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_graph=".RawURLEncode($v->id));
         }
 
         $this->smarty_cgrp_team = array();
@@ -295,6 +315,13 @@ class apu_iquest_hq extends apu_base_class{
             $this->ref_id = $_GET['view_hint'];
             $this->action=array('action'=>"view_hint",
                                  'validate_form'=>true,
+                                 'reload'=>false);
+        }
+        elseif (isset($_GET['view_graph'])){
+            $this->smarty_action = 'view_graph';
+            $this->team_id = $_GET['view_graph'];
+            $this->action=array('action'=>"view_graph",
+                                 'validate_form'=>false,
                                  'reload'=>false);
         }
         elseif (isset($_GET['get_clue'])){
@@ -433,6 +460,12 @@ class apu_iquest_hq extends apu_base_class{
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_hint'], $this->smarty_hint);
+
+        if ($this->action['action'] == "view_graph"){
+            $smarty->assign($this->opt['smarty_get_graph_url'],
+                            $this->controler->url($_SERVER['PHP_SELF'].
+                                                  "?get_graph=".RawURLEncode($this->team_id)));
+        }
     }
     
 }

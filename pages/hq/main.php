@@ -18,6 +18,9 @@ else{
     $smarty->assign('back_url', $controler->url($_SERVER['PHP_SELF']));
 }
 
+$smarty->assign('main_url', $_SERVER['PHP_SELF']);
+
+
 $apu    = new apu_iquest_hq();
 
 

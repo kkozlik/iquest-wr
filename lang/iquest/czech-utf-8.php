@@ -61,6 +61,10 @@ $lang_str['iquest_file_audio_content'] =                "Audio soubor nelze pře
 $lang_str['iquest_file_video_content'] =                "Video soubor nelze přehrát v prohlížeči. Stáhněte si jej a přehrajte jiným programem.";
 $lang_str['iquest_file_general_content'] =              "Soubor nelze zobrazit. Stáhněte si jej a zobrazte jiným programem.";
 
+$lang_str['iquest_txt_graph_complex'] =                 "Komplexní graf";
+$lang_str['iquest_txt_graph_simplified'] =              "Zjednodušený graf";
+
+
 $lang_str['iquest_event_all'] =                         "-- Vše --";
 $lang_str['iquest_event_time'] =                        "Čas";
 $lang_str['iquest_event_team'] =                        "Tým";

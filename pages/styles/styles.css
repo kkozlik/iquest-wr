@@ -58,6 +58,17 @@
     padding: 5px 10px
 }
 
+
+/* display correctly tabbed navigation above wells */
+.tab-well .nav-tabs{
+    border-bottom: 0px;
+}
+.tab-well .nav{
+    margin-bottom: 0px;
+}
+
+
+
 .datatable .filename{
     line-height: 30px;
 }

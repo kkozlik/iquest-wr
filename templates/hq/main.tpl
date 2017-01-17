@@ -83,6 +83,41 @@
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+{elseif $action=='view_graph'}
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+
+    <div class="tab-well" id="graphTab">
+    <ul class="nav nav-tabs">
+      <li class="active">
+        <a href="#" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
+      </li>
+      <li><a href="#" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a></li>
+    </ul>
+    <div class="well">
+        <object data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
+    </div>
+    </div>
+
+    <ul class="breadcrumb">
+    <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
+    </ul>
+
+
+    <script type="text/javascript">
+
+        $('#graphTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+            
+            var graph_type = $(this).attr("data-type");
+            $('#graphTab object').attr("data", "{$get_graph_url|escape}&type="+graph_type);
+        })
+
+    </script>
 {else}
 
     <div class="horizontal-scrollbar" id="scroll-wrapper">
