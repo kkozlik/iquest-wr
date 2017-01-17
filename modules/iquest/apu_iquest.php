@@ -184,9 +184,23 @@ class apu_iquest extends apu_base_class{
         
         if (Iquest_Options::get(Iquest_Options::SHOW_PLACE)){
 
-            $ranks = Iquest_team_rank::fetch(array("last"=>1));
-            $actual_order = reset($ranks)->rank;
-            $this->smarty_team_place = $actual_order[$this->team_id];
+            $hide_timeout = Iquest_Options::get(Iquest_Options::HIDE_PLACE_TIMEOUT);
+            $hide_time = 0;
+
+            if ($hide_timeout){
+                $end_time = Iquest_Options::get(Iquest_Options::END_TIME);
+                $hide_time = $end_time - $hide_timeout;
+            }
+            
+            if ($hide_time and time() > $hide_time){
+                $this->smarty_team_place = "??";
+            }
+            else{
+                $ranks = Iquest_team_rank::fetch(array("last"=>1));
+                $actual_order = reset($ranks)->rank;
+                $this->smarty_team_place = $actual_order[$this->team_id];
+            }
+            
             $this->smarty_show_place = true;
         }
     }

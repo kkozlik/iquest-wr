@@ -461,7 +461,8 @@ class Iquest_Metadata{
 
         foreach($this->data['options'] as $name=>$value){
             if ($name == Iquest_Options::COUNTDOWN_LIMIT_HINT or
-                $name == Iquest_Options::COUNTDOWN_LIMIT_SOLUTION){
+                $name == Iquest_Options::COUNTDOWN_LIMIT_SOLUTION or
+                $name == Iquest_Options::HIDE_PLACE_TIMEOUT){
 
                 $value = self::timeout_to_sec($value, "option $name");
             }
@@ -596,6 +597,7 @@ class Chroust{
     static function set_defaults(){
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
         Iquest_Options::set(Iquest_Options::SHOW_PLACE, 1);
+        Iquest_Options::set(Iquest_Options::HIDE_PLACE_TIMEOUT, 0);
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH, 1);
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH_CGRP_NAMES, 0);
     }

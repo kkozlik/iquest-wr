@@ -14,7 +14,9 @@ class Iquest_Options{
     const CHECK_KEY_ORDER = "check_key_order";
 
     /** Show position of the team among others */
-    const SHOW_PLACE      = "show_place";
+    const SHOW_PLACE            = "show_place";
+    /** Do not show position of the team this number of seconds before END_TIME */
+    const HIDE_PLACE_TIMEOUT    = "hide_place_timoeut";
 
     /** Show contest graph to teams */
     const SHOW_GRAPH            = "show_graph";
@@ -36,6 +38,7 @@ class Iquest_Options{
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
                                              self::SHOW_PLACE,
+                                             self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
                                              ); 
@@ -46,6 +49,7 @@ class Iquest_Options{
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
                                              self::SHOW_PLACE,
+                                             self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
                                             );
