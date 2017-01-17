@@ -98,7 +98,7 @@
       <li><a href="#" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a></li>
     </ul>
     <div class="well">
-        <object data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
+        <object data="" type="image/svg+xml" width="100%"></object>
     </div>
     </div>
 
@@ -109,14 +109,52 @@
 
     <script type="text/javascript">
 
-        $('#graphTab a').click(function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-            
-            var graph_type = $(this).attr("data-type");
-            $('#graphTab object').attr("data", "{$get_graph_url|escape}&type="+graph_type);
-        })
+        $( document ).ready(function() {
 
+            /*
+             * Save tab selection into cookie
+             */
+            var saveTabSelectionToCookie = function(){
+                var activeTab = $('#graphTab .nav .active a').attr("data-type");
+                
+                document.cookie = "graphTypeSelected=" + encodeURIComponent(activeTab);
+            }
+
+            /*
+             * Read value of cookie of given name
+             * http://www.quirksmode.org/js/cookies.html#script
+             */
+            var readCookie = function(name) {
+                var nameEQ = encodeURIComponent(name) + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+                }
+                return null;
+            }
+
+
+            $('#graphTab a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+                
+                var graph_type = $(this).attr("data-type");
+                $('#graphTab object').attr("data", "{$get_graph_url|escape}&type="+graph_type);
+                
+                saveTabSelectionToCookie();
+            })
+
+
+            var selectedTab = readCookie('graphTypeSelected');
+            if (selectedTab){
+                $("#graphTab a[data-type='"+selectedTab+"']").trigger("click");
+            }
+            else{
+                $("#graphTab a[data-type='simplified']").trigger("click");
+            }
+        });
     </script>
 {else}
 
