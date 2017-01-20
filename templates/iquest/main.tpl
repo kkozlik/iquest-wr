@@ -180,12 +180,22 @@
     </ul>
 
     <div class="well">
-        <object data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
+        <object id="contestGraph" data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
     </div>
 
     <ul class="breadcrumb">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
+
+    <script type="text/javascript">
+
+        // load svgZoom.js script
+        $.getScript("{$cfg->js_src_path}svgZoom.js");
+
+        $('#contestGraph').on('load', function(){
+            svgZoom.init('#contestGraph');
+        });
+    </script>
 
 {else}
 

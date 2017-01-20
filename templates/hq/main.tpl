@@ -93,9 +93,9 @@
     <div class="tab-well" id="graphTab">
     <ul class="nav nav-tabs">
       <li class="active">
-        <a href="#" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
+        <a href="" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
       </li>
-      <li><a href="#" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a></li>
+      <li><a href="" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a></li>
     </ul>
     <div class="well">
         <object data="" type="image/svg+xml" width="100%"></object>
@@ -106,8 +106,10 @@
     <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
-
     <script type="text/javascript">
+
+        // load svgZoom.js script
+        $.getScript("{$cfg->js_src_path}svgZoom.js");
 
         $( document ).ready(function() {
 
@@ -144,8 +146,11 @@
                 $('#graphTab object').attr("data", "{$get_graph_url|escape}&type="+graph_type);
                 
                 saveTabSelectionToCookie();
-            })
+            });
 
+            $('#graphTab object').on('load', function(){
+                svgZoom.init('#graphTab object');
+            });
 
             var selectedTab = readCookie('graphTypeSelected');
             if (selectedTab){
