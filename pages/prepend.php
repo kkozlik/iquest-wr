@@ -32,7 +32,7 @@ function set_page_attributes(){
                     $config->style_src_path."bootstrap-responsive.css",
         ),
         'required_javascript' => array(
-                    "jquery-1.11.1.min.js",
+                    "jquery-3.1.1.min.js",
                     "bootstrap.min.js",
                     "jquery.countdown.min.js",
                     "core/functions.js",
