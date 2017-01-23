@@ -1,6 +1,7 @@
 * Possibility to show contest graph in team interface
 * Possibility to show team place among other teams in the team interface
 * HQ: contest graph - can display graph in simplified form
+* HQ: event log - allow to filter the log by multiple teams
 
 rel 0.1.6
 * HQ: table - hyperlinks in popup info 

@@ -13,7 +13,6 @@ HQ
 - log udalosti - kdyz se odstrankuje na dalsi stranku tak autorefresh nacte vse z predchazejicich stranek. 
   Autorefresh by asi mel byt vypnuty na dalsich strankach
 - log udalosti - solution link (napr MRAC-KOD,  MOST-CERCANY) obcas zobrazuje "Soubor nelze zobrazit"
-- Filtr podle tymu: dovolit vybrat vic tymu (select multiple)
 
 HQ - prehledova tabulka
 -----------------------

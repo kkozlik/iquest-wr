@@ -29,6 +29,7 @@ $apu->set_opt('event_row_template_name', 'hq/event-row.tpl');
 $controler->add_apu($apu);
 $controler->add_apu($filter);
 $controler->set_template_name('hq/event.tpl');
+$controler->add_required_javascript('bootstrap-multiselect.js');
 $controler->start();
 
 

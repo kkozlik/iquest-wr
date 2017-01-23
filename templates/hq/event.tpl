@@ -104,7 +104,7 @@
     
 
     var EventPoller = {
-        last_id: {$last_event_id},
+        last_id: {$last_event_id|json_encode},
         
         poll: function(){
             $.getJSON(
@@ -125,6 +125,22 @@
     
     
     $(document).ready(function() {
+        $('#filter_form #team_id').multiselect({
+            onInitialized : function ($aSelect, $aContainer) {
+            
+                var $dropdown = $aContainer.find('.btn');
+                var offset = $dropdown.offset();
+                
+                $aContainer.find('.dropdown-menu').css({
+                    position:   'fixed',
+                    top:        (offset.top + $dropdown.outerHeight()),
+                    left:       offset.left,
+                })
+            },
+            buttonWidth: '220px',
+            includeSelectAllOption: true
+        });
+
         EventPoller.init();
     });
 

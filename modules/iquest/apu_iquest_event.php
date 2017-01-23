@@ -117,7 +117,7 @@ class apu_iquest_event extends apu_base_class{
 
         $teams = Iquest_Team::fetch(array('order_by' => 'name'));
         $team_options = array();
-        $team_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
+//        $team_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
         foreach($teams as $v){
             $team_options[] = array("value" => $v->id, "label" => $v->name);
         }
@@ -139,6 +139,7 @@ class apu_iquest_event extends apu_base_class{
         $f[] = array("type"=>"select",
                      "name"=>"team_id",
                      "options"=>$team_options,
+                     "multiple"=>1,
                      "size"=>1,
                      "label"=>$lang_str['iquest_event_team']);
 
@@ -310,8 +311,10 @@ class apu_iquest_event extends apu_base_class{
         $this->pager=$data->get_pager();
         $this->events_to_smarty($events);
 
-        $last_event = reset($events);
-        $this->last_id = $last_event->id; 
+        if ($events){
+            $last_event = reset($events);
+            $this->last_id = $last_event->id; 
+        }
 
         action_log($this->opt['screen_name'], $this->action, "View events");
     }
