@@ -40,18 +40,18 @@ var svgZoom = {
         var height1 = viewBoxParts[3];
 
         if (scrollUp){
-            viewBoxParts[2] = viewBoxParts[2] * this.zoomCoef;
-            viewBoxParts[3] = viewBoxParts[3] * this.zoomCoef;
-            
-            if (viewBoxParts[2] > this.svgWidth)  viewBoxParts[2] = this.svgWidth;
-            if (viewBoxParts[3] > this.svgHeight) viewBoxParts[3] = this.svgHeight;
-        }
-        else{
             viewBoxParts[2] = viewBoxParts[2] / this.zoomCoef;
             viewBoxParts[3] = viewBoxParts[3] / this.zoomCoef;
 
             if (viewBoxParts[2] < this.svgMinWidth)  viewBoxParts[2] = this.svgMinWidth;
             if (viewBoxParts[3] < this.svgMinHeight) viewBoxParts[3] = this.svgMinHeight;
+        }
+        else{
+            viewBoxParts[2] = viewBoxParts[2] * this.zoomCoef;
+            viewBoxParts[3] = viewBoxParts[3] * this.zoomCoef;
+            
+            if (viewBoxParts[2] > this.svgWidth)  viewBoxParts[2] = this.svgWidth;
+            if (viewBoxParts[3] > this.svgHeight) viewBoxParts[3] = this.svgHeight;
         }
 
         viewBoxParts[0] +=  (width1 - viewBoxParts[2])  / 2;
