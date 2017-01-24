@@ -171,7 +171,7 @@ class Iquest_Events{
             if (isset($this->data['solution']['id'])){   
                 $out['solution']['text'] = $this->data['solution']['id'];
                 
-                if (isset($opt['solution_url'])){
+                if (isset($opt['solution_url']) and !empty($this->data['solution']['filename'])){
                     $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['solution_url']);
                 }
             }

@@ -12,7 +12,7 @@ HQ
 - v grafu zvyraznit startovni/cilovou/vzdavaci indicii
 - log udalosti - kdyz se odstrankuje na dalsi stranku tak autorefresh nacte vse z predchazejicich stranek. 
   Autorefresh by asi mel byt vypnuty na dalsich strankach
-- log udalosti - solution link (napr MRAC-KOD,  MOST-CERCANY) obcas zobrazuje "Soubor nelze zobrazit"
+- log udalosti - pri zadani chybneho kodu zobrazovat seznam aktivnich cgrp
 
 HQ - prehledova tabulka
 -----------------------
