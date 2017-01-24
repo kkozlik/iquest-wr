@@ -193,7 +193,7 @@
         ({$team.wallet} {$lang_str.iquest_txt_coin_symbol})
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
-        {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a>"}
+        {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a><br /><strong>Datum: </strong>`$cgrp_team[$group.id][$team.id].gained_at_date|escape`"}
         <td colspan="{$colspan}" 
             class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}" 
             title="{$group.id|escape}"
@@ -208,9 +208,9 @@
         {foreach $clue_groups as $group}
             {foreach $group.solution_ids as $solution_id}
             {if $solutions.$solution_id.view_url|default:0}
-            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong><a href='`$solutions.$solution_id.view_url|escape`'>`$solutions.$solution_id.name|escape`</a>"}
+            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong><a href='`$solutions.$solution_id.view_url|escape`'>`$solutions.$solution_id.name|escape`</a><br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
             {else}
-            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`"}
+            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`<br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
             {/if}
             <td class="time-field {if $solution_team[$solution_id][$team.id].solved}solved{/if}" 
                 title="{$solutions.$solution_id.id|escape}"

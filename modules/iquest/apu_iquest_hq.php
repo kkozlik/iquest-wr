@@ -262,11 +262,13 @@ class apu_iquest_hq extends apu_base_class{
 
             foreach($teams as $team){
                 $this->smarty_cgrp_team[$cgrp->id][$team->id] = array("gained_at" => "",
+                                                                      "gained_at_date" => "",
                                                                       "gained" => false);
                 if (!empty($open_cgrps[$cgrp->id][$team->id])){
                     $this->smarty_cgrp_team[$cgrp->id][$team->id] = 
-                        array("gained_at" => date("H:i:s", $open_cgrps[$cgrp->id][$team->id]),
-                              "gained" => true);
+                        array("gained_at"       => date("H:i:s", $open_cgrps[$cgrp->id][$team->id]),
+                              "gained_at_date"  => date("d.m.Y", $open_cgrps[$cgrp->id][$team->id]),
+                              "gained"          => true);
                 }
             }
         }
@@ -277,12 +279,14 @@ class apu_iquest_hq extends apu_base_class{
 
             foreach($teams as $team){
                 $this->smarty_solution_team[$solution->id][$team->id] = array("solved_at" => "",
+                                                                              "solved_at_date" => "",
                                                                               "solved" => false);
 
                 if (!empty($open_cgrps[$solution->cgrp_id][$team->id])){
                     $this->smarty_solution_team[$solution->id][$team->id] =
-                        array("solved_at" => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
-                              "solved" => true);
+                        array("solved_at"       => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
+                              "solved_at_date"  => date("d.m.Y", $open_cgrps[$solution->cgrp_id][$team->id]),
+                              "solved"          => true);
                 }
             }
         }
