@@ -1770,8 +1770,31 @@ class Iquest_solution_graph_node{
             $dot .=  $this->solved ? ",fontcolor=green" : ""; 
         }
         else{
-            $dot .= "style=filled";
-            $dot .= $this->gained ? ",color=green" : ",color=red";
+            $start_cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+            $final_cgrp_id = Iquest_Options::get(Iquest_Options::FINAL_CGRP_ID);
+            $giveitup_cgrp_id = Iquest_Options::get(Iquest_Options::REVEAL_GOAL_CGRP_ID);
+
+
+            if ($this->obj->cgrp_id == $giveitup_cgrp_id){
+                $dot .= "shape=octagon";
+                $dot .= ",style=filled";
+                $dot .= ",color=cyan";
+            }
+            else{
+                if ($this->obj->cgrp_id == $start_cgrp_id){
+                    $dot .= "shape=doublecircle";
+                }
+                elseif ($this->obj->cgrp_id == $final_cgrp_id){
+                    $dot .= "shape=doubleoctagon";
+                }
+                else{
+                    $dot .= "shape=ellipse";
+                }
+
+                $dot .= ",style=filled";
+                $dot .= $this->gained ? ",color=green" : ",color=red";
+            }
+
         }
 
         if ($this->visited){
