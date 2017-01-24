@@ -141,7 +141,12 @@
             includeSelectAllOption: true
         });
 
+{* Event Poller shall be enabled only if we are displaying the first 
+ * page of the pager. Otherwise the poller would populate the other 
+ * pages with the most recent events. *}
+{if !$pager.pos}
         EventPoller.init();
+{/if}
     });
 
 
