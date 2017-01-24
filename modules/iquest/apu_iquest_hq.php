@@ -44,6 +44,7 @@
 
 class apu_iquest_hq extends apu_base_class{
 
+    protected $sorter=null;
     protected $ref_id;
     protected $team_id;
 
@@ -88,6 +89,10 @@ class apu_iquest_hq extends apu_base_class{
         $this->opt['smarty_get_graph_url'] =    'get_graph_url';
     }
 
+    function set_sorter(&$sorter){
+        $this->sorter = &$sorter;
+    }
+
     /**
      *  this metod is called always at begining - initialize variables
      */
@@ -100,8 +105,17 @@ class apu_iquest_hq extends apu_base_class{
         
         $this->session = &$_SESSION['apu_iquest_hq'][$this->opt['instance_id']];
         
+        if (is_a($this->sorter, "apu_base_class")){
+            /* register callback called on sorter change */
+            $this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));
+            $this->sorter->set_base_apu($this);
+        }
     }
 
+    function get_sorter_columns(){
+        return array('name', 'rank');
+    }
+    
     function action_get_clue(){
         $this->controler->disable_html_output();
         $this->clue->flush_content();
@@ -213,8 +227,39 @@ class apu_iquest_hq extends apu_base_class{
 
     function action_default(){
 
+        $order_by_rank = false;
+        $order_desc    = false;
 
-        $teams = Iquest_Team::fetch();
+        $opt = array();
+        if (is_a($this->sorter, "apu_base_class")){
+            $order_desc = $this->sorter->get_sort_dir();
+            if ($this->sorter->get_sort_col() == "name"){
+                $opt['order_by']   = $this->sorter->get_sort_col();
+                $opt['order_desc'] = $order_desc;
+            }
+            elseif ($this->sorter->get_sort_col() == "rank"){
+                $ranks = Iquest_team_rank::fetch(array("last"=>1));
+                $actual_order = reset($ranks)->rank;
+                $order_by_rank = true;
+            }
+        }
+
+        $teams = Iquest_Team::fetch($opt);
+
+        if ($order_by_rank){
+            uasort($teams, function($a, $b) use ($actual_order, $order_desc){
+
+                $rank1 = $actual_order[$a->id];
+                $rank2 = $actual_order[$b->id];
+                
+                if ($rank1 == $rank2) return 0;
+                if ($order_desc) return ($rank1 > $rank2) ? -1 : 1;
+                else             return ($rank1 < $rank2) ? -1 : 1;
+            });
+        
+        }
+
+
         $clue_groups = Iquest_ClueGrp::fetch(array("orderby"=>"ordering"));
         $open_cgrps = Iquest_ClueGrp::fetch_cgrp_open();
         $solutions = Iquest_Solution::fetch();
