@@ -306,11 +306,20 @@ class Iquest_ClueGrp{
      *  Instantiate clue group by id
      */         
     static function &by_id($id){
+        static $cache = array();
+
+        if (array_key_exists($id, $cache)) return $cache[$id];
+
         $objs = static::fetch(array("id"=>$id));
-        if (!$objs) return null;
+        if (!$objs) {
+            $cache[$id] = null;
+        }
+        else{
+            $obj = reset($objs);
+            $cache[$id] = $obj;
+        } 
         
-        $obj = reset($objs);
-        return $obj;
+        return $cache[$id];
     }
 
 
