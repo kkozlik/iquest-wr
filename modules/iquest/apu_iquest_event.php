@@ -224,6 +224,7 @@ class apu_iquest_event extends apu_base_class{
 
     function events_to_smarty($events){
         $opt = array(
+                    "cgrp_url" => "main.php?view_grp=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
                     "hint_url" => "main.php?view_hint=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
                     "solution_url" => "main.php?view_solution=<id>&back_url=".RawURLEncode($_SERVER['PHP_SELF']),
                 );

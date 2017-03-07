@@ -193,10 +193,34 @@ class Iquest_Events{
 
             if (isset($this->data['active_solutions'])){
                 $active_solutions = array();
+                $active_tasks = array();
+                
                 foreach($this->data['active_solutions'] as $solution){
-                    $active_solutions[] = $solution['id'];
+                    $active_solution = array();
+                    $active_solution['text'] = "{$solution['id']} ({$solution['key']})";
+                    if (isset($opt['solution_url']) and !empty($solution['filename'])){
+                        $active_solution['url']  = str_replace("<id>", RawURLEncode($solution['ref_id']), $opt['solution_url']);
+                    }
+                    $active_solutions[] = $active_solution;
+
+                    if (!$solution['stub']){
+                        $clue_grp = &Iquest_ClueGrp::by_id($solution['cgrp_id']);
+
+                        $active_task = array();
+                        if ($clue_grp){
+                            $active_task['text'] = $clue_grp->name;
+                            if (isset($opt['cgrp_url'])){
+                                $active_task['url']  = str_replace("<id>", RawURLEncode($clue_grp->ref_id), $opt['cgrp_url']);
+                            }
+                        }
+                        else{
+                            $active_task['text'] = $solution['cgrp_id'];
+                        }
+                        $active_tasks[] = $active_task;
+                    }
                 }
-                $out['active tasks']['text'] = implode(", ", $active_solutions);
+                $out['active tasks']['values'] = $active_tasks;
+                $out['active keys']['values'] = $active_solutions;
             }
 
 

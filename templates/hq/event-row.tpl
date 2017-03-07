@@ -17,7 +17,16 @@
         {foreach $event.data_filtered as $key=>$value}
             <span class="eventLogDataKey">{$key|escape}</span>:
             <span class="eventLogDataValue">
-                {if $value.url|default:false}
+                {if $value.values|default:false}
+                    {foreach $value.values as $key2=>$value2}
+                        {if $value2.url|default:false}
+                            <a href="{$value2.url|escape}">{$value2.text|escape}</a>
+                        {else}
+                            {$value2.text|escape}
+                        {/if}
+                        {if !$value2@last},{/if}
+                    {/foreach}
+                {elseif $value.url|default:false}
                     <a href="{$value.url|escape}">{$value.text|escape}</a>
                 {else}
                     {$value.text|escape}
