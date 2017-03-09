@@ -9,7 +9,7 @@
 {if $actual_order}
     <div class="row">
     <div class="span6 offset3">
-        <h3>{$lang_str.iquest_rank_act_order_title}</h3>
+        <h3 id="rankTableTitle" class="alert alert-info">{$lang_str.iquest_rank_act_order_title}</h3>
         
         <table class="table table-bordered table-striped table-condensed">
         <thead>
@@ -19,12 +19,14 @@
         </tr>
         </thead>
         
+        <tbody id="rankTableBody">
         {foreach $actual_order as $team_name => $rank}
         <tr>
         <td>{$rank}</td>
         <td>{$team_name}</td>
         </tr>
         {/foreach}
+        </tbody>
         </table>
     </div>
     </div>
@@ -131,8 +133,75 @@
                     ]
                 }{if !$team_rank@last},{/if}
             {/foreach}  
-            ]
+            ],
+
+            plotOptions:{
+                series: {
+                    events: {
+                        click: function (event) {
+                            updateRankTable(event.point.index, this.chart.series);
+
+                            var lastPoint = (event.point.index == (event.point.series.data.length - 1));
+                            updateRankTableTitle(event.point.x, lastPoint);
+                        }
+                    }
+                }
+            }
         });
 
+
+        /**
+         *  Update table of team ranks according to selected time in the graph
+         */
+        var updateRankTable = function(index, series){
+            var teamRanks = [];
+
+            for(var i in series){
+                if (series[i].options.isInternal) continue;
+
+                teamRanks.push({
+                    name: series[i].name,
+                    rank: series[i].data[index].y
+                });
+            }
+
+            teamRanks.sort(
+                function(a, b){
+                    if (a.rank < b.rank) return -1;
+                    if (a.rank > b.rank) return 1;
+                    return 0;
+                }
+            )
+
+            $("#rankTableBody").html("");
+            for (var i in teamRanks){
+                $("#rankTableBody").append('<tr><td>'+teamRanks[i].rank+'</td><td>'+teamRanks[i].name+'</td></tr>');
+            }
+
+        }
+
+        /**
+         *  Update the title of table of team ranks to indicate the selected time
+         */
+        var updateRankTableTitle = function(val, lastPoint){
+
+            // If last point has been selected the table shows actual order
+            if (lastPoint){
+                $("#rankTableTitle").html("{$lang_str.iquest_rank_act_order_title}");
+                $("#rankTableTitle").addClass("alert-info");
+                return;
+            }
+
+            var today = new Date();
+            var date = new Date(val);
+
+            var timeStr;
+
+            if (today.toDateString() == date.toDateString())    timeStr = date.toLocaleTimeString();
+            else                                                timeStr = date.toLocaleString();
+
+            $("#rankTableTitle").html("{$lang_str.iquest_rank_time_order_title}: "+timeStr);
+            $("#rankTableTitle").removeClass("alert-info");
+        }
     });    
 </script>

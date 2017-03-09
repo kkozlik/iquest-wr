@@ -85,5 +85,6 @@ $lang_str['iquest_rank_y_axes']=                        "Pořadí";
 $lang_str['iquest_rank_team'] =                         "Tým";
 
 $lang_str['iquest_rank_act_order_title'] =              "Aktuální pořadí týmů";
+$lang_str['iquest_rank_time_order_title'] =             "Pořadí týmů k";
 
 ?>
