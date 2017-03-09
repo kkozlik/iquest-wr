@@ -43,13 +43,25 @@
             colors: [ "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1",  "#9100e1", "#00ff24", "#0000fe"]
         });
         
-        $('#team-ranks').highcharts({
+
+        Highcharts.stockChart('team-ranks', {
             chart: {
                 type: 'spline',
-                zoomType: 'x'
+                zoomType: 'x',
+                height: 435
+            },
+            legend: {
+                enabled: true
             },
             title: {
                 text: '{$lang_str.iquest_rank_title|escape:javascript}'
+            },
+            rangeSelector:{
+                enabled: false
+            },
+            scrollbar: {
+                enabled: true,
+                height: 5
             },
             xAxis: {
                 type: 'datetime',
@@ -63,17 +75,37 @@
                 },
                 reversed: true,
                 min: 1,
-                max: {$ranks|count} 
+                max: {$ranks|count},
+                endOnTick: false,
+                opposite: false,
+                showFirstLabel: true,
+                showLastLabel: true,
+                labels: {
+                    align: "right",
+                    y:3
+                }
             },
             tooltip: {
                 headerFormat: '{ldelim}point.y{rdelim}. <b>{ldelim}series.name{rdelim}</b><br/>',
-                pointFormat: '{ldelim}point.x:%H:%M:%S{rdelim}'
+                pointFormat: '{ldelim}point.x:%H:%M:%S{rdelim}',
+                shared: false
+            },
+            navigator:{
+                margin:10,
+                height:25,
+                yAxis:{
+                    reversed: true
+                }
             },
 
             series: [
             {foreach $ranks as $team_rank}  
                 {
                     name: '{$team_rank.name|escape:javascript}',
+                    marker: {
+                        enabled: null,
+                        radius: 4
+                    },
                     // Define the data points. All series have a dummy year
                     // of 1970/71 in order to be compared on the same x axis. Note
                     // that in JavaScript, months start at 0 for January, 1 for February etc.
@@ -87,6 +119,10 @@
                                     lineWidth: 2,
                                     symbol:    'circle'
                                 },
+                             {else}
+                                marker: {
+                                    enabled: false
+                                },
                              {/if}
                                 x:{$rank_data.timestamp * 1000}, 
                                 y:{$rank_data.rank} 
@@ -97,5 +133,6 @@
             {/foreach}  
             ]
         });
+
     });    
 </script>

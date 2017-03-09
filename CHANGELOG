@@ -4,6 +4,7 @@
 * HQ: event log - allow to filter the log by multiple teams
 * HQ: table - allow to sort the table by team name and team rank 
 * HQ: event log - improvements of the 'key_entered' log events
+* HQ: team ranks - graph improvements
 
 rel 0.1.6
 * HQ: table - hyperlinks in popup info 

@@ -14,7 +14,7 @@ $apu    = new apu_iquest_team_rank();
 
 
 $controler->add_apu($apu);
-$controler->add_required_javascript('highcharts.js'); 
+$controler->add_required_javascript('highstock.js'); 
 $controler->set_template_name('hq/team_rank.tpl');
 $controler->start();
 
