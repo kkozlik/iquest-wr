@@ -996,6 +996,14 @@ class Chroust{
      *  there are any hints that could be bought
      */         
     static function set_wallet_active(){
+        // Check whether the WALLET_ACTIVE is already set from metadata file. If so
+        // just return. Otherwise catch the exception thrown and set the WALLET_ACTIVE flag.
+        try{
+            $option_value = Iquest_Options::get(Iquest_Options::WALLET_ACTIVE);
+            return;
+        }
+        catch(RuntimeException $e){}
+
         $coin_value = 0;
     
         foreach(self::$summary['hints'] as $row){

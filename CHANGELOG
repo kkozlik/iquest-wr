@@ -6,6 +6,7 @@
 * HQ: event log - improvements of the 'key_entered' log events
 * HQ: team ranks - graph improvements
 * HQ: team ranks - the rank table is updated to reflect lask time selected in the graph
+* chroust: possibility to manually specify the wallet_active flag
 
 rel 0.1.6
 * HQ: table - hyperlinks in popup info 

@@ -20,7 +20,6 @@ CHROUST
 -------
 
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
-- moznost rucne nastavit wallet_active flag
 - format kodu (uvodni "I.Q:") by melo byt konfigurovatelne
 - heslo k HQ konfigurovat pomoci ini souboru
 - trimovat ID zadane v point_to. Aby point_to[]=ID1, ID2, ID3 bylo to same jako point_to[]=ID1,ID2,ID3
