@@ -12,6 +12,7 @@ class Iquest_Options{
     const REVEAL_GOAL_CGRP_ID = "reveal_goal_cgrp_id";
     const WALLET_ACTIVE   = "wallet_active";
     const CHECK_KEY_ORDER = "check_key_order";
+    const KEY_PREFIX      = "key_prefix";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -41,6 +42,7 @@ class Iquest_Options{
                                              self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
+                                             self::KEY_PREFIX,
                                              ); 
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -52,6 +54,7 @@ class Iquest_Options{
                                              self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
+                                             self::KEY_PREFIX,
                                             );
     /** Options cache */
     private static $options = null;
