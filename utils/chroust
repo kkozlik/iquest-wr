@@ -355,7 +355,9 @@ class Iquest_Metadata{
         if ($point_to == "-" or $point_to == "") return array(); 
 
         // Otherwise create array from the comma separated list
-        return explode(",", $point_to); 
+        $point_to_values = explode(",", $point_to); 
+        $point_to_values = array_map("trim", $point_to_values);
+        return $point_to_values;
     }
 
 
