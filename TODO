@@ -21,7 +21,7 @@ CHROUST
 
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
 - heslo k HQ konfigurovat pomoci ini souboru
-- u chyby: "neexistuje cgrp_id=foo" pripsat upozorneni ze v adresari musi existovat soubor indicie
+- moznost zmenit logo souteze
 
 INSTALL
 -------

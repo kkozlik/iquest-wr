@@ -1027,7 +1027,7 @@ class Chroust{
         foreach($solutions as $solution){
             if (!$solution->stub and !isset($cgrps[$solution->cgrp_id])){
                 throw new Iquest_VerifyFailedException(
-                            "Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'.",
+                            "Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'. Make sure that the respective directory of clue group contain a clue file.",
                             array(Iquest_VerifyFailedException::CLUE_GRP_IDS)
                 );            
             }
