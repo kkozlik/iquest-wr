@@ -13,6 +13,7 @@ class Iquest_Options{
     const WALLET_ACTIVE   = "wallet_active";
     const CHECK_KEY_ORDER = "check_key_order";
     const KEY_PREFIX      = "key_prefix";
+    const LOGO            = "logo";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -43,6 +44,7 @@ class Iquest_Options{
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
                                              self::KEY_PREFIX,
+                                             self::LOGO,
                                              ); 
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -55,6 +57,7 @@ class Iquest_Options{
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
                                              self::KEY_PREFIX,
+                                             self::LOGO,
                                             );
     /** Options cache */
     private static $options = null;

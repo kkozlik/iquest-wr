@@ -603,6 +603,7 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH, 1);
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH_CGRP_NAMES, 0);
         Iquest_Options::set(Iquest_Options::KEY_PREFIX, "");
+        Iquest_Options::set(Iquest_Options::LOGO, "");
     }
 
     /**
@@ -775,8 +776,30 @@ class Chroust{
         catch(Iquest_MetadataOpenException $e){
             throw new Iquest_InvalidConfigException("Problem reading metadata of directory: ".$dir, 0 ,$e);
         }
-        
+
+        self::process_logo($dir);
+
         return $metadata;
+    }
+
+    static function process_logo($src_dir){
+        global $config;
+
+        $logo_file = Iquest_Options::get(Iquest_Options::LOGO);
+        if ($logo_file){
+
+            $dest_file = self::canonicalize_name(basename($logo_file));
+
+            if (!file_exists($src_dir.$logo_file)){
+                throw new Iquest_InvalidConfigException("File for logo does not exists: ".$src_dir.$logo_file);
+            }
+
+            if (!copy($src_dir.$logo_file, $config->iquest_data_dir.$dest_file)){
+                throw new Exception("Copy of file ".$src_dir.$logo_file." failed");
+            }
+            
+            Iquest_Options::set(Iquest_Options::LOGO, $logo_file);
+        }
     }
 
     static function process_data_dir($src_dir){

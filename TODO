@@ -4,6 +4,7 @@
 Team
 ----
 - druhe heslo pro read-only login pro pratele na telefonu
+- Prehravani audio/video v prohlizeci (HTML5)
 
  
 HQ
@@ -14,6 +15,7 @@ HQ - prehledova tabulka
 -----------------------
 - blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
   po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
+- Indikovat kde vyprsi deadliny
 
 
 CHROUST
@@ -21,7 +23,7 @@ CHROUST
 
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
 - heslo k HQ konfigurovat pomoci ini souboru
-- moznost zmenit logo souteze
+- moznost zmenit nazev souteze (alt text pro logo a page title)
 
 INSTALL
 -------

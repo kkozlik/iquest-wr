@@ -47,6 +47,7 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 $GLOBALS['page_attributes']['logout_url'] = $controler->url('logout.php');
 $GLOBALS['page_attributes']['giveitup_url'] = $controler->url('giveitup.php');
+$GLOBALS['page_attributes']['logo_url'] = $controler->url('logo.php');
 
 try{
     $GLOBALS['page_attributes']['display_wallet'] = Iquest_Options::get(Iquest_Options::WALLET_ACTIVE);
