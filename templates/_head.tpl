@@ -17,7 +17,7 @@
         <span class="icon-bar"></span>
         </a>
 
-        <span class="brand logo"><img src="{$parameters.logo_url}" alt="I.Quest"></span>
+        <span class="brand logo"><img src="{$parameters.logo_url|escape}" alt="{$parameters.game_name|escape}"></span>
 
         <div class="navinfo {($next_hint and $next_solution)?"double":""}">
             <div class="navinfo-inner">

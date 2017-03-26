@@ -17,10 +17,6 @@ function set_page_attributes(){
     
     $GLOBALS['page_attributes']=array(
         'title' => null,
-        'html_title' => "I.QUEST - contest",
-    //  'tab_collection' => $config->admin_tabs,
-    //  'path_to_pages' => $config->admin_pages_path,
-    //  'run_at_html_body_begin' => '_disable_unneeded_tabs',
         'logout'=>false,
         'prolog'=>"",
         'separator'=>"",
@@ -51,10 +47,17 @@ $GLOBALS['page_attributes']['logo_url'] = $controler->url('logo.php');
 
 try{
     $GLOBALS['page_attributes']['display_wallet'] = Iquest_Options::get(Iquest_Options::WALLET_ACTIVE);
+    $GLOBALS['page_attributes']['game_name'] = Iquest_Options::get(Iquest_Options::GAME_NAME);
 }
 catch(RuntimeException $e){
     $GLOBALS['page_attributes']['display_wallet'] = false;
+    $GLOBALS['page_attributes']['game_name'] = "";
 }
+
+if (!$GLOBALS['page_attributes']['game_name']) $GLOBALS['page_attributes']['game_name'] = "I.Quest";
+
+$GLOBALS['page_attributes']['html_title'] = $GLOBALS['page_attributes']['game_name'];
+
 
 if (!empty($_SESSION['auth']) and 
     $_SESSION['auth']->is_authenticated()){
