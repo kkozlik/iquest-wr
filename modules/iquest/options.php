@@ -15,6 +15,7 @@ class Iquest_Options{
     const KEY_PREFIX      = "key_prefix";
     const LOGO            = "logo";
     const GAME_NAME       = "game_name";
+    const HQ_LOGIN        = "hq_login";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -47,6 +48,7 @@ class Iquest_Options{
                                              self::KEY_PREFIX,
                                              self::LOGO,
                                              self::GAME_NAME,
+                                             self::HQ_LOGIN,
                                              ); 
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -61,6 +63,7 @@ class Iquest_Options{
                                              self::KEY_PREFIX,
                                              self::LOGO,
                                              self::GAME_NAME,
+                                             self::HQ_LOGIN,
                                             );
     /** Options cache */
     private static $options = null;

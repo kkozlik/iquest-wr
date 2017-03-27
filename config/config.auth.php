@@ -6,11 +6,13 @@ if (!isset($config->iquest_auth)) $config->iquest_auth = new stdclass();
 /**
  *  Credentials for admin users.
  *  Array of credentials in format: "username" => "password" 
+ * 
+ *  !!! DEPRECATED set it in metadata.ini file instead !!!
  */ 
-$config->iquest_auth->admin_login = array(
-    "admin" => "admin",
-    "hq"    => "hq",
-);
+// $config->iquest_auth->admin_login = array(
+//     "admin" => "admin",
+//     "hq"    => "hq",
+// );
 
 
 /*

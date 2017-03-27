@@ -473,6 +473,26 @@ class Iquest_Metadata{
         }
     }
 
+    function save_hq_login(){
+        if (!isset($this->data['HQ']['credentials']) or
+            !is_array($this->data['HQ']['credentials']) or
+            !count($this->data['HQ']['credentials'])) {
+
+            Console::log("*** WARNING: There is no information for login into HQ specified in top metadata file.", Console::YELLOW);
+            return;
+        }
+        
+        $hq_logins = array();
+        foreach($this->data['HQ']['credentials'] as $username => $password){
+            if (substr($password, 0, 1) == '$') $password = substr($password, 1);
+            else                                $password = md5($password);
+
+            $hq_logins[$username] = $password;
+        }
+
+        Iquest_Options::set(Iquest_Options::HQ_LOGIN, json_encode($hq_logins));
+    }
+
     function to_string(){
         $cfg = $this->get_cfg();
 
@@ -605,6 +625,7 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::KEY_PREFIX, "");
         Iquest_Options::set(Iquest_Options::LOGO, "");
         Iquest_Options::set(Iquest_Options::GAME_NAME, "");
+        Iquest_Options::set(Iquest_Options::HQ_LOGIN, "[]");
     }
 
     /**
@@ -773,6 +794,7 @@ class Chroust{
     
         try{
             $metadata->save_options();
+            $metadata->save_hq_login();
         }
         catch(Iquest_MetadataOpenException $e){
             throw new Iquest_InvalidConfigException("Problem reading metadata of directory: ".$dir, 0 ,$e);

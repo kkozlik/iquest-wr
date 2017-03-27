@@ -11,6 +11,7 @@
 * metadata: if point_to directive contain list of values, the list can now contain spaces
             e.g. point_to[]=ID1, ID2, ID3 is same as point_to[]=ID1,ID2,ID3
 * metadata: possibility to specify name of file containing the logo displayed in top left corner
+* chroust: Username/password for HQ interface shall be defined in metadata file now
 
 rel 0.1.6
 * HQ: table - hyperlinks in popup info 
