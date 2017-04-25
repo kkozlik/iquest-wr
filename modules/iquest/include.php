@@ -21,7 +21,23 @@ function iquest_init(){
     require_once($_SERWEB["configdir"] . "config.iquest.php");
 }
 
-require_once( dirname(__FILE__)."/classes.php" );
+require_once( "classes/Iquest.php" );
+
+require_once( "classes/Iquest_Clue.php" );
+require_once( "classes/Iquest_ClueGrp.php" );
+require_once( "classes/Iquest_Hint.php" );
+require_once( "classes/Iquest_Solution.php" );
+require_once( "classes/Iquest_key.php" );
+
+require_once( "classes/Iquest_solution_graph_node.php" );
+require_once( "classes/Iquest_solution_graph.php" );
+require_once( "classes/Iquest_contest_graph_simplified.php" );
+
+require_once( "classes/Iquest_Team.php" );
+require_once( "classes/Iquest_team_rank.php" );
+
+require_once( "classes/Iquest_info_msg.php" );
+
 require_once( dirname(__FILE__)."/options.php" );
 require_once( dirname(__FILE__)."/events.php" );
 
