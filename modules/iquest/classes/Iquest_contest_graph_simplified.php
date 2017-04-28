@@ -79,13 +79,16 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
                 foreach($solution_ids as $solution_id){
                     if (empty($this->solutions[$solution_id])) continue;
                     $solution = $this->solutions[$solution_id];
-                    if (empty($this->cgroups[$solution->cgrp_id])) continue;
-                    $next_cgrp = $this->cgroups[$solution->cgrp_id];
 
+                    $next_cgrp_ids = $solution->get_next_cgrp_ids();
+                    foreach($next_cgrp_ids as $next_cgrp_id){
+                        if (empty($this->cgroups[$next_cgrp_id])) continue;
+                        $next_cgrp = $this->cgroups[$next_cgrp_id];
 
-                    $edges[] = self::escape_dot($cgroup->ref_id)." -> ".self::escape_dot($next_cgrp->ref_id).";\n";
-                    $connected_cgroups[$cgroup->id] = true;
-                    $connected_cgroups[$next_cgrp->id] = true;
+                        $edges[] = self::escape_dot($cgroup->ref_id)." -> ".self::escape_dot($next_cgrp->ref_id).";\n";
+                        $connected_cgroups[$cgroup->id] = true;
+                        $connected_cgroups[$next_cgrp->id] = true;
+                    }
                 }
             }
         }

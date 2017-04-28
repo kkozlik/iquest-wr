@@ -1,10 +1,3 @@
-# --------------------------------------------------------
-# Host:                         kk-iquest
-# Server version:               5.5.31-0+wheezy1
-# Server OS:                    debian-linux-gnu
-# HeidiSQL version:             6.0.0.3603
-# Date/time:                    2015-08-12 10:55:29
-# --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
@@ -179,6 +172,18 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
   UNIQUE KEY `solution_key_UNIQUE` (`solution_key`),
   KEY `fk_task_solution_clue_grp` (`cgrp_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+# Data exporting was unselected.
+
+# Dumping structure for table iquest.task_solution_nextcgrp
+CREATE TABLE `task_solution_nextcgrp` (
+	`solution_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
+	`cgrp_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
+	`condition` TEXT NULL COLLATE 'utf8_czech_ci',
+	PRIMARY KEY (`solution_id`, `cgrp_id`),
+	INDEX `solution_id` (`solution_id`),
+	INDEX `cgrp_id` (`cgrp_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.

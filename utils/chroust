@@ -774,6 +774,7 @@ class Chroust{
                                          "timeout" =>    $timeout,
                                          "next_cgrp_id" => $stub ? null : $next_cgrp_id);
 
+//TODO: next_cgrp_id should be array
         $solution = new Iquest_Solution($solution_id, $ref_id, 
                 $filename, $content_type, null, $name, $next_cgrp_id, $timeout, 
                 $countdown_start, $key, $coin_value, $stub);

@@ -276,19 +276,23 @@ class apu_iquest_hq extends apu_base_class{
         foreach($clue_groups as $k => $v){
             $cgrp_solutions = Iquest_Solution::fetch_by_opening_cgrp($v->id);
             $solution_ids = array_keys($cgrp_solutions);
-            usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
-                if (!isset($clue_groups[$solutions[$a]->cgrp_id]) and
-                    !isset($clue_groups[$solutions[$b]->cgrp_id])){
+            // Sort solutions of each clue group by ordening number of the clue group
+            // they are leading to.
+
+            //TODO: $solutions[$a]->cgrp_id is not set anymore
+            // usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
+            //     if (!isset($clue_groups[$solutions[$a]->cgrp_id]) and
+            //         !isset($clue_groups[$solutions[$b]->cgrp_id])){
                     
-                    return $solutions[$a]->name > $solutions[$b]->name;
-                }
+            //         return $solutions[$a]->name > $solutions[$b]->name;
+            //     }
 
-                if (!isset($clue_groups[$solutions[$a]->cgrp_id])) return 1;
-                if (!isset($clue_groups[$solutions[$b]->cgrp_id])) return -1;
+            //     if (!isset($clue_groups[$solutions[$a]->cgrp_id])) return 1;
+            //     if (!isset($clue_groups[$solutions[$b]->cgrp_id])) return -1;
 
-                return $clue_groups[$solutions[$a]->cgrp_id]->ordering - 
-                       $clue_groups[$solutions[$b]->cgrp_id]->ordering;
-            });
+            //     return $clue_groups[$solutions[$a]->cgrp_id]->ordering - 
+            //            $clue_groups[$solutions[$b]->cgrp_id]->ordering;
+            // });
 
             $this->smarty_groups[$k] = $v->to_smarty();
             $this->smarty_groups[$k]['view_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
@@ -327,12 +331,14 @@ class apu_iquest_hq extends apu_base_class{
                                                                               "solved_at_date" => "",
                                                                               "solved" => false);
 
-                if (!empty($open_cgrps[$solution->cgrp_id][$team->id])){
-                    $this->smarty_solution_team[$solution->id][$team->id] =
-                        array("solved_at"       => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
-                              "solved_at_date"  => date("d.m.Y", $open_cgrps[$solution->cgrp_id][$team->id]),
-                              "solved"          => true);
-                }
+                // If the solution is solved, set the solved date
+                //TODO: $solution->cgrp_id is not set anymore
+                // if (!empty($open_cgrps[$solution->cgrp_id][$team->id])){
+                //     $this->smarty_solution_team[$solution->id][$team->id] =
+                //         array("solved_at"       => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
+                //               "solved_at_date"  => date("d.m.Y", $open_cgrps[$solution->cgrp_id][$team->id]),
+                //               "solved"          => true);
+                // }
             }
         }
 

@@ -114,20 +114,27 @@ class Iquest{
         sw_log($log_prefix."*** Closing solution (ID={$solution->id})", PEAR_LOG_INFO);
         Iquest_Solution::deschedule($solution->id, $team_id);    
 
-        // 2. Open new clue group
-        self::_open_cgrp($solution->cgrp_id, $team_id, $log_prefix);
+        // 2. Open new clue groups
+        $next_cgrp_ids = $solution->get_next_cgrp_ids();
+        foreach($next_cgrp_ids as $next_cgrp_id){
+            self::_open_cgrp($next_cgrp_id, $team_id, $log_prefix);
+        }
 
         self::gain_coins($team_id, $solution->coin_value);
 
         // 3. Schedule show time for new hints
         if (!$solution->stub){
-            self::_schedule_new_hints($solution->cgrp_id, $team_id, $log_prefix);
+            foreach($next_cgrp_ids as $next_cgrp_id){
+                self::_schedule_new_hints($next_cgrp_id, $team_id, $log_prefix);
+            }
         }
 
         // 4. If team gained all clues that lead to some task_solution
         //    schedule showing of the solution
         if (!$solution->stub){
-            self::_schedule_solution($solution->cgrp_id, $team_id, $log_prefix);
+            foreach($next_cgrp_ids as $next_cgrp_id){
+                self::_schedule_solution($next_cgrp_id, $team_id, $log_prefix);
+            }
         }
                 
         // 5. Hints that has not been displayed and are not needed any more
@@ -253,26 +260,27 @@ class Iquest{
 
             // If solution is already solved, skip it.
             // Solution is solved if the team gained the clue group to which the solution points
-            if (Iquest_ClueGrp::is_accessible($opening_solution->cgrp_id, $team_id)){
-                sw_log($log_prefix."      It's already solved", PEAR_LOG_INFO);
-                continue;
-            }
+// TODO: Need to figure out how to determine whether a solution is solved
+            // if (Iquest_ClueGrp::is_accessible($opening_solution->cgrp_id, $team_id)){
+            //     sw_log($log_prefix."      It's already solved", PEAR_LOG_INFO);
+            //     continue;
+            // }
 
 
             $schedule_solution = true;
-        if ($opening_solution->countdown_start==Iquest_Solution::CD_START_ALL){
-            // fetch list of all clue groups that opens the solution
-            $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($opening_solution->id, $team_id);
-            foreach($clue_grps as $clue_grp){
-                // if any of the clue groups is not gained yet, do not schedule
-                // the solution
-                if (is_null($clue_grp->gained_at)){
-                    sw_log($log_prefix."      Clue group (ID={$clue_grp->id}) not gained yet. Not schedule the solution.", PEAR_LOG_INFO);
-                    $schedule_solution = false;
-                    break;
+            if ($opening_solution->countdown_start==Iquest_Solution::CD_START_ALL){
+                // fetch list of all clue groups that opens the solution
+                $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($opening_solution->id, $team_id);
+                foreach($clue_grps as $clue_grp){
+                    // if any of the clue groups is not gained yet, do not schedule
+                    // the solution
+                    if (is_null($clue_grp->gained_at)){
+                        sw_log($log_prefix."      Clue group (ID={$clue_grp->id}) not gained yet. Not schedule the solution.", PEAR_LOG_INFO);
+                        $schedule_solution = false;
+                        break;
+                    }
                 }
             }
-        }
             
             unset($clue_grps);
             

@@ -107,7 +107,6 @@ $config->data_sql->iquest_solution->table_name =            "task_solution";
 
 $config->data_sql->iquest_solution->cols->id =              "solution_id";
 $config->data_sql->iquest_solution->cols->ref_id =          "ref_id";
-$config->data_sql->iquest_solution->cols->cgrp_id =         "cgrp_id";
 $config->data_sql->iquest_solution->cols->name =            "name";
 $config->data_sql->iquest_solution->cols->key =             "solution_key";
 $config->data_sql->iquest_solution->cols->filename =        "filename";
@@ -117,6 +116,19 @@ $config->data_sql->iquest_solution->cols->countdown_start = "countdown_start";
 $config->data_sql->iquest_solution->cols->comment =         "comment";
 $config->data_sql->iquest_solution->cols->coin_value =      "coin_value";
 $config->data_sql->iquest_solution->cols->stub =            "stub";
+
+
+/**
+ *      solution_next_cgrp
+ */ 
+$config->data_sql->iquest_solution_next_cgrp = new stdClass();
+$config->data_sql->iquest_solution_next_cgrp->cols = new stdClass();
+
+$config->data_sql->iquest_solution_next_cgrp->table_name =            "task_solution_nextcgrp";
+
+$config->data_sql->iquest_solution_next_cgrp->cols->solution_id =     "solution_id";
+$config->data_sql->iquest_solution_next_cgrp->cols->cgrp_id =         "cgrp_id";
+$config->data_sql->iquest_solution_next_cgrp->cols->condition =       "condition";
 
 
 /**

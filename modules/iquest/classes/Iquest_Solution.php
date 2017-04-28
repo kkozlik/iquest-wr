@@ -1,12 +1,13 @@
 <?php
 require_once("Iquest_file.php");
+require_once("Iquest_Solution_Next_Cgrp.php");
 
 class Iquest_Solution extends Iquest_file{
 
     const CD_START_ALL =    "all";
     const CD_START_SINGLE = "single";
 
-    public $cgrp_id;
+    public $next_cgrps;
     public $name;
     public $key;
     public $timeout;
@@ -80,7 +81,6 @@ class Iquest_Solution extends Iquest_file{
 
         $q = "select c.".$cc->id.",
                      c.".$cc->ref_id.",
-                     c.".$cc->cgrp_id.",
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
                      time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
@@ -109,7 +109,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->content_type],
                                                        $row[$cc->comment],
                                                        $row[$cc->name],
-                                                       $row[$cc->cgrp_id],
+//TODO:                                                       $row[$cc->cgrp_id],
                                                        $row[$cc->timeout],
                                                        $row[$cc->countdown_start],
                                                        $row[$cc->key],
@@ -154,9 +154,9 @@ class Iquest_Solution extends Iquest_file{
                where t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." and
                      t.".$ct->solution_id."=s.".$cs->id;
 
+//TODO:                     s.".$cs->cgrp_id.",
         $q = "select s.".$cs->id.",
                      s.".$cs->ref_id.",
-                     s.".$cs->cgrp_id.",
                      s.".$cs->filename.",
                      s.".$cs->content_type.",
                      time_to_sec(s.".$cs->timeout.") as ".$cs->timeout.", 
@@ -183,7 +183,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->content_type],
                                                        $row[$cs->comment],
                                                        $row[$cs->name],
-                                                       $row[$cs->cgrp_id],
+//TODO:                                                       $row[$cs->cgrp_id],
                                                        $row[$cs->timeout],
                                                        $row[$cs->countdown_start],
                                                        $row[$cs->key],
@@ -287,11 +287,12 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
-                         $cgrp_id, $timeout, $countdown_start, $key, $coin_value, $stub, $show_at=null){
+//TODO:                         $cgrp_id, 
+                         $timeout, $countdown_start, $key, $coin_value, $stub, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
-        $this->cgrp_id = $cgrp_id;
+//TODO:        $this->cgrp_id = $cgrp_id;
         $this->timeout = $timeout;
         $this->countdown_start = $countdown_start;
         $this->key = $key;
@@ -356,14 +357,68 @@ class Iquest_Solution extends Iquest_file{
         return $this->show_at;
     }
 
+    /**
+     * Load values for $this->next_cgrps array from database
+     *
+     * @return void
+     */
+    private function load_next_cgrps(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = &$config->data_sql->iquest_solution_next_cgrp->table_name;
+        /* col names */
+        $c     = &$config->data_sql->iquest_solution_next_cgrp->cols;
+
+
+        $qw = array();
+        $qw[] = "n.".$c->solution_id." = ".$data->sql_format($this->id, "s");
+
+        if ($qw) $qw = " where ".implode(' and ', $qw);
+        else $qw = "";
+
+        $q = "select n.".$c->cgrp_id.",
+                     n.".$c->condition."
+              from ".$t_name." n ".
+              $qw;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
+
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$c->cgrp_id]] =  new Iquest_Solution_Next_Cgrp($row[$c->cgrp_id], 
+                                                                     $row[$c->condition]);
+        }
+        $res->free();
+        $this->next_cgrps = $out;
+    }
+
+    /**
+     * Get array of IDs of clue groups that are gained by entering key of this solution
+     *
+     * @return array
+     */
+    public function get_next_cgrp_ids(){
+        if (is_null($this->next_cgrps)){
+            $this->load_next_cgrps();
+        }
+
+        $cgrp_ids = array();
+        foreach($this->next_cgrps as $next_cgrp) $cgrp_ids[] = $next_cgrp->cgrp_id;
+
+        return $cgrp_ids;
+    }
 
     function insert(){
         global $data, $config;
 
         /* table's name */
         $t_name = &$config->data_sql->iquest_solution->table_name;
+        $tn_name = &$config->data_sql->iquest_solution_next_cgrp->table_name;
         /* col names */
         $c      = &$config->data_sql->iquest_solution->cols;
+        $cn     = &$config->data_sql->iquest_solution_next_cgrp->cols;
     
         $q = "insert into ".$t_name."(
                     ".$c->id.",
@@ -371,7 +426,6 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->filename.",
                     ".$c->content_type.",
                     ".$c->comment.", 
-                    ".$c->cgrp_id.",
                     ".$c->name.",
                     ".$c->key.",
                     ".$c->coin_value.",
@@ -385,7 +439,6 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->filename,        "s").",
                     ".$data->sql_format($this->content_type,    "s").",
                     ".$data->sql_format($this->comment,         "S").",
-                    ".$data->sql_format($this->cgrp_id,         "s").",
                     ".$data->sql_format($this->name,            "s").",
                     ".$data->sql_format($this->key,             "s").",
                     ".$data->sql_format($this->coin_value,      "n").",
@@ -396,6 +449,23 @@ class Iquest_Solution extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
+    
+        foreach($this->next_cgrps as $next_cgrp){
+            $q = "insert into ".$tn_name."(
+                        ".$cn->solution_id.",
+                        ".$cn->cgrp_id.",
+                        ".$cn->condition."
+                  )
+                  values(
+                        ".$data->sql_format($this->id,              "s").",
+                        ".$data->sql_format($next_cgrp->cgrp_id,    "s").",
+                        ".$data->sql_format($next_cgrp->condition,  "s")."
+                  )";
+            
+            $res=$data->db->query($q);
+            if ($data->dbIsError($res)) throw new DBException($res);
+        }
+    
     }
 
     function to_smarty(){
