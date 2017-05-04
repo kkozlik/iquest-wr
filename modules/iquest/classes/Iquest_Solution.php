@@ -109,7 +109,6 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->content_type],
                                                        $row[$cc->comment],
                                                        $row[$cc->name],
-//TODO:                                                       $row[$cc->cgrp_id],
                                                        $row[$cc->timeout],
                                                        $row[$cc->countdown_start],
                                                        $row[$cc->key],
@@ -154,7 +153,6 @@ class Iquest_Solution extends Iquest_file{
                where t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." and
                      t.".$ct->solution_id."=s.".$cs->id;
 
-//TODO:                     s.".$cs->cgrp_id.",
         $q = "select s.".$cs->id.",
                      s.".$cs->ref_id.",
                      s.".$cs->filename.",
@@ -183,7 +181,6 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->content_type],
                                                        $row[$cs->comment],
                                                        $row[$cs->name],
-//TODO:                                                       $row[$cs->cgrp_id],
                                                        $row[$cs->timeout],
                                                        $row[$cs->countdown_start],
                                                        $row[$cs->key],
@@ -287,12 +284,10 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
-//TODO:                         $cgrp_id, 
                          $timeout, $countdown_start, $key, $coin_value, $stub, $show_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
-//TODO:        $this->cgrp_id = $cgrp_id;
         $this->timeout = $timeout;
         $this->countdown_start = $countdown_start;
         $this->key = $key;
