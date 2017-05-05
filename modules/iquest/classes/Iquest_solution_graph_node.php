@@ -52,7 +52,7 @@ class Iquest_solution_graph_node{
 
         if ($this->type == self::TYPE_SOLUTION){
             $dot .= "shape=box";
-            $dot .=  $this->solved ? ",fontcolor=green" : ""; 
+            $dot .=  $this->solved ? ",color=lightgreen,style=filled" : ""; 
         }
         else{
             $start_cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
