@@ -62,14 +62,23 @@ class Iquest_Solution extends Iquest_file{
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
         if (isset($opt['team_id'])){
-            $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
-            $join[] = " join ".$tt_name." t on c.".$cc->id." = t.".$ct->solution_id;
-            $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at." ";
-            $cols .= ", UNIX_TIMESTAMP(t.".$ct->solved_at.") as ".$ct->solved_at." ";
-
+    
+            // Generate virtual table we are joining with
+            $q_join = "select UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at.",
+                              UNIX_TIMESTAMP(t.".$ct->solved_at.") as ".$ct->solved_at.",
+                              t.".$ct->team_id.",
+                              t.".$ct->solution_id."
+                       from ".$tt_name." t 
+                       where t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "N");
+    
+            $join[] = " left join (".$q_join.") tt on c.".$cc->id." = tt.".$ct->solution_id;
+    
+            $cols .= ", tt.".$ct->show_at." ";
+            $cols .= ", tt.".$ct->solved_at." ";
+        
             if (!empty($opt['accessible'])){
-                $qw[] = "t.".$ct->show_at." <= now()";
-                $qw[] = "t.".$ct->show_at." != 0";
+                $qw[] = "tt.".$ct->show_at." <= now()";
+                $qw[] = "tt.".$ct->show_at." != 0";
             }
 
             $order = " order by ".$ct->show_at." desc";
