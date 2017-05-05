@@ -831,11 +831,10 @@ class apu_iquest extends apu_base_class{
             return false; 
         }
 
-//TODO: need to figure out new way how to determine that solution is already solved
-        // if (Iquest_ClueGrp::is_accessible($this->solution->cgrp_id, $this->team_id)){
-        //     ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
-        //     return false; 
-        // }
+        if ($this->solution->is_solved($this->team_id)){
+            ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
+            return false;
+        }
 
         // Check that the keys are entered in correct order, check that 
         // the team has a clue to this key

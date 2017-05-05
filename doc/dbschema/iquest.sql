@@ -194,6 +194,7 @@ CREATE TABLE IF NOT EXISTS `task_solution_team` (
   `team_id` int(11) NOT NULL,
   `solution_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `show_at` datetime NOT NULL,
+  `solved_at` datetime NOT NULL,
   PRIMARY KEY (`team_id`,`solution_id`),
   KEY `fk_task_solution_has_team_team` (`team_id`),
   KEY `fk_task_solution_has_team_task_solution` (`solution_id`),

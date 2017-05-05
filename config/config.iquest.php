@@ -142,6 +142,7 @@ $config->data_sql->iquest_solution_team->table_name =           "task_solution_t
 $config->data_sql->iquest_solution_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_solution_team->cols->solution_id =    "solution_id";
 $config->data_sql->iquest_solution_team->cols->show_at =        "show_at";
+$config->data_sql->iquest_solution_team->cols->solved_at =      "solved_at";
 
 
 

@@ -81,6 +81,7 @@ class Iquest{
         /**
          *  1. Close current task (only if the show_at time did not pass)
          *     Table: task_solution_team.show_at = never           
+         *     Table: task_solution_team.solved_at = now
          *                 
          *  2. Open new clue group
          *     Table: open_cgrp_team.gained_at = now
@@ -113,6 +114,7 @@ class Iquest{
         // 1. Close current task
         sw_log($log_prefix."*** Closing solution (ID={$solution->id})", PEAR_LOG_INFO);
         Iquest_Solution::deschedule($solution->id, $team_id);    
+        Iquest_Solution::mark_solved($solution->id, $team_id);
 
         // 2. Open new clue groups
         $next_cgrp_ids = $solution->get_next_cgrp_ids();
