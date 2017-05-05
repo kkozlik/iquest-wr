@@ -261,12 +261,10 @@ class Iquest{
             }
 
             // If solution is already solved, skip it.
-            // Solution is solved if the team gained the clue group to which the solution points
-// TODO: Need to figure out how to determine whether a solution is solved
-            // if (Iquest_ClueGrp::is_accessible($opening_solution->cgrp_id, $team_id)){
-            //     sw_log($log_prefix."      It's already solved", PEAR_LOG_INFO);
-            //     continue;
-            // }
+            if ($opening_solution->is_solved($team_id)){
+                sw_log($log_prefix."      It's already solved", PEAR_LOG_INFO);
+                continue;
+            }
 
 
             $schedule_solution = true;

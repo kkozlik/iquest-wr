@@ -23,7 +23,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         $opt = array("team_id" => $this->team_id);
         $this->cgroups = Iquest_ClueGrp::fetch($opt);
         $this->cgrp_open = Iquest_ClueGrp::fetch_cgrp_open($opt);
-        $this->solutions = Iquest_Solution::fetch();
+        $this->solutions = Iquest_Solution::fetch($opt);
 
         // create clue => solution edges
         $this->load_clue2solution();
@@ -35,6 +35,10 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             $this->nodes["S_".$solution->id] = 
                 new Iquest_solution_graph_node(Iquest_solution_graph_node::TYPE_SOLUTION, $solution);
 
+            // if team has gained the clue group, mark the solution as solved
+            if ($solution->is_solved($team_id)){
+                $this->nodes["S_".$solution->id]->solved = true;
+            }
 
             $next_cgrp_ids = $solution->get_next_cgrp_ids();
             foreach($next_cgrp_ids as $next_cgrp_id){
@@ -53,35 +57,6 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
                     }
                 }
             }
-
-// TODO: Need to set $this->nodes["S_".$solution->id]->solved flag if the solution is solved
-//       Need to figure out how to determine whether a solution is solved
-
-            // // if there is a clue group that is gained by solving a task solution
-            // if (isset($this->cgroups[$solution->cgrp_id])){
-            //     $cgrp = &$this->cgroups[$solution->cgrp_id];
-
-            //     // if team has gained the clue group, mark the solution as solved
-            //     if ($cgrp->gained_at){
-            //         $this->nodes["S_".$solution->id]->solved = true;
-            //     }
-
-            //     // fetch all clues and create the solution => clue edges
-            //     $clues = $cgrp->get_clues();
-            //     foreach($clues as &$clue){
-            //         if (!isset($this->edges["S_".$solution->id])) $this->edges["S_".$solution->id] = array();
-            //         $this->edges["S_".$solution->id][] = "C_".$clue->id;
-                    
-            //         if (!isset($this->reverse_edges["C_".$clue->id])) $this->reverse_edges["C_".$clue->id] = array();
-            //         $this->reverse_edges["C_".$clue->id][] = "S_".$solution->id;
-            //     }
-            // }
-
-            // // For dead-end waypoints there is no real clue group defined. 
-            // // So check directly the open_cgrp table so we know whether it is solved. 
-            // elseif (isset($this->cgrp_open[$solution->cgrp_id])){
-            //     $this->nodes["S_".$solution->id]->solved = true;
-            // }
         }
 
         // walk through all clue groups
