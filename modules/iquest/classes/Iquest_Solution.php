@@ -64,8 +64,8 @@ class Iquest_Solution extends Iquest_file{
         if (isset($opt['team_id'])){
     
             // Generate virtual table we are joining with
-            $q_join = "select UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at.",
-                              UNIX_TIMESTAMP(t.".$ct->solved_at.") as ".$ct->solved_at.",
+            $q_join = "select t.".$ct->show_at.",
+                              t.".$ct->solved_at.",
                               t.".$ct->team_id.",
                               t.".$ct->solution_id."
                        from ".$tt_name." t 
@@ -73,8 +73,8 @@ class Iquest_Solution extends Iquest_file{
     
             $join[] = " left join (".$q_join.") tt on c.".$cc->id." = tt.".$ct->solution_id;
     
-            $cols .= ", tt.".$ct->show_at." ";
-            $cols .= ", tt.".$ct->solved_at." ";
+            $cols .= ", UNIX_TIMESTAMP(tt.".$ct->show_at.") as ".$ct->show_at;
+            $cols .= ", UNIX_TIMESTAMP(tt.".$ct->solved_at.") as ".$ct->solved_at;
         
             if (!empty($opt['accessible'])){
                 $qw[] = "tt.".$ct->show_at." <= now()";
