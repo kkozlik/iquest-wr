@@ -6,6 +6,8 @@ Team
 - druhe heslo pro read-only login pro pratele na telefonu
 - Prehravani audio/video v prohlizeci (HTML5)
 
+
+- zobrazovat cenu napovedy pred stisknutim tlacitka
  
 HQ
 --
@@ -15,7 +17,6 @@ HQ - prehledova tabulka
 -----------------------
 - blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
   po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
-- Indikovat kde vyprsi deadliny
 
 
 CHROUST

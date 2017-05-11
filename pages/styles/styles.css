@@ -253,6 +253,12 @@ span.coin-animated{
     color: #468847;
 }
 
+.table.summary td.showed,
+.table.summary td.scheduled{
+    background-color: #fcf8e3;
+    color: #c09853;
+}
+
 .table.summary td.unused{
     background-color: #E5E5E5;
     color: #ADADAD;

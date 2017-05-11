@@ -216,12 +216,16 @@
             {else}
             {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`<br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
             {/if}
-            <td class="time-field {if $solution_team[$solution_id][$team.id].solved}solved{/if}" 
+            {$act_sol_team = $solution_team[$solution_id][$team.id]}
+            <td class="time-field {if $act_sol_team.solved}solved{elseif $act_sol_team.showed}showed{elseif $act_sol_team.scheduled}scheduled{/if}" 
                 title="{$solutions.$solution_id.id|escape}"
                 data-toggle="popover" 
                 data-content="{$data_content|escape}"
             >
-            {$solution_team[$solution_id][$team.id].solved_at|escape}
+                {if $act_sol_team.solved}{$act_sol_team.solved_at|escape}
+                {elseif $act_sol_team.showed}Prozrazeno
+                {elseif $act_sol_team.scheduled}{$act_sol_team.time_to_show|escape}
+                {/if}
             </td>
             {foreachelse}
             <td class="unused">&nbsp;</td>

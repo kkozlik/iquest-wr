@@ -426,6 +426,31 @@ class Iquest_Solution extends Iquest_file{
      * @return void
      */
     private function query_team_info($team_id){
+        $opt = array(
+            "team_id" =>        $team_id,
+            "solution_id" =>    $this->id,
+        );
+
+        $res = $this->fetch_solution_team($opt);
+
+        if ($res){
+            $row = reset($res);
+            $this->show_at = $row["show_at"];
+            $this->solved_at = $row["solved_at"];
+        }
+        else{
+            $this->show_at = 0;
+            $this->solved_at = 0;
+        }
+    }
+
+    /**
+     * Query the iquest_solution_team DB table for show_at and solved_at values
+     *
+     * @param array $opt
+     * @return array  [{show_at: ... , solved_at: ...}, ...]
+     */
+    public function fetch_solution_team($opt=array()){
         global $data, $config;
 
         /* table's name */
@@ -434,29 +459,33 @@ class Iquest_Solution extends Iquest_file{
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
         $qw = array();
-        $qw[] = $c->solution_id." = ".$data->sql_format($this->id, "s");
-        $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
+        if (isset($opt['team_id']))      $qw[] = $c->team_id." = ".$data->sql_format($opt['team_id'], "n");
+        if (isset($opt['solution_id']))  $qw[] = $c->solution_id." = ".$data->sql_format($opt['solution_id'], "s");
+
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
-        $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
+        $q = "select $c->team_id,
+                     $c->solution_id,
+                     UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
                      UNIX_TIMESTAMP(".$c->solved_at.") as ".$c->solved_at."
               from ".$t_name.$qw;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
 
-        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $this->show_at = $row[$c->show_at];
-            $this->solved_at = $row[$c->solved_at];
-        }
-        else{
-            $this->show_at = 0;
-            $this->solved_at = 0;
+        $out = array();
+        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+            $out[$row[$c->solution_id]][$row[$c->team_id]] = array(
+                "show_at"   => $row[$c->show_at],
+                "solved_at" => $row[$c->solved_at],
+            );
         }
         $res->free();
+        return $out;
     }
+
 
     /**
      * Load values for $this->next_cgrps array from database

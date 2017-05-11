@@ -263,6 +263,7 @@ class apu_iquest_hq extends apu_base_class{
         $clue_groups = Iquest_ClueGrp::fetch(array("orderby"=>"ordering"));
         $open_cgrps = Iquest_ClueGrp::fetch_cgrp_open();
         $solutions = Iquest_Solution::fetch();
+        $solution_team = Iquest_Solution::fetch_solution_team();
 
         $this->smarty_solutions = array();
         foreach($solutions as $solution){
@@ -329,16 +330,41 @@ class apu_iquest_hq extends apu_base_class{
             foreach($teams as $team){
                 $this->smarty_solution_team[$solution->id][$team->id] = array("solved_at" => "",
                                                                               "solved_at_date" => "",
-                                                                              "solved" => false);
+                                                                              "solved" => false,
+                                                                              "showed" => false,
+                                                                              "scheduled" => false,
+                                                                              "time_to_show" => "",
+                                                                        );
 
                 // If the solution is solved, set the solved date
-                //TODO: $solution->cgrp_id is not set anymore
-                // if (!empty($open_cgrps[$solution->cgrp_id][$team->id])){
-                //     $this->smarty_solution_team[$solution->id][$team->id] =
-                //         array("solved_at"       => date("H:i:s", $open_cgrps[$solution->cgrp_id][$team->id]),
-                //               "solved_at_date"  => date("d.m.Y", $open_cgrps[$solution->cgrp_id][$team->id]),
-                //               "solved"          => true);
-                // }
+                if (!empty($solution_team[$solution->id][$team->id])){
+
+                    $solved =    (bool)$solution_team[$solution->id][$team->id]['solved_at'];
+                    $scheduled = (bool)$solution_team[$solution->id][$team->id]['show_at'];
+                    $showed =    false;
+                    $time_to_show = "";
+
+                    if ($scheduled){
+                        $time_to_show = $solution_team[$solution->id][$team->id]['show_at'] - time();
+                        if ($time_to_show < 0) $showed =true;
+                        else {
+                            $hours = floor($time_to_show / 3600);
+                            $mins = floor($time_to_show / 60 % 60);
+                            $secs = floor($time_to_show % 60);
+                            $time_to_show = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+                        }
+                    }
+
+                    $this->smarty_solution_team[$solution->id][$team->id] =
+                        array("solved_at"       => $solved ? date("H:i:s", $solution_team[$solution->id][$team->id]['solved_at']) : "",
+                              "solved_at_date"  => $solved ? date("d.m.Y", $solution_team[$solution->id][$team->id]['solved_at']) : "",
+                              "solved"          => $solved,
+                              "showed"          => $showed,
+                              "scheduled"       => $scheduled,
+                              "time_to_show"    => $time_to_show,
+                        );
+                }
+
             }
         }
 
