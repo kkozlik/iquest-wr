@@ -277,24 +277,25 @@ class apu_iquest_hq extends apu_base_class{
         foreach($clue_groups as $k => $v){
             $cgrp_solutions = Iquest_Solution::fetch_by_opening_cgrp($v->id);
             $solution_ids = array_keys($cgrp_solutions);
-            // Sort solutions of each clue group by ordening number of the clue group
-            // they are leading to.
 
-            //TODO: $solutions[$a]->cgrp_id is not set anymore
-            // usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
-            //     if (!isset($clue_groups[$solutions[$a]->cgrp_id]) and
-            //         !isset($clue_groups[$solutions[$b]->cgrp_id])){
+            // Sort solutions of each clue group by ordening number of the first
+            // clue group they are leading to.
+            usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
+                $next_cgrp_id_a = reset($solutions[$a]->get_next_cgrp_ids());
+                $next_cgrp_id_b = reset($solutions[$b]->get_next_cgrp_ids());
+
+                if (!isset($clue_groups[$next_cgrp_id_a]) and
+                    !isset($clue_groups[$next_cgrp_id_b])){
                     
-            //         return $solutions[$a]->name > $solutions[$b]->name;
-            //     }
+                    return $solutions[$a]->name > $solutions[$b]->name;
+                }
 
-            //     if (!isset($clue_groups[$solutions[$a]->cgrp_id])) return 1;
-            //     if (!isset($clue_groups[$solutions[$b]->cgrp_id])) return -1;
+                if (!isset($clue_groups[$next_cgrp_id_a])) return 1;
+                if (!isset($clue_groups[$next_cgrp_id_b])) return -1;
 
-            //     return $clue_groups[$solutions[$a]->cgrp_id]->ordering - 
-            //            $clue_groups[$solutions[$b]->cgrp_id]->ordering;
-            // });
-
+                return $clue_groups[$next_cgrp_id_a]->ordering - 
+                       $clue_groups[$next_cgrp_id_b]->ordering;
+            });
             $this->smarty_groups[$k] = $v->to_smarty();
             $this->smarty_groups[$k]['view_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
             $this->smarty_groups[$k]['solution_ids'] = $solution_ids;
