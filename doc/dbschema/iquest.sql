@@ -157,7 +157,6 @@ CREATE TABLE IF NOT EXISTS `options` (
 CREATE TABLE IF NOT EXISTS `task_solution` (
   `solution_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `ref_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
-  `cgrp_id` varchar(64) COLLATE utf8_czech_ci NOT NULL COMMENT 'ID of clue grp that is opened by solving the task',
   `name` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `solution_key` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `filename` varchar(255) COLLATE utf8_czech_ci NOT NULL,
@@ -169,8 +168,7 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `stub` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Indicate dead end waypoint. Could be used e.g. to gain coins only.',
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
-  UNIQUE KEY `solution_key_UNIQUE` (`solution_key`),
-  KEY `fk_task_solution_clue_grp` (`cgrp_id`)
+  UNIQUE KEY `solution_key_UNIQUE` (`solution_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
