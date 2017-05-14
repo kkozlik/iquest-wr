@@ -168,7 +168,6 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `coin_value` decimal(5,2) NOT NULL DEFAULT '0.00',
   `stub` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Indicate dead end waypoint. Could be used e.g. to gain coins only.',
   PRIMARY KEY (`solution_id`),
-  UNIQUE KEY `cgrp_id_UNIQUE` (`cgrp_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
   UNIQUE KEY `solution_key_UNIQUE` (`solution_key`),
   KEY `fk_task_solution_clue_grp` (`cgrp_id`)
@@ -180,7 +179,7 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
 CREATE TABLE `task_solution_nextcgrp` (
 	`solution_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
 	`cgrp_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
-	`condition` TEXT NULL COLLATE 'utf8_czech_ci',
+	`cond` TEXT NULL COLLATE 'utf8_czech_ci',
 	PRIMARY KEY (`solution_id`, `cgrp_id`),
 	INDEX `solution_id` (`solution_id`),
 	INDEX `cgrp_id` (`cgrp_id`)

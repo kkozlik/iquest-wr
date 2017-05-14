@@ -128,7 +128,7 @@ $config->data_sql->iquest_solution_next_cgrp->table_name =            "task_solu
 
 $config->data_sql->iquest_solution_next_cgrp->cols->solution_id =     "solution_id";
 $config->data_sql->iquest_solution_next_cgrp->cols->cgrp_id =         "cgrp_id";
-$config->data_sql->iquest_solution_next_cgrp->cols->condition =       "condition";
+$config->data_sql->iquest_solution_next_cgrp->cols->condition =       "cond";
 
 
 /**

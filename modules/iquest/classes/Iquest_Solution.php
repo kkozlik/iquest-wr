@@ -540,6 +540,20 @@ class Iquest_Solution extends Iquest_file{
         return $cgrp_ids;
     }
 
+    /**
+     * Set next clue groups of the solution
+     *
+     * @param array $next_cgrps array of Iquest_Solution_Next_Cgrp objects
+     * @return void
+     */
+    public function set_next_cgrps($next_cgrps){
+
+        $this->next_cgrps = array();
+        foreach($next_cgrps as $next_cgrp){
+            $this->next_cgrps[$next_cgrp->cgrp_id] = $next_cgrp;
+        }
+    }
+
     function insert(){
         global $data, $config;
 

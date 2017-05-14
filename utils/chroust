@@ -253,8 +253,12 @@ class Iquest_Metadata{
             return $this->data['solution']['id'];
         }
 
-        $next_cgrp = $this->get_solution_next_cgrp();
-        if ($next_cgrp) return self::SOLUTION_ID_PREFIX.$next_cgrp;
+        $next_cgrps = $this->get_solution_next_cgrp();
+        if ($next_cgrps) {
+            $first = reset($next_cgrps);
+
+            return self::SOLUTION_ID_PREFIX.$first->cgrp_id;
+        }
 
         return $this->get_cgrp_id();
     }
@@ -326,12 +330,38 @@ class Iquest_Metadata{
         return round($this->data['solution']['coin_value'],2);
     }
 
+    /**
+     * Return next clue group of a solution
+     *
+     * @return array of Iquest_Solution_Next_Cgrp
+     */
     function get_solution_next_cgrp(){
         if (!isset($this->data['solution']['next_cgrp_id'])){
-            return null;
+            return array();
         }
-        return $this->data['solution']['next_cgrp_id'];
+
+        if (!is_array($this->data['solution']['next_cgrp_id'])){
+            $this->data['solution']['next_cgrp_id'] = array($this->data['solution']['next_cgrp_id']);
+        }
+
+        $output = array();
+        foreach($this->data['solution']['next_cgrp_id'] as $next_cgrp_str){
+            $output[] = $this->parse_next_cgrp($next_cgrp_str);
+        }
+
+        return $output;
     }
+
+    private function parse_next_cgrp($val){
+        $parts = explode(",", $val, 2);
+        if (empty($parts[1])) $condition = null;
+        else                  $condition = trim($parts[1]);
+
+        $next_cgrp_id = trim($parts[0]);
+
+        return new Iquest_Solution_Next_Cgrp($next_cgrp_id, $condition);
+    }
+
 
     /**
      *  Return number of hidden clues
@@ -510,6 +540,16 @@ class Iquest_Metadata{
         try                                     {$cgrp_name=$this->get_cgrp_name();}
         catch(Iquest_InvalidConfigException $e) {$cgrp_name = "---";}
 
+        $next_cgrps = $this->get_solution_next_cgrp();
+        $next_cgrps_str = array();
+
+        foreach($next_cgrps as $next_cgrp){
+            if ($next_cgrp->condition) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
+            else                       $next_cgrps_str[] = $next_cgrp->cgrp_id;
+        }
+        $next_cgrps_str = implode(", ", $next_cgrps_str);
+
+
         $str .= "** CLUE GROUP:\n";
         $str .= "   ID: ".$cgrp_id.
                   " NAME: ".$cgrp_name.
@@ -525,7 +565,7 @@ class Iquest_Metadata{
         $str .= "   TIMEOUT: ".$this->get_solution_timeout().
                   " COUNTDOWN START: ".$this->get_solution_countdown_start().
                   " COIN VALUE: ".$this->get_solution_coin_value().
-                  " NEXT CGRP ID: ".$this->get_solution_next_cgrp()."\n";
+                  " NEXT CGRP IDS: ".$next_cgrps_str."\n";
 
         $str .= "** CLUES:\n";
         $str .= "   NR HIDDEN CLUES: ".$this->get_clue_hidden_nr()."\n";
@@ -569,6 +609,7 @@ class Chroust{
             $config->data_sql->iquest_clue2solution->table_name,
             $config->data_sql->iquest_hint->table_name,
             $config->data_sql->iquest_solution->table_name,
+            $config->data_sql->iquest_solution_next_cgrp->table_name,
             $config->data_sql->iquest_option->table_name,
         );
 
@@ -751,7 +792,7 @@ class Chroust{
         $key = $metadata->get_solution_key_canon();
         $timeout = $metadata->get_solution_timeout();
         $countdown_start = $metadata->get_solution_countdown_start();
-        $next_cgrp_id = $metadata->get_solution_next_cgrp();
+        $next_cgrps = $metadata->get_solution_next_cgrp();
         $coin_value = $metadata->get_solution_coin_value();
 
         if (!$filename and $timeout > 0){
@@ -759,28 +800,34 @@ class Chroust{
         }
 
         $stub = false;
-        if (!$next_cgrp_id){
+        if (!$next_cgrps){
             $stub = true;
-            $next_cgrp_id = $solution_id."#STUB"; // generate and ID for clue group.
-                                              // This ID does not exists in clue_group table
-                                              // but is used in open_cgrp table to mark
-                                              // gained solutions. 
+            // TODO: is it still needed?
+            // $next_cgrps = $solution_id."#STUB"; // generate and ID for clue group.
+            //                                   // This ID does not exists in clue_group table
+            //                                   // but is used in open_cgrp table to mark
+            //                                   // gained solutions. 
         }
+
+        $next_cgrps_str = array();
+        foreach($next_cgrps as $next_cgrp){
+            if ($next_cgrp->condition) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
+            else                       $next_cgrps_str[] = $next_cgrp->cgrp_id;
+        }
+        $next_cgrps_str = implode(", ", $next_cgrps_str);
 
         self::$summary['keys'][] = array("name" => $name,
                                          "key"  => $metadata->get_solution_key(),
                                          "ordering" => $metadata->get_cgrp_order(),
                                          "coin_value" => $coin_value,
                                          "timeout" =>    $timeout,
-                                         "next_cgrp_id" => $stub ? null : $next_cgrp_id);
+                                         "next_cgrp_id" => $next_cgrps ? $next_cgrps_str :  null);
 
         $solution = new Iquest_Solution($solution_id, $ref_id, 
                 $filename, $content_type, null, $name, $timeout, 
                 $countdown_start, $key, $coin_value, $stub);
 
-//TODO: next_cgrp_id should be array
-//TODO: set next_cgrp
-//        $solution->set_next_cgrp($next_cgrp_id);
+        $solution->set_next_cgrps($next_cgrps);
 
         $solution->insert();
         return $solution;
@@ -1075,11 +1122,13 @@ class Chroust{
         
         // verify that next_cgrp_id for each solution is valid (exists)
         foreach($solutions as $solution){
-            if (!$solution->stub and !isset($cgrps[$solution->cgrp_id])){
-                throw new Iquest_VerifyFailedException(
-                            "Task solution '{$solution->id}' reference non existing clue group '{$solution->cgrp_id}'. Make sure that the respective directory of clue group contain a clue file.",
-                            array(Iquest_VerifyFailedException::CLUE_GRP_IDS)
-                );            
+            foreach($solution->get_next_cgrp_ids() as $next_cgrp_id){
+                if (!isset($cgrps[$next_cgrp_id])){
+                    throw new Iquest_VerifyFailedException(
+                                "Task solution '{$solution->id}' reference non existing clue group '{$next_cgrp_id}'. Make sure that the respective directory of clue group contain a clue file.",
+                                array(Iquest_VerifyFailedException::CLUE_GRP_IDS)
+                    );
+                }
             }
         }
         
@@ -1340,7 +1389,7 @@ class Chroust{
                                     'key'           => "Key ", 
                                     'coin_value'    => "Coin ", 
                                     'timeout'       => "Timeout ",
-                                    'next_cgrp_id'  => "NextCgrp ", 
+                                    'next_cgrp_id'  => "NextCgrps ", 
                                     );
             $fields_widths = self::get_field_widths(self::$summary['keys'], $fields_headers);
 
