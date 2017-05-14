@@ -191,9 +191,34 @@ class Iquest_Events{
                 }
             }   
 
+            if (isset($this->data['active_clues'])){
+                $active_cgrps = array();
+                foreach($this->data['active_clues'] as $clue){
+                    $active_cgrps[$clue['cgrp_id']] = $clue['cgrp_id'];
+                }
+
+                $active_tasks = array();
+                foreach($active_cgrps as $cgrp_id){
+                    $clue_grp = &Iquest_ClueGrp::by_id($cgrp_id);
+
+                    $active_task = array();
+                    if ($clue_grp){
+                        $active_task['text'] = $clue_grp->name;
+                        if (isset($opt['cgrp_url'])){
+                            $active_task['url']  = str_replace("<id>", RawURLEncode($clue_grp->ref_id), $opt['cgrp_url']);
+                        }
+                    }
+                    else{
+                        $active_task['text'] = $cgrp_id;
+                    }
+                    $active_tasks[] = $active_task;
+                }
+
+                $out['active tasks']['values'] = $active_tasks;
+            }
+
             if (isset($this->data['active_solutions'])){
                 $active_solutions = array();
-                $active_tasks = array();
                 
                 foreach($this->data['active_solutions'] as $solution){
                     $active_solution = array();
@@ -202,27 +227,9 @@ class Iquest_Events{
                         $active_solution['url']  = str_replace("<id>", RawURLEncode($solution['ref_id']), $opt['solution_url']);
                     }
                     $active_solutions[] = $active_solution;
-
-                    if (!$solution['stub']){
-                        $clue_grp = &Iquest_ClueGrp::by_id($solution['cgrp_id']);
-
-                        $active_task = array();
-                        if ($clue_grp){
-                            $active_task['text'] = $clue_grp->name;
-                            if (isset($opt['cgrp_url'])){
-                                $active_task['url']  = str_replace("<id>", RawURLEncode($clue_grp->ref_id), $opt['cgrp_url']);
-                            }
-                        }
-                        else{
-                            $active_task['text'] = $solution['cgrp_id'];
-                        }
-                        $active_tasks[] = $active_task;
-                    }
                 }
-                $out['active tasks']['values'] = $active_tasks;
                 $out['active keys']['values'] = $active_solutions;
             }
-
 
             break;
         case self::COIN_SPEND:

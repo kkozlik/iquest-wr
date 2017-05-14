@@ -640,6 +640,7 @@ class apu_iquest extends apu_base_class{
 
             $graph = new Iquest_solution_graph($this->team_id);
             $event_data["active_solutions"] = $graph->get_active_solutions();
+            $event_data["active_clues"] = $graph->get_active_clues();
 
             Iquest_Events::add(Iquest_Events::KEY,
                                false,

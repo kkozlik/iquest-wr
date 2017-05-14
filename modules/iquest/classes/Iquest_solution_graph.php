@@ -417,6 +417,38 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         return $out;
     }
 
+    /**
+     *  Get clues which team already gained and that are leading to a solution 
+     *  that is not solved yet
+     */         
+    public function get_active_clues(){
+        $out = array();
+
+        // walk throught all graph nodes
+        foreach($this->nodes as &$node){
+            // skip those nodes that are not solutions ot that are already solved
+            if (!$node->is_solution()) continue;
+            if ($node->solved) continue;
+
+            // walk through all nodes that points to current node
+            $node_id = $node->get_node_id();
+            if (isset($this->reverse_edges[$node_id])){
+                foreach($this->reverse_edges[$node_id] as $node2_id){
+                    // If the node is not clue or if it is not gained yet, skip it
+                    $node2 = $this->nodes[$node2_id];
+                    if (!$node2->is_clue()) continue;
+                    if (!$node2->gained) continue;
+                    
+                    // add the solution to the output
+                    $obj = $node2->get_obj();
+                    $out[$obj->id] = $obj;
+                }
+            }
+        }
+        
+        return $out;
+    }
+
 
     /**
      *  Generate graph representation in DOT language (for graphviz)
