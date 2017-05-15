@@ -36,20 +36,23 @@ class Iquest{
         // Make sure it's time to start contest
         if (!self::is_started()) return;
 
-        $cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+        $cgrp_ids = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_IDS);
 
         $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
         sw_log($log_prefix."*** Starting contest for Team", PEAR_LOG_INFO);
 
-        // 1. Open new clue group
-        self::_open_cgrp($cgrp_id, $team_id, $log_prefix);
+        foreach($cgrp_ids as $cgrp_id)
+        {
+            // 1. Open new clue group
+            self::_open_cgrp($cgrp_id, $team_id, $log_prefix);
 
-        // 2. Schedule show time for new hints
-        self::_schedule_new_hints($cgrp_id, $team_id, $log_prefix);
+            // 2. Schedule show time for new hints
+            self::_schedule_new_hints($cgrp_id, $team_id, $log_prefix);
 
-        // 3. If team gained all clues that lead to some task_solution
-        //    schedule showing of the solution
-        self::_schedule_solution($cgrp_id, $team_id, $log_prefix);
+            // 3. If team gained all clues that lead to some task_solution
+            //    schedule showing of the solution
+            self::_schedule_solution($cgrp_id, $team_id, $log_prefix);
+        }
     }
 
 

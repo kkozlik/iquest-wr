@@ -40,9 +40,6 @@ NICE TO HAVE
 
 BRANCH:
 -------
-* dovolit pri zadani kodu otevrit nekolik cgrp
-  - vyresit TODO z kodu
-  - doresit zmeny v chroustovi
-  - dovolit otevrit nekolik cgrp pri startu souteze
 * zobrazit nejakou cgrp az po zadani nekolika kodu
+  - vyresit TODO z kodu
 

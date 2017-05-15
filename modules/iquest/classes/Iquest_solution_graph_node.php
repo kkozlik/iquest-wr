@@ -55,7 +55,7 @@ class Iquest_solution_graph_node{
             $dot .=  $this->solved ? ",color=lightgreen,style=filled" : ""; 
         }
         else{
-            $start_cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+            $start_cgrp_ids = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_IDS);
             $final_cgrp_id = Iquest_Options::get(Iquest_Options::FINAL_CGRP_ID);
             $giveitup_cgrp_id = Iquest_Options::get(Iquest_Options::REVEAL_GOAL_CGRP_ID);
 
@@ -66,7 +66,7 @@ class Iquest_solution_graph_node{
                 $dot .= ",color=cyan";
             }
             else{
-                if ($this->obj->cgrp_id == $start_cgrp_id){
+                if (in_array($this->obj->cgrp_id, $start_cgrp_ids)){
                     $dot .= "shape=doublecircle";
                 }
                 elseif ($this->obj->cgrp_id == $final_cgrp_id){

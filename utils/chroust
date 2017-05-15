@@ -92,7 +92,7 @@ class Iquest_Metadata{
 
     /** Name of directives in ini file that set the option */
     public static $option_2_ini_file_directive = array(
-        Iquest_Options::INITIAL_CGRP_ID       => "start",
+        Iquest_Options::INITIAL_CGRP_IDS      => "start",
         Iquest_Options::FINAL_CGRP_ID         => "final",
         Iquest_Options::REVEAL_GOAL_CGRP_ID   => "reveal_goal",
     ); 
@@ -1021,7 +1021,15 @@ class Chroust{
             self::insert_cgrp($metadata);
 
             if ($metadata->is_start_cgrp()){
-                Iquest_Options::set(Iquest_Options::INITIAL_CGRP_ID, $metadata->get_cgrp_id());
+                try{
+                    $initial_cgrps = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_IDS);
+                }
+                catch(RuntimeException $e){
+                    $initial_cgrps = array();
+                }
+
+                $initial_cgrps[] = $metadata->get_cgrp_id();
+                Iquest_Options::set(Iquest_Options::INITIAL_CGRP_IDS, $initial_cgrps);
             }
     
             if ($metadata->is_reveal_goal_cgrp()){

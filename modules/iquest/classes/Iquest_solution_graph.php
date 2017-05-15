@@ -208,24 +208,27 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
         $queue = array();
 
-        $initial_cgrp_id = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_ID);
+        $initial_cgrp_ids = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_IDS);
 
-        if (!isset($this->cgroups[$initial_cgrp_id])){
-            throw new UnexpectedValueException("Invalid ID of initial clue group: '$initial_cgrp_id'");
+        foreach($initial_cgrp_ids as $initial_cgrp_id)
+        {
+            if (!isset($this->cgroups[$initial_cgrp_id])){
+                throw new UnexpectedValueException("Invalid ID of initial clue group: '$initial_cgrp_id'");
+            }
+
+            $clues = $this->cgroups[$initial_cgrp_id]->get_clues();
+
+            if (!$clues){
+                throw new UnexpectedValueException("Initial clue group: '$initial_cgrp_id' does not contain any clues");
+            }
+
+            //add nodes of initial clue group to the queue
+            foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
         }
-
-        $clues = $this->cgroups[$initial_cgrp_id]->get_clues();
-
-        if (!$clues){
-            throw new UnexpectedValueException("Initial clue group: '$initial_cgrp_id' does not contain any clues");
-        }
-
-        //add nodes of initial clue group to the queue
-        foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
 
         sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
 
-        // as long as there are nodes in in the queue, fetch node from the queue...
+        // as long as there are nodes in the queue, fetch node from the queue...
         while(!is_null($node_id = array_shift($queue))){
             // and set it's visited flag to true
             $this->nodes[$node_id]->visited = true;
