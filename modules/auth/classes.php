@@ -281,8 +281,6 @@ class iquest_hq_auth extends iquest_auth{
         $credentials = Iquest_Options::get(Iquest_Options::HQ_LOGIN);
 
         if ($credentials){
-            $credentials = json_decode($credentials, true);
-
             // Authenticate by credentials from metadata.ini file
             if (isset($credentials[$username]) and 
                 $credentials[$username] == md5($password)) return $username;

@@ -89,7 +89,7 @@ class Iquest_Options{
 
         self::$options = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            self::$options[$row[$c->name]] = $row[$c->value];
+            self::$options[$row[$c->name]] = json_decode($row[$c->value], true);
         }
         $res->free();
 
@@ -162,7 +162,7 @@ class Iquest_Options{
                 ".$c->value.")
               values(
                 ".$data->sql_format($option_name,  "s").",
-                ".$data->sql_format($option_value, "s").")";
+                ".$data->sql_format(json_encode($option_value), "s").")";
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);

@@ -520,7 +520,7 @@ class Iquest_Metadata{
             $hq_logins[$username] = $password;
         }
 
-        Iquest_Options::set(Iquest_Options::HQ_LOGIN, json_encode($hq_logins));
+        Iquest_Options::set(Iquest_Options::HQ_LOGIN, $hq_logins);
     }
 
     function to_string(){
@@ -666,7 +666,7 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::KEY_PREFIX, "");
         Iquest_Options::set(Iquest_Options::LOGO, "");
         Iquest_Options::set(Iquest_Options::GAME_NAME, "");
-        Iquest_Options::set(Iquest_Options::HQ_LOGIN, "[]");
+        Iquest_Options::set(Iquest_Options::HQ_LOGIN, array());
     }
 
     /**
