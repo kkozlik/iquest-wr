@@ -21,6 +21,7 @@ HQ - prehledova tabulka
 
 CHROUST
 -------
+- hlidat unikatnost klice jeste pred 'insert into task_solution' a zahlasit smysluplnou chybu pokud klic neni unikatni
 
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
 
@@ -41,5 +42,7 @@ NICE TO HAVE
 BRANCH:
 -------
 * zobrazit nejakou cgrp az po zadani nekolika kodu
+  - naucit chrousta cist podminky a kontrolovat jejich syntaxy
   - vyresit TODO z kodu
+* blbe se zobrazujou vazby v zjednodusenem grafu
 

@@ -120,7 +120,7 @@ class Iquest{
         Iquest_Solution::mark_solved($solution->id, $team_id);
 
         // 2. Open new clue groups
-        $next_cgrp_ids = $solution->get_next_cgrp_ids();
+        $next_cgrp_ids = $solution->get_next_cgrp_ids_cond($team_id);
         foreach($next_cgrp_ids as $next_cgrp_id){
             self::_open_cgrp($next_cgrp_id, $team_id, $log_prefix);
         }

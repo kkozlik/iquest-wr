@@ -530,14 +530,41 @@ class Iquest_Solution extends Iquest_file{
      * @return array
      */
     public function get_next_cgrp_ids(){
+
+        $cgrp_ids = array();
+        foreach($this->get_next_cgrps() as $next_cgrp) $cgrp_ids[] = $next_cgrp->cgrp_id;
+
+        return $cgrp_ids;
+    }
+
+    /**
+     * Get array of IDs of clue groups that are gained by entering key of this solution
+     * and met their condition
+     *
+     * @param int $team_id
+     * @return array
+     */
+    public function get_next_cgrp_ids_cond($team_id){
+
+        $cgrp_ids = array();
+        foreach($this->get_next_cgrps() as $next_cgrp) {
+            if ($next_cgrp->evalueateCondition($this, $team_id)) $cgrp_ids[] = $next_cgrp->cgrp_id;
+        }
+
+        return $cgrp_ids;
+    }
+
+    /**
+     * Get array of Iquest_Solution_Next_Cgrp objects that are gained by entering key of this solution
+     *
+     * @return array
+     */
+    public function get_next_cgrps(){
         if (is_null($this->next_cgrps)){
             $this->load_next_cgrps();
         }
 
-        $cgrp_ids = array();
-        foreach($this->next_cgrps as $next_cgrp) $cgrp_ids[] = $next_cgrp->cgrp_id;
-
-        return $cgrp_ids;
+        return $this->next_cgrps;
     }
 
     /**
