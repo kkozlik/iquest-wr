@@ -15,6 +15,7 @@
 * Possibility to open multiple clue groups when a key is entered
 * Possibility to open multiple clue groups when a the contest starts
 * Open clue groups conditionaly whena key is entered
+* Display hint price on the 'buy hint' button
 
 rel 0.1.6
 * HQ: table - hyperlinks in popup info 

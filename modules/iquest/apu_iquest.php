@@ -236,6 +236,9 @@ class apu_iquest extends apu_base_class{
             $smarty_cgrp['buy_confirmation'] = str_replace("<price>",
                                                            $hint_for_sale->price,
                                                            $lang_str['iquest_conf_buy_hint']);
+            $smarty_cgrp['hint_price'] = str_replace("<price>",
+                                                     $hint_for_sale->price,
+                                                     $lang_str['iquest_btn_buy_hint_price']);
         }
 
 
@@ -508,6 +511,9 @@ class apu_iquest extends apu_base_class{
                     $smarty_group['buy_confirmation'] = str_replace("<price>",
                                                                     $hint_for_sale->price,
                                                                     $lang_str['iquest_conf_buy_hint']);
+                    $smarty_group['hint_price'] = str_replace("<price>",
+                                                              $hint_for_sale->price,
+                                                              $lang_str['iquest_btn_buy_hint_price']);
                 }
                 $this->smarty_groups[$k] = $smarty_group;
             }

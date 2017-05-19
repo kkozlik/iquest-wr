@@ -59,7 +59,7 @@
         <div class="brand">{$clue_grp.name|escape}</div>
         <div class="pull-left">{call print_minimized_clues clue_grp=$clue_grp}</div>
         {if $clue_grp.hints_for_sale}
-        <div class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a></div>
+        <div class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$clue_grp.hint_price|escape}</a></div>
         {/if}
         {if $clue_grp.new}
         <div class="pull-right"><span class="new"></span></div>
@@ -209,7 +209,7 @@
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
-        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint}</a>{/if}
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>
