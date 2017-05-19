@@ -706,6 +706,11 @@ class Chroust{
         if (isset(self::$id2ref_id['cgrp'][$cgrp_id])) $ref_id = self::$id2ref_id['cgrp'][$cgrp_id];
         else                                           $ref_id = rfc4122_uuid();
         
+        $id_dup_cgrp = Iquest_ClueGrp::fetch(array("id"=>$cgrp_id));
+        if ($id_dup_cgrp){
+            throw new Iquest_InvalidConfigException("There are two clue groups sharing same ID: '$cgrp_id'.");
+        }
+
         $cgrp = new Iquest_ClueGrp($cgrp_id, $ref_id, $cgrp_name, $cgrp_order);
         $cgrp->insert();
         return $cgrp;
@@ -797,6 +802,16 @@ class Chroust{
 
         if (!$filename and $timeout > 0){
             throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
+        }
+
+        $id_dup_solution = Iquest_Solution::by_id($solution_id);
+        if ($id_dup_solution){
+            throw new Iquest_InvalidConfigException("There are two solutions sharing same ID: '$solution_id'.");
+        }
+
+        $key_dup_solution = Iquest_Solution::by_key($key);
+        if ($key_dup_solution){
+            throw new Iquest_InvalidConfigException("Solution '{$key_dup_solution->id}' and '$solution_id' have same key configured ($key).");
         }
 
         $next_cgrps_str = array();

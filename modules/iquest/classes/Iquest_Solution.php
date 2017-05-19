@@ -24,6 +24,20 @@ class Iquest_Solution extends Iquest_file{
         return Iquest_key::obj_by_key($key, get_called_class());
     }
 
+    /**
+     *  Instantiate solution by id
+     */         
+    static function &by_id($id){
+        $objs = self::fetch(array("id"=>$id));
+        if (!$objs) {
+            $null = null; //reference have to be returned
+            return $null;
+        }
+        
+        $obj = reset($objs);
+        return $obj;
+    }
+
     static function canonicalize_key($key){
         return Iquest_key::canonicalize_key($key, get_called_class());
     }
@@ -58,6 +72,7 @@ class Iquest_Solution extends Iquest_file{
         $join = array();
         $cols = "";
         $order = "";
+        if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
         if (isset($opt['team_id'])){

@@ -19,9 +19,8 @@ HQ - prehledova tabulka
 
 CHROUST
 -------
-- hlidat unikatnost klice jeste pred 'insert into task_solution' a zahlasit smysluplnou chybu pokud klic neni unikatni
-
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
+
 
 INSTALL
 -------
