@@ -58,10 +58,10 @@ class Iquest_Solution_Next_Cgrp{
      *
      * @return array
      */
-    private function parseCondition(){
+    public function parseCondition(){
 
         // Get function name and params from $this->condition string
-        if (!preg_match("/(?P<function>[a-z0-9_]+) *\\((?P<params>.*)\\)/i", $this->condition, $matches)){
+        if (!preg_match('/^(?P<function>[a-z0-9_]+) *\\((?P<params>.*)\\)$/i', $this->condition, $matches)){
             throw new Exception("Invalid condtition expression");
         }
 

@@ -544,8 +544,8 @@ class Iquest_Metadata{
         $next_cgrps_str = array();
 
         foreach($next_cgrps as $next_cgrp){
-            if ($next_cgrp->condition) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
-            else                       $next_cgrps_str[] = $next_cgrp->cgrp_id;
+            if ($next_cgrp->isConditional()) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
+            else                             $next_cgrps_str[] = $next_cgrp->cgrp_id;
         }
         $next_cgrps_str = implode(", ", $next_cgrps_str);
 
@@ -811,8 +811,19 @@ class Chroust{
 
         $next_cgrps_str = array();
         foreach($next_cgrps as $next_cgrp){
-            if ($next_cgrp->condition) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
-            else                       $next_cgrps_str[] = $next_cgrp->cgrp_id;
+            if ($next_cgrp->isConditional()) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
+            else                             $next_cgrps_str[] = $next_cgrp->cgrp_id;
+
+            if ($next_cgrp->isConditional()){
+                try{
+                    $next_cgrp->parseCondition();
+                }
+                catch(Exception $e){
+                    throw new Iquest_VerifyFailedException(
+                                "next_cgrp_id of solution '$solution_id' contain invalid condition '{$next_cgrp->condition}'. ".$e->getMessage()
+                    );            
+                }
+            }
         }
         $next_cgrps_str = implode(", ", $next_cgrps_str);
 
