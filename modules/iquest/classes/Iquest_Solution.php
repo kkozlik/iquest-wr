@@ -13,7 +13,6 @@ class Iquest_Solution extends Iquest_file{
     public $timeout;
     public $countdown_start;
     public $coin_value;
-    public $stub;
 
     public $show_at = null;
     public $solved_at = null;
@@ -101,8 +100,7 @@ class Iquest_Solution extends Iquest_file{
                      c.".$cc->comment.",
                      c.".$cc->name.",
                      c.".$cc->key.",
-                     c.".$cc->coin_value.",
-                     c.".$cc->stub.
+                     c.".$cc->coin_value.
                      $cols." 
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
@@ -127,7 +125,6 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->countdown_start],
                                                        $row[$cc->key],
                                                        $row[$cc->coin_value],
-                                                       $row[$cc->stub],
                                                        $row[$ct->show_at],
                                                        $row[$ct->solved_at]);
         }
@@ -184,7 +181,6 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->name.",
                      s.".$cs->key.",
                      s.".$cs->coin_value.",
-                     s.".$cs->stub.",
                      (".$q2.") as ".$ct->show_at.",
                      (".$q3.") as ".$ct->solved_at."
               from ".$ts_name." s
@@ -207,7 +203,6 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->countdown_start],
                                                        $row[$cs->key],
                                                        $row[$cs->coin_value],
-                                                       $row[$cs->stub],
                                                        $row[$ct->show_at],
                                                        $row[$ct->solved_at]);
         }
@@ -363,7 +358,7 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
-                         $timeout, $countdown_start, $key, $coin_value, $stub, $show_at=null, $solved_at=null){
+                         $timeout, $countdown_start, $key, $coin_value, $show_at=null, $solved_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
         
         $this->name = $name;
@@ -371,7 +366,6 @@ class Iquest_Solution extends Iquest_file{
         $this->countdown_start = $countdown_start;
         $this->key = $key;
         $this->coin_value = $coin_value;
-        $this->stub = $stub;
         $this->show_at = $show_at;
         $this->solved_at = $solved_at;
     }
@@ -600,7 +594,6 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->name.",
                     ".$c->key.",
                     ".$c->coin_value.",
-                    ".$c->stub.",
                     ".$c->countdown_start.",
                     ".$c->timeout."
               )
@@ -613,8 +606,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->name,            "s").",
                     ".$data->sql_format($this->key,             "s").",
                     ".$data->sql_format($this->coin_value,      "n").",
-                    ".$data->sql_format($this->stub,            "n").",
-                    ".$data->sql_format($this->countdown_start,   "s").",
+                    ".$data->sql_format($this->countdown_start, "s").",
                     sec_to_time(".$data->sql_format($this->timeout, "n").")
               )";
 

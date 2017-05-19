@@ -128,18 +128,14 @@ class Iquest{
         self::gain_coins($team_id, $solution->coin_value);
 
         // 3. Schedule show time for new hints
-        if (!$solution->stub){
-            foreach($next_cgrp_ids as $next_cgrp_id){
-                self::_schedule_new_hints($next_cgrp_id, $team_id, $log_prefix);
-            }
+        foreach($next_cgrp_ids as $next_cgrp_id){
+            self::_schedule_new_hints($next_cgrp_id, $team_id, $log_prefix);
         }
 
         // 4. If team gained all clues that lead to some task_solution
         //    schedule showing of the solution
-        if (!$solution->stub){
-            foreach($next_cgrp_ids as $next_cgrp_id){
-                self::_schedule_solution($next_cgrp_id, $team_id, $log_prefix);
-            }
+        foreach($next_cgrp_ids as $next_cgrp_id){
+            self::_schedule_solution($next_cgrp_id, $team_id, $log_prefix);
         }
                 
         // 5. Hints that has not been displayed and are not needed any more

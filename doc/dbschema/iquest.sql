@@ -165,7 +165,6 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `timeout` time NOT NULL,
   `countdown_start` enum('all','single') COLLATE utf8_czech_ci NOT NULL DEFAULT 'all' COMMENT 'Specify when to start the timeout countdown. The default value ''all'' means it should start counting down once all clues pointed to this solution are gained. If the value is set to ''single'' it''s sufficient to gain just one clue pointing to this solution.',
   `coin_value` decimal(5,2) NOT NULL DEFAULT '0.00',
-  `stub` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Indicate dead end waypoint. Could be used e.g. to gain coins only.',
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
   UNIQUE KEY `solution_key_UNIQUE` (`solution_key`)

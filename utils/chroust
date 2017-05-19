@@ -799,16 +799,6 @@ class Chroust{
             throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
         }
 
-        $stub = false;
-        if (!$next_cgrps){
-            $stub = true;
-            // TODO: is it still needed?
-            // $next_cgrps = $solution_id."#STUB"; // generate and ID for clue group.
-            //                                   // This ID does not exists in clue_group table
-            //                                   // but is used in open_cgrp table to mark
-            //                                   // gained solutions. 
-        }
-
         $next_cgrps_str = array();
         foreach($next_cgrps as $next_cgrp){
             if ($next_cgrp->isConditional()) $next_cgrps_str[] = "*{$next_cgrp->cgrp_id}";
@@ -836,7 +826,7 @@ class Chroust{
 
         $solution = new Iquest_Solution($solution_id, $ref_id, 
                 $filename, $content_type, null, $name, $timeout, 
-                $countdown_start, $key, $coin_value, $stub);
+                $countdown_start, $key, $coin_value);
 
         $solution->set_next_cgrps($next_cgrps);
 
