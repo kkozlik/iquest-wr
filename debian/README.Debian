@@ -1,6 +1,13 @@
-iquest for Debian
------------------
+Create database schema:
+-----------------------
 
-<possible notes regarding this package - if none, delete this file>
+Execute comamnd:
 
- -- Karel Kozlík <kk@unknown>  Sun, 30 Jun 2013 19:30:28 +0200
+    mysql < /usr/share/doc/iquest/dbschema/iquest.sql
+
+to create iquest database and the DB table.
+
+Manualy create an user in your mysql server that have access to the iquest 
+database and that is allowed for at least: SELECT, INSERT, UPDATE, DELETE
+
+Edit file:  /etc/iquest/config.php and configure your DB details there.
