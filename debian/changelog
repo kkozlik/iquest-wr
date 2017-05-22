@@ -1,3 +1,27 @@
+iquest (0.2.0) stable; urgency=medium
+
+  * Possibility to show contest graph in team interface
+  * Possibility to show team place among other teams in the team interface
+  * HQ: contest graph - can display graph in simplified form
+  * HQ: event log - allow to filter the log by multiple teams
+  * HQ: table - allow to sort the table by team name and team rank 
+  * HQ: event log - improvements of the 'key_entered' log events
+  * HQ: team ranks - graph improvements
+  * HQ: team ranks - the rank table is updated to reflect lask time selected in the graph
+  * chroust: possibility to manually specify the wallet_active flag
+  * Key prefix (initial "I.Q:") is no more hardcoded but can be configured via .ini files
+  * metadata: if point_to directive contain list of values, the list can now contain spaces
+            e.g. point_to[]=ID1, ID2, ID3 is same as point_to[]=ID1,ID2,ID3
+  * metadata: possibility to specify name of file containing the logo displayed in top left corner
+  * chroust: Username/password for HQ interface shall be defined in metadata file now
+  * Possibility to open multiple clue groups when a key is entered
+  * Possibility to open multiple clue groups when a the contest starts
+  * Open clue groups conditionaly whena key is entered
+  * Display hint price on the 'buy hint' button
+  * Chroust: checks for keys/IDs duplicities
+
+ --  <kk@kk-iquest.kufr.cz>  Mon, 22 May 2017 20:38:10 +0200
+
 iquest (0.1.6) stable; urgency=low
 
   * HQ: table - hyperlinks in popup info 
