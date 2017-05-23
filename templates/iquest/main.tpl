@@ -19,7 +19,7 @@
             {elseif $clue.type=="special"}<span class="questionmark"></span>
             {else}<span class="finder"></span>{/if}
         </th>
-        <th class="link"><a href="{$clue.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+        <th class="link"><a href="{$clue.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
             <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>
@@ -36,7 +36,7 @@
             {$lang_str.iquest_hint}: {$hint.filename|escape}
             {if $hint.new}<span class="new"></span>{/if}
         </th>
-        <th class="link"><a href="{$hint.file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
             <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>

@@ -37,10 +37,12 @@ class Iquest_file{
         case "jpg":     return "image/jpeg";
         case "png":     return "image/png";
         case "gif":     return "image/gif";
+        case "svg":     return "image/svg+xml";
         case "mp3":     return "audio/mpeg";
         case "wav":     return "audio/wav";
         case "avi":     return "video/x-msvideo";
         case "mp4":     return "video/mp4";
+        case "pdf":     return "application/pdf";
         default:        return "application/octet-string";
         }
         
@@ -76,8 +78,10 @@ class Iquest_file{
 
     /**
      *  Flush content of the file for download
+     * 
+     *  @param bool $download   Specify whether include the header causing file download dialog popup
      */         
-    function flush_content(){
+    function flush_content($download = false){
         global $config;
         
         $filename = $config->iquest_data_dir.$this->filename;
@@ -86,7 +90,7 @@ class Iquest_file{
 
         header('Content-Description: File Transfer');
         header('Content-Type: '.$this->content_type);
-        header('Content-Disposition: attachment; filename='.basename($filename));
+        if ($download) header('Content-Disposition: attachment; filename='.basename($filename));
         header('Content-Transfer-Encoding: binary');
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + $offset) . " GMT");
         header("Cache-Control: max-age=$offset, must-revalidate");

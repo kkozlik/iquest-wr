@@ -46,6 +46,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
 
     protected $team_id;
     protected $ref_id;
+    protected $download = false;
     protected $clue;
     protected $clue_grp;
     protected $smarty_clues;
@@ -113,7 +114,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
         
     function action_get_clue(){
         $this->controler->disable_html_output();
-        $this->clue->flush_content();
+        $this->clue->flush_content($this->download);
         return true;
     }
 
@@ -131,6 +132,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
         foreach($clues as $k => $v){
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+            $smarty_clue['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id)."&download=1", false);
             $this->smarty_clues[$k] = $smarty_clue;
         }
 
@@ -148,6 +150,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
     function determine_action(){
         if (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_clue",
                                  'validate_form'=>true,
                                  'reload'=>false,

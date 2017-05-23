@@ -46,6 +46,7 @@ class apu_iquest_hq extends apu_base_class{
 
     protected $sorter=null;
     protected $ref_id;
+    protected $download = false;
     protected $team_id;
 
     protected $hint;
@@ -118,19 +119,19 @@ class apu_iquest_hq extends apu_base_class{
     
     function action_get_clue(){
         $this->controler->disable_html_output();
-        $this->clue->flush_content();
+        $this->clue->flush_content($this->download);
         return true;
     }
 
     function action_get_hint(){
         $this->controler->disable_html_output();
-        $this->hint->flush_content();
+        $this->hint->flush_content($this->download);
         return true;
     }
 
     function action_get_solution(){
         $this->controler->disable_html_output();
-        $this->solution->flush_content();
+        $this->solution->flush_content($this->download);
         return true;
     }
 
@@ -173,9 +174,11 @@ class apu_iquest_hq extends apu_base_class{
 
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+            $smarty_clue['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id)."&download=1", false);
 
             foreach($smarty_clue['hints'] as $hk => $hv){
                 $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+                $smarty_clue['hints'][$hk]['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id'])."&download=1", false);
             }
 
             $this->smarty_clues[$k] = $smarty_clue;
@@ -194,6 +197,7 @@ class apu_iquest_hq extends apu_base_class{
 
         $this->smarty_solutions = $this->solution->to_smarty();
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
+        $this->smarty_solutions['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id)."&download=1", false);
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View solution screen");
         return true;
@@ -208,6 +212,7 @@ class apu_iquest_hq extends apu_base_class{
 
         $this->smarty_hint = $this->hint->to_smarty();
         $this->smarty_hint['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($this->hint->ref_id), false);
+        $this->smarty_hint['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($this->hint->ref_id)."&download=1", false);
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View hint screen");
         return true;
@@ -408,6 +413,7 @@ class apu_iquest_hq extends apu_base_class{
         }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_clue",
                                  'validate_form'=>true,
                                  'reload'=>false,
@@ -415,6 +421,7 @@ class apu_iquest_hq extends apu_base_class{
         }
         elseif (isset($_GET['get_hint'])){
             $this->ref_id = $_GET['get_hint'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_hint",
                                  'validate_form'=>true,
                                  'reload'=>false,
@@ -422,6 +429,7 @@ class apu_iquest_hq extends apu_base_class{
         }
         elseif (isset($_GET['get_solution'])){
             $this->ref_id = $_GET['get_solution'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_solution",
                                  'validate_form'=>true,
                                  'reload'=>false,

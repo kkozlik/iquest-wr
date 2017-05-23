@@ -46,6 +46,7 @@ class apu_iquest extends apu_base_class{
 
     protected $team_id;
     protected $ref_id;
+    protected $download = false;
     protected $clue;
     protected $clue_grp;
     protected $hint;
@@ -253,11 +254,13 @@ class apu_iquest extends apu_base_class{
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['hidden'] = isset($this->session['hidden_ref_ids'][$v->ref_id]);
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
+            $smarty_clue['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id)."&download=1", false);
             $smarty_clue['hide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?hide=".RawURLEncode($clues[$k]->ref_id));
             $smarty_clue['unhide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?unhide=".RawURLEncode($clues[$k]->ref_id));
 
             foreach($smarty_clue['hints'] as $hk => $hv){
                 $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
+                $smarty_clue['hints'][$hk]['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id'])."&download=1", false);
                 $smarty_clue['hints'][$hk]['hide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?hide=".RawURLEncode($hv['ref_id']));
                 $smarty_clue['hints'][$hk]['unhide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?unhide=".RawURLEncode($hv['ref_id']));
                 $smarty_clue['hints'][$hk]['new'] = !isset($this->session['known_hints'][$hv['id']]);
@@ -347,19 +350,19 @@ class apu_iquest extends apu_base_class{
 
     function action_get_clue(){
         $this->controler->disable_html_output();
-        $this->clue->flush_content();
+        $this->clue->flush_content($this->download);
         return true;
     }
 
     function action_get_hint(){
         $this->controler->disable_html_output();
-        $this->hint->flush_content();
+        $this->hint->flush_content($this->download);
         return true;
     }
 
     function action_get_solution(){
         $this->controler->disable_html_output();
-        $this->solution->flush_content();
+        $this->solution->flush_content($this->download);
         return true;
     }
 
@@ -411,6 +414,7 @@ class apu_iquest extends apu_base_class{
         
         $this->smarty_solutions = $this->solution->to_smarty();
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
+        $this->smarty_solutions['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id)."&download=1", false);
 
         $this->get_timeouts();
         $this->get_team_info();
@@ -588,6 +592,7 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['get_clue'])){
             $this->ref_id = $_GET['get_clue'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_clue",
                                  'validate_form'=>true,
                                  'reload'=>false,
@@ -595,6 +600,7 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['get_hint'])){
             $this->ref_id = $_GET['get_hint'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_hint",
                                  'validate_form'=>true,
                                  'reload'=>false,
@@ -602,6 +608,7 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['get_solution'])){
             $this->ref_id = $_GET['get_solution'];
+            $this->download = !empty($_GET['download']);
             $this->action=array('action'=>"get_solution",
                                  'validate_form'=>true,
                                  'reload'=>false,

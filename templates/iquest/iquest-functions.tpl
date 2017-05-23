@@ -6,6 +6,12 @@
             <td colspan="{$colspan}"><pre class="plaintext">{$file.content}</pre>
             </td>
         </tr>
+    {elseif $file.content_type == "image/svg+xml"}
+        <tr>
+            <td colspan="{$colspan}" class="text-center fileimg">
+                <object data="{$file.file_url|escape}" type="image/svg+xml" width="100%"></object>
+            </td>
+        </tr>
     {elseif $file.content_type|truncate:6:"" == "image/"}
         <tr>
             <td colspan="{$colspan}" class="text-center fileimg">
@@ -23,6 +29,12 @@
         <tr>
             <td colspan="{$colspan}" class="text-center">
                 <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_video_content}</span></div>
+            </td>
+        </tr>
+    {elseif $file.content_type == "application/pdf"}
+        <tr>
+            <td colspan="{$colspan}" class="text-center fileimg">
+                <embed src="{$file.file_url|escape}" width="100%" height="800px"/>
             </td>
         </tr>
     {else}

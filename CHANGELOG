@@ -1,3 +1,6 @@
+* Added support for svg and pdf files
+
+rel 0.2.0
 * Possibility to show contest graph in team interface
 * Possibility to show team place among other teams in the team interface
 * HQ: contest graph - can display graph in simplified form
@@ -14,7 +17,7 @@
 * chroust: Username/password for HQ interface shall be defined in metadata file now
 * Possibility to open multiple clue groups when a key is entered
 * Possibility to open multiple clue groups when a the contest starts
-* Open clue groups conditionaly whena key is entered
+* Open clue groups conditionaly when a key is entered
 * Display hint price on the 'buy hint' button
 * Chroust: checks for keys/IDs duplicities
 
