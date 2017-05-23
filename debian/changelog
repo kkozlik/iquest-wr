@@ -1,3 +1,9 @@
+iquest (0.2.1) stable; urgency=medium
+
+  * Added support for svg and pdf files
+
+ --  <kk@kk-iquest.kufr.cz>  Tue, 23 May 2017 22:25:36 +0200
+
 iquest (0.2.0+nmu1) stable; urgency=medium
 
   * Minor fixes in debian package
