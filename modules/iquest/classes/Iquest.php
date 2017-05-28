@@ -41,7 +41,7 @@ class Iquest{
         $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
         sw_log($log_prefix."*** Starting contest for Team", PEAR_LOG_INFO);
 
-        foreach($cgrp_ids as $cgrp_id)
+        foreach(array_reverse($cgrp_ids) as $cgrp_id)
         {
             // 1. Open new clue group
             self::_open_cgrp($cgrp_id, $team_id, $log_prefix);
@@ -120,7 +120,10 @@ class Iquest{
         Iquest_Solution::mark_solved($solution->id, $team_id);
 
         // 2. Open new clue groups
-        $next_cgrp_ids = $solution->get_next_cgrp_ids_cond($team_id);
+        // If there are multiple clue groups they are opened in reverse order then
+        // their 'ordering' value. This is because the gained_at value may differ by a second
+        // and we still want display them by 'ordering' order on team interface
+        $next_cgrp_ids = array_reverse($solution->get_next_cgrp_ids_cond($team_id));
         foreach($next_cgrp_ids as $next_cgrp_id){
             self::_open_cgrp($next_cgrp_id, $team_id, $log_prefix);
         }

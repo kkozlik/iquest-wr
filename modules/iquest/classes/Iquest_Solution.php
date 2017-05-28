@@ -505,9 +505,11 @@ class Iquest_Solution extends Iquest_file{
         global $data, $config;
 
         /* table's name */
-        $t_name = &$config->data_sql->iquest_solution_next_cgrp->table_name;
+        $t_name  = &$config->data_sql->iquest_solution_next_cgrp->table_name;
+        $tc_name = &$config->data_sql->iquest_cgrp->table_name;
         /* col names */
-        $c     = &$config->data_sql->iquest_solution_next_cgrp->cols;
+        $c       = &$config->data_sql->iquest_solution_next_cgrp->cols;
+        $cc      = &$config->data_sql->iquest_cgrp->cols;
 
 
         $qw = array();
@@ -518,8 +520,8 @@ class Iquest_Solution extends Iquest_file{
 
         $q = "select n.".$c->cgrp_id.",
                      n.".$c->condition."
-              from ".$t_name." n ".
-              $qw;
+              from $t_name n join $tc_name c on n.".$c->cgrp_id." = c.".$cc->id.
+              $qw." order by c.".$cc->ordering;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);

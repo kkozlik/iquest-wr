@@ -73,7 +73,7 @@ class Iquest_ClueGrp{
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
 
         // default ordering
-        $order_by = $co->gained_at." desc";
+        $order_by = $co->gained_at." desc, ".$cc->ordering;
         if (isset($opt['orderby'])) $order_by = $cc->$opt['orderby'];
 
 
