@@ -24,6 +24,7 @@ install: build
 	mkdir -p $(DESTDIR)/usr/share/doc/iquest
 	mkdir -p $(DESTDIR)/etc/iquest
 	mkdir -p $(DESTDIR)/etc/php5/conf.d
+	mkdir -p $(DESTDIR)/etc/php5/apache2/conf.d
 	mkdir -p $(DESTDIR)/var/lib/iquest
 	cp -r $(CURDIR)/config/*    $(DESTDIR)/etc/iquest
 	cp -r $(CURDIR)/doc/php/*   $(DESTDIR)/etc/php5/conf.d
@@ -38,6 +39,7 @@ install: build
 	rm $(DESTDIR)/etc/iquest/set_env.developer.php
 	rm $(DESTDIR)/etc/iquest/iquest.apache.developer
 	ln -sf /etc/iquest $(DESTDIR)/usr/share/iquest/config
+	ln -sf /etc/php5/conf.d/30-iquest.ini $(DESTDIR)/etc/php5/apache2/conf.d/30-iquest.ini
 	ln -sf /var/lib/iquest $(DESTDIR)/usr/share/iquest/data
 
 # Do not compress the DB schema file
