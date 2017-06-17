@@ -747,12 +747,16 @@ class Chroust{
         $timeout = $metadata->get_hint_timeout($hint_nr);
         $price = $metadata->get_hint_price($hint_nr);
 
+        if (!$clues){
+            throw new Iquest_InvalidConfigException("Cannot insert hint. There are no clues defined in clue grp '$cgrp_id'.");
+        }
+
         // if clue ID is not specified, use the ID of last clue
         if (is_null($clue_id)){
             $last_clue = end($clues);
             $clue_id = $last_clue->id;
 
-            Console::log("*** WARNING: clue_IDs are not specified for hint. Useing '$clue_id'", Console::YELLOW);
+            Console::log("*** WARNING: clue_IDs are not specified for hint '$hint_nr'. Useing the last clue: '$clue_id'", Console::YELLOW);
         }
 
         // Check whether the clue ID is valid
