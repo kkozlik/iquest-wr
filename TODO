@@ -6,7 +6,6 @@ Team
 - druhe heslo pro read-only login pro pratele na telefonu
 - Prehravani audio/video v prohlizeci (HTML5)
 
- 
 HQ
 --
 
@@ -16,10 +15,19 @@ HQ - prehledova tabulka
 - blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
   po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
 
+- zakazat zalamovani radku i iqc a u razeni
 
 CHROUST
 -------
 viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
+
+kdyz chybi indicie
+
+Reading directory: /var/www/i.quest/dav/2017/wr/a1 - ganja/
+PHP Notice:  Trying to get property of non-object in /usr/share/iquest/utils/chroust on line 753
+*** WARNING: clue_IDs are not specified for hint. Useing ''
+
+vypisovat celkovou cenu napoved
 
 
 INSTALL

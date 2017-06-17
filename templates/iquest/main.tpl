@@ -64,10 +64,24 @@
         {if $clue_grp.new}
         <div class="pull-right"><span class="new"></span></div>
         {/if}
+        <div class="navbar-middle">{$lang_str.iquest_txt_gained_at}: {call print_clue_grp_gained_at clue_grp=$clue_grp}</div>
         </div>
     </div>
 {/function}
 
+
+{**
+ *  Print the gained_at value of clue group.
+ *  If the time value is from today, just the time is displayed. Otherwise date and time is displayed.
+ *  @param  clue_grp
+ *}
+{function print_clue_grp_gained_at}
+    {if $smarty.now|date_format:'%Y-%m-%d' == $clue_grp.gained_at_ts|date_format:'%Y-%m-%d'}
+        {$clue_grp.gained_at_ts|date_format:'%H:%M:%S'|escape}
+    {else}
+        {$clue_grp.gained_at_ts|date_format:'%d.%m.%Y %H:%M:%S'|escape}
+    {/if}
+{/function}
 
 {**
  *  Print minimized clues and hints (as part of clue grp title)

@@ -22,6 +22,15 @@
     white-space: nowrap;
 }
 
+.navbar .navbar-middle {
+    display: block;
+    margin: 0 auto;
+    width: 450px;
+    line-height: 40px;
+    white-space: nowrap;
+    text-align: center;
+}
+
 .navbar .navinfo {
     display: block;
     margin: 0 auto;
