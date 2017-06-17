@@ -26,7 +26,6 @@ Reading directory: /var/www/i.quest/dav/2017/wr/a1 - ganja/
 PHP Notice:  Trying to get property of non-object in /usr/share/iquest/utils/chroust on line 753
 *** WARNING: clue_IDs are not specified for hint. Useing ''
 
-vypisovat celkovou cenu napoved
 
 
 INSTALL

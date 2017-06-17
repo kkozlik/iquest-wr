@@ -1382,7 +1382,9 @@ class Chroust{
             
             $fstring = self::get_formating_string($fields_widths, "|");
 
+            $total_hint_price = 0;
             foreach(self::$summary['hints'] as $row){
+                $total_hint_price += $row['price'];
                 echo self::utf_8_sprintf($fstring, 
                             $row['cgrp_name'], 
                             $row['clue_id'], 
@@ -1393,6 +1395,12 @@ class Chroust{
 
             self::print_table_separator($fields_widths);
 
+            echo self::utf_8_sprintf($fstring, 
+                        "Total:", 
+                        "",
+                        "",
+                        $total_hint_price,
+                        "");
 
 
 
@@ -1416,7 +1424,9 @@ class Chroust{
                                     'next_cgrp_id'  => "NextCgrps ", 
                                     );
             $fields_widths = self::get_field_widths(self::$summary['keys'], $fields_headers);
-
+            
+            // Hack: make sure the last 'Total:' line fits into column widths
+            if ($fields_widths['name'] < iconv_strlen("Total:", "UTF-8")) $fields_widths['name'] = iconv_strlen("Total:", "UTF-8");
 
             self::print_table_heading($fields_headers, $fields_widths);
             self::print_table_separator($fields_widths);
