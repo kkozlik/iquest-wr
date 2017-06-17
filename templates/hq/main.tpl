@@ -169,8 +169,8 @@
     <tr>
     <th rowspan="2" style="vertical-align: middle;">
         Řazení:<br />
-        <a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}<br /> 
-        <a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}
+        <span class="nowrap"><a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span><br /> 
+        <span class="nowrap"><a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span>
     </th>
     {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
     <th colspan="{$colspan}" title="{$group.id|escape}"><a href="{$group.view_url|escape}">{$group.name|escape}</a></th>
@@ -194,7 +194,7 @@
     <tr class="first">
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
-        ({$team.wallet} {$lang_str.iquest_txt_coin_symbol})
+        <span class="nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
         {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a><br /><strong>Datum: </strong>`$cgrp_team[$group.id][$team.id].gained_at_date|escape`"}
