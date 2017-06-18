@@ -1,3 +1,4 @@
+* contest graph: mark the solved clue groups with green color
 * metadata: introducing TRUE() and FALSE() conditions for next_cgrp_id
 * chroust: better error message if clue is missing but a hint is defined
 * chroust: display total price of the hints in the summary

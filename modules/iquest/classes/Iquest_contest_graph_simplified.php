@@ -19,6 +19,10 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
     /* Flag indicating that unknown clue groups shall not be displayed as hyperlinks */
     protected $link_unknown_cgrps = false;
 
+    /* List of clues IDs that has been already gained by the team,
+     *  but that are not needed anymore (has been used to solve a task solution).
+     */
+    protected $unneded_clues = array();
 
     /**
      *  Create the graph for a team
@@ -29,7 +33,11 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
         // fetch clue groups and solutions
         $opt = array("team_id" => $this->team_id);
         $this->cgroups = Iquest_ClueGrp::fetch($opt);
-        $this->solutions = Iquest_Solution::fetch();
+        $this->solutions = Iquest_Solution::fetch($opt);
+
+        // fetch list of unneded clues
+        $full_graph = new Iquest_solution_graph($team_id);
+        $this->unneded_clues = $full_graph->get_unneded_clues();
 
         // create clue => solution edges
         $this->load_clue2solution();
@@ -134,7 +142,10 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
 
         $xlabel = $cgroup->name;
         if ($cgroup->gained_at){
-            $dot .= "fillcolor=white,";
+            if (Iquest_Options::get(Iquest_Options::SHOW_GRAPH_MARK_SOLVED) and $this->is_cgroup_solved($cgroup))
+                $dot .= "fillcolor=\"#468847\",";
+            else
+                $dot .= "fillcolor=white,";
         }
         else{
             $dot .= "fillcolor=grey,";
@@ -153,6 +164,21 @@ class Iquest_contest_graph_simplified extends Iquest_graph_abstract{
         $dot .= "]";
         
         return $dot;
+    }
+
+    /**
+     * Return true if clue group is solved. 
+     * Clue group is solved if all of it's clues are listed in $this->unneded_clues array.
+     *
+     * @param Iquest_ClueGrp $cgroup
+     * @return boolean
+     */
+    protected function is_cgroup_solved($cgroup){
+        $clues = $cgroup->get_clues();
+        foreach($clues as &$clue){
+            if (!in_array($clue->id, $this->unneded_clues)) return false;
+        }
+        return true;
     }
 
     /**

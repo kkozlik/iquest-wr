@@ -26,6 +26,8 @@ class Iquest_Options{
     const SHOW_GRAPH            = "show_graph";
     /** Show names of unknown clue groups in contest graph */
     const SHOW_GRAPH_CGRP_NAMES = "show_graph_cgrp_names";
+    /** Mark solved clue groups in contest graph */
+    const SHOW_GRAPH_MARK_SOLVED = "show_graph_mark_solved";
 
 
 
@@ -45,6 +47,7 @@ class Iquest_Options{
                                              self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
+                                             self::SHOW_GRAPH_MARK_SOLVED,
                                              self::KEY_PREFIX,
                                              self::LOGO,
                                              self::GAME_NAME,
@@ -60,6 +63,7 @@ class Iquest_Options{
                                              self::HIDE_PLACE_TIMEOUT,
                                              self::SHOW_GRAPH,
                                              self::SHOW_GRAPH_CGRP_NAMES,
+                                             self::SHOW_GRAPH_MARK_SOLVED,
                                              self::KEY_PREFIX,
                                              self::LOGO,
                                              self::GAME_NAME,
