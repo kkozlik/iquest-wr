@@ -1,3 +1,13 @@
+iquest (0.2.3) stable; urgency=medium
+
+  * contest graph: mark the solved clue groups with green color
+  * metadata: introducing TRUE() and FALSE() conditions for next_cgrp_id
+  * chroust: better error message if clue is missing but a hint is defined
+  * chroust: display total price of the hints in the summary
+  * For each clue grp display when it has been gained
+
+ --  <kk@kk-iquest.kufr.cz>  Sun, 18 Jun 2017 23:35:58 +0200
+
 iquest (0.2.2) stable; urgency=medium
 
   * Fix order of clue groups that are gained at single moment
