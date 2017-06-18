@@ -12,6 +12,8 @@ var svgZoom = {
     svgHeight : null,
     svgMinWidth : null,
     svgMinHeight : null,
+    svgMaxWidth : null,
+    svgMaxHeight : null,
     zoomCoef : 1.1,
     lastMousePos : null,
     
@@ -25,13 +27,23 @@ var svgZoom = {
 
         this.svgMinWidth  = this.svgWidth  / 10;
         this.svgMinHeight = this.svgHeight / 10;
+
+        this.svgMaxWidth  = this.svgWidth  * 2;
+        this.svgMaxHeight = this.svgHeight * 2;
         
         $(this.svgObj).bind('mousewheel DOMMouseScroll', $.proxy(this.onMouseWheel, this));
         $(this.svgObj).on('mousedown', $.proxy(this.onMouseDown, this));
         $(this.svgObj).on('mouseup', $.proxy(this.onMouseUp, this));
     },
     
+
+    /**
+     * Zoom the image but only if CTRL key is pressed
+     */
     onMouseWheel : function (e){
+
+        if (!e.ctrlKey) return;
+        e.preventDefault();
 
         var scrollUp = (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0); 
         var viewBoxParts = this.getViewBoxParts();
@@ -50,8 +62,8 @@ var svgZoom = {
             viewBoxParts[2] = viewBoxParts[2] * this.zoomCoef;
             viewBoxParts[3] = viewBoxParts[3] * this.zoomCoef;
             
-            if (viewBoxParts[2] > this.svgWidth)  viewBoxParts[2] = this.svgWidth;
-            if (viewBoxParts[3] > this.svgHeight) viewBoxParts[3] = this.svgHeight;
+            if (viewBoxParts[2] > this.svgMaxWidth)  viewBoxParts[2] = this.svgMaxWidth;
+            if (viewBoxParts[3] > this.svgMaxHeight) viewBoxParts[3] = this.svgMaxHeight;
         }
 
         viewBoxParts[0] +=  (width1 - viewBoxParts[2])  / 2;
@@ -108,7 +120,22 @@ var svgZoom = {
     },
 
     checkViewBoxBoundaries : function( viewBoxParts ){
-    
+
+        $return = false;
+        if (viewBoxParts[3] > this.svgHeight){
+            $return = true;
+            viewBoxParts[1] = 0;
+        }
+
+        if (viewBoxParts[2] > this.svgWidth){
+            $return = true;
+
+            if (viewBoxParts[0] > 0) viewBoxParts[0] = 0;
+            if (viewBoxParts[0] + viewBoxParts[2] < this.svgWidth)  viewBoxParts[0] = this.svgWidth - viewBoxParts[2];
+        }
+
+        if ($return) return viewBoxParts;
+
         if (viewBoxParts[0] < 0) viewBoxParts[0] = 0;
         if (viewBoxParts[1] < 0) viewBoxParts[1] = 0;
 
