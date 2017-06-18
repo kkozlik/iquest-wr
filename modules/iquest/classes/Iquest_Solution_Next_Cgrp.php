@@ -8,7 +8,10 @@ class Iquest_Solution_Next_Cgrp{
      * Condition specifing whether the clue group could be gained. If set, the condition
      * shall be in form: FUNCTION_NAME([PARAM, ... ])
      * 
-     * The only supported function now is 'DEPENDS'. See cond_depends() method.
+     * The only supported functions now are:
+     *  - 'DEPENDS'. See cond_depends() method.
+     *  - 'TRUE'. See cond_true() method.
+     *  - 'FALSE'. See cond_false() method.
      *
      * @var string
      */
@@ -117,6 +120,36 @@ class Iquest_Solution_Next_Cgrp{
 
         sw_log(__CLASS__.":".__FUNCTION__.": All solutions '".implode("', '", $params)."' are solved. Evaluating condition as true.", PEAR_LOG_INFO);
         return true;
+    }
+
+    /**
+     * Implementation of TRUE() condition. It always return true.
+     * Use of this condition have same behavior as if not condition is used.
+     * But it has a side effect: It draw the arrow in dashed style in the contest graph.
+     *
+     * @param Iquest_Solution $current_solution     The solution just being solved
+     * @param int $team_id                          The team solving the solution
+     * @param array $params                         Params of the DEPENDS(...) condition. It should be array of solution IDs
+     * @return bool
+     */
+    private function cond_true(Iquest_Solution $current_solution, $team_id, $params){
+
+        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+        return true;
+    }
+
+    /**
+     * Implementation of FALSE() condition. It always return false
+     *
+     * @param Iquest_Solution $current_solution     The solution just being solved
+     * @param int $team_id                          The team solving the solution
+     * @param array $params                         Params of the DEPENDS(...) condition. It should be array of solution IDs
+     * @return bool
+     */
+    private function cond_false(Iquest_Solution $current_solution, $team_id, $params){
+
+        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+        return false;
     }
 
 }
