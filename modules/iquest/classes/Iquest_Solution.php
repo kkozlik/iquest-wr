@@ -442,8 +442,8 @@ class Iquest_Solution extends Iquest_file{
 
         $res = $this->fetch_solution_team($opt);
 
-        if ($res){
-            $row = reset($res);
+        if (isset($res[$this->id][$team_id])){
+            $row = $res[$this->id][$team_id];
             $this->show_at = $row["show_at"];
             $this->solved_at = $row["solved_at"];
         }
