@@ -278,7 +278,7 @@
         var $pop = $(this);
         setTimeout(function () {
             $pop.popover('hide');
-        }, 1400);
+        }, 2000);
     });
     </script>
 {/literal}
