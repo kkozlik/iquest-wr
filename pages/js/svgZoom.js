@@ -121,26 +121,23 @@ var svgZoom = {
 
     checkViewBoxBoundaries : function( viewBoxParts ){
 
-        $return = false;
         if (viewBoxParts[3] > this.svgHeight){
-            $return = true;
             viewBoxParts[1] = 0;
+        }
+        else{
+            if (viewBoxParts[1] < 0) viewBoxParts[1] = 0;
+            if (viewBoxParts[1] + viewBoxParts[3] > this.svgHeight) viewBoxParts[1] = this.svgHeight - viewBoxParts[3];
         }
 
         if (viewBoxParts[2] > this.svgWidth){
-            $return = true;
-
             if (viewBoxParts[0] > 0) viewBoxParts[0] = 0;
             if (viewBoxParts[0] + viewBoxParts[2] < this.svgWidth)  viewBoxParts[0] = this.svgWidth - viewBoxParts[2];
         }
+        else{
+            if (viewBoxParts[0] < 0) viewBoxParts[0] = 0;
+            if (viewBoxParts[0] + viewBoxParts[2] > this.svgWidth)  viewBoxParts[0] = this.svgWidth - viewBoxParts[2];
+        }
 
-        if ($return) return viewBoxParts;
-
-        if (viewBoxParts[0] < 0) viewBoxParts[0] = 0;
-        if (viewBoxParts[1] < 0) viewBoxParts[1] = 0;
-
-        if (viewBoxParts[0] + viewBoxParts[2] > this.svgWidth)  viewBoxParts[0] = this.svgWidth - viewBoxParts[2];
-        if (viewBoxParts[1] + viewBoxParts[3] > this.svgHeight) viewBoxParts[1] = this.svgHeight - viewBoxParts[3];
     
         return viewBoxParts;
     }
