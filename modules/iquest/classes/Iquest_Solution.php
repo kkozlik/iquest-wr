@@ -520,7 +520,7 @@ class Iquest_Solution extends Iquest_file{
 
         $q = "select n.".$c->cgrp_id.",
                      n.".$c->condition."
-              from $t_name n join $tc_name c on n.".$c->cgrp_id." = c.".$cc->id.
+              from $t_name n left join $tc_name c on n.".$c->cgrp_id." = c.".$cc->id.
               $qw." order by c.".$cc->ordering;
 
         $res=$data->db->query($q);
