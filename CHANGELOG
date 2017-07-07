@@ -1,3 +1,5 @@
+* fix of loading bootstrap-multiselect javascript
+
 rel 0.2.3
 * contest graph: mark the solved clue groups with green color
 * metadata: introducing TRUE() and FALSE() conditions for next_cgrp_id

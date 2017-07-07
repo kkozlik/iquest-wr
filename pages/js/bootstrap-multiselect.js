@@ -10,7 +10,11 @@
     var _myPath = $('script[src$="bootstrap-multiselect.js"]').attr('src').replace('bootstrap-multiselect.js','');
     
     // load bootstrap-table.min.js script
-    $.getScript(_myPath+"bootstrap-multiselect/bootstrap-multiselect.js");
+    $.ajax({
+        url: _myPath+"bootstrap-multiselect/bootstrap-multiselect.js",
+        dataType: 'script',
+        async: false
+    });
     
     // load bootstrap-table.min.css styles
     $("<link/>", {

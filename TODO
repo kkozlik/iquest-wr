@@ -18,7 +18,10 @@ HQ - prehledova tabulka
 
 CHROUST
 -------
-viz wiki: https://kufr.cz:1443/kk/wiki/iquest/implementace/testovani
+- pokud adresar obsahuje jen solution a neni u nej v metadatech zadane jmeno tak to pise chybu 
+  "name for clue group is not set." prestoze v adresari zadny clue group neni definovany.
+  Je treba upravit chybovou hlasku.
+
 
 
 INSTALL
