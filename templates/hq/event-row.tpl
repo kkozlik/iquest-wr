@@ -20,16 +20,16 @@
                 {if $value.values|default:false}
                     {foreach $value.values as $key2=>$value2}
                         {if $value2.url|default:false}
-                            <a href="{$value2.url|escape}">{$value2.text|escape}</a>
+                            <a href="{$value2.url|escape}">{$value2.text|default:'<null>'|escape}</a>
                         {else}
-                            {$value2.text|escape}
+                            {$value2.text|default:'<null>'|escape}
                         {/if}
                         {if !$value2@last},{/if}
                     {/foreach}
                 {elseif $value.url|default:false}
-                    <a href="{$value.url|escape}">{$value.text|escape}</a>
+                    <a href="{$value.url|escape}">{$value.text|default:'<null>'|escape}</a>
                 {else}
-                    {$value.text|escape}
+                    {$value.text|default:'<null>'|escape}
                 {/if}
             </span>{if !$value@last},{/if}
         {/foreach}
