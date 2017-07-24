@@ -119,7 +119,7 @@
         },
         
         init: function(){
-            window.setInterval(this.poll, 30000);
+            window.setInterval(this.poll, 10000);
         }
     }
     
