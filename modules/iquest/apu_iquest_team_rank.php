@@ -82,11 +82,10 @@ class apu_iquest_team_rank extends apu_base_class{
     /**
      *  Method perform action default 
      *
-     *  @param array $errors    array with error messages
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
 
-    function action_default(&$errors){
+    function action_default(){
 
         $ranks = Iquest_team_rank::fetch();
         $teams = Iquest_team::fetch();

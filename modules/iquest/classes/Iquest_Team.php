@@ -7,7 +7,8 @@ class Iquest_Team{
     public $wallet;
 
     static function fetch_by_id($id){
-        return reset(static::fetch(array("id" => $id)));
+        $records = static::fetch(array("id" => $id));
+        return reset($records);
     }
     
     static function fetch($opt=array()){

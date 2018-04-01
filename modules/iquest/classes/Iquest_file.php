@@ -119,7 +119,7 @@ class Iquest_file{
     }
 
 
-    function to_smarty($opt = array()){
+    function to_smarty(){
         $out = array();
         $out['id'] = $this->id;
         $out['ref_id'] = $this->ref_id;

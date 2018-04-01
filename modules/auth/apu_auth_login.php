@@ -164,9 +164,9 @@ class apu_auth_login extends apu_base_class{
     }
     
     /* create html form */
-    function create_html_form(&$errors){
+    function create_html_form(){
         global $lang_str;
-        parent::create_html_form($errors);
+        parent::create_html_form();
 
         $cookie_uname="";
         if (isset($_COOKIE[self::cookie_user])) $cookie_uname=$_COOKIE[self::cookie_user];
@@ -203,7 +203,7 @@ class apu_auth_login extends apu_base_class{
     }
 
     /* validate html form */
-    function validate_form(&$errors){
+    function validate_form(){
         global $config, $lang_str;
         $uid = null;
         $perms = null;
@@ -211,7 +211,7 @@ class apu_auth_login extends apu_base_class{
         // don't display logout mesage in case that form was submited
         if (isset($_GET['logout'])) unset($_GET['logout']);
 
-        if (false === parent::validate_form($errors)) return false;
+        if (false === parent::validate_form()) return false;
 
         $this->password = $_POST['passw'];
         $this->username = $_POST['uname'];

@@ -108,7 +108,7 @@ class apu_iquest_hq extends apu_base_class{
         
         if (is_a($this->sorter, "apu_base_class")){
             /* register callback called on sorter change */
-            $this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));
+            //$this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));
             $this->sorter->set_base_apu($this);
         }
     }
@@ -286,8 +286,11 @@ class apu_iquest_hq extends apu_base_class{
             // Sort solutions of each clue group by ordening number of the first
             // clue group they are leading to.
             usort($solution_ids, function($a, $b) use ($clue_groups, $solutions){
-                $next_cgrp_id_a = reset($solutions[$a]->get_next_cgrp_ids());
-                $next_cgrp_id_b = reset($solutions[$b]->get_next_cgrp_ids());
+                $next_cgrp_ids_a = $solutions[$a]->get_next_cgrp_ids();
+                $next_cgrp_ids_b = $solutions[$b]->get_next_cgrp_ids();
+
+                $next_cgrp_id_a = reset($next_cgrp_ids_a);
+                $next_cgrp_id_b = reset($next_cgrp_ids_b);
 
                 if (!isset($clue_groups[$next_cgrp_id_a]) and
                     !isset($clue_groups[$next_cgrp_id_b])){

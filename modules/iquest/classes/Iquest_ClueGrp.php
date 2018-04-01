@@ -74,7 +74,7 @@ class Iquest_ClueGrp{
 
         // default ordering
         $order_by = $co->gained_at." desc, ".$cc->ordering;
-        if (isset($opt['orderby'])) $order_by = $cc->$opt['orderby'];
+        if (isset($opt['orderby'])) $order_by = $cc->{$opt['orderby']};
 
 
         // If team_id is specified, set the gained_at attribute of clue group
