@@ -92,7 +92,7 @@ class Iquest_Solution extends Iquest_file{
         
             if (!empty($opt['accessible'])){
                 $qw[] = "tt.".$ct->show_at." <= now()";
-                $qw[] = "tt.".$ct->show_at." != 0";
+                $qw[] = "UNIX_TIMESTAMP(tt.".$ct->show_at.") != 0";
             }
 
             $order = " order by ".$ct->show_at." desc";
@@ -248,7 +248,7 @@ class Iquest_Solution extends Iquest_file{
         $qw = " where ".implode(' and ', $qw);
 
         $q = "update $tt_name
-              set ".$ct->show_at."=sec_to_time(0)".$qw;
+              set ".$ct->show_at."=FROM_UNIXTIME(0)".$qw;
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -276,7 +276,7 @@ class Iquest_Solution extends Iquest_file{
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
                     addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")),
-                    sec_to_time(0))";
+                    FROM_UNIXTIME(0))";
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
@@ -329,7 +329,7 @@ class Iquest_Solution extends Iquest_file{
                         ".$c->solved_at.")
                 values (".$data->sql_format($id,        "s").",
                         ".$data->sql_format($team_id,   "n").",
-                        sec_to_time(0),
+                        FROM_UNIXTIME(0),
                         now())";
         }
 
