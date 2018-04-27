@@ -18,5 +18,5 @@ Building debian package
 * run: debchange -r
 * add release label to CHANGELOG file
 * run: ./build-deb
-* git commit -va
+* git commit -va -m "Release x.y.z"
 * git tag release_x.y.z
