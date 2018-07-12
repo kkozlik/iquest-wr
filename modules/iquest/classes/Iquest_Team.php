@@ -23,7 +23,9 @@ class Iquest_Team{
         $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : "";
 
         $qw = array();
-        if (isset($opt['id']))      $qw[] = "t.".$ct->id." = ".$data->sql_format($opt['id'], "n");
+        if (isset($opt['id']))          $qw[] = "t.".$ct->id." = ".$data->sql_format($opt['id'], "n");
+        if (isset($opt['username']))    $qw[] = "t.".$ct->username." = ".$data->sql_format($opt['username'], "s");
+        if (isset($opt['name']))        $qw[] = "t.".$ct->name." = ".$data->sql_format($opt['name'], "s");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";

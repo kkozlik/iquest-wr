@@ -202,3 +202,72 @@ class Console {
     }
  
 }
+
+class Console_Cli{
+    public static function print_errors(){
+        $eh = &ErrorHandler::singleton();
+        $errors = $eh->get_errors_array();
+        if (!$errors) return 0;
+
+        fwrite(STDERR, "There were errors:\n");
+        foreach($errors as $error) {
+            fwrite(STDERR, "$error\n");
+        }
+        fwrite(STDERR, "\n");
+        return 1;
+    }
+
+    public static function parse_args($args) {
+        array_shift($args);
+        $endofoptions = false;
+
+        $ret = array(
+            'options' => array(),
+            'flags' => array(),
+            'arguments' => array(),
+        );
+
+        while ($arg = array_shift($args)) {
+            // if we have reached end of options,
+            // we cast all remaining argvs as arguments
+            if ($endofoptions) {
+                $ret['arguments'][] = $arg;
+                continue;
+            }
+
+            // Is it a command? (prefixed with --)
+            if (substr($arg, 0, 2) === '--') {
+
+                // is it the end of options flag?
+                if (!isset($arg[3])) {
+                    $endofoptions = true;; // end of options;
+                    continue;
+                }
+
+                $value = "";
+                $com = substr($arg, 2);
+
+                // is it the syntax '--option=argument'?
+                if (strpos($com, '='))
+                    list($com, $value) = split("=", $com, 2);
+
+
+                $ret['options'][$com] = !empty($value) ? $value : true;
+                continue;
+            }
+
+            // Is it a flag or a serial of flags? (prefixed with -)
+            if (substr($arg, 0, 1) === '-') {
+                for ($i = 1; isset($arg[$i]); $i++)
+                    $ret['flags'][] = $arg[$i];
+                continue;
+            }
+
+            // finally, it is not option, nor flag, nor argument
+            $ret['arguments'][] = $arg;
+            continue;
+        }
+
+        return $ret;
+    }
+}

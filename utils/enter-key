@@ -1,0 +1,96 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
+if (!isset($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR']='CLI';
+
+$_required_modules = array('iquest', 'auth', 'console');
+
+require_once(dirname(__FILE__)."/../config/set_env.php");
+require_once(dirname(__FILE__)."/../functions/functions.php");
+require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
+
+function usage(){
+    echo <<<EOF
+
+Usage: 
+    {$_SERVER['argv'][0]} [--check-key-order|--no-check-key-order]  TEAM   KEY
+        Simulate key entering by a team. Team can be identified by it's name or username.
+
+EOF;
+
+}
+
+function main(){
+    $args = Console_Cli::parse_args($_SERVER['argv']);
+
+
+    if (count($args['arguments']) != 2){
+        usage();
+        ErrorHandler::add_error("Invalid number of arguments");
+        Console_Cli::print_errors();
+        exit(1);
+    }
+
+    $verify_opts = array();
+
+    if (isset($args['options']['check-key-order'])){
+        $verify_opts[Iquest_Options::CHECK_KEY_ORDER] = true;
+        unset($args['options']['check-key-order']);
+    }
+    elseif (isset($args['options']['no-check-key-order'])){
+        $verify_opts[Iquest_Options::CHECK_KEY_ORDER] = false;
+        unset($args['options']['no-check-key-order']);
+    }
+
+    if (!empty($args['options'])){
+        // there are some unknown options
+        usage();
+        ErrorHandler::add_error("Invalid options");
+        Console_Cli::print_errors();
+        exit(1);
+    }
+
+
+    $team_name =    $args['arguments'][0];
+    $key =          $args['arguments'][1];
+
+    $team = get_team($team_name);
+    if (!$team){
+        ErrorHandler::add_error("Team '$team_name' does not exist");
+        Console_Cli::print_errors();
+        exit(2);
+    }
+
+    Iquest_Events::set_extra_data(['note' => "Team: {$team->name} via CLI"]);
+
+    $solution = Iquest_Solution::verify_key($key, $team->id, $verify_opts);
+    if (!$solution){
+        Console_Cli::print_errors();
+        exit(3);
+    }
+
+    // Solve the solution and open another tasks
+    $solution->solve($team->id);
+
+    echo "OK\n";
+    exit(0);
+}
+
+function get_team($name){
+
+    $team = Iquest_Team::fetch(['name' => $name]);
+    if ($team) {
+        return reset($team);
+    }
+
+    $team = Iquest_Team::fetch(['username' => $name]);
+    if ($team) {
+        return reset($team);
+    }
+
+    return null;
+}
+
+
+main();

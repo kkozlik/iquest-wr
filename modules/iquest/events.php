@@ -23,6 +23,12 @@ class Iquest_Events{
     public $data;
     public $team_name;
 
+    private static $extra_data = array();
+
+    public static function set_extra_data($data){
+        if (!is_array($data)) throw new UnexpectedValueException("\$data variable is not type of array");
+        self::$extra_data = $data;
+    }
 
     static function add_remote_ip(&$data){
         $data['ip'] = $_SERVER["REMOTE_ADDR"];
@@ -46,6 +52,8 @@ class Iquest_Events{
             $user_id = $_SESSION['auth']->get_logged_user();
             $team_id = $user_id->get_uid();
         }
+
+        if (self::$extra_data) $event_data = array_merge($event_data, self::$extra_data);
 
         $eh = &ErrorHandler::singleton();
         $errors = $eh->get_errors_array();
@@ -103,7 +111,7 @@ class Iquest_Events{
 
         if (!empty($opt['use_pager']) or !empty($opt['count_only'])){
             $q="select count(*) from ".$t_name." e
-                    join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
+                    left join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
             
             $res=$data->db->query($q);
             if (MDB2::isError($res)) throw new DBException($res);
@@ -126,7 +134,7 @@ class Iquest_Events{
                    e.".$c->data.",
                    t.".$ct->name."
             from ".$t_name." e
-                join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
+                left join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
 
 
         if ($o_order_by) $q .= " order by ".$c->$o_order_by." ".$o_order_desc;
@@ -165,6 +173,7 @@ class Iquest_Events{
     private function get_filtered_data($opt = array()){
         
         $out = array();
+
         switch($this->type){
         case self::KEY:
             if (isset($this->data['key']))              $out['key']['text'] = $this->data['key'];
@@ -191,6 +200,23 @@ class Iquest_Events{
                 }
             }   
 
+            break;
+        case self::COIN_SPEND:
+            if (isset($this->data['hint']['id']))   {
+                $out['hint']['text'] = $this->data['hint']['id'];
+
+                if (isset($opt['hint_url'])){
+                    $out['hint']['url']  = str_replace("<id>", RawURLEncode($this->data['hint']['ref_id']), $opt['hint_url']);
+                }
+            }
+            break;
+        }
+
+        if (isset($this->data['note']))           $out['note']['text'] = $this->data['note'];
+        if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
+
+        switch($this->type){
+        case self::KEY:
             if (isset($this->data['active_clues'])){
                 $active_cgrps = array();
                 foreach($this->data['active_clues'] as $clue){
@@ -232,19 +258,9 @@ class Iquest_Events{
             }
 
             break;
-        case self::COIN_SPEND:
-            if (isset($this->data['hint']['id']))   {
-                $out['hint']['text'] = $this->data['hint']['id'];
-                
-                if (isset($opt['hint_url'])){
-                    $out['hint']['url']  = str_replace("<id>", RawURLEncode($this->data['hint']['ref_id']), $opt['hint_url']);
-                }
-            }
-            break;
         }
 
-        if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
-        
+
         return $out;
     }
 
