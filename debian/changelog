@@ -1,3 +1,10 @@
+iquest (0.2.7) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * adding CLI commands for enter key and clear ranks
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 12 Jul 2018 16:12:31 +0200
+
 iquest (0.2.6) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
