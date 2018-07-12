@@ -54,6 +54,9 @@
     
     </div>
 
+    <div class="pull-left">
+    <label class="checkbox">Pause autorefresh<input type="checkbox" class="pause-autorefresh"></label>
+    </div>
     {call iquestPager pager=$pager}
 
     <table class="table table-bordered" id="event-table">
@@ -105,8 +108,11 @@
 
     var EventPoller = {
         last_id: {$last_event_id|json_encode},
-        
+        enabled: true,
+
         poll: function(){
+            if (!EventPoller.enabled) return;
+
             $.getJSON(
                 '{$my_url}',
                 { last_id_ajax: EventPoller.last_id }, 
@@ -157,6 +163,11 @@
             },
             buttonWidth: '220px',
             includeSelectAllOption: true
+        });
+
+        $('.pause-autorefresh').on('click', function(){
+            if (this.checked) EventPoller.enabled = false;
+            else              EventPoller.enabled = true;
         });
 
 {* Event Poller shall be enabled only if we are displaying the first 
