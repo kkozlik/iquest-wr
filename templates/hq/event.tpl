@@ -138,7 +138,9 @@
                 })
             },
             buttonWidth: '220px',
-            includeSelectAllOption: true
+            includeSelectAllOption: true,
+            enableCaseInsensitiveFiltering: true,
+            maxHeight: 300
         });
 
         $('#filter_form #type').multiselect({

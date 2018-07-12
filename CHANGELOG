@@ -1,4 +1,5 @@
 * HQ event log: filter - log type - allow multiple selection (#6)
+* HQ event log: filter - team name cannot be scrolled if do not fit screen (#5)
 
 rel 0.2.7
 * adding CLI commands for enter key and clear ranks
