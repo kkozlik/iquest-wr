@@ -372,6 +372,73 @@ class Iquest_Solution extends Iquest_file{
         return $out;
     }
 
+
+    /**
+     * Verify whether the given key can be entered be team. If so, return the
+     * solution object with given key. Otherwise null is returned.
+     *
+     * @param string $key
+     * @param int $team_id
+     * @return Iquest_Solution|null
+     */
+    public static function verify_key($key, $team_id, $opts=array()){
+        global $lang_str;
+
+        if (empty($key)){
+            ErrorHandler::add_error($lang_str['iquest_err_key_empty']);
+            self::log_invalid_key($key, $team_id);
+            return null;
+        }
+
+        $solution = Iquest_Solution::by_key($key);
+
+        if (!$solution){
+            ErrorHandler::add_error($lang_str['iquest_err_key_invalid']);
+            self::log_invalid_key($key, $team_id);
+            return null;
+        }
+
+        if ($solution->is_solved($team_id)){
+            ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
+            self::log_invalid_key($key, $team_id);
+            return null;
+        }
+
+        if (array_key_exists(Iquest_Options::CHECK_KEY_ORDER, $opts)){
+            $check_order = $opts[Iquest_Options::CHECK_KEY_ORDER];
+        }
+        else{
+            $check_order = Iquest_Options::get(Iquest_Options::CHECK_KEY_ORDER);
+        }
+
+        // Check that the keys are entered in correct order, check that
+        // the team has a clue to this key
+        if ($check_order and
+            !$solution->is_reachable($team_id)){
+
+            ErrorHandler::add_error($lang_str['iquest_err_key_not_reachable']);
+            self::log_invalid_key($key, $team_id);
+            return null;
+        }
+
+        return $solution;
+    }
+
+
+    private static function log_invalid_key($key, $team_id){
+        $event_data = array("key" => $key);
+        $event_data["diacritics_key"] = remove_diacritics($key);
+        $event_data["cannon_key"] = Iquest_Solution::canonicalize_key($key);
+
+        $graph = new Iquest_solution_graph($team_id);
+        $event_data["active_solutions"] = $graph->get_active_solutions();
+        $event_data["active_clues"] = $graph->get_active_clues();
+
+        Iquest_Events::add(Iquest_Events::KEY,
+                            false,
+                            $event_data);
+    }
+
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
                          $timeout, $countdown_start, $key, $coin_value, $show_at=null, $solved_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
@@ -384,7 +451,26 @@ class Iquest_Solution extends Iquest_file{
         $this->show_at = $show_at;
         $this->solved_at = $solved_at;
     }
-    
+
+
+    /**
+     * Set the solution as solved and open new tasks
+     *
+     * @param int $team_id
+     * @return void
+     */
+    public function solve($team_id){
+        // make sure the show_at value is present in the solution object
+        $this->get_show_at($team_id);
+
+        Iquest_Events::add(Iquest_Events::KEY,
+                           true,
+                           array("key" => $this->key,
+                                 "solution" => $this));
+
+        Iquest::solution_found($this, $team_id);
+    }
+
     /**
      *  Check whether the solution is reachable by given team.
      *  The solution is reachable if the team gained at least one clue leading 

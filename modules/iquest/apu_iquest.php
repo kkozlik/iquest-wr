@@ -303,15 +303,8 @@ class apu_iquest extends apu_base_class{
      */
     function action_solve(){
 
-        // make sure the show_at value is present in the solution object
-        $this->solution->get_show_at($this->team_id);
-
-        Iquest_Events::add(Iquest_Events::KEY,
-                           true,
-                           array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null,
-                                 "solution" => $this->solution));
-
-        Iquest::solution_found($this->solution, $this->team_id);
+        // Solve the solution and open another tasks
+        $this->solution->solve($this->team_id);
 
         action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
         
@@ -644,20 +637,6 @@ class apu_iquest extends apu_base_class{
     function form_invalid(){
         if ($this->action['action'] == "solve"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Key entering failed", false, array("errors"=>$this->controler->errors));
-
-            $event_data = array("key" => isset($_POST['solution_key']) ? $_POST['solution_key'] : null);
-            if (isset($_POST['solution_key'])){
-                $event_data["diacritics_key"] = remove_diacritics($_POST['solution_key']);
-                $event_data["cannon_key"] = Iquest_Solution::canonicalize_key($_POST['solution_key']);
-            }
-
-            $graph = new Iquest_solution_graph($this->team_id);
-            $event_data["active_solutions"] = $graph->get_active_solutions();
-            $event_data["active_clues"] = $graph->get_active_clues();
-
-            Iquest_Events::add(Iquest_Events::KEY,
-                               false,
-                               $event_data);
             if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "buy_hint"){
@@ -825,6 +804,7 @@ class apu_iquest extends apu_base_class{
         }
 
 
+        // Action: solve
         $form_ok = true;
         if (false === parent::validate_form()) $form_ok = false;
 
@@ -833,32 +813,14 @@ class apu_iquest extends apu_base_class{
             return false; 
         }
 
-        if (empty($_POST['solution_key'])){
-            ErrorHandler::add_error($lang_str['iquest_err_key_empty']);
-            return false; 
-        }
+        $key = null;
+        if (isset($_POST['solution_key'])) $key = $_POST['solution_key'];
 
-        $this->solution = Iquest_Solution::by_key($_POST['solution_key']);
-
+        $this->solution = Iquest_Solution::verify_key($key, $this->team_id);
         if (!$this->solution){
-            ErrorHandler::add_error($lang_str['iquest_err_key_invalid']);
             return false; 
         }
 
-        if ($this->solution->is_solved($this->team_id)){
-            ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
-            return false;
-        }
-
-        // Check that the keys are entered in correct order, check that 
-        // the team has a clue to this key
-        if (Iquest_Options::get(Iquest_Options::CHECK_KEY_ORDER) and
-            !$this->solution->is_reachable($this->team_id)){
-            
-            ErrorHandler::add_error($lang_str['iquest_err_key_not_reachable']);
-            return false; 
-        }
-        
         return $form_ok;
     }
     
