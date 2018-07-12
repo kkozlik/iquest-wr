@@ -20,3 +20,4 @@ Building debian package
 * run: ./build-deb
 * git commit -va -m "Release x.y.z"
 * git tag release_x.y.z
+* git push origin release_x.y.z
