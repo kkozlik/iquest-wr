@@ -117,14 +117,12 @@ class apu_iquest_event extends apu_base_class{
 
         $teams = Iquest_Team::fetch(array('order_by' => 'name'));
         $team_options = array();
-//        $team_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
         foreach($teams as $v){
             $team_options[] = array("value" => $v->id, "label" => $v->name);
         }
 
         $types = Iquest_Events::$supported_types;
         $type_options = array();
-        $type_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
         foreach($types as $v){
             $type_options[] = array("value" => $v, "label" => $v);
         }
@@ -145,6 +143,7 @@ class apu_iquest_event extends apu_base_class{
 
         $f[] = array("type"=>"select",
                      "name"=>"type",
+                     "multiple"=>1,
                      "size"=>1,
                      "label"=>$lang_str['iquest_event_type'],
                      "options"=>$type_options);

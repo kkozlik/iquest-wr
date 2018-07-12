@@ -1,3 +1,5 @@
+* HQ event log: filter - log type - allow multiple selection (#6)
+
 rel 0.2.7
 * adding CLI commands for enter key and clear ranks
 
