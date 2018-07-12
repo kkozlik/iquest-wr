@@ -22,7 +22,7 @@ class Iquest_team_rank{
         $c       = &$config->data_sql->iquest_team_rank->cols;
 
         $qw = array();
-//        if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
+        //  if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
@@ -99,6 +99,38 @@ class Iquest_team_rank{
         $last_rank_obj->timestamp = time();
         $last_rank_obj->team_id = $team_id;
         $last_rank_obj->insert();
+    }
+
+    public static function init_db_table(){
+        $teams = Iquest_Team::fetch();
+
+        $team_nr = count($teams);
+        $distances = array();
+        $rank = array();
+
+        foreach($teams as $team){
+            $distances[$team->id] = "999999";
+            $rank[$team->id] = $team_nr;
+        }
+
+        $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
+
+        $team_rank = new Iquest_team_rank($start_time, $distances, $rank, null);
+        $team_rank->insert();
+    }
+
+    public static function clear_db_table(){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_team_rank->table_name;
+        /* col names */
+        $c      = &$config->data_sql->iquest_team_rank->cols;
+
+        $q = "delete from ".$t_name;
+
+        $res=$data->db->query($q);
+        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
     function __construct($timestamp, $distance, $rank, $team_id=null){

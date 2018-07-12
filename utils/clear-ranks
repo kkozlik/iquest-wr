@@ -1,0 +1,40 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
+if (!isset($_SERVER['REMOTE_ADDR'])) $_SERVER['REMOTE_ADDR']='CLI';
+
+$_required_modules = array('iquest', 'auth', 'console');
+
+require_once(dirname(__FILE__)."/../config/set_env.php");
+require_once(dirname(__FILE__)."/../functions/functions.php");
+require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
+
+function usage(){
+    echo <<<EOF
+
+Usage: 
+    {$_SERVER['argv'][0]}
+        Clear team ranks
+
+EOF;
+
+}
+
+function main(){
+
+    if (count($_SERVER['argv']) != 1){
+        usage();
+        ErrorHandler::add_error("Invalid number of arguments");
+        Console_Cli::print_errors();
+        exit(1);
+    }
+
+    Iquest_team_rank::clear_db_table();
+    Iquest_team_rank::init_db_table();
+
+    echo "OK\n";
+    exit(0);
+}
+
+main();

@@ -681,22 +681,8 @@ class Chroust{
         if (!empty($option['preserve-user-data']) and count($ranks)){
             return;
         }
-        
-        $teams = Iquest_Team::fetch();
 
-        $team_nr = count($teams);
-        $distances = array();
-        $rank = array();
-
-        foreach($teams as $team){
-            $distances[$team->id] = "999999";
-            $rank[$team->id] = $team_nr;
-        }
-
-        $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
-
-        $team_rank = new Iquest_team_rank($start_time, $distances, $rank, null);
-        $team_rank->insert();
+        Iquest_team_rank::init_db_table();
     }
     
     static function insert_cgrp($metadata){
