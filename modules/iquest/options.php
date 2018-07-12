@@ -20,7 +20,7 @@ class Iquest_Options{
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
     /** Do not show position of the team this number of seconds before END_TIME */
-    const HIDE_PLACE_TIMEOUT    = "hide_place_timoeut";
+    const HIDE_PLACE_TIMEOUT    = "hide_place_timeout";
 
     /** Show contest graph to teams */
     const SHOW_GRAPH            = "show_graph";
