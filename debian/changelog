@@ -1,3 +1,13 @@
+iquest (0.2.8) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * HQ event log: filter - log type - allow multiple selection (#6)
+  * HQ event log: filter - team name cannot be scrolled if do not fit screen (#5)
+  * HQ event log: ability to disable auto-refresh (#7)
+  * chroust: fix typo in name of config option (#18)
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 12 Jul 2018 23:15:52 +0200
+
 iquest (0.2.7) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
