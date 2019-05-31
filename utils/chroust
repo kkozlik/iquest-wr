@@ -24,7 +24,7 @@ class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
 
     public function __construct($message, $gather_info=array()){
         parent::__construct($message);
-        
+
         foreach($gather_info as $info_type){
             $this->gather_info($info_type);
         }
@@ -71,7 +71,7 @@ class Iquest_VerifyFailedException extends Iquest_InvalidConfigException {
 
 class Iquest_Verbose_Output{
     private static $enabled=false;
-    
+
     public static function enable(){
         self::$enabled=true;
     }
@@ -95,7 +95,7 @@ class Iquest_Metadata{
         Iquest_Options::INITIAL_CGRP_IDS      => "start",
         Iquest_Options::FINAL_CGRP_ID         => "final",
         Iquest_Options::REVEAL_GOAL_CGRP_ID   => "reveal_goal",
-    ); 
+    );
 
     private $data;
     private $parent_metadata;
@@ -138,7 +138,7 @@ class Iquest_Metadata{
 
     private function get_metadata($file){
         if (!file_exists($file)) throw new Iquest_noMetaDataException();
-        
+
         $metadata = parse_ini_file($file, true);
         if (false === $metadata){
             throw new Iquest_MetadataOpenException("Cannot open or read metadata file: ".$file);
@@ -161,18 +161,18 @@ class Iquest_Metadata{
                 $cfg[$k] = $this->data['cfg'][$k];
             }
         }
-        
+
         return $cfg;
     }
 
     /**
      *  Return charset used in for specific file
-     *  
-     *  Function first look to [$filename] section and if it do not contain 
-     *  the charset, it look to [general] section.               
-     */         
+     *
+     *  Function first look to [$filename] section and if it do not contain
+     *  the charset, it look to [general] section.
+     */
     function get_charset($filename){
-        
+
         $filename = basename($filename);
         if (isset($this->data["file:".$filename]['charset'])){
             return $this->data["file:".$filename]['charset'];
@@ -191,12 +191,12 @@ class Iquest_Metadata{
 
     /**
      *  Return MIME type used in for specific file
-     *  
-     *  Function first look to [$filename] section and if it do not contain 
-     *  the MIME type it call Iquest_file::get_mime_type()               
-     */         
+     *
+     *  Function first look to [$filename] section and if it do not contain
+     *  the MIME type it call Iquest_file::get_mime_type()
+     */
     function get_mime_type($filename){
-        
+
         $filename = basename($filename);
         if (isset($this->data["file:".$filename]['mime_type'])){
             return $this->data["file:".$filename]['mime_type'];
@@ -211,7 +211,7 @@ class Iquest_Metadata{
         }
         return $this->data['general']['id'];
     }
-    
+
     function get_cgrp_name(){
 
         if (!isset($this->data['cgrp']['name'])){
@@ -225,7 +225,7 @@ class Iquest_Metadata{
 
         return $this->data['cgrp']['name'];
     }
-    
+
     function get_cgrp_order(){
 
         if (!isset($this->data['cgrp']['order'])){
@@ -296,7 +296,7 @@ class Iquest_Metadata{
 
     /**
      *  Get canonicalized key
-     */         
+     */
     function get_solution_key_canon(){
         return Iquest_Solution::canonicalize_key($this->get_solution_key());
     }
@@ -305,7 +305,7 @@ class Iquest_Metadata{
         if (!isset($this->data['solution']['timeout'])){
             return 0;
         }
-        return self::timeout_to_sec($this->data['solution']['timeout'], "solution"); 
+        return self::timeout_to_sec($this->data['solution']['timeout'], "solution");
     }
 
     function get_solution_countdown_start(){
@@ -320,7 +320,7 @@ class Iquest_Metadata{
             throw new Iquest_InvalidConfigException("Invalid value '{$this->data['solution']['countdown_start']}' for countdown_start.");
         }
 
-        return $this->data['solution']['countdown_start']; 
+        return $this->data['solution']['countdown_start'];
     }
 
     function get_solution_coin_value(){
@@ -365,27 +365,27 @@ class Iquest_Metadata{
 
     /**
      *  Return number of hidden clues
-     */         
+     */
     function get_clue_hidden_nr(){
         if (!isset($this->data['cgrp']['hidden_clues'])) return 0;
-        
+
         return (int)$this->data['cgrp']['hidden_clues'];
     }
-    
+
     function get_clue_point_to($clue_nr){
-        // If no point_to is specifed for the clue, assume it point to 
-        // solution specified in this directory 
+        // If no point_to is specifed for the clue, assume it point to
+        // solution specified in this directory
         if (!isset($this->data['clue']['point_to'][$clue_nr])){
             return array($this->get_solution_id());
-        } 
-        
+        }
+
         $point_to = $this->data['clue']['point_to'][$clue_nr];
 
         // If point_to is "-" or "" it point to no solution
-        if ($point_to == "-" or $point_to == "") return array(); 
+        if ($point_to == "-" or $point_to == "") return array();
 
         // Otherwise create array from the comma separated list
-        $point_to_values = explode(",", $point_to); 
+        $point_to_values = explode(",", $point_to);
         $point_to_values = array_map("trim", $point_to_values);
         return $point_to_values;
     }
@@ -412,39 +412,39 @@ class Iquest_Metadata{
     /**
      *  Retrieve the clue ID for given hint number
      *  Return null if clue ids are not specified
-     */         
+     */
     function get_hint_clueid($hint_nr){
-        if (!isset($this->data['hint']['clue_IDs']) or 
+        if (!isset($this->data['hint']['clue_IDs']) or
             trim($this->data['hint']['clue_IDs']) == ""){
-            
+
             return null;
         }
-        
+
         $clue_IDs = explode(",", $this->data['hint']['clue_IDs']);
 
         if (trim($clue_IDs[0]) == ""){
             return null;
         }
-        
+
         if (!isset($clue_IDs[$hint_nr])){
             $clue_ID = (int)end($clue_IDs);
-            $clue_ID = $this->get_cgrp_id()."-".$clue_ID; 
+            $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
         }
         else{
             $clue_ID = (int)$clue_IDs[$hint_nr];
-            $clue_ID = $this->get_cgrp_id()."-".$clue_ID; 
+            $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
         }
 
         return $clue_ID;
     }
 
     function get_hint_timeout($hint_nr){
-        if (!isset($this->data['hint']['timeouts']) or 
+        if (!isset($this->data['hint']['timeouts']) or
             trim($this->data['hint']['timeouts']) == ""){
 
             $this->data['hint']['timeouts'] = "";
         }
-        
+
         $timeouts = explode(",", $this->data['hint']['timeouts']);
 
 
@@ -458,16 +458,16 @@ class Iquest_Metadata{
 
         if ($timeout == "") $timeout = 0;
 
-        return self::timeout_to_sec($timeout, "hint $hint_nr"); 
+        return self::timeout_to_sec($timeout, "hint $hint_nr");
     }
 
     function get_hint_price($hint_nr){
-        if (!isset($this->data['hint']['prices']) or 
+        if (!isset($this->data['hint']['prices']) or
             trim($this->data['hint']['prices']) == ""){
 
             $this->data['hint']['prices'] = "";
         }
-        
+
         $prices = explode(",", $this->data['hint']['prices']);
 
         if (!isset($prices[$hint_nr])){
@@ -476,7 +476,7 @@ class Iquest_Metadata{
         else{
             $price = $prices[$hint_nr];
         }
-        
+
         if ($price == "") $price = 0;
 
         if (!is_numeric($price)){
@@ -486,7 +486,7 @@ class Iquest_Metadata{
         return round($price, 2);
     }
 
-    
+
     function save_options(){
         if (!isset($this->data['options'])) return;
         if (!is_array($this->data['options'])) return;
@@ -511,7 +511,7 @@ class Iquest_Metadata{
             Console::log("*** WARNING: There is no information for login into HQ specified in top metadata file.", Console::YELLOW);
             return;
         }
-        
+
         $hq_logins = array();
         foreach($this->data['HQ']['credentials'] as $username => $password){
             if (substr($password, 0, 1) == '$') $password = substr($password, 1);
@@ -569,7 +569,7 @@ class Iquest_Metadata{
 
         $str .= "** CLUES:\n";
         $str .= "   NR HIDDEN CLUES: ".$this->get_clue_hidden_nr()."\n";
-        
+
         return $str;
     }
 }
@@ -596,13 +596,13 @@ class Chroust{
             rm($config->iquest_data_dir."*");
         }
         else {
-            throw new Exception("Iquest datadir is not set in config file.");            
+            throw new Exception("Iquest datadir is not set in config file.");
         }
     }
 
     static function prune_db($option){
         global $data, $config;
-    
+
         $tables = array(
             $config->data_sql->iquest_cgrp->table_name,
             $config->data_sql->iquest_clue->table_name,
@@ -630,10 +630,10 @@ class Chroust{
         if (empty($option['preserve-user-data'])){
             Console::log("Wiping user wallets", Console::YELLOW);
             $res=$data->db->query(
-                "update {$config->data_sql->iquest_team->table_name} 
+                "update {$config->data_sql->iquest_team->table_name}
                  set {$config->data_sql->iquest_team->cols->wallet}=0");
             if ($data->dbIsError($res)) throw new DBException($res);
-        }    
+        }
     }
 
     static function save_ref_ids($option){
@@ -646,7 +646,7 @@ class Chroust{
         $clues = Iquest_Clue::fetch();
         $hints = Iquest_Hint::fetch();
         $solutions = Iquest_Solution::fetch();
-        
+
         foreach($cgrps as $cgrp)            self::$id2ref_id['cgrp'][$cgrp->id]         = $cgrp->ref_id;
         foreach($clues as $clue)            self::$id2ref_id['clue'][$clue->id]         = $clue->ref_id;
         foreach($hints as $hint)            self::$id2ref_id['hint'][$hint->id]         = $hint->ref_id;
@@ -656,7 +656,7 @@ class Chroust{
 
     /**
      *  Set default values for options
-     */         
+     */
     static function set_defaults(){
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
         Iquest_Options::set(Iquest_Options::SHOW_PLACE, 1);
@@ -672,7 +672,7 @@ class Chroust{
 
     /**
      *  Create initial record for team ranking.
-     */         
+     */
     static function init_team_rank($option){
 
         $ranks = Iquest_team_rank::fetch();
@@ -684,7 +684,7 @@ class Chroust{
 
         Iquest_team_rank::init_db_table();
     }
-    
+
     static function insert_cgrp($metadata){
         $cgrp_id = $metadata->get_cgrp_id();
         $cgrp_name = $metadata->get_cgrp_name();
@@ -692,7 +692,7 @@ class Chroust{
 
         if (isset(self::$id2ref_id['cgrp'][$cgrp_id])) $ref_id = self::$id2ref_id['cgrp'][$cgrp_id];
         else                                           $ref_id = rfc4122_uuid();
-        
+
         $id_dup_cgrp = Iquest_ClueGrp::fetch(array("id"=>$cgrp_id));
         if ($id_dup_cgrp){
             throw new Iquest_InvalidConfigException("There are two clue groups sharing same ID: '$cgrp_id'.");
@@ -714,7 +714,7 @@ class Chroust{
         $point_to = $metadata->get_clue_point_to($clue_nr);
         $clue_type = $metadata->get_clue_type($clue_nr, $filename);
 
-        $clue = new Iquest_Clue($clue_id, $ref_id, 
+        $clue = new Iquest_Clue($clue_id, $ref_id,
                 $filename, $content_type, $clue_type,
                 null, $cgrp_id, $clue_nr, $point_to);
 
@@ -763,7 +763,7 @@ class Chroust{
                                           "timeout"   => $timeout);
 
 
-        $hint = new Iquest_Hint($hint_id, $ref_id, 
+        $hint = new Iquest_Hint($hint_id, $ref_id,
                 $filename, $content_type, null, $clue_id, $timeout, $price, $hint_nr);
 
         $hint->insert();
@@ -774,7 +774,7 @@ class Chroust{
 
         if ($solution_nr > 0){
             Console::log("*** WARNING: Only one solution file allowed in a directory. Ignoring the another one: '$filename'", Console::YELLOW);
-            return null; 
+            return null;
         }
 
         $solution_id = $metadata->get_solution_id();
@@ -817,7 +817,7 @@ class Chroust{
                 catch(Exception $e){
                     throw new Iquest_VerifyFailedException(
                                 "next_cgrp_id of solution '$solution_id' contain invalid condition '{$next_cgrp->condition}'. ".$e->getMessage()
-                    );            
+                    );
                 }
             }
         }
@@ -830,8 +830,8 @@ class Chroust{
                                          "timeout" =>    $timeout,
                                          "next_cgrp_id" => $next_cgrps ? $next_cgrps_str :  null);
 
-        $solution = new Iquest_Solution($solution_id, $ref_id, 
-                $filename, $content_type, null, $name, $timeout, 
+        $solution = new Iquest_Solution($solution_id, $ref_id,
+                $filename, $content_type, null, $name, $timeout,
                 $countdown_start, $key, $coin_value);
 
         $solution->set_next_cgrps($next_cgrps);
@@ -840,7 +840,7 @@ class Chroust{
         return $solution;
     }
 
-    
+
     static function process_top_metadata($dir){
 
         try{
@@ -849,7 +849,7 @@ class Chroust{
         catch (Iquest_noMetaDataException $e){
             throw new Iquest_InvalidConfigException("Cannot find top metadata file in directory: ".$dir, 0 ,$e);
         }
-    
+
         try{
             $metadata->save_options();
             $metadata->save_hq_login();
@@ -878,7 +878,7 @@ class Chroust{
             if (!copy($src_dir.$logo_file, $config->iquest_data_dir.$dest_file)){
                 throw new Exception("Copy of file ".$src_dir.$logo_file." failed");
             }
-            
+
             Iquest_Options::set(Iquest_Options::LOGO, $logo_file);
         }
     }
@@ -892,8 +892,8 @@ class Chroust{
 
         foreach($dir as $entry){
             //skip entries that are not directories
-            if (!is_dir($src_dir.$entry)) continue; 
-            if (substr($entry, 0, 1) == ".") continue; 
+            if (!is_dir($src_dir.$entry)) continue;
+            if (substr($entry, 0, 1) == ".") continue;
 
             try{
                 $dest_dir = self::canonicalize_name($entry);
@@ -903,7 +903,7 @@ class Chroust{
                 throw new Iquest_InvalidConfigException("Problem during processing directory: ".$src_dir.$entry.DIRECTORY_SEPARATOR, 0, $e);
             }
         }
-    
+
     }
 
     static private function filename_replacement(&$line, &$files, $filename){
@@ -915,13 +915,13 @@ class Chroust{
             else{
                 throw new Iquest_InvalidConfigException("Invalid file replacement '{$matches[0]}' in file '$filename'");
             }
-            
+
             $nr = $matches['nr'] - 1;
             $filenames = array_keys($files[$type]);
             if (!isset($filenames[$nr])){
                 throw new Iquest_InvalidConfigException("Cannot find file number '{$matches['nr']}' for file replacement '{$matches[0]}' in file '$filename'");
             }
-    
+
             $line = str_replace($matches[0], $filenames[$nr], $line);
         }
     }
@@ -946,6 +946,10 @@ class Chroust{
 
                 self::filename_replacement($line, $files, basename($from));
 
+                if (preg_match("/<hint-cnt>/i", $line, $matches)){
+                    $line = str_replace($matches[0], count($files['hints']), $line);
+                }
+
                 if (false === fwrite($out, $line)){
                     throw new Exception("Copy of file $from failed");
                 }
@@ -956,11 +960,11 @@ class Chroust{
             }
 
 
-            fclose($in);            
-            fclose($out);            
+            fclose($in);
+            fclose($out);
             return;
         }
-        
+
         if (!copy($from, $config->iquest_data_dir.$to)){
             throw new Exception("Copy of file $from failed");
         }
@@ -968,7 +972,7 @@ class Chroust{
 
     static function process_task_dir($task_dir, $dest_dir, $top_metadata){
         global $config;
-        
+
         Console::log("Reading directory: $task_dir", Console::GREEN);
 
         try{
@@ -980,10 +984,10 @@ class Chroust{
         }
 
         Iquest_Verbose_Output::log($metadata->to_string(), "Metadata");
-        
-        // re-create the dest. dir 
+
+        // re-create the dest. dir
         RecursiveMkdir($config->iquest_data_dir.$dest_dir);
-        
+
         $dir = scandir($task_dir, SCANDIR_SORT_ASCENDING);
         if ($dir === false) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$task_dir);
 
@@ -992,13 +996,13 @@ class Chroust{
         $entries['clues']=array();
         $entries['hints']=array();
         $entries['solutions']=array();
-        
+
         foreach($dir as $entry){
             //skip entries that are not files
             if (!is_file($task_dir.$entry)) continue;
             // skip metadata file
-            if ($entry == Iquest_Metadata::METADATA_FILE) continue; 
-        
+            if ($entry == Iquest_Metadata::METADATA_FILE) continue;
+
             $dest_file = self::canonicalize_name($entry);
 
             if (preg_match("/".$cfg["clue_pattern"]."/i", $dest_file) or
@@ -1038,11 +1042,11 @@ class Chroust{
                 $initial_cgrps[] = $metadata->get_cgrp_id();
                 Iquest_Options::set(Iquest_Options::INITIAL_CGRP_IDS, $initial_cgrps);
             }
-    
+
             if ($metadata->is_reveal_goal_cgrp()){
                 Iquest_Options::set(Iquest_Options::REVEAL_GOAL_CGRP_ID, $metadata->get_cgrp_id());
             }
-    
+
             if ($metadata->is_final_cgrp()){
                 Iquest_Options::set(Iquest_Options::FINAL_CGRP_ID, $metadata->get_cgrp_id());
             }
@@ -1103,13 +1107,13 @@ class Chroust{
             }
         }
 
-        
+
     }
 
     /**
-     *  Set value of WALLET_ACTIVE option in dependency whether 
+     *  Set value of WALLET_ACTIVE option in dependency whether
      *  there are any hints that could be bought
-     */         
+     */
     static function set_wallet_active(){
         // Check whether the WALLET_ACTIVE is already set from metadata file. If so
         // just return. Otherwise catch the exception thrown and set the WALLET_ACTIVE flag.
@@ -1120,11 +1124,11 @@ class Chroust{
         catch(RuntimeException $e){}
 
         $coin_value = 0;
-    
+
         foreach(self::$summary['hints'] as $row){
             $coin_value += $row['price'];
         }
-        
+
         Iquest_Options::set(Iquest_Options::WALLET_ACTIVE, ($coin_value>0) ? 1 : 0);
     }
 
@@ -1134,7 +1138,7 @@ class Chroust{
         $cgrps = Iquest_ClueGrp::fetch();
         $clues = Iquest_Clue::fetch();
         $solutions = Iquest_Solution::fetch();
-        
+
         // verify that next_cgrp_id for each solution is valid (exists)
         foreach($solutions as $solution){
             foreach($solution->get_next_cgrp_ids() as $next_cgrp_id){
@@ -1146,9 +1150,9 @@ class Chroust{
                 }
             }
         }
-        
-        
-        
+
+
+
         // verify that clue2soultion point to existing solution
 
         /* table's name */
@@ -1160,7 +1164,7 @@ class Chroust{
         $q = "select ".$c->clue_id.",
                      ".$c->solution_id."
               from ".$t_name;
-    
+
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
 
@@ -1170,7 +1174,7 @@ class Chroust{
                 throw new Iquest_VerifyFailedException(
                             "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.",
                             array(Iquest_VerifyFailedException::SOLUTION_IDS)
-                );            
+                );
             }
 
             if (!isset($clues[$row[$c->clue_id]])){
@@ -1192,7 +1196,7 @@ class Chroust{
             catch(RuntimeException $e){
                 echo "\n";
                 Console::log("\n*** ERROR: Option $option_name is not set.", Console::RED);
-                
+
                 if (in_array($option_name, Iquest_Options::$set_in_global_ini)){
                     echo "It should be specified in [options] section of metadata in top directory.\n";
                 }
@@ -1203,13 +1207,13 @@ class Chroust{
                 if (isset(Iquest_Metadata::$option_2_ini_file_directive[$option_name])){
                     echo "You should set the directive '".Iquest_Metadata::$option_2_ini_file_directive[$option_name]."'.\n";
                 }
-                
+
                 throw new Iquest_InvalidConfigException($e->getMessage());
             }
         }
-        
+
         // Verify that the graph of clues and solutions is continuous.
-        // Use any fake number as team_id. We do not need to have graph for any team. 
+        // Use any fake number as team_id. We do not need to have graph for any team.
         $graph = new Iquest_solution_graph(9999);
         $graph_errors = $graph->check_graph_continuous();
         if ($graph_errors){
@@ -1220,7 +1224,7 @@ class Chroust{
             Console::log("You can check the graph in the HQ interface by click on name of any team.\n", Console::LIGHT_PURPLE);
             Console::log($graph_errors, Console::LIGHT_PURPLE);
             Console::log(str_repeat("*", 80), Console::LIGHT_PURPLE);
-        }        
+        }
     }
 
     static function canonicalize_name($str){
@@ -1243,27 +1247,27 @@ class Chroust{
 
     static function utf_8_sprintf ($format) {
         $args = func_get_args();
-        
+
         for ($i = 1; $i < count($args); $i++) {
             $args [$i] = iconv('UTF-8', 'ISO-8859-2', $args [$i]);
         }
-        
+
         return iconv('ISO-8859-2', 'UTF-8', call_user_func_array('sprintf', $args));
     }
-    
+
     static function format_time($t){
-        return sprintf("%02d%s%02d%s%02d", 
-                            floor($t/3600), ':', 
-                            ($t/60)%60,     ':', 
+        return sprintf("%02d%s%02d%s%02d",
+                            floor($t/3600), ':',
+                            ($t/60)%60,     ':',
                             $t%60);
     }
-    
+
     static function usage(){
         echo "Usage: ".$_SERVER['argv'][0]." [--verbose] [--preserve-user-data|--clear-user-data] <datadir> \n\n";
     }
-    
+
     static function main(){
-    
+
         if (posix_getuid() == 0){
             fwrite(STDERR, "Execution as root is not allowed\n");
             exit(1);
@@ -1306,18 +1310,18 @@ class Chroust{
             fwrite(STDERR, "The src_dir is not set.\n");
             exit;
         }
-        
+
         if (!is_dir($src_dir)){
             fwrite(STDERR, "The directory does not exists ($src_dir)\n");
             exit(1);
         }
-    
+
         if (substr($src_dir, -1) != DIRECTORY_SEPARATOR){
             $src_dir.=DIRECTORY_SEPARATOR;
         }
 
         umask(002);
-        
+
         try{
             self::save_ref_ids($option);
             self::prune_data_dir();
@@ -1347,7 +1351,7 @@ class Chroust{
             echo "\n";
             Console::log("Hint summary:", Console::LIGHT_GREEN, false, Console::UNDERLINE);
             echo "\n";
-            
+
             // sort the keys summary by 'ordering' attribute
             usort(self::$summary['hints'], create_function('$a,$b','
                 if ($a["ordering"] == $b["ordering"]) {
@@ -1360,34 +1364,34 @@ class Chroust{
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
             '));
 
-            $fields_headers = array('cgrp_name' => "Cgrp Name ", 
-                                    'clue_id'   => "Clue ID ", 
-                                    'hint_nr'   => "Hint Nr ", 
-                                    'price'     => "Price ", 
+            $fields_headers = array('cgrp_name' => "Cgrp Name ",
+                                    'clue_id'   => "Clue ID ",
+                                    'hint_nr'   => "Hint Nr ",
+                                    'price'     => "Price ",
                                     'timeout'   => "Timeout ",
                                     );
             $fields_widths = self::get_field_widths(self::$summary['hints'], $fields_headers);
 
             self::print_table_heading($fields_headers, $fields_widths);
             self::print_table_separator($fields_widths);
-            
+
             $fstring = self::get_formating_string($fields_widths, "|");
 
             $total_hint_price = 0;
             foreach(self::$summary['hints'] as $row){
                 $total_hint_price += $row['price'];
-                echo self::utf_8_sprintf($fstring, 
-                            $row['cgrp_name'], 
-                            $row['clue_id'], 
-                            $row['hint_nr'], 
+                echo self::utf_8_sprintf($fstring,
+                            $row['cgrp_name'],
+                            $row['clue_id'],
+                            $row['hint_nr'],
                             $row['price']>0?$row['price']:"---",
                             $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---");
             }
 
             self::print_table_separator($fields_widths);
 
-            echo self::utf_8_sprintf($fstring, 
-                        "Total:", 
+            echo self::utf_8_sprintf($fstring,
+                        "Total:",
                         "",
                         "",
                         $total_hint_price,
@@ -1408,44 +1412,44 @@ class Chroust{
             '));
 
 
-            $fields_headers = array('name'          => "Name ", 
-                                    'key'           => "Key ", 
-                                    'coin_value'    => "Coin ", 
+            $fields_headers = array('name'          => "Name ",
+                                    'key'           => "Key ",
+                                    'coin_value'    => "Coin ",
                                     'timeout'       => "Timeout ",
-                                    'next_cgrp_id'  => "NextCgrps ", 
+                                    'next_cgrp_id'  => "NextCgrps ",
                                     );
             $fields_widths = self::get_field_widths(self::$summary['keys'], $fields_headers);
-            
+
             // Hack: make sure the last 'Total:' line fits into column widths
             if ($fields_widths['name'] < iconv_strlen("Total:", "UTF-8")) $fields_widths['name'] = iconv_strlen("Total:", "UTF-8");
 
             self::print_table_heading($fields_headers, $fields_widths);
             self::print_table_separator($fields_widths);
-            
+
             $fstring = self::get_formating_string($fields_widths, "|");
             $total_coins = $total_timeout = 0;
             foreach(self::$summary['keys'] as $row){
                 $total_coins += $row['coin_value'];
                 $total_timeout += $row['timeout'];
-                echo self::utf_8_sprintf($fstring, 
-                            $row['name'], 
-                            $row['key'], 
+                echo self::utf_8_sprintf($fstring,
+                            $row['name'],
+                            $row['key'],
                             $row['coin_value']>0?$row['coin_value']:"---",
                             $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---",
                             $row['next_cgrp_id']?$row['next_cgrp_id']:"---");
             }
 
             self::print_table_separator($fields_widths);
-            echo self::utf_8_sprintf($fstring, 
-                        "Total:", 
+            echo self::utf_8_sprintf($fstring,
+                        "Total:",
                         "",
                         $total_coins,
                         self::format_time($total_timeout),
                         "");
 
-                        
+
             echo "\n";
-            
+
         }
         catch (Iquest_VerifyFailedException $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
@@ -1465,27 +1469,27 @@ class Chroust{
             throw $e;
         }
 
-    
-    
+
+
     }
-    
+
     static function get_field_widths($fields, $fields_headers){
         $field_widths = array();
         foreach($fields_headers as $key => $val){
             $field_widths[$key] = iconv_strlen($val, "UTF-8");
-            
+
             foreach($fields as $field){
                 $width = iconv_strlen($field[$key], "UTF-8");
                 if ($field_widths[$key] < $width) $field_widths[$key] = $width;
             }
         }
-        
+
         return $field_widths;
     }
-    
+
     static function get_formating_string($fields_widths, $separator){
         $fstr = $separator;
-        
+
         foreach($fields_widths as $width){
             $fstr .= "%-".$width."s".$separator;
         }
@@ -1495,7 +1499,7 @@ class Chroust{
     static function print_table_heading($fields_headers, $fields_widths){
         $format_str = self::get_formating_string($fields_widths, "^");
         $args = array_merge(array($format_str), $fields_headers);
-        
+
         echo call_user_func_array(array('self', 'utf_8_sprintf'), $args);
     }
 

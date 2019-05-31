@@ -2,7 +2,7 @@ You could use replacements for following tags in files of clues/solutions/hints:
 
 <key>    - will be replaced with the actual code defined in metadata.ini
            (replaced in solution files only)
-           
+
 <file-[type][number]> - will be replaced with filename of given file from current directory
         [type] should be 'c', 'h' or 's' where:
                'c' stands for Clue file
@@ -12,5 +12,5 @@ You could use replacements for following tags in files of clues/solutions/hints:
         [number] is the numebr of the file of given type in the directory.
                  Files are numbered from 1 in alphabetical order.
 
+<hint-cnt> - will be replaced with the actual number of hints defined in the directory
 
-                   
