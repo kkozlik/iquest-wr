@@ -2,20 +2,21 @@
 
 /**
  *  Class to access iquest options
- */ 
+ */
 class Iquest_Options{
 
-    const START_TIME      = "start_time";
-    const END_TIME        = "end_time";
-    const INITIAL_CGRP_IDS = "initial_cgrp_ids";
-    const FINAL_CGRP_ID   = "final_cgrp_id";
-    const REVEAL_GOAL_CGRP_ID = "reveal_goal_cgrp_id";
-    const WALLET_ACTIVE   = "wallet_active";
-    const CHECK_KEY_ORDER = "check_key_order";
-    const KEY_PREFIX      = "key_prefix";
-    const LOGO            = "logo";
-    const GAME_NAME       = "game_name";
-    const HQ_LOGIN        = "hq_login";
+    const START_TIME            = "start_time";
+    const END_TIME              = "end_time";
+    const INITIAL_CGRP_IDS      = "initial_cgrp_ids";
+    const FINAL_CGRP_ID         = "final_cgrp_id";
+    const REVEAL_GOAL_CGRP_ID   = "reveal_goal_cgrp_id";
+    const WALLET_ACTIVE         = "wallet_active";
+    const WALLET_INITIAL_VALUE  = "wallet_initial_value";
+    const CHECK_KEY_ORDER       = "check_key_order";
+    const KEY_PREFIX            = "key_prefix";
+    const LOGO                  = "logo";
+    const GAME_NAME             = "game_name";
+    const HQ_LOGIN              = "hq_login";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -40,6 +41,7 @@ class Iquest_Options{
                                              self::FINAL_CGRP_ID,
                                              self::REVEAL_GOAL_CGRP_ID,
                                              self::WALLET_ACTIVE,
+                                             self::WALLET_INITIAL_VALUE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
@@ -52,10 +54,11 @@ class Iquest_Options{
                                              self::LOGO,
                                              self::GAME_NAME,
                                              self::HQ_LOGIN,
-                                             ); 
+                                             );
 
     public static $set_in_global_ini = array(self::START_TIME,
                                              self::END_TIME,
+                                             self::WALLET_INITIAL_VALUE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
@@ -74,7 +77,7 @@ class Iquest_Options{
 
     /**
      *  Load options from the DB
-     */         
+     */
     private static function load(){
         global $data, $config;
 
@@ -103,11 +106,11 @@ class Iquest_Options{
 
     /**
      *  Return option with given name
-     */         
+     */
     public static function get($option_name){
         // if options are not loaded yet, load them
         if (is_null(self::$options)) self::load();
-        
+
         // check if the option name is valid
         if (!array_key_exists($option_name, self::$options)){
             throw new RuntimeException("Unknown option: '$option_name'");
@@ -116,16 +119,16 @@ class Iquest_Options{
         // time options convert to unix timestamp
         if ($option_name == self::START_TIME or
             $option_name == self::END_TIME) {
-            
+
             $time = strtotime(self::$options[$option_name]);
-            
+
             if (false === $time){
                 throw new RuntimeException("Option '$option_name' do not contain valid datetime but: '".self::$options[$option_name]."'");
             }
-            
+
             return $time;
         }
-        
+
         return self::$options[$option_name];
     }
 
@@ -136,9 +139,9 @@ class Iquest_Options{
         // verify time options contain valid datetime
         if ($option_name == self::START_TIME or
             $option_name == self::END_TIME) {
-            
+
             $time = strtotime($option_value);
-            
+
             if (false === $time){
                 throw new RuntimeException("Option '$option_name' do not contain valid datetime but: '".$option_value."'");
             }
@@ -171,8 +174,8 @@ class Iquest_Options{
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
 
-        if (!is_null(self::$options)) self::$options[$option_name] = $option_value; 
-        
+        if (!is_null(self::$options)) self::$options[$option_name] = $option_value;
+
     }
 }
 

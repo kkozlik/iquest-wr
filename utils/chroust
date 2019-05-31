@@ -642,12 +642,18 @@ class Chroust{
             $res=$data->db->query("delete from ".$table);
             if ($data->dbIsError($res)) throw new DBException($res);
         }
+    }
+
+    static function initialize_user_wallets($option){
+        global $data, $config;
+
+        $initial_value = (float)Iquest_Options::get(Iquest_Options::WALLET_INITIAL_VALUE);
 
         if (empty($option['preserve-user-data'])){
             Console::log("Wiping user wallets", Console::YELLOW);
             $res=$data->db->query(
                 "update {$config->data_sql->iquest_team->table_name}
-                 set {$config->data_sql->iquest_team->cols->wallet}=0");
+                 set {$config->data_sql->iquest_team->cols->wallet}=$initial_value");
             if ($data->dbIsError($res)) throw new DBException($res);
         }
     }
@@ -674,6 +680,7 @@ class Chroust{
      *  Set default values for options
      */
     static function set_defaults(){
+        Iquest_Options::set(Iquest_Options::WALLET_INITIAL_VALUE, 0);
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
         Iquest_Options::set(Iquest_Options::SHOW_PLACE, 1);
         Iquest_Options::set(Iquest_Options::HIDE_PLACE_TIMEOUT, 0);
@@ -905,9 +912,7 @@ class Chroust{
         }
     }
 
-    static function process_data_dir($src_dir){
-
-        $top_metadata = self::process_top_metadata($src_dir);
+    static function process_data_dir($src_dir, $top_metadata){
 
         $dir = scandir($src_dir, SCANDIR_SORT_ASCENDING);
         if ($dir === false) throw new Iquest_ConfigDirOpenException("Cannot open directory: ".$src_dir);
@@ -1353,7 +1358,11 @@ class Chroust{
             self::prune_data_dir();
             self::prune_db($option);
             self::set_defaults();
-            self::process_data_dir($src_dir);
+
+            $top_metadata = self::process_top_metadata($src_dir);
+            self::initialize_user_wallets($option);
+
+            self::process_data_dir($src_dir, $top_metadata);
 
             if (self::$unknown_files){
                 echo "\n";

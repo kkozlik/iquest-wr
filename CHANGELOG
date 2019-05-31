@@ -2,6 +2,7 @@ unreleased
 * chroust: adding replacements <hint-cnt> and <timeout> to text files
 * Play audio/video directly in browser using HTML5 (#3)
 * chroust: suppress WARNING: clue_IDs are not specified for hint '0' (#9)
+* chroust: ability to define initial value for user wallet (#11)
 
 rel 0.2.8
 * HQ event log: filter - log type - allow multiple selection (#6)
