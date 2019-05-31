@@ -22,13 +22,22 @@
     {elseif $file.content_type|truncate:6:"" == "audio/"}
         <tr>
             <td colspan="{$colspan}">
-                <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_audio_content}</span></div>
+                <div class="text-center">
+                    <audio controls preload="metadata" src="{$file.file_url|escape}">
+                        <span class="badge badge-inverse">{$lang_str.iquest_file_audio_content}</span>
+                    </audio>
+                </div>
+
             </td>
         </tr>
     {elseif $file.content_type|truncate:6:"" == "video/"}
         <tr>
             <td colspan="{$colspan}" class="text-center">
-                <div class="text-center"><span class="badge badge-inverse">{$lang_str.iquest_file_video_content}</span></div>
+                <div class="text-center">
+                    <video controls preload="metadata" src="{$file.file_url|escape}">
+                        <span class="badge badge-inverse">{$lang_str.iquest_file_video_content}</span>
+                    </video>
+                </div>
             </td>
         </tr>
     {elseif $file.content_type == "application/pdf"}
@@ -49,15 +58,15 @@
 
 {function iquestPager}
     <div class="pagination pagination-right"><ul><li>
-        {pager page=$pager 
-               class_text='' 
-               class_num='' 
-               class_numon='active' 
-               txt_first='&laquo;&laquo;' 
-               txt_prev='&laquo;' 
-               txt_next='&raquo;' 
-               txt_last='&raquo;&raquo;' 
-               display='always' 
+        {pager page=$pager
+               class_text=''
+               class_num=''
+               class_numon='active'
+               txt_first='&laquo;&laquo;'
+               txt_prev='&laquo;'
+               txt_next='&raquo;'
+               txt_last='&raquo;&raquo;'
+               display='always'
                separator='</li><li>'}
     </li></ul></div>
 {/function}
