@@ -29,7 +29,7 @@ case "$1" in
         chmod 2770 /var/lib/iquest/data
         chown www-data:iquest /var/lib/iquest/data
 
-        chmod 664 /var/lib/iquest/smarty
+        chmod 775 /var/lib/iquest/smarty
         chown www-data:iquest /var/lib/iquest/smarty
 
         chmod 660 /etc/iquest/config.php
