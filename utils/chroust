@@ -515,7 +515,12 @@ class Iquest_Metadata{
                 $value = self::timeout_to_sec($value, "option $name");
             }
 
-            Iquest_Options::set($name, $value);
+            try{
+                Iquest_Options::set($name, $value);
+            }
+            catch(RuntimeException $e){
+                throw new Iquest_InvalidConfigException("Error while processing 'options' from top metadata file: ".$e->getMessage());
+            }
         }
     }
 
