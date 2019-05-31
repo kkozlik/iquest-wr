@@ -90,6 +90,8 @@ class Iquest_Metadata{
     const METADATA_FILE = "metadata.ini";
     const SOLUTION_ID_PREFIX = "KEY-";
 
+    const LAST_CLUE = "L";
+
     /** Name of directives in ini file that set the option */
     public static $option_2_ini_file_directive = array(
         Iquest_Options::INITIAL_CGRP_IDS      => "start",
@@ -423,6 +425,7 @@ class Iquest_Metadata{
     /**
      *  Retrieve the clue ID for given hint number
      *  Return null if clue ids are not specified
+     *  Return self::LAST_CLUE as a special value if last defined clue shall be used
      */
     function get_hint_clueid($hint_nr){
         if (!isset($this->data['hint']['clue_IDs']) or
@@ -442,6 +445,8 @@ class Iquest_Metadata{
             $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
         }
         else{
+            if ($clue_IDs[$hint_nr] == 'L') return self::LAST_CLUE;
+
             $clue_ID = (int)$clue_IDs[$hint_nr];
             $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
         }
@@ -755,6 +760,12 @@ class Chroust{
             $clue_id = $last_clue->id;
 
             Console::log("*** WARNING: clue_IDs are not specified for hint '$hint_nr'. Useing the last clue: '$clue_id'", Console::YELLOW);
+        }
+
+        // if last clue shall be used
+        if ($clue_id == Iquest_Metadata::LAST_CLUE){
+            $last_clue = end($clues);
+            $clue_id = $last_clue->id;
         }
 
         // Check whether the clue ID is valid
