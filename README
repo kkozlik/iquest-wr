@@ -5,16 +5,17 @@ Dependencies
  * php-mdb2
  * php5-mysql
  * pear: MDB2#mysqli
- * graphviz 
+ * graphviz
 
 
-Check value of session garbage collection in php.ini: 
+Check value of session garbage collection in php.ini:
 session.gc_maxlifetime = 86400
 
 
 Building debian package
 -----------------------
 * run: debchange -i
+* put changelog entries here
 * run: debchange -r
 * add release label to CHANGELOG file
 * run: ./build-deb

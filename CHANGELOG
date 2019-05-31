@@ -1,4 +1,4 @@
-unreleased
+rel 0.2.9
 * chroust: adding replacements <hint-cnt> and <timeout> to text files
 * Play audio/video directly in browser using HTML5 (#3)
 * chroust: suppress WARNING: clue_IDs are not specified for hint '0' (#9)
