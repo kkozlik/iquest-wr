@@ -308,6 +308,17 @@ class Iquest_Metadata{
         return self::timeout_to_sec($this->data['solution']['timeout'], "solution");
     }
 
+    function get_solution_timeout_str(){
+        $timeout = $this->get_solution_timeout();
+        if (!$timeout) return "------";
+
+        $secs = $timeout % 60; $timeout /= 60;
+        $mins = $timeout % 60; $timeout /= 60;
+        $hours = $timeout;
+
+        return sprintf("%02d:%02d:%02d", $hours, $mins, $secs);
+    }
+
     function get_solution_countdown_start(){
         if (!isset($this->data['solution']['countdown_start'])){
             return Iquest_Solution::CD_START_ALL;
@@ -948,6 +959,10 @@ class Chroust{
 
                 if (preg_match("/<hint-cnt>/i", $line, $matches)){
                     $line = str_replace($matches[0], count($files['hints']), $line);
+                }
+
+                if (preg_match("/<timeout>/i", $line, $matches)){
+                    $line = str_replace($matches[0], $metadata->get_solution_timeout_str(), $line);
                 }
 
                 if (false === fwrite($out, $line)){

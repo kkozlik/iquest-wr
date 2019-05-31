@@ -13,4 +13,5 @@ You could use replacements for following tags in files of clues/solutions/hints:
                  Files are numbered from 1 in alphabetical order.
 
 <hint-cnt> - will be replaced with the actual number of hints defined in the directory
+<timeout>  - will be replaced with the actual timeout defined in metadata.ini
 
