@@ -4,6 +4,7 @@ unreleased
 * chroust: suppress WARNING: clue_IDs are not specified for hint '0' (#9)
 * chroust: ability to define initial value for user wallet (#11)
 * chroust: Unexpected exception if there is unknown option (#20)
+* Directory /var/lib/serweb-frmwrk/smarty/ might be created with wrong permissions (#14)
 
 rel 0.2.8
 * HQ event log: filter - log type - allow multiple selection (#6)

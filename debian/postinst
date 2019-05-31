@@ -26,8 +26,11 @@ case "$1" in
         fi
 
 
-        chmod 2770 /var/lib/iquest
-        chown www-data:iquest /var/lib/iquest
+        chmod 2770 /var/lib/iquest/data
+        chown www-data:iquest /var/lib/iquest/data
+
+        chmod 664 /var/lib/iquest/smarty
+        chown www-data:iquest /var/lib/iquest/smarty
 
         chmod 660 /etc/iquest/config.php
         chmod 660 /etc/iquest/config.auth.php
