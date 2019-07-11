@@ -1,3 +1,11 @@
+iquest (0.2.10) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * fix permissions for /var/lib/iquest/smarty dir (#14)
+  * alow negative values of gained coins
+
+ --  <kk@kk-iquest.kufr.cz>  Sat, 01 Jun 2019 04:05:47 +0200
+
 iquest (0.2.9) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
