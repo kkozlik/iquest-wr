@@ -1,4 +1,5 @@
 * fix permissions for /var/lib/iquest/smarty dir (#14)
+* alow negative values of gained coins
 
 rel 0.2.9
 * chroust: adding replacements <hint-cnt> and <timeout> to text files
