@@ -10,7 +10,7 @@
     <div class="row">
     <div class="span6 offset3">
         <h3 id="rankTableTitle" class="alert alert-info">{$lang_str.iquest_rank_act_order_title}</h3>
-        
+
         <table class="table table-bordered table-striped table-condensed">
         <thead>
         <tr>
@@ -18,7 +18,7 @@
         <th>{$lang_str.iquest_rank_team}</th>
         </tr>
         </thead>
-        
+
         <tbody id="rankTableBody">
         {foreach $actual_order as $team_name => $rank}
         <tr>
@@ -44,7 +44,7 @@
             },
             colors: [ "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1",  "#9100e1", "#00ff24", "#0000fe"]
         });
-        
+
 
         Highcharts.stockChart('team-ranks', {
             chart: {
@@ -90,7 +90,8 @@
             tooltip: {
                 headerFormat: '{ldelim}point.y{rdelim}. <b>{ldelim}series.name{rdelim}</b><br/>',
                 pointFormat: '{ldelim}point.x:%H:%M:%S{rdelim}',
-                shared: false
+                shared: false,
+                split: false
             },
             navigator:{
                 margin:10,
@@ -101,7 +102,7 @@
             },
 
             series: [
-            {foreach $ranks as $team_rank}  
+            {foreach $ranks as $team_rank}
                 {
                     name: '{$team_rank.name|escape:javascript}',
                     marker: {
@@ -112,7 +113,7 @@
                     // of 1970/71 in order to be compared on the same x axis. Note
                     // that in JavaScript, months start at 0 for January, 1 for February etc.
                     data: [
-                        {foreach $team_rank.data as $rank_data}  
+                        {foreach $team_rank.data as $rank_data}
                             {
                              {if $rank_data.origin}
                                 marker: {
@@ -126,22 +127,23 @@
                                     enabled: false
                                 },
                              {/if}
-                                x:{$rank_data.timestamp * 1000}, 
-                                y:{$rank_data.rank} 
+                                x:{$rank_data.timestamp * 1000},
+                                y:{$rank_data.rank}
                             }{if !$rank_data@last},{/if}
-                        {/foreach}  
+                        {/foreach}
                     ]
                 }{if !$team_rank@last},{/if}
-            {/foreach}  
+            {/foreach}
             ],
 
             plotOptions:{
                 series: {
                     events: {
                         click: function (event) {
-                            updateRankTable(event.point.index, this.chart.series);
+                            updateRankTable(event.point.x, this.chart.series);
 
-                            var lastPoint = (event.point.index == (event.point.series.data.length - 1));
+                            var data = event.point.series.options.data;
+                            var lastPoint = (event.point.x == (data[data.length - 1].x));
                             updateRankTableTitle(event.point.x, lastPoint);
                         }
                     }
@@ -149,11 +151,24 @@
             }
         });
 
+        var getYValue = function (data, xValue){
+            var yValue = null;
+            {* var points = series.points; *}
+
+            for(var i=0; i<data.length; i++){
+                if(data[i].x >= xValue){
+                    yValue = data[i].y;
+                    break;
+                }
+            }
+
+            return yValue;
+        }
 
         /**
          *  Update table of team ranks according to selected time in the graph
          */
-        var updateRankTable = function(index, series){
+        var updateRankTable = function(timestamp, series){
             var teamRanks = [];
 
             for(var i in series){
@@ -161,7 +176,7 @@
 
                 teamRanks.push({
                     name: series[i].name,
-                    rank: series[i].data[index].y
+                    rank: getYValue(series[i].options.data, timestamp)
                 });
             }
 
@@ -203,5 +218,5 @@
             $("#rankTableTitle").html("{$lang_str.iquest_rank_time_order_title}: "+timeStr);
             $("#rankTableTitle").removeClass("alert-info");
         }
-    });    
+    });
 </script>
