@@ -1,3 +1,5 @@
+* fix rank table is generation (#25)
+
 rel 0.2.10
 * fix permissions for /var/lib/iquest/smarty dir (#14)
 * alow negative values of gained coins
