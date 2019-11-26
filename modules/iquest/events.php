@@ -13,7 +13,7 @@ class Iquest_Events{
                                            self::KEY,
                                            self::LOGOUT,
                                            self::GIVEITUP,
-                                           self::COIN_SPEND); 
+                                           self::COIN_SPEND);
 
     public $id;
     public $team_id;
@@ -46,9 +46,9 @@ class Iquest_Events{
         $c      = &$config->data_sql->iquest_event->cols;
 
         $team_id = null;
-        if (!empty($_SESSION['auth']) and 
+        if (!empty($_SESSION['auth']) and
             $_SESSION['auth']->is_authenticated()){
-            
+
             $user_id = $_SESSION['auth']->get_logged_user();
             $team_id = $user_id->get_uid();
         }
@@ -80,7 +80,7 @@ class Iquest_Events{
         if ($data->dbIsError($res)) throw new DBException($res);
 
     }
-    
+
     static function fetch($opt=array()){
         global $data, $config;
 
@@ -92,7 +92,7 @@ class Iquest_Events{
         $ct      = &$config->data_sql->iquest_team->cols;
 
         $o_order_by = (!empty($opt['order_by'])) ? $opt['order_by'] : "timestamp";
-        $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : ""; 
+        $o_order_desc = (!empty($opt['order_desc'])) ? "desc" : "";
 
         $qw = array();
         if (isset($opt['id']))                      $qw[] = "e.".$c->id." = ".$data->sql_format($opt['id'], "n");
@@ -112,7 +112,7 @@ class Iquest_Events{
         if (!empty($opt['use_pager']) or !empty($opt['count_only'])){
             $q="select count(*) from ".$t_name." e
                     left join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
-            
+
             $res=$data->db->query($q);
             if (MDB2::isError($res)) throw new DBException($res);
             $row=$res->fetchRow(MDB2_FETCHMODE_ORDERED);
@@ -120,7 +120,7 @@ class Iquest_Events{
             $res->free();
 
             if (!empty($opt['count_only'])) return $row[0];
-            
+
             /* if act_row is bigger then num_rows, correct it */
             $data->correct_act_row();
         }
@@ -128,7 +128,7 @@ class Iquest_Events{
 
         $q="select e.".$c->id.",
                    e.".$c->team_id.",
-                   UNIX_TIMESTAMP(e.".$c->timestamp.") as ".$c->timestamp.", 
+                   UNIX_TIMESTAMP(e.".$c->timestamp.") as ".$c->timestamp.",
                    e.".$c->type.",
                    e.".$c->success.",
                    e.".$c->data.",
@@ -140,14 +140,14 @@ class Iquest_Events{
         if ($o_order_by) $q .= " order by ".$c->$o_order_by." ".$o_order_desc;
 
         $q .= !empty($opt['use_pager']) ? $data->get_sql_limit_phrase() : "";
-            
+
         $res=$data->db->query($q);
         if (MDB2::isError($res)) throw new DBException($res);
-    
+
         $out=array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
 
-            $out[] =  new Iquest_Events($row[$c->id], 
+            $out[] =  new Iquest_Events($row[$c->id],
                                         $row[$c->team_id],
                                         $row[$c->timestamp],
                                         $row[$c->type],
@@ -157,7 +157,7 @@ class Iquest_Events{
 
         }
         $res->free();
-        return $out;    
+        return $out;
     }
 
     function __construct($id, $team_id, $timestamp, $type, $success, $data, $team_name){
@@ -171,22 +171,22 @@ class Iquest_Events{
     }
 
     private function get_filtered_data($opt = array()){
-        
+
         $out = array();
 
         switch($this->type){
         case self::KEY:
             if (isset($this->data['key']))              $out['key']['text'] = $this->data['key'];
-            if (isset($this->data['solution']['id'])){   
+            if (isset($this->data['solution']['id'])){
                 $out['solution']['text'] = $this->data['solution']['id'];
-                
+
                 if (isset($opt['solution_url']) and !empty($this->data['solution']['filename'])){
                     $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['solution_url']);
                 }
             }
-            
-            if (isset($this->data['solution']['coin_value']) and 
-                $this->data['solution']['coin_value'] > 0){
+
+            if (isset($this->data['solution']['coin_value']) and
+                $this->data['solution']['coin_value'] != 0){
 
                 $out['coin gained']['text'] = $this->data['solution']['coin_value'];
             }
@@ -198,7 +198,7 @@ class Iquest_Events{
                 else{
                     $out['timeout']['text'] = gmdate("H:i:s", $this->data['solution']['show_at'] - $this->timestamp)." till expire";
                 }
-            }   
+            }
 
             break;
         case self::COIN_SPEND:
@@ -245,7 +245,7 @@ class Iquest_Events{
 
             if (isset($this->data['active_solutions'])){
                 $active_solutions = array();
-                
+
                 foreach($this->data['active_solutions'] as $solution){
                     $active_solution = array();
                     $active_solution['text'] = "{$solution['id']} ({$solution['key']})";

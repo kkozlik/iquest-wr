@@ -1162,7 +1162,7 @@ class Chroust{
         $coin_value = 0;
 
         foreach(self::$summary['hints'] as $row){
-            $coin_value += $row['price'];
+            $coin_value += abs($row['price']);
         }
 
         Iquest_Options::set(Iquest_Options::WALLET_ACTIVE, ($coin_value>0) ? 1 : 0);
@@ -1474,7 +1474,7 @@ class Chroust{
                 echo self::utf_8_sprintf($fstring,
                             $row['name'],
                             $row['key'],
-                            $row['coin_value']>0?$row['coin_value']:"---",
+                            $row['coin_value']!=0?$row['coin_value']:"---",
                             $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---",
                             $row['next_cgrp_id']?$row['next_cgrp_id']:"---");
             }
