@@ -17,7 +17,8 @@ class Iquest{
      */
     static function is_over(){
         // check that team is active (team is deactivated when it give up the contest)
-        if (!$_SESSION['auth']->is_active()) return true;
+        $team = Iquest_auth::get_logged_in_team();
+        if (!$team->is_active()) return true;
 
         $end_time = Iquest_Options::get(Iquest_Options::END_TIME);
 

@@ -1,19 +1,16 @@
 <?php
 
-$_phplib_page_open = array("sess" => "iquest_session",
-                           "auth" => "iquest_auth");
-
-$_data_layer_required_methods=array();
-$_required_modules = array('iquest', 'auth');
-$_required_apu = array('apu_iquest'); 
+$_phplib_page_open = array("sess" => "iquest_session");
+$_required_modules = array('iquest');
 
 require dirname(__FILE__)."/prepend.php";
 
+Iquest_auth::access_check(['team']);
 
 if (Iquest::is_started()){
     $controler->redirect("main.php");
     exit;
-} 
+}
 
 $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
 $sec_remaining = $start_time - time();
@@ -26,4 +23,3 @@ $controler->set_onload_js("enable_countdown('#start_coundown', $sec_remaining);"
 $controler->set_template_name('iquest/waittostart.tpl');
 $controler->start();
 
-?>

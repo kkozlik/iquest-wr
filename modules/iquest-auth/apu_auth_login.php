@@ -1,53 +1,49 @@
 <?php
 /**
- * Application unit login 
- * 
+ * Application unit login
+ *
  * @author    Karel Kozlik
- * @version   $Id: apu_login.php,v 1.8 2006/09/08 12:27:33 kozlik Exp $
  * @package   iquest
- */ 
+ */
 
 /** Application unit login
  *
  *
  *  This application unit is used for login into application. This APU can't
  *  be combined with others APUs on one page.
- *     
+ *
  *  Configuration:
  *  --------------
- *  'auth_class'                (string) default: "Auth"
- *   Name of class auth class which is used for validate credentials and which
- *   is created after successfull authentication.
- *  
+ *
  *  'redirect_on_login'         (string) default: 'my_account.php'
  *   name of script ot which is browser redirected after succesfull login
- *  
+ *
  *  'cookie_domain'             (string) default: null
- *   The domain that the cookie in which is stored username is available 
- *  
+ *   The domain that the cookie in which is stored username is available
+ *
  *  'msg_logout'                default: $lang_str['msg_logout_s'] and $lang_str['msg_logout_l']
  *   message which should be showed on user logout - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                 (string) default: 'login_form'
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
  *  'smarty_action'             name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']          (form)          
+ *  opt['smarty_form']          (form)
  *   phplib html form
- *   
+ *
  *  opt['smarty_action']            (action)
  *    tells what should smarty display. Values:
- *    'default' - 
+ *    'default' -
  *    'was_logged_out' - when user was logged out
- *  
+ *
  */
 
 class apu_auth_login extends apu_base_class{
@@ -59,34 +55,23 @@ class apu_auth_login extends apu_base_class{
 
     const cookie_user = "iquest_user";
 
-    /* return required data layer methods - static class */
-    function get_required_data_layer_methods(){
-        return array();
-    }
-
-    /* return array of strings - requred javascript files */
-    function get_required_javascript(){
-        return array();
-    }
-    
     /* constructor */
     function __construct(){
         global $lang_str, $config;
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
 
         $this->opt['redirect_on_login'] = null;
         $this->opt['cookie_domain'] = null;
-        $this->opt['relogin'] = false;
-        $this->opt['auth_class'] = 'iquest_auth';
+        $this->opt['redirect_on_logout'] = null;
+
+        $this->opt['required_capabilities'] = null;
 
         /* message on attributes update */
         $this->opt['msg_logout']['long']  = &$lang_str['auth_msg_logout'];
-        
-        /*** names of variables assigned to smarty ***/
 
-        $this->opt['smarty_relogin'] =      'relogin';
+        /*** names of variables assigned to smarty ***/
 
         /* form */
         $this->opt['smarty_form'] =         'form';
@@ -94,16 +79,16 @@ class apu_auth_login extends apu_base_class{
         $this->opt['smarty_action'] =       'action';
         /* name of html form */
         $this->opt['form_name'] =           'login_form';
-        
+
         $this->opt['form_submit']=array('type' => 'button',
                                         'text' => $lang_str['auth_b_login']);
-        
+
     }
 
     /* this metod is called always at begining */
     function init(){
         parent::init();
-        
+
         $this->controler->set_onload_js("
             if (document.forms['".$this->opt['form_name']."']['uname'].value != '') {
                 document.forms['".$this->opt['form_name']."']['passw'].focus();
@@ -113,18 +98,9 @@ class apu_auth_login extends apu_base_class{
         ");
     }
 
-    function action_login(&$errors){
-        global $lang_str, $config;
+    function action_login(){
 
-        unset($_SESSION['auth']);
-
-        setcookie(self::cookie_user, $_POST['uname'], time()+31536000, null, $this->opt['cookie_domain']); //cookie expires in one year
-
-        $_SESSION['auth'] = new $this->opt['auth_class'];
-        $_SESSION['auth']->authenticate_as($this->uid, $this->username, null, null);
-
-        if (is_array($this->perms))
-            $_SESSION['auth']->set_perms($this->perms);
+        setcookie(self::cookie_user, $this->username, time()+31536000, null, $this->opt['cookie_domain']); //cookie expires in one year
 
         sw_log("User login: redirecting to page: ".$this->opt['redirect_on_login'], PEAR_LOG_DEBUG);
 
@@ -135,34 +111,46 @@ class apu_auth_login extends apu_base_class{
         $this->controler->change_url_for_reload($this->opt['redirect_on_login']);
         return true;
     }
-    
+
+    function action_logout(){
+
+        $auth = Iquest_authN::singleton();
+        $user = $auth->getIdentity();
+
+        Iquest_Events::add(Iquest_Events::LOGOUT,
+                        true,
+                        array());
+
+        action_log(null, null, "User '$user' logged out");
+
+        $auth->clearIdentity();
+
+        if ($this->opt['redirect_on_logout']){
+            $this->controler->change_url_for_reload($this->opt['redirect_on_logout']);
+        }
+        return 'logged_out=1';
+    }
+
     /* check _get and _post arrays and determine what we will do */
     function determine_action(){
 
-        if ($this->opt['relogin']){
-            // If relogin screen is displayed do not execute login action
-            // The form data should be processed by function 
-            // <auth_class>::auth_validatelogin()
-
-            $this->action=array('action'=>"default",
-                                'validate_form'=>false,
-                                'reload'=>false);
-            return;
-        }
-
-        if ($this->was_form_submited() or 
-            (isset($_GET["redir_id"]) and $_GET["redir_id"] == $this->opt['instance_id'])){ // Is there data to process?
+        if ($this->was_form_submited()){
 
             $this->action=array('action'=>"login",
                                 'validate_form'=>true,
                                 'reload'=>true,
                                 'alone'=>true);
         }
+        elseif (isset($_GET['logout'])){
+             $this->action=array('action'=>"logout",
+                                 'validate_form'=>false,
+                                 'reload'=>false);
+        }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
                                  'reload'=>false);
     }
-    
+
     /* create html form */
     function create_html_form(){
         global $lang_str;
@@ -170,28 +158,23 @@ class apu_auth_login extends apu_base_class{
 
         $cookie_uname="";
         if (isset($_COOKIE[self::cookie_user])) $cookie_uname=$_COOKIE[self::cookie_user];
-        if ($this->opt['relogin'] and isset($_SESSION['auth']->auth['uname'])){
-            $cookie_uname=$_SESSION['auth']->auth['uname'];
-        }
-        
+
         $this->f->add_element(array("type"=>"text",
                                      "name"=>"uname",
                                      "size"=>20,
                                      "maxlength"=>50,
                                      "value"=>$cookie_uname,
-                                     "disabled"=>$this->opt['relogin'],
-                                     "skip_load_default"=>$this->opt['relogin'],
-                                     "minlength"=>$this->opt['relogin'] ? 0 : 1,
+                                     "minlength"=> 1,
                                      "length_e"=>$lang_str['auth_err_empty_username'],
                                      "extrahtml"=>"autocomplete='off' "));
-                                     
+
         $this->f->add_element(array("type"=>"text",
                                      "name"=>"passw",
                                      "value"=>"",
                                      "size"=>20,
                                      "maxlength"=>25,
                                      "pass"=>1));
-        
+
     }
 
 
@@ -204,49 +187,50 @@ class apu_auth_login extends apu_base_class{
 
     /* validate html form */
     function validate_form(){
-        global $config, $lang_str;
-        $uid = null;
-        $perms = null;
+        global $lang_str;
 
         // don't display logout mesage in case that form was submited
-        if (isset($_GET['logout'])) unset($_GET['logout']);
+        if (isset($_GET['logged_out'])) unset($_GET['logged_out']);
 
         if (false === parent::validate_form()) return false;
 
-        $this->password = $_POST['passw'];
         $this->username = $_POST['uname'];
+        $this->password = $_POST['passw'];
 
         sw_log("User login: values from login form: username: ".
                 $this->username.", password: ".$this->password, PEAR_LOG_DEBUG);
 
+        $adapter = new Iquest_auth_adapter_credentials();
+        $adapter->setIdentity($this->username);
+        $adapter->setCredential($this->password);
 
-        /* validate credentials */
-        $opt = array();
-        $uid = call_user_func_array(array($this->opt['auth_class'], 'validate_credentials'), 
-                                    array($this->username, null, $this->password, &$opt));
-        if (false === $uid) return false;
+        $authn = Iquest_authN::singleton();
+        $result = $authn->authenticate($adapter);
 
+        if (!$result->isValid()){
+            foreach($result->getMessages() as $msg) ErrorHandler::add_error($msg);
+            return false;
+        }
 
-        /* set_permissions */
-        $perms = call_user_func_array(array($this->opt['auth_class'], 'find_out_perms'), 
-                                      array($uid, array()));
+        $authz = Iquest_authZ::singleton();
+        if ($this->opt['required_capabilities'] and !$authz->authorize($this->opt['required_capabilities'])){
+            sw_log(__CLASS__." login failed - not authorized ", PEAR_LOG_INFO);
 
-        if (false === $perms) return false;
-
-        $this->uid = $uid;
-        $this->perms = $perms;
+            ErrorHandler::add_error($lang_str['auth_err_bad_username']);
+            return false;
+        }
 
         sw_log("User login: authentication succeeded, uid: ".$this->uid, PEAR_LOG_DEBUG);
 
         return true;
     }
-    
-    
+
+
     /* add messages to given array */
     function return_messages(&$msgs){
         global $_GET;
-        
-        if (isset($_GET['logout'])){
+
+        if (isset($_GET['logged_out'])){
             $msgs[]=&$this->opt['msg_logout'];
             $this->smarty_action="was_logged_out";
         }
@@ -256,10 +240,6 @@ class apu_auth_login extends apu_base_class{
     function pass_values_to_html(){
         global $smarty;
         $smarty->assign($this->opt['smarty_action'], $this->smarty_action);
-        $smarty->assign($this->opt['smarty_relogin'], $this->opt['relogin']);
     }
-    
+
 }
-
-
-?>

@@ -1,45 +1,45 @@
 <?php
 /**
- * Application unit iquest 
- * 
+ * Application unit iquest
+ *
  * @author    Karel Kozlik
  * @version   $Id: application_layer_cz,v 1.10 2007/09/17 18:56:31 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 
 /**
- *  Application unit iquest 
+ *  Application unit iquest
  *
  *
  *  This application unit is used for display and edit LB Proxies
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'msg_update'                    default: $lang_str['msg_changes_saved_s'] and $lang_str['msg_changes_saved_l']
  *   message which should be showed on attributes update - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                     (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
  *  'smarty_action'                 name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']              (form)          
+ *  opt['smarty_form']              (form)
  *   phplib html form
- *   
+ *
  *  opt['smarty_action']            (action)
  *    tells what should smarty display. Values:
- *    'default' - 
+ *    'default' -
  *    'was_updated' - when user submited form and data was succefully stored
- *  
+ *
  */
 
 class apu_iquest extends apu_base_class{
@@ -65,8 +65,8 @@ class apu_iquest extends apu_base_class{
     const SESS_URL_TOKEN = "url_token";
     const GET_URL_TOKEN = "token";
 
-    /** 
-     *  return required data layer methods - static class 
+    /**
+     *  return required data layer methods - static class
      *
      *  @return array   array of required data layer methods
      */
@@ -75,17 +75,17 @@ class apu_iquest extends apu_base_class{
     }
 
     /**
-     *  return array of strings - required javascript files 
+     *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
         return array();
     }
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function __construct(){
@@ -94,9 +94,10 @@ class apu_iquest extends apu_base_class{
 
 
         $this->opt['screen_name'] = "IQUEST";
+        $this->opt['team_id'] =     null;
 
         $this->opt['msg_solve']['long']  =     &$lang_str['iquest_msg_key_correct'];
-        
+
         /*** names of variables assigned to smarty ***/
         /* form */
         $this->opt['smarty_form'] =         'form';
@@ -121,10 +122,10 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_get_graph_url'] =    'get_graph_url';
         $this->opt['smarty_view_graph_url'] =   'view_graph_url';
         $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
-        
+
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
-        
+
     }
 
     /**
@@ -133,21 +134,22 @@ class apu_iquest extends apu_base_class{
     function init(){
         parent::init();
 
-        $this->team_id = $this->user_id->get_uid();
+        if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
+        $this->team_id = $this->opt['team_id'];
 
         if (!isset($_SESSION['apu_iquest'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest'][$this->opt['instance_id']] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_iquest'][$this->opt['instance_id']];
-        
+
         if (!isset($this->session['known_cgrps']))      $this->session['known_cgrps'] = array();
         if (!isset($this->session['known_hints']))      $this->session['known_hints'] = array();
         if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();
         if (!isset($this->session['hidden_ref_ids']))   $this->session['hidden_ref_ids'] = array();
         if (!isset($this->session['view_all']))         $this->session['view_all'] = false;
     }
-    
+
     function get_timeouts(){
 
         $next_solution = Iquest_Solution::get_next_scheduled($this->team_id);
@@ -158,10 +160,10 @@ class apu_iquest extends apu_base_class{
 
         if ($next_solution){
             $show_after = $next_solution['show_at'] - time();
-            if ($show_after > 0 and 
+            if ($show_after > 0 and
                 ($show_after < $countdown_limit_solution or
                  $countdown_limit_solution == 0)){
-                
+
                 $this->smarty_next_solution = gmdate("H:i:s", $show_after);
                 $this->controler->set_onload_js("enable_countdown('#solution_countdown', $show_after);");
             }
@@ -169,20 +171,20 @@ class apu_iquest extends apu_base_class{
 
         if ($next_hint){
             $show_after = $next_hint['show_at'] - time();
-            if ($show_after > 0 and 
+            if ($show_after > 0 and
                 ($show_after < $countdown_limit_hint or
                  $countdown_limit_hint == 0)){
-                
+
                 $this->smarty_next_hint = gmdate("H:i:s", $show_after);
                 $this->controler->set_onload_js("enable_countdown('#hint_countdown', $show_after);");
             }
         }
     }
-    
+
     function get_team_info(){
         $team = Iquest_Team::fetch_by_id($this->team_id);
         $this->smarty_team = $team->to_smarty();
-        
+
         if (Iquest_Options::get(Iquest_Options::SHOW_PLACE)){
 
             $hide_timeout = Iquest_Options::get(Iquest_Options::HIDE_PLACE_TIMEOUT);
@@ -192,7 +194,7 @@ class apu_iquest extends apu_base_class{
                 $end_time = Iquest_Options::get(Iquest_Options::END_TIME);
                 $hide_time = $end_time - $hide_timeout;
             }
-            
+
             if ($hide_time and time() > $hide_time){
                 $this->smarty_team_place = "??";
             }
@@ -201,7 +203,7 @@ class apu_iquest extends apu_base_class{
                 $actual_order = reset($ranks)->rank;
                 $this->smarty_team_place = $actual_order[$this->team_id];
             }
-            
+
             $this->smarty_show_place = true;
         }
     }
@@ -209,13 +211,13 @@ class apu_iquest extends apu_base_class{
 
     /**
      *  Get token for URL that is used to detect doubled requests
-     */         
+     */
     function get_url_token(){
 
         if (empty($this->session[self::SESS_URL_TOKEN])){
             // The token in not set yet. Generate new one
             $this->session[self::SESS_URL_TOKEN] = rfc4122_uuid();
-        } 
+        }
 
         return self::GET_URL_TOKEN."=".RawURLEncode($this->session[self::SESS_URL_TOKEN]);
     }
@@ -249,7 +251,7 @@ class apu_iquest extends apu_base_class{
         foreach($clues as $k => $v){
             // skip hidden clues
             if ($v->type == Iquest_Clue::TYPE_HIDDEN) continue;
-            
+
             $hints = $clues[$k]->get_accessible_hints($this->team_id);
             $smarty_clue = $clues[$k]->to_smarty();
             $smarty_clue['hidden'] = isset($this->session['hidden_ref_ids'][$v->ref_id]);
@@ -272,7 +274,7 @@ class apu_iquest extends apu_base_class{
         }
 
         $this->session['known_cgrps'][$clue_grp->id] = true;
-    
+
         return $smarty_cgrp;
     }
 
@@ -280,22 +282,22 @@ class apu_iquest extends apu_base_class{
     function action_ajax_hide(){
         $this->controler->disable_html_output();
         header("Content-Type: text/plain");
-        
+
         $this->session['hidden_ref_ids'][$this->ref_id] = true;
-        
+
         return true;
     }
 
     function action_ajax_unhide(){
         $this->controler->disable_html_output();
         header("Content-Type: text/plain");
-        
+
         unset($this->session['hidden_ref_ids'][$this->ref_id]);
-        
+
         return true;
     }
 
-    
+
     /**
      *  Method perform action solve
      *
@@ -307,7 +309,7 @@ class apu_iquest extends apu_base_class{
         $this->solution->solve($this->team_id);
 
         action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
-        
+
         Iquest_info_msg::add_msg($this->opt['msg_solve']['long']);
 
         $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
@@ -335,8 +337,8 @@ class apu_iquest extends apu_base_class{
         $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
 
         if (!empty($_GET['view_grp_detail'])){
-            $get[] = "view_grp=".RawURLEncode($this->ref_id); 
-        } 
+            $get[] = "view_grp=".RawURLEncode($this->ref_id);
+        }
 
         return $get;
     }
@@ -375,9 +377,9 @@ class apu_iquest extends apu_base_class{
         return true;
     }
 
-    
+
     /**
-     *  Method perform action view_grp 
+     *  Method perform action view_grp
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -395,16 +397,16 @@ class apu_iquest extends apu_base_class{
         return true;
     }
 
-    
 
-    
+
+
     /**
-     *  Method perform action view_solution 
+     *  Method perform action view_solution
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
     function action_view_solution(){
-        
+
         $this->smarty_solutions = $this->solution->to_smarty();
         $this->smarty_solutions['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id), false);
         $this->smarty_solutions['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_solution=".RawURLEncode($this->solution->ref_id)."&download=1", false);
@@ -434,7 +436,7 @@ class apu_iquest extends apu_base_class{
     }
 
     function action_view_graph(){
-        
+
         $this->get_timeouts();
         $this->get_team_info();
 
@@ -443,7 +445,7 @@ class apu_iquest extends apu_base_class{
     }
 
     /**
-     *  Method perform action default 
+     *  Method perform action default
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -480,21 +482,21 @@ class apu_iquest extends apu_base_class{
         else{
             foreach($clue_groups as $k => $v){
                 $new_hints = false;
-                
+
                 $opt = array("cgrp_id" => $v->id,
                              "team_id" => $this->team_id,
                              "accessible" => true);
                 $hints = Iquest_Hint::fetch($opt);
-    
+
                 foreach($hints as $hint){
                     if (!isset($this->session['known_hints'][$hint->id])){
                         $new_hints = true;
                         break;
                     }
                 }
-    
+
                 $hint_for_sale = $clue_groups[$k]->get_next_hint_for_sale($this->team_id);
-    
+
                 $smarty_group = $v->to_smarty();
                 $smarty_group['detail_url'] = $this->controler->url($_SERVER['PHP_SELF']."?view_grp=".RawURLEncode($v->ref_id));
                 $smarty_group['new'] = !isset($this->session['known_cgrps'][$v->id]);
@@ -533,9 +535,9 @@ class apu_iquest extends apu_base_class{
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
@@ -619,7 +621,7 @@ class apu_iquest extends apu_base_class{
     }
 
     /**
-     *  create html form 
+     *  create html form
      *
      *  @return null            FALSE on failure
      */
@@ -630,7 +632,7 @@ class apu_iquest extends apu_base_class{
                                      "name"=>"solution_key",
                                      "value"=>"",
                                      "js_trim_value" => true,
-                                     "js_validate" => false, 
+                                     "js_validate" => false,
                                      "maxlength"=>64));
     }
 
@@ -642,7 +644,7 @@ class apu_iquest extends apu_base_class{
         elseif ($this->action['action'] == "buy_hint"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Buy hint failed", false, array("errors"=>$this->controler->errors));
 
-            if (!empty($_GET['view_grp_detail']) and 
+            if (!empty($_GET['view_grp_detail']) and
                 $this->clue_grp){
 
                 $this->smarty_action = 'view_grp';
@@ -670,7 +672,7 @@ class apu_iquest extends apu_base_class{
     }
 
     /**
-     *  validate html form 
+     *  validate html form
      *
      *  @return bool            TRUE if given values of form are OK, FALSE otherwise
      */
@@ -683,7 +685,7 @@ class apu_iquest extends apu_base_class{
             $opt = array("ref_id" => $this->ref_id,
                          "team_id" => $this->team_id,
                          "available_only" => true);
-        
+
             $this->clue_grp = Iquest_ClueGrp::fetch($opt);
             if (!$this->clue_grp){
                 ErrorHandler::add_error("Unknown clue group!");
@@ -697,14 +699,14 @@ class apu_iquest extends apu_base_class{
 
 
         /* check that solution is accessible to the user */
-        if ($this->action['action'] == "view_solution" or 
+        if ($this->action['action'] == "view_solution" or
             $this->action['action'] == "get_solution"){
 
             $opt = array("ref_id" => $this->ref_id,
                          "team_id" => $this->team_id,
                          "accessible" => true);
             $solutions = Iquest_Solution::fetch($opt);
-    
+
             if (!$solutions){
                 ErrorHandler::add_error("Unknown solution!");
                 sw_log("Unknown solution: '".$this->ref_id."'", PEAR_LOG_INFO);
@@ -731,13 +733,13 @@ class apu_iquest extends apu_base_class{
                 sw_log("Hidden clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
-            
+
             if (!Iquest_ClueGrp::is_accessible($this->clue->cgrp_id, $this->team_id)){
                 ErrorHandler::add_error("Unknown clue!");
                 sw_log("Not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
-            
+
             return true;
         }
 
@@ -776,7 +778,7 @@ class apu_iquest extends apu_base_class{
             $opt = array("ref_id" => $this->ref_id,
                          "team_id" => $this->team_id,
                          "available_only" => true);
-        
+
             $this->clue_grp = Iquest_ClueGrp::fetch($opt);
             if (!$this->clue_grp){
                 ErrorHandler::add_error("Unknown clue group!");
@@ -790,11 +792,11 @@ class apu_iquest extends apu_base_class{
                 ErrorHandler::add_error($lang_str['iquest_err_no_hint_for_sale']);
                 return false;
             }
-            
+
             $team = Iquest_Team::fetch_by_id($this->team_id);
 
             if ($team->wallet < $this->hint->price){
-                ErrorHandler::add_error(str_replace("<price>", 
+                ErrorHandler::add_error(str_replace("<price>",
                                                     $this->hint->price,
                                                     $lang_str['iquest_err_hint_no_money']));
                 return false;
@@ -810,7 +812,7 @@ class apu_iquest extends apu_base_class{
 
         if (Iquest::is_over()){
             ErrorHandler::add_error($lang_str['iquest_err_contest_over']);
-            return false; 
+            return false;
         }
 
         $key = null;
@@ -818,15 +820,15 @@ class apu_iquest extends apu_base_class{
 
         $this->solution = Iquest_Solution::verify_key($key, $this->team_id);
         if (!$this->solution){
-            return false; 
+            return false;
         }
 
         return $form_ok;
     }
-    
-    
+
+
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -849,13 +851,13 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
         $smarty->assign($this->opt['smarty_get_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_graph=1"));
         $smarty->assign($this->opt['smarty_view_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?view_graph=1"));
-        $smarty->assign($this->opt['smarty_all_in_1_url'], 
+        $smarty->assign($this->opt['smarty_all_in_1_url'],
                         $this->controler->url($_SERVER['PHP_SELF'].
                             "?view_all=".($this->session['view_all']?"0":"1")));
     }
-    
+
     /**
-     *  return info need to assign html form to smarty 
+     *  return info need to assign html form to smarty
      */
     function pass_form_to_html(){
         return array('smarty_name' => $this->opt['smarty_form'],
@@ -864,6 +866,3 @@ class apu_iquest extends apu_base_class{
                      'before'      => $this->js_before);
     }
 }
-
-
-?>

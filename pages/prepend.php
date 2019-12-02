@@ -1,12 +1,12 @@
 <?php
 /**
  *  File required by all pages. It is used to load all required files
- * 
- */ 
+ *
+ */
 
 
 /*
- *  Set page attributes in pre-auth hook so they are available 
+ *  Set page attributes in pre-auth hook so they are available
  *  if re-login screen is displayed
  */
 $GLOBALS["_SERWEB"]["hookpreauth"] = "set_page_attributes";
@@ -14,7 +14,7 @@ $GLOBALS["_SERWEB"]["hookpreauth"] = "set_page_attributes";
 
 function set_page_attributes(){
     global $config;
-    
+
     $GLOBALS['page_attributes']=array(
         'title' => null,
         'logout'=>false,
@@ -41,31 +41,31 @@ require_once(realpath(dirname(__FILE__)."/..")."/config/set_env.php");
 require_once(dirname(__FILE__)."/../functions/functions.php");
 require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
-$GLOBALS['page_attributes']['logout_url'] = $controler->url('logout.php');
-$GLOBALS['page_attributes']['giveitup_url'] = $controler->url('giveitup.php');
-$GLOBALS['page_attributes']['logo_url'] = $controler->url('logo.php');
+Iquest_auth::$login_page_url = "login.php";
 
-try{
-    $GLOBALS['page_attributes']['display_wallet'] = Iquest_Options::get(Iquest_Options::WALLET_ACTIVE);
-    $GLOBALS['page_attributes']['game_name'] = Iquest_Options::get(Iquest_Options::GAME_NAME);
-}
-catch(RuntimeException $e){
-    $GLOBALS['page_attributes']['display_wallet'] = false;
-    $GLOBALS['page_attributes']['game_name'] = "";
-}
+$GLOBALS['controler']->attach_listener("pre_html_output", function($event){
 
-if (!$GLOBALS['page_attributes']['game_name']) $GLOBALS['page_attributes']['game_name'] = "I.Quest";
+    $GLOBALS['page_attributes']['logout_url']   = $GLOBALS['controler']->url('login.php?logout=1');
+    $GLOBALS['page_attributes']['giveitup_url'] = $GLOBALS['controler']->url('giveitup.php');
+    $GLOBALS['page_attributes']['logo_url']     = $GLOBALS['controler']->url('logo.php');
 
-$GLOBALS['page_attributes']['html_title'] = $GLOBALS['page_attributes']['game_name'];
+    try{
+        $GLOBALS['page_attributes']['display_wallet'] = Iquest_Options::get(Iquest_Options::WALLET_ACTIVE);
+        $GLOBALS['page_attributes']['game_name'] = Iquest_Options::get(Iquest_Options::GAME_NAME);
+    }
+    catch(RuntimeException $e){
+        $GLOBALS['page_attributes']['display_wallet'] = false;
+        $GLOBALS['page_attributes']['game_name'] = "";
+    }
 
+    if (!$GLOBALS['page_attributes']['game_name']) $GLOBALS['page_attributes']['game_name'] = "I.Quest";
 
-if (!empty($_SESSION['auth']) and 
-    $_SESSION['auth']->is_authenticated()){
+    $GLOBALS['page_attributes']['html_title'] = $GLOBALS['page_attributes']['game_name'];
 
-    $smarty->assign("team_name", $_SESSION['auth']->get_team_name());
-}
+    $team = Iquest_auth::get_logged_in_team();
+    if ($team) $GLOBALS['smarty']->assign("team_name", $team->name);
 
-$controler->set_onload_js("set_clock('#current_time', ".time().");");
-$smarty->assign("current_time", date("H:i:s"));
+    $GLOBALS['controler']->set_onload_js("set_clock('#current_time', ".time().");");
+    $GLOBALS['smarty']->assign("current_time", date("H:i:s"));
+});
 
-?>

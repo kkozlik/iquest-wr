@@ -46,11 +46,8 @@ class Iquest_Events{
         $c      = &$config->data_sql->iquest_event->cols;
 
         $team_id = null;
-        if (!empty($_SESSION['auth']) and
-            $_SESSION['auth']->is_authenticated()){
-
-            $user_id = $_SESSION['auth']->get_logged_user();
-            $team_id = $user_id->get_uid();
+        if (Iquest_auth::has_identity()){
+            $team_id = Iquest_auth::get_logged_in_uid();
         }
 
         if (self::$extra_data) $event_data = array_merge($event_data, self::$extra_data);

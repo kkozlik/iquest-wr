@@ -1,45 +1,45 @@
 <?php
 /**
- * Application unit iquest 
- * 
+ * Application unit iquest
+ *
  * @author    Karel Kozlik
  * @version   $Id: application_layer_cz,v 1.10 2007/09/17 18:56:31 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 
 /**
- *  Application unit iquest 
+ *  Application unit iquest
  *
  *
  *  This application unit is used for display and edit LB Proxies
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'msg_update'                    default: $lang_str['msg_changes_saved_s'] and $lang_str['msg_changes_saved_l']
  *   message which should be showed on attributes update - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                     (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
  *  'smarty_action'                 name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']              (form)          
+ *  opt['smarty_form']              (form)
  *   phplib html form
- *   
+ *
  *  opt['smarty_action']            (action)
  *    tells what should smarty display. Values:
- *    'default' - 
+ *    'default' -
  *    'was_updated' - when user submited form and data was succefully stored
- *  
+ *
  */
 
 class apu_iquest_reveal_goal extends apu_base_class{
@@ -52,8 +52,8 @@ class apu_iquest_reveal_goal extends apu_base_class{
     protected $smarty_clues;
 
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function __construct(){
@@ -62,14 +62,15 @@ class apu_iquest_reveal_goal extends apu_base_class{
 
 
         $this->opt['screen_name'] = "IQUEST-REVEAL";
+        $this->opt['team_id'] =     null;
 
         $this->opt['main_url'] = "";
 
-        
+
         /*** names of variables assigned to smarty ***/
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_main_url'] =     'main_url';
-        
+
     }
 
     /**
@@ -78,22 +79,23 @@ class apu_iquest_reveal_goal extends apu_base_class{
     function init(){
         parent::init();
 
-        $this->team_id = $this->user_id->get_uid();
+        if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
+        $this->team_id = $this->opt['team_id'];
 
         if (!isset($_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']];
 
 
         // Verify that the goal could be revealed, exit otherwise
 
         if (!Iquest::is_over()){
-            // If it is not time to show target location yet, return back to main screen 
+            // If it is not time to show target location yet, return back to main screen
             $this->controler->redirect($this->opt['main_url']);
             exit;
-        } 
+        }
 
 
         // Get ID of the clue group revealing the goal
@@ -106,21 +108,21 @@ class apu_iquest_reveal_goal extends apu_base_class{
         if (!$this->clue_grp){
             throw new Exception("Unknown clue group (ID=$cgrp_id)");
         }
-        
+
         $this->clue_grp = reset($this->clue_grp);
 
     }
-    
-        
+
+
     function action_get_clue(){
         $this->controler->disable_html_output();
         $this->clue->flush_content($this->download);
         return true;
     }
 
-    
+
     /**
-     *  Method perform action defaul 
+     *  Method perform action defaul
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -140,12 +142,12 @@ class apu_iquest_reveal_goal extends apu_base_class{
         return true;
     }
 
-    
 
-    
-    
+
+
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if (isset($_GET['get_clue'])){
@@ -168,7 +170,7 @@ class apu_iquest_reveal_goal extends apu_base_class{
     }
 
     /**
-     *  validate html form 
+     *  validate html form
      *
      *  @return bool            TRUE if given values of form are OK, FALSE otherwise
      */
@@ -184,22 +186,22 @@ class apu_iquest_reveal_goal extends apu_base_class{
                 sw_log("Unknown clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
-            
+
             if ($this->clue->cgrp_id != $this->clue_grp->id){
                 ErrorHandler::add_error("Unknown clue!");
                 sw_log("Not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
-            
+
             return true;
         }
 
         return true;
     }
-    
-    
+
+
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -207,8 +209,5 @@ class apu_iquest_reveal_goal extends apu_base_class{
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($this->opt['main_url']));
     }
-    
+
 }
-
-
-?>

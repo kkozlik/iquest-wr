@@ -1,55 +1,56 @@
 <?php
 /**
- * Application unit iquest 
- * 
+ * Application unit iquest
+ *
  * @author    Karel Kozlik
  * @version   $Id: application_layer_cz,v 1.10 2007/09/17 18:56:31 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 
 /**
- *  Application unit iquest 
+ *  Application unit iquest
  *
  *
  *  This application unit is used for display and edit LB Proxies
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'msg_update'                    default: $lang_str['msg_changes_saved_s'] and $lang_str['msg_changes_saved_l']
  *   message which should be showed on attributes update - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                     (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
  *  'smarty_action'                 name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']              (form)          
+ *  opt['smarty_form']              (form)
  *   phplib html form
- *   
+ *
  *  opt['smarty_action']            (action)
  *    tells what should smarty display. Values:
- *    'default' - 
+ *    'default' -
  *    'was_updated' - when user submited form and data was succefully stored
- *  
+ *
  */
 
 class apu_iquest_giveitup extends apu_base_class{
 
     protected $team_id;
+    protected $team_edit;
 
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function __construct(){
@@ -58,6 +59,7 @@ class apu_iquest_giveitup extends apu_base_class{
 
 
         $this->opt['screen_name'] = "IQUEST-GIVEITUP";
+        $this->opt['team_id'] =     null;
         $this->opt['main_url'] = "";
 
         /*** names of variables assigned to smarty ***/
@@ -67,10 +69,10 @@ class apu_iquest_giveitup extends apu_base_class{
         $this->opt['form_name'] =           '';
 
         $this->opt['smarty_main_url'] =         'main_url';
-        
+
         $this->opt['form_submit']['text'] = $lang_str['b_giveitup'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
-        
+
     }
 
     /**
@@ -79,16 +81,17 @@ class apu_iquest_giveitup extends apu_base_class{
     function init(){
         parent::init();
 
-        $this->team_id = $this->user_id->get_uid();
+        if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
+        $this->team_id = $this->opt['team_id'];
 
         if (!isset($_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']];
     }
-    
-    
+
+
     /**
      *  Method perform action solve
      *
@@ -100,7 +103,7 @@ class apu_iquest_giveitup extends apu_base_class{
                            true,
                            array());
 
-        $_SESSION['auth']->activate(false);
+        $this->team_edit->activate(false);
 
         action_log($this->opt['screen_name'], $this->action, " Team deactivated (ID={$this->team_id})");
 
@@ -108,10 +111,10 @@ class apu_iquest_giveitup extends apu_base_class{
         $get = array('apu_iquest_giveitup='.RawURLEncode($this->opt['instance_id']));
         return $get;
     }
-    
+
 
     /**
-     *  Method perform action default 
+     *  Method perform action default
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -121,9 +124,9 @@ class apu_iquest_giveitup extends apu_base_class{
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View give-it-up screen");
         return true;
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if ($this->was_form_submited()){    // Is there data to process?
@@ -137,7 +140,7 @@ class apu_iquest_giveitup extends apu_base_class{
     }
 
     /**
-     *  create html form 
+     *  create html form
      *
      *  @return null            FALSE on failure
      */
@@ -149,7 +152,7 @@ class apu_iquest_giveitup extends apu_base_class{
                                      "name"=>"passwd",
                                      "value"=>"",
                                      "js_trim_value" => false,
-                                     "js_validate" => false, 
+                                     "js_validate" => false,
                                      "maxlength"=>64));
     }
 
@@ -167,7 +170,7 @@ class apu_iquest_giveitup extends apu_base_class{
     }
 
     /**
-     *  validate html form 
+     *  validate html form
      *
      *  @return bool            TRUE if given values of form are OK, FALSE otherwise
      */
@@ -179,34 +182,41 @@ class apu_iquest_giveitup extends apu_base_class{
 
         if (Iquest::is_over()){
             ErrorHandler::add_error($lang_str['iquest_err_contest_over']);
-            return false; 
+            return false;
         }
 
         if (empty($_POST['passwd'])){
             ErrorHandler::add_error($lang_str['iquest_err_passw_empty']);
-            return false; 
+            return false;
         }
 
-        if (!$_SESSION['auth']->checkpass($_POST['passwd'])){
+        $team = Iquest_Team::fetch_by_id($this->team_id);
+        if (!$team){
+            ErrorHandler::add_error("Invalid team ID");
+            return false;
+        }
+
+        $this->team_edit = Iquest_Team::checkpass($team->username ,$_POST['passwd']);
+        if (!$this->team_edit){
             ErrorHandler::add_error($lang_str['iquest_err_passw_invalid']);
-            return false; 
+            return false;
         }
 
         return $form_ok;
     }
-    
-    
+
+
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($this->opt['main_url']));
     }
-    
+
     /**
-     *  return info need to assign html form to smarty 
+     *  return info need to assign html form to smarty
      */
     function pass_form_to_html(){
         return array('smarty_name' => $this->opt['smarty_form'],
@@ -215,6 +225,3 @@ class apu_iquest_giveitup extends apu_base_class{
                      'before'      => $this->js_before);
     }
 }
-
-
-?>

@@ -1,13 +1,12 @@
 <?php
 
-$_phplib_page_open = array("sess" => "iquest_hq_session",
-                           "auth" => "iquest_hq_auth");
-
-$_data_layer_required_methods=array();
-$_required_modules = array('iquest', 'auth', 'widgets');
-$_required_apu = array('apu_iquest_hq', 'apu_sorter'); 
+$_phplib_page_open = array("sess" => "iquest_hq_session");
+$_required_modules = array('iquest', 'widgets');
+$_required_apu = array('apu_iquest_hq', 'apu_sorter');
 
 require dirname(__FILE__)."/prepend.php";
+
+Iquest_auth::access_check(['hq']);
 
 if (!empty($_GET['back_url'])) {
     $controler->change_url_for_reload($_GET['back_url']);
@@ -34,5 +33,3 @@ $controler->add_required_javascript('jquery.kinetic.min.js');
 $controler->add_required_javascript('jquery.floatThead.min.js');
 $controler->start();
 
-
-?>
