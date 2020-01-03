@@ -1,3 +1,10 @@
+iquest (0.2.90) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * initial version of traccar module
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 19 Dec 2019 16:26:46 +0100
+
 iquest (0.2.10) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
