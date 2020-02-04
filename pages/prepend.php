@@ -26,7 +26,7 @@ function set_page_attributes(){
                     $config->style_src_path."styles.css",
         ),
         'required_javascript' => array(
-                    "jquery-3.1.1.min.js",
+                    "jquery.min.js",
                     "bootstrap.min.js",
                     "jquery.countdown.min.js",
                     "core/functions.js",

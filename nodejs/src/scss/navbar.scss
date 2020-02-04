@@ -1,0 +1,43 @@
+
+.navbar-dark{
+    .clock,
+    .wallet,
+    .timeouts {
+        color: #DDDDDD;
+    }
+}
+
+.navbar{
+    .clock,
+    .wallet,
+    .timeouts {
+        line-height: 15px;
+        font-size: 12px;
+        white-space: nowrap;
+        text-align: center;
+        padding: 2px 10px
+    }
+}
+
+
+.navbar .navinfo {
+    display: block;
+    margin: 0 auto;
+    width: 450px;
+    font-size: 12px;
+    line-height: 40px;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.navbar .navinfo .navinfo-inner{
+    position: absolute;
+    margin-left:  100px;
+    margin-right: 100px;
+    width:        250px;
+}
+
+.navbar .navinfo.double {
+    line-height: 20px;
+}
+
