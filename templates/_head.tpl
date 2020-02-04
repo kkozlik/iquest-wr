@@ -82,7 +82,9 @@
     <div class="alert alert-danger">
         <div class="row align-items-center">
             <h3 class="col mb-0">{$lang_str.iquest_txt_contest_over}</h3>
-            <a class="btn btn-danger " href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
+            <div class="col-auto">
+                <a class="btn btn-danger " href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
+            </div>
         </div>
     </div>
 {/if}

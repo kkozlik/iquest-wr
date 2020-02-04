@@ -15,23 +15,30 @@
 
 <div class="form-signin">
 
-{$form.start}
-<h2 class="form-signin-heading">{$lang_str.auth_userlogin}</h2>
-<p>{$lang_str.auth_enter_username_and_passw}:</p>
+    {$form.start}
+        <h2 class="form-signin-heading">{$lang_str.auth_userlogin}</h2>
+        <p>{$lang_str.auth_enter_username_and_passw}:</p>
 
+        <div class="row align-items-center">
+            <div class="col-3">
+                <label for="uname">{$lang_str.auth_username}:</label>
+            </div>
+            <div class="col">
+                {$form.uname}
+            </div>
+        </div>
 
-<table border="0" cellspacing="0" cellpadding="0" align="center">
-<tr>
-<td><label for="uname">{$lang_str.auth_username}:</label></td>
-<td>{$form.uname}</td>
-</tr>
-<tr>
-<td><label for="passw">{$lang_str.auth_password}:</label></td>
-<td>{$form.passw}</td>
-</tr>
-</table>
-<div class="loginButton">{$form.okey}</div>
-{$form.finish}
+        <div class="row align-items-center">
+            <div class="col-3">
+                <label for="passw">{$lang_str.auth_password}:</label>
+            </div>
+            <div class="col">
+                {$form.passw}
+            </div>
+        </div>
+
+        {$form.okey}
+    {$form.finish}
 </div>
 
 <br>

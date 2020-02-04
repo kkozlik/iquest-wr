@@ -9,18 +9,20 @@
 </ul>
 
 
-<div class="hero-unit">
+<div class="card bg-light mb-3">
+    <div class="card-body p-5">
 
-<h3>{$lang_str.iquest_txt_giveitup_heading}</h3>
-<p>{$lang_str.iquest_txt_giveitup_p1}</p>
-<p>{$lang_str.iquest_txt_giveitup_p2}</p>
+        <h3>{$lang_str.iquest_txt_giveitup_heading}</h3>
+        <p>{$lang_str.iquest_txt_giveitup_p1}</p>
+        <p>{$lang_str.iquest_txt_giveitup_p2}</p>
 
-<div class="form-inline">
-{$form.start}
-{$form.passwd} {$form.okey}
-{$form.finish}
-</div>
+        <div class="form-inline">
+        {$form.start}
+        {$form.passwd} {$form.okey}
+        {$form.finish}
+        </div>
 
+    </div>
 </div>
 
 
