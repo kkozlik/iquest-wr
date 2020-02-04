@@ -1,27 +1,36 @@
 
-.navbar span.logo{
-    padding: 8px 20px;
-}
-
-.form-inline.well form{
-    margin-bottom: 0;
-}
-
 
 .team-name {
     white-space: nowrap;
 }
 
-.navbar .navbar-middle {
-    display: block;
-    margin: 0 auto;
-    width: 450px;
-    line-height: 40px;
-    white-space: nowrap;
-    text-align: center;
+.cgrp-title {
+    font-size: 0.85rem;
+
+    background-color: #fafafa;
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+
+    &.new{
+        background-color: #fcf8e3;
+        background-image: linear-gradient(to bottom, #fcfcf8, #fcf8da);
+    }
+
+    h5{
+        color: #777777;
+        text-shadow: 0 1px 0 #ffffff;
+    }
+
+    a {
+        color: #777777;
+    }
+
+    a:hover,
+    a:focus {
+        color: #333333;
+    }
+
 }
-
-
 
 /* display correctly tabbed navigation above wells */
 .tab-well .nav-tabs{
@@ -97,23 +106,18 @@ span.questionmark{
     margin: 5px;
 }
 
-.navbar span.new,
 span.new{
     background-image: url("../img/nove.png");
 }
-.navbar span.newhint,
 span.newhint{
     background-image: url("../img/hint.png");
 }
-.navbar span.coin,
 span.coin{
     background-image: url("../img/coin.png");
 }
-.navbar span.finder,
 span.finder{
     background-image: url("../img/finder.png");
 }
-.navbar span.questionmark,
 span.questionmark{
     background-image: url("../img/questionmark.png");
 }
@@ -129,11 +133,6 @@ span.coin-animated{
 
 
 
-.navbar .new{
-    background-color: #fcf8e3;
-    background-image: linear-gradient(to bottom, #fcfcf8, #fcf8da);
-    background-repeat: repeat-x;
-}
 
 .breadcrumb.breadcrumb-btn{
     padding: 0 15px;

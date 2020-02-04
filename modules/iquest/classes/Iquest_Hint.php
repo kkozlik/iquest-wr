@@ -12,7 +12,7 @@ class Iquest_Hint extends Iquest_file{
 
     /**
      *  Fetch hits form DB
-     */         
+     */
     static function fetch($opt=array()){
         global $data, $config;
 
@@ -57,11 +57,11 @@ class Iquest_Hint extends Iquest_file{
         }
 
         if (isset($opt['unscheduled_team_id'])){
-            //Get only those hints that are not scheduled to be shown to given team yet 
-            $q2 = "select ".$ct->hint_id." 
-                   from ".$tt_name." 
+            //Get only those hints that are not scheduled to be shown to given team yet
+            $q2 = "select ".$ct->hint_id."
+                   from ".$tt_name."
                    where ".$ct->team_id." = ".$data->sql_format($opt['unscheduled_team_id'], "s");
-                   
+
             $qw[] = "h.".$ch->id." not in (".$q2.")";
         }
 
@@ -77,11 +77,11 @@ class Iquest_Hint extends Iquest_file{
                      h.".$ch->clue_id.",
                      h.".$ch->filename.",
                      h.".$ch->content_type.",
-                     time_to_sec(h.".$ch->timeout.") as ".$ch->timeout.", 
+                     time_to_sec(h.".$ch->timeout.") as ".$ch->timeout.",
                      h.".$ch->price.",
                      h.".$ch->ordering.",
                      h.".$ch->comment.
-                     $cols." 
+                     $cols."
               from ".$th_name." h ".implode(" ", $join).
               $qw;
 
@@ -96,8 +96,8 @@ class Iquest_Hint extends Iquest_file{
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if (!isset($row[$ct->show_at]))  $row[$ct->show_at] = null;
             if (!isset($row[$ct->for_sale])) $row[$ct->for_sale] = null;
-            
-            $out[$row[$ch->id]] =  new Iquest_Hint($row[$ch->id], 
+
+            $out[$row[$ch->id]] =  new Iquest_Hint($row[$ch->id],
                                                    $row[$ch->ref_id],
                                                    $row[$ch->filename],
                                                    $row[$ch->content_type],
@@ -115,8 +115,8 @@ class Iquest_Hint extends Iquest_file{
 
     /**
      *  Schedule time to show new hint for team $team_id.
-     *  This function do not check whether it is already scheduled!     
-     */         
+     *  This function do not check whether it is already scheduled!
+     */
     static function schedule($id, $team_id, $timeout, $for_sale){
         global $data, $config;
 
@@ -128,9 +128,11 @@ class Iquest_Hint extends Iquest_file{
         // if timeout is not specified set it to far future, the hint has to be buyed then
         if (!$timeout) $timeout = 2147483647; // (2^31)-1 - max integer value on 32bit systems
 
+        //@TODO: pri moc velkym timeoutu (2147483647) se vzteka maria DB -> poresit. Bud pouzivat nulu nebo extra sloupec
+
         $q="insert into ".$t_name." (
-                    ".$c->hint_id.", 
-                    ".$c->team_id.", 
+                    ".$c->hint_id.",
+                    ".$c->team_id.",
                     ".$c->show_at.",
                     ".$c->for_sale.")
             values (".$data->sql_format($id,        "s").",
@@ -140,17 +142,17 @@ class Iquest_Hint extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
     /**
      *  De-schedule displaying of hint by $clue_id for team $team_id.
-     *  If the hint is not displayed yet, it will not be displayed never.     
-     */             
+     *  If the hint is not displayed yet, it will not be displayed never.
+     */
     static function deschedule($clue_ids, $team_id){
         global $data, $config;
-    
+
         /* table's name */
         $th_name  = &$config->data_sql->iquest_hint->table_name;
         $tt_name  = &$config->data_sql->iquest_hint_team->table_name;
@@ -172,20 +174,20 @@ class Iquest_Hint extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
     /**
-     *  Buy the hint.    
+     *  Buy the hint.
      *  Change scheduled time to show the hint for team $team_id to NOW and
      *  mark the hint it is not longer for sale.
-     *       
-     *  The hint must be already scheduled. This function do not check whether 
+     *
+     *  The hint must be already scheduled. This function do not check whether
      *  it is already scheduled!
-     *  
-     *  This function also do not check price of the hint               
-     */         
+     *
+     *  This function also do not check price of the hint
+     */
     static function buy($id, $team_id){
         global $data, $config;
 
@@ -194,15 +196,15 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
-        $q = "update ".$t_name." set 
+        $q = "update ".$t_name." set
                 ".$c->show_at." = now(),
                 ".$c->for_sale." = 0
-              where ".$c->hint_id." = ".$data->sql_format($id,      "s")." and 
+              where ".$c->hint_id." = ".$data->sql_format($id,      "s")." and
                     ".$c->team_id." = ".$data->sql_format($team_id, "n");
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
@@ -222,7 +224,7 @@ class Iquest_Hint extends Iquest_file{
         else $qw = "";
 
         $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
-                     ".$c->hint_id." 
+                     ".$c->hint_id."
               from ".$t_name.$qw;
 
         $q .= " order by ".$c->show_at;
@@ -237,13 +239,13 @@ class Iquest_Hint extends Iquest_file{
                        "hint_id" => $row[$c->hint_id]);
         }
         $res->free();
-        
+
         return $out;
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null, $for_sale=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
-        
+
         $this->clue_id = $clue_id;
         $this->timeout = $timeout;
         $this->price = $price;
@@ -259,13 +261,13 @@ class Iquest_Hint extends Iquest_file{
         $t_name = &$config->data_sql->iquest_hint->table_name;
         /* col names */
         $c      = &$config->data_sql->iquest_hint->cols;
-    
+
         $q = "insert into ".$t_name."(
                     ".$c->id.",
                     ".$c->ref_id.",
                     ".$c->filename.",
                     ".$c->content_type.",
-                    ".$c->comment.", 
+                    ".$c->comment.",
                     ".$c->clue_id.",
                     ".$c->timeout.",
                     ".$c->price.",

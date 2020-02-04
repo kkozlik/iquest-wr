@@ -19,9 +19,9 @@
             {elseif $clue.type=="special"}<span class="questionmark"></span>
             {else}<span class="finder"></span>{/if}
         </th>
-        <th class="link"><a href="{$clue.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+        <th class="link"><a href="{$clue.download_file_url|escape}" class="btn btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
-            <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
+            <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>
     </tr>
     {call iquestRenderFile file=$clue colspan=3}
@@ -36,9 +36,9 @@
             {$lang_str.iquest_hint}: {$hint.filename|escape}
             {if $hint.new}<span class="new"></span>{/if}
         </th>
-        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
         <th class="buttons">
-            <a href="#" title="{$lang_str.iquest_minimize}" class="btn minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
+            <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
         </th>
     </tr>
     {call iquestRenderFile file=$hint colspan=3}
@@ -54,17 +54,19 @@
  *  @param  clue_grp
  *}
 {function print_clue_grp_title}
-    <div class="navbar" id="{$clue_grp.ref_id}">
-        <div class="navbar-inner {if $clue_grp.new}new{/if}">
-        <div class="brand">{$clue_grp.name|escape}</div>
-        <div class="pull-left">{call print_minimized_clues clue_grp=$clue_grp}</div>
-        {if $clue_grp.hints_for_sale}
-        <div class="pull-right"><a href="{$clue_grp.buy_url|escape}" class="btn" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$clue_grp.hint_price|escape}</a></div>
-        {/if}
-        {if $clue_grp.new}
-        <div class="pull-right"><span class="new"></span></div>
-        {/if}
-        <div class="navbar-middle">{$lang_str.iquest_txt_gained_at}: {call print_clue_grp_gained_at clue_grp=$clue_grp}</div>
+    <div class="card mb-3 cgrp-title {if $clue_grp.new}new{/if}" id="{$clue_grp.ref_id}">
+        <div class="card-body p-1">
+            <div class="row align-items-center mx-0">
+                <h5 class="col-auto mb-0">{$clue_grp.name|escape}</h5>
+                <div class="col-auto">{call print_minimized_clues clue_grp=$clue_grp}</div>
+                <div class="col my-auto text-center">{$lang_str.iquest_txt_gained_at}: {call print_clue_grp_gained_at clue_grp=$clue_grp}</div>
+                {if $clue_grp.new}
+                    <div class="col-auto px-0"><span class="new"></span></div>
+                {/if}
+                {if $clue_grp.hints_for_sale}
+                    <div class="col-auto pl-2 pr-0"><a href="{$clue_grp.buy_url|escape}" class="btn btn-sm btn-outline-secondary" onclick="return linkConfirmation(this, '{$clue_grp.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$clue_grp.hint_price|escape}</a></div>
+                {/if}
+            </div>
         </div>
     </div>
 {/function}
@@ -88,13 +90,13 @@
  *  @param  clue_grp
  *}
 {function print_minimized_clues}
-    <ul class="navbar-text inline shrinked-grp">
+    <ul class="list-inline shrinked-grp mb-0">
     {foreach $clue_grp.clues as $clue}
-    <li id="min{$clue.ref_id|escape}" {if !$clue.hidden}class="minimized-hidden"{/if}>
+    <li class="list-inline-item {if !$clue.hidden}minimized-hidden{/if}" id="min{$clue.ref_id|escape}">
         <a href="#" class="navbar-link restore-btn" data-obj-id="{$clue.ref_id|escape}" data-url-unhide="{$clue.unhide_url}">{$clue.filename|escape}</a>
     </li>
     {foreach $clue.hints as $hint}
-    <li id="min{$hint.ref_id|escape}" {if !$hint.hidden}class="minimized-hidden"{/if}>
+    <li class="list-inline-item {if !$hint.hidden}minimized-hidden{/if}" id="min{$hint.ref_id|escape}">
         <a href="#" class="navbar-link restore-btn" data-obj-id="{$hint.ref_id|escape}" data-url-unhide="{$hint.unhide_url}">{$hint.filename|escape}</a>
     </li>
     {/foreach}
@@ -172,7 +174,7 @@
         <div class="navbar" id="{$solution.ref_id}">
             <div class="navbar-inner {if $solution.new}new{/if}">
             <div class="brand">{$lang_str.iquest_solution}: {$solution.name|escape}</div>
-            <div class="pull-right"><a href="{$solution.detail_url|escape}" class="btn">{$lang_str.iquest_view}</a></div>
+            <div class="pull-right"><a href="{$solution.detail_url|escape}" class="btn btn-outline-secondary">{$lang_str.iquest_view}</a></div>
             {if $solution.new}
             <div class="pull-right"><span class="new"></span></div>
             {/if}
@@ -231,13 +233,13 @@
 
 
     <div class="row">
-    <div class="span6">
+    <div class="col-6">
     <table class="table table-bordered clue-list">
     <tr><th>{$lang_str.iquest_avail_tasks}</th></tr>
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
-        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn btn-outline-secondary pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>
@@ -247,7 +249,7 @@
 
     {foreach $solutions as $solution}
         {if $solution@first}
-        <div class="span6">
+        <div class="col-6">
         <table class="table table-bordered clue-list">
         <tr><th>{$lang_str.iquest_avail_solutions}</th></tr>
         {/if}
