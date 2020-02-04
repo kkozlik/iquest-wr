@@ -79,9 +79,11 @@
 <div class="container" id="page_container">
 
 {if $contest_over|default:false}
-    <div class="alert alert-block alert-error fade in contest-over">
-    <span>{$lang_str.iquest_txt_contest_over}</span>
-    <a class="btn btn-danger pull-right" href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
+    <div class="alert alert-danger">
+        <div class="row align-items-center">
+            <h3 class="col mb-0">{$lang_str.iquest_txt_contest_over}</h3>
+            <a class="btn btn-danger " href="{$reveal_url|escape}">{$lang_str.iquest_txt_show_goal}</a>
+        </div>
     </div>
 {/if}
 
