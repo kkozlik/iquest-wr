@@ -3,6 +3,22 @@
 // Variable Overrides
 $enable-gradients: true;
 
+$font-size-base: rem(16px);
+$font-size-sm: rem(11px);
+
+$navbar-brand-font-size: $font-size-base;
+$navbar-toggler-font-size: $font-size-base;
+
+$navbar-padding-y: 4px;
+$navbar-padding-x: 35px;
+
+$navbar-toggler-padding-y: 0.25rem;
+$navbar-brand-padding-y: 0.25rem;
+$nav-link-padding-y: 0.25rem;
+
+$theme-colors: (
+    "dark": #1b1b1b
+);
 
 // Bootstrap Sass Imports
 @import "node_modules/bootstrap/scss/functions";
@@ -25,7 +41,6 @@ $enable-gradients: true;
 @import "node_modules/bootstrap/scss/nav";
 @import "node_modules/bootstrap/scss/navbar";
 @import "node_modules/bootstrap/scss/card";
-@import "breadcrumb";
 @import "node_modules/bootstrap/scss/breadcrumb";
 @import "node_modules/bootstrap/scss/pagination";
 @import "node_modules/bootstrap/scss/badge";
@@ -45,9 +60,10 @@ $enable-gradients: true;
 @import "node_modules/bootstrap/scss/print";
 
 
-@import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
-@import "node_modules/@fortawesome/fontawesome-free/scss/solid";
-@import "node_modules/@fortawesome/fontawesome-free/scss/regular";
+// @import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
+// @import "node_modules/@fortawesome/fontawesome-free/scss/solid";
+// @import "node_modules/@fortawesome/fontawesome-free/scss/regular";
 
 
+@import "navbar";
 @import "custom";

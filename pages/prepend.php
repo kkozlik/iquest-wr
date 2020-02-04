@@ -24,8 +24,6 @@ function set_page_attributes(){
         'ie_selects' => true,
         'css_file'=>array(
                     $config->style_src_path."styles.css",
-                    $config->style_src_path."bootstrap.css",
-                    $config->style_src_path."bootstrap-responsive.css",
         ),
         'required_javascript' => array(
                     "jquery-3.1.1.min.js",

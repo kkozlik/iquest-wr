@@ -31,41 +31,6 @@
     text-align: center;
 }
 
-.navbar .navinfo {
-    display: block;
-    margin: 0 auto;
-    width: 450px;
-    font-size: 12px;
-    line-height: 40px;
-    white-space: nowrap;
-    text-align: center;
-}
-
-.navbar .navinfo .navinfo-inner{
-    position: absolute;
-    margin-left:  100px;
-    margin-right: 100px;
-    width:        250px;
-}
-
-.navbar .navinfo.double {
-    line-height: 20px;
-}
-
-.navbar-inverse .clock,
-.navbar-inverse .wallet,
-.navbar-inverse .navinfo {
-    color: #DDDDDD;
-}
-
-.navbar .clock,
-.navbar .wallet {
-    line-height: 15px;
-    font-size: 12px;
-    white-space: nowrap;
-    text-align: center;
-    padding: 5px 10px
-}
 
 
 /* display correctly tabbed navigation above wells */
@@ -110,7 +75,7 @@
 
 table.clue-list td{
     line-height: 30px;
-    padding: 3px 8px;    
+    padding: 3px 8px;
 }
 
 table.clue-list td.new{
@@ -186,18 +151,18 @@ span.coin-animated{
 
 .breadcrumb.breadcrumb-btn li{
     line-height: 30px;
-    padding: 0px 8px;    
+    padding: 0px 8px;
 }
 
 .breadcrumb.breadcrumb-btn li.no-btn{
-    padding: 3px 8px;    
+    padding: 3px 8px;
 }
 
 
-.btn input[type="radio"], 
+.btn input[type="radio"],
 .btn input[type="checkbox"]{
-    margin-top: 0px; 
-    margin-bottom: 2px; 
+    margin-top: 0px;
+    margin-bottom: 2px;
 }
 
 .plaintext{
