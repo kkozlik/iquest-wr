@@ -4,13 +4,13 @@
 // for retreaving a normalized naturalWidth and naturalHeight.
 (function($){
     var  props = ['Width', 'Height'], prop;
-    
+
     while (prop = props.pop()) {
         (function (natural, prop) {
-            $.fn[natural] = (natural in new Image()) ? 
+            $.fn[natural] = (natural in new Image()) ?
                     function () {
                         return this[0][natural];
-                    } : 
+                    } :
 
                     function () {
                         var node = this[0], img, value;
@@ -30,7 +30,7 @@
 function resize_images(){
     $('.fileimg img').each(function() {
 
-    
+
         var ratio = 0;  // Used for aspect ratio
         var width = $(this).width();    // Current image width
         var height = $(this).height();  // Current image height
@@ -40,14 +40,14 @@ function resize_images(){
         // Max width for the image
         var maxWidth = Math.min( $( "#page_container" ).width() - 18,
                                  naturalwidth);
-    
+
         ratio = maxWidth / naturalwidth;   // get ratio for scaling image
         $(this).css("width", maxWidth); // Set new width
         $(this).css("height", naturalheight * ratio);  // Scale height based on ratio
 
 //         height = height * ratio;    // Reset height to match scaled image
 //         width = $(this).width();    // Current image width
-        
+
         $(this).parent().find('span.img_size').html(naturalwidth+"×"+naturalheight);
     });
 }
@@ -59,8 +59,8 @@ function reload(){
 
 function enable_countdown(selector, secs){
     $(selector).countdown({
-                    until: '+'+secs, 
-                    compact: true, 
+                    until: '+'+secs,
+                    compact: true,
                     description: '',
                     onExpiry: reload
                 });
@@ -68,10 +68,10 @@ function enable_countdown(selector, secs){
 
 /**
  *  set clock showing server time
- */ 
+ */
 function set_clock(selector, time){
-    
-    // First get difference between client and server time and store it into 
+
+    // First get difference between client and server time and store it into
     // diff variable.
     var client_time = new Date();
     var server_time = new Date();
@@ -84,7 +84,7 @@ function set_clock(selector, time){
         // so we will gain the server time.
         var current_time = new Date();
         current_time.setTime(current_time.getTime() + diff);
-        
+
         // Format the time to string
         $(selector).text(current_time.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"));
     }, 1000);
@@ -95,10 +95,10 @@ $(document).ready(function() {
 
     /**
      *  Click handler for minimize buttons for clues/hints
-     */         
+     */
     $(".shrinkable .minimize-btn").click(function(e) {
         e.preventDefault();
-        
+
         var obj_id = $(this).attr("data-obj-id");
 
         $("#"+obj_id).slideUp(
@@ -117,10 +117,10 @@ $(document).ready(function() {
 
     /**
      *  Click handler for restore buttons for clues/hints
-     */         
+     */
     $(".shrinked-grp .restore-btn").click(function(e) {
         e.preventDefault();
-        
+
         var obj_id = $(this).attr("data-obj-id");
         $("#min"+obj_id).addClass("minimized-hidden");
         $("#"+obj_id).slideDown(150);
@@ -135,11 +135,11 @@ $(document).ready(function() {
 
     /**
      *  Click handler for checkbox on the 'All-in-one' button
-     */         
+     */
     $("#allInOneChk").click(function(e) {
         e.preventDefault();
 
-        var link = $(this).parent();
+        var link = $(this).closest("A");
         window.location = link.attr("href");
     });
 });

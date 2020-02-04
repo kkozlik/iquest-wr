@@ -118,7 +118,7 @@
              */
             var saveTabSelectionToCookie = function(){
                 var activeTab = $('#graphTab .nav .active a').attr("data-type");
-                
+
                 document.cookie = "graphTypeSelected=" + encodeURIComponent(activeTab);
             }
 
@@ -141,10 +141,10 @@
             $('#graphTab a').click(function (e) {
                 e.preventDefault();
                 $(this).tab('show');
-                
+
                 var graph_type = $(this).attr("data-type");
                 $('#graphTab object').attr("data", "{$get_graph_url|escape}&type="+graph_type);
-                
+
                 saveTabSelectionToCookie();
             });
 
@@ -169,8 +169,8 @@
     <tr>
     <th rowspan="2" style="vertical-align: middle;">
         Řazení:<br />
-        <span class="nowrap"><a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span><br /> 
-        <span class="nowrap"><a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span>
+        <span class="text-nowrap"><a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span><br />
+        <span class="text-nowrap"><a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span>
     </th>
     {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
     <th colspan="{$colspan}" title="{$group.id|escape}"><a href="{$group.view_url|escape}">{$group.name|escape}</a></th>
@@ -194,14 +194,14 @@
     <tr class="first">
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
-        <span class="nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>
+        <span class="text-nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
         {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a><br /><strong>Datum: </strong>`$cgrp_team[$group.id][$team.id].gained_at_date|escape`"}
-        <td colspan="{$colspan}" 
-            class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}" 
+        <td colspan="{$colspan}"
+            class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}"
             title="{$group.id|escape}"
-            data-toggle="popover" 
+            data-toggle="popover"
             data-content="{$data_content|escape}"
         >
         {$cgrp_team[$group.id][$team.id].gained_at|escape}
@@ -217,9 +217,9 @@
             {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`<br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
             {/if}
             {$act_sol_team = $solution_team[$solution_id][$team.id]}
-            <td class="time-field {if $act_sol_team.solved}solved{elseif $act_sol_team.showed}showed{elseif $act_sol_team.scheduled}scheduled{/if}" 
+            <td class="time-field {if $act_sol_team.solved}solved{elseif $act_sol_team.showed}showed{elseif $act_sol_team.scheduled}scheduled{/if}"
                 title="{$solutions.$solution_id.id|escape}"
-                data-toggle="popover" 
+                data-toggle="popover"
                 data-content="{$data_content|escape}"
             >
                 {if $act_sol_team.solved}{$act_sol_team.solved_at|escape}
@@ -262,9 +262,9 @@
         // Kinetic is not needed on android. Its functionality is already in
         // the mobile browser.
         // So enable it only on not mobile device too.
-        
+
         $('#scroll-wrapper').kinetic();
-        $('#scroll-wrapper').addClass('inselectable'); 
+        $('#scroll-wrapper').addClass('inselectable');
     }
 
     $(".time-field").popover({

@@ -1,4 +1,4 @@
-{* 
+{*
  *  variables that should be set:
  *      - $event
  *      - $raw_data - indicate whether raw data of the event should be displayed
@@ -7,7 +7,7 @@
 
 {$data_content="<pre>`$event.data_formated`</pre>"}
 <tr class="{if $event.success}success{else}error{/if}">
-    <td class="nowrap">{$event.timestamp}</td>
+    <td class="text-nowrap">{$event.timestamp}</td>
     <td >{$event.team_name}</td>
     <td >{$event.type}</td>
     {if $raw_data}

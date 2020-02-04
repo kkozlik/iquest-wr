@@ -41,6 +41,17 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 
 Iquest_auth::$login_page_url = "login.php";
 
+$GLOBALS['controler']->attach_listener("pre_form_smarty", function($event){
+    OohElCommon::$default_class = "form-control";
+    OohElCheckbox::$default_class = "custom-control-input";
+    OohElRadio::$default_class = "custom-control-input";
+    OohElSelect::$default_class = "custom-select";
+    OohElFile::$default_class = "custom-file-input";
+    // OohElSubmit::$default_class = "btn btn-primary";
+    // OohElReset::$default_class = "btn btn-primary";
+    // OohElButton::$default_class = "btn btn-primary";
+});
+
 $GLOBALS['controler']->attach_listener("pre_html_output", function($event){
 
     $GLOBALS['page_attributes']['logout_url']   = $GLOBALS['controler']->url('login.php?logout=1');

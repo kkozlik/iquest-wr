@@ -104,23 +104,37 @@
 
 
 {**
- *  Print the block containing input elements for entering key 
+ *  Print the block containing input elements for entering key
  *}
 {function print_key_input}
-    <div class="form-inline well">
+    <div class="card bg-light mb-4">
+        <div class="card-body p-4">
+
     {$form.start}
-    <div class="row-fluid">
-        <div class="span2"><a href="{$all_in_1_url|escape}" class="nowrap btn {if $action=='view_all'}btn-inverse{/if}"><input type="checkbox" id="allInOneChk" {if $action=='view_all'}checked{/if}> {$lang_str.iquest_all_in_1}</a></div>
-        <div class="span8 text-center">
-        <label for="solution_key" class="solution_label">{$lang_str.iquest_solution_key}:</label>
-        {$form.solution_key}
-        {$form.okey}
+    <div class="row align-items-end">
+        <div class="col-3">
+            <a href="{$all_in_1_url|escape}" class="text-nowrap btn {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="allInOneChk" id="allInOneChk" {if $action=='view_all'}checked{/if}>
+                    <label class="custom-control-label" for="allInOneChk">{$lang_str.iquest_all_in_1}</label>
+                </div>
+            </a>
         </div>
-        {if $graph_enabled}
-        <div class="span2"><a href="{$view_graph_url|escape}" class="nowrap btn">{$lang_str.iquest_graph}</a></div>
-        {/if}
+        <div class="col">
+            <div class="form-inline justify-content-center">
+                <label for="solution_key" class="mr-2">{$lang_str.iquest_solution_key}:</label>
+                {$form.solution_key}&nbsp;
+                {$form.okey}
+            </div>
+        </div>
+        <div class="col-3">
+            {if $graph_enabled}
+                <a href="{$view_graph_url|escape}" class="float-right btn btn-outline-secondary">{$lang_str.iquest_graph}</a>
+            {/if}
+        </div>
     </div>
     {$form.finish}
+        </div>
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
@@ -166,7 +180,7 @@
         </div>
     {/foreach}
 
-    
+
 {elseif $action=='view_solution'}
 
     <ul class="breadcrumb">
@@ -214,8 +228,8 @@
 {else}
 
     {call print_key_input}
-    
-    
+
+
     <div class="row">
     <div class="span6">
     <table class="table table-bordered clue-list">

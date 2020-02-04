@@ -25,7 +25,7 @@
         </ul>
     </div>
 
-    <div class="navbar-text timeouts mx-auto {($next_hint and $next_solution)?"double":""}">
+    <div class="navbar-text timeouts mx-auto">
         {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: <span id="hint_countdown">{$next_hint}</span></div>{/if}
         {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: <span id="solution_countdown">{$next_solution}</span></div>{/if}
     </div>
