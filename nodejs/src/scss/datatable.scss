@@ -1,0 +1,36 @@
+.datatable{
+    .filename{
+        line-height: 30px;
+        padding-left: 1rem;
+    }
+
+    .link{
+        width: rem(80px);
+        text-align: center;
+    }
+
+    .buttons{
+        width: rem(44px);
+        text-align: center;
+    }
+
+    td pre{
+        margin-bottom: 0;
+    }
+
+    &.clue th{
+        background-color: #dff0d8;
+    }
+
+    &.hint th{
+        background-color: #d9edf7;
+    }
+
+    &.hint tr.new th{
+        background-color: #fcf8e3;
+    }
+
+    &.solution th{
+        background-color: #f2dede;
+    }
+}

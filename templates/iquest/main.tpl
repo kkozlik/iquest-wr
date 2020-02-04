@@ -12,37 +12,41 @@
 {function print_clue_grp}
     {foreach $clue_grp.clues as $clue}
     <div class="datatable clue" id="{$clue.ref_id|escape}" {if $clue.hidden}style="display: none;"{/if}>
-    <table class="table table-bordered shrinkable">
-    <tr>
-        <th class="filename">{$clue.filename|escape}
-            {if $clue.type=="coin"}<span class="coin"></span>
-            {elseif $clue.type=="special"}<span class="questionmark"></span>
-            {else}<span class="finder"></span>{/if}
-        </th>
-        <th class="link"><a href="{$clue.download_file_url|escape}" class="btn btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
-        <th class="buttons">
-            <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="icon-chevron-down"></i></a>
-        </th>
-    </tr>
-    {call iquestRenderFile file=$clue colspan=3}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table shrinkable mb-0">
+            <tr>
+                <th class="filename align-middle">{$clue.filename|escape}
+                    {if $clue.type=="coin"}<span class="coin"></span>
+                    {elseif $clue.type=="special"}<span class="questionmark"></span>
+                    {else}<span class="finder"></span>{/if}
+                </th>
+                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="buttons align-middle">
+                    <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary btn-sm minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="fas fa-chevron-down"></i></a>
+                </th>
+            </tr>
+            {call iquestRenderFile file=$clue colspan=3}
+            </table>
+        </div>
     </div>
 
     {foreach $clue.hints as $hint}
     <div class="datatable hint" id="{$hint.ref_id|escape}" {if $hint.hidden}style="display: none;"{/if}>
-    <table class="table table-bordered shrinkable">
-    <tr {if $hint.new}class="new"{/if}>
-        <th class="filename">
-            {$lang_str.iquest_hint}: {$hint.filename|escape}
-            {if $hint.new}<span class="new"></span>{/if}
-        </th>
-        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
-        <th class="buttons">
-            <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="icon-chevron-down"></i></a>
-        </th>
-    </tr>
-    {call iquestRenderFile file=$hint colspan=3}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table shrinkable mb-0">
+            <tr {if $hint.new}class="new"{/if}>
+                <th class="filename align-middle">
+                    {$lang_str.iquest_hint}: {$hint.filename|escape}
+                    {if $hint.new}<span class="new"></span>{/if}
+                </th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="buttons align-middle">
+                    <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary btn-sm minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="fas fa-chevron-down"></i></a>
+                </th>
+            </tr>
+            {call iquestRenderFile file=$hint colspan=3}
+            </table>
+        </div>
     </div>
     {/foreach}
     {/foreach}
@@ -93,11 +97,11 @@
     <ul class="list-inline shrinked-grp mb-0">
     {foreach $clue_grp.clues as $clue}
     <li class="list-inline-item {if !$clue.hidden}minimized-hidden{/if}" id="min{$clue.ref_id|escape}">
-        <a href="#" class="navbar-link restore-btn" data-obj-id="{$clue.ref_id|escape}" data-url-unhide="{$clue.unhide_url}">{$clue.filename|escape}</a>
+        <a href="#" class="restore-btn" data-obj-id="{$clue.ref_id|escape}" data-url-unhide="{$clue.unhide_url}">{$clue.filename|escape}</a>
     </li>
     {foreach $clue.hints as $hint}
     <li class="list-inline-item {if !$hint.hidden}minimized-hidden{/if}" id="min{$hint.ref_id|escape}">
-        <a href="#" class="navbar-link restore-btn" data-obj-id="{$hint.ref_id|escape}" data-url-unhide="{$hint.unhide_url}">{$hint.filename|escape}</a>
+        <a href="#" class="restore-btn" data-obj-id="{$hint.ref_id|escape}" data-url-unhide="{$hint.unhide_url}">{$hint.filename|escape}</a>
     </li>
     {/foreach}
     {/foreach}
@@ -171,13 +175,16 @@
     {/foreach}
 
     {foreach $solutions as $solution}
-        <div class="navbar" id="{$solution.ref_id}">
-            <div class="navbar-inner {if $solution.new}new{/if}">
-            <div class="brand">{$lang_str.iquest_solution}: {$solution.name|escape}</div>
-            <div class="pull-right"><a href="{$solution.detail_url|escape}" class="btn btn-outline-secondary">{$lang_str.iquest_view}</a></div>
-            {if $solution.new}
-            <div class="pull-right"><span class="new"></span></div>
-            {/if}
+        <div class="card mb-3 solution-title {if $solution.new}new{/if}" id="{$solution.ref_id}">
+            <div class="card-body p-1">
+                <div class="row align-items-center mx-0">
+                    <h5 class="col mb-0">{$lang_str.iquest_solution}: {$solution.name|escape}</h5>
+
+                    {if $solution.new}
+                        <div class="col-auto px-0"><span class="new"></span></div>
+                    {/if}
+                    <div class="col-auto pl-2 pr-0"><a href="{$solution.detail_url|escape}" class="btn btn-sm btn-outline-secondary">{$lang_str.iquest_view}</a></div>
+                </div>
             </div>
         </div>
     {/foreach}
@@ -190,13 +197,15 @@
     </ul>
 
     <div class="datatable solution">
-    <table class="table table-bordered">
-    <tr>
-        <th class="filename">{$solutions.name}</th>
-        <th class="link">&nbsp;</th>
-    </tr>
-    {call iquestRenderFile file=$solutions}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table mb-0">
+            <tr>
+                <th class="filename">{$solutions.name}</th>
+                <th class="link">&nbsp;</th>
+            </tr>
+            {call iquestRenderFile file=$solutions}
+            </table>
+        </div>
     </div>
 
     <ul class="breadcrumb">
@@ -209,8 +218,10 @@
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
-    <div class="well">
-        <object id="contestGraph" data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
+    <div class="card bg-light mb-3">
+        <div class="card-body p-1">
+            <object id="contestGraph" data="{$get_graph_url|escape}" type="image/svg+xml" width="100%"></object>
+        </div>
     </div>
 
     <ul class="breadcrumb">
@@ -239,7 +250,7 @@
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
-        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn btn-outline-secondary pull-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn btn-sm btn-outline-secondary float-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>

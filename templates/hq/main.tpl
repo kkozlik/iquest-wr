@@ -169,8 +169,8 @@
     <tr>
     <th rowspan="2" style="vertical-align: middle;">
         Řazení:<br />
-        <span class="text-nowrap"><a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span><br />
-        <span class="text-nowrap"><a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="icon-chevron-down"></i>{else}<i class="icon-chevron-up"></i>{/if}{/if}</span>
+        <span class="text-nowrap"><a href="{$url_sort.name}">Jméno</a>  {if $sorter_order_by=='name'}{if $sorter_dir}<i class="fas fa-chevron-down"></i>{else}<i class="fas fa-chevron-up"></i>{/if}{/if}</span><br />
+        <span class="text-nowrap"><a href="{$url_sort.rank}">Pořadí</a> {if $sorter_order_by=='rank'}{if $sorter_dir}<i class="fas fa-chevron-down"></i>{else}<i class="fas fa-chevron-up"></i>{/if}{/if}</span>
     </th>
     {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
     <th colspan="{$colspan}" title="{$group.id|escape}"><a href="{$group.view_url|escape}">{$group.name|escape}</a></th>

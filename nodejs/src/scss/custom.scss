@@ -4,7 +4,8 @@
     white-space: nowrap;
 }
 
-.cgrp-title {
+.cgrp-title,
+.solution-title {
     font-size: 0.85rem;
 
     background-color: #fafafa;
@@ -32,6 +33,10 @@
 
 }
 
+.btn-outline-secondary{
+    background-color: #f8f9fa;
+}
+
 /* display correctly tabbed navigation above wells */
 .tab-well .nav-tabs{
     border-bottom: 0px;
@@ -40,37 +45,6 @@
     margin-bottom: 0px;
 }
 
-
-
-.datatable .filename{
-    line-height: 30px;
-}
-
-.datatable .link{
-    width: 130px;
-    text-align: center;
-}
-
-.datatable .buttons{
-    width: 44px;
-    text-align: center;
-}
-
-.datatable.clue th{
-    background-color: #dff0d8;
-}
-
-.datatable.hint th{
-    background-color: #d9edf7;
-}
-
-.datatable.hint tr.new th{
-    background-color: #fcf8e3;
-}
-
-.datatable.solution th{
-    background-color: #f2dede;
-}
 
 table.clue-list td{
     line-height: 30px;
@@ -167,10 +141,6 @@ span.coin-animated{
     word-wrap: normal;
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
     font-size: 14px;
-}
-
-.datatable td.fileimg{
-    text-align: center;
 }
 
 .form-signin {
