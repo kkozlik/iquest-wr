@@ -1,3 +1,5 @@
 data
 config/set_env.developer.php
 config/iquest.apache.developer
+nodejs/node_modules
+pages/styles/styles.css
