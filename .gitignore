@@ -8,6 +8,8 @@ nodejs/node_modules
 
 pages/js/bootstrap.min.js
 pages/js/bootstrap.min.js.map
+pages/js/bootstrap-select.min.js
+pages/js/bootstrap-select.min.js.map
 pages/js/jquery.js
 pages/js/jquery.min.js
 pages/js/jquery.min.map

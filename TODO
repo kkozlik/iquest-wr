@@ -13,35 +13,31 @@ HQ
 
 HQ - prehledova tabulka
 -----------------------
-- blbe se prohlizi na mobilu - mozna pridat ikonu ktera 
+- blbe se prohlizi na mobilu - mozna pridat ikonu ktera
   po kliknuti nahore a vlevo zobrazi table headery nebo tak neco
 
 HQ - log
 --------
 - duplicitni kody v logu err key entered - iquest 2017 nekde pred koncem souteze
 
-  15.07.2017 09:48:58 	L45 / K10 	key_entered 	
-      key: Nfukziur , 
-      active tasks: B2 , C1 , A2 , A1 , D3 , E4 , F3 , G2 , 
-      active keys: KEY-B3-KOSMAS (nfukziuk) , 
-                   KEY-C2-NEVERHOOD (thuk5kly) , 
-                   KEY-TRAILER-BETAMAZE (eibei3ch) , 
-                   A1-MARECEK (jatujedu) , 
-                   KEY-TRAILER-MANCHESTER (sioz7oic) , 
-                   KEY-BRETISLAVUV-DUB (sai3rihi) , 
-                   KEY-BRETISLAVUV-DUB (sai3rihi) , 
-                   KEY-BRETISLAVUV-DUB (sai3rihi) , 
-                   KEY-BRETISLAVUV-DUB (sai3rihi) , 
-      errors: Sorry, tento kód není správně. 
-
-- filter - team name - multiselect nejde scrolovat
-- filter - typ logu - udelat jako multiselect
-- ability to disable auto-refresh
+  15.07.2017 09:48:58 	L45 / K10 	key_entered
+      key: Nfukziur ,
+      active tasks: B2 , C1 , A2 , A1 , D3 , E4 , F3 , G2 ,
+      active keys: KEY-B3-KOSMAS (nfukziuk) ,
+                   KEY-C2-NEVERHOOD (thuk5kly) ,
+                   KEY-TRAILER-BETAMAZE (eibei3ch) ,
+                   A1-MARECEK (jatujedu) ,
+                   KEY-TRAILER-MANCHESTER (sioz7oic) ,
+                   KEY-BRETISLAVUV-DUB (sai3rihi) ,
+                   KEY-BRETISLAVUV-DUB (sai3rihi) ,
+                   KEY-BRETISLAVUV-DUB (sai3rihi) ,
+                   KEY-BRETISLAVUV-DUB (sai3rihi) ,
+      errors: Sorry, tento kód není správně.
 
 
 CHROUST
 -------
-- pokud adresar obsahuje jen solution a neni u nej v metadatech zadane jmeno tak to pise chybu 
+- pokud adresar obsahuje jen solution a neni u nej v metadatech zadane jmeno tak to pise chybu
   "name for clue group is not set." prestoze v adresari zadny clue group neni definovany.
   Je treba upravit chybovou hlasku.
 

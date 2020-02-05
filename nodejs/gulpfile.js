@@ -44,7 +44,7 @@ gulp.task('clean', function() {
         OUTPUT_CSS_DIR+'/styles.css',
         OUTPUT_CSS_DIR+'/styles.css.map',
 
-        // js1
+        // js
         OUTPUT_JS_DIR+'/bootstrap.min.js',
         OUTPUT_JS_DIR+'/jquery.min.js',
         OUTPUT_JS_DIR+'/popper.min.js',
@@ -52,6 +52,8 @@ gulp.task('clean', function() {
         OUTPUT_JS_DIR+'/jquery.js',
         OUTPUT_JS_DIR+'/jquery.min.map',
         OUTPUT_JS_DIR+'/popper.min.js.map',
+        OUTPUT_JS_DIR+'/bootstrap-select.min.js',
+        OUTPUT_JS_DIR+'/bootstrap-select.min.js.map',
 
         // images
         OUTPUT_CSS_DIR+'/images/*',
@@ -80,7 +82,8 @@ gulp.task('js', function() {
     let src = [
             'node_modules/bootstrap/dist/js/bootstrap.min.js',
             'node_modules/jquery/dist/jquery.min.js',
-            'node_modules/popper.js/dist/umd/popper.min.js'
+            'node_modules/popper.js/dist/umd/popper.min.js',
+            'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js'
     ];
 
     if (process.env.NODE_ENV == 'development'){
@@ -88,6 +91,7 @@ gulp.task('js', function() {
         src.push('node_modules/jquery/dist/jquery.js');
         src.push('node_modules/jquery/dist/jquery.min.map');
         src.push('node_modules/popper.js/dist/umd/popper.min.js.map');
+        src.push('node_modules/bootstrap-select/dist/js/bootstrap-select.min.js.map');
     }
 
     return gulp.src(src)

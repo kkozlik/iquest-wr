@@ -14,11 +14,17 @@
             <div class="card-body p-3">
                 <div class="form-search form-filter">
                     {$filter_form.start}
-                    <label for="team_id"><div>{$lang_str.iquest_event_team}:</div>{$filter_form.team_id}</label>
+                    <label for="team_id"><div>{$lang_str.iquest_event_team}:</div>
+                        {$filter_formobj->el('team_id')->ignore_default_class(true)}
+                    </label>
 
-                    <label for="type"><div>{$lang_str.iquest_event_type}:</div>{$filter_form.type}</label>
+                    <label for="type"><div>{$lang_str.iquest_event_type}:</div>
+                        {$filter_formobj->el('type')->ignore_default_class(true)}
+                    </label>
 
-                    <label for="success"><div>{$lang_str.iquest_event_success}:</div>{$filter_form.success}</label>
+                    <label for="success"><div>{$lang_str.iquest_event_success}:</div>
+                        {$filter_formobj->el('success')->ignore_default_class(true)}
+                    </label>
 
                     <label for="date_from">
                     <div>{$lang_str.iquest_event_date_from}:</div>
@@ -142,38 +148,20 @@
     $(document).ready(function() {
         $('.pagination .page-link.active').closest('li').addClass('active');
 
-        $('#filter_form #team_id').multiselect({
-            onInitialized : function ($aSelect, $aContainer) {
-
-                var $dropdown = $aContainer.find('.btn');
-                var offset = $dropdown.offset();
-
-                $aContainer.find('.dropdown-menu').css({
-                    position:   'fixed',
-                    top:        (offset.top + $dropdown.outerHeight()),
-                    left:       offset.left,
-                })
-            },
-            buttonWidth: '220px',
-            includeSelectAllOption: true,
-            enableCaseInsensitiveFiltering: true,
-            maxHeight: 300
+        $('#filter_form select[name="team_id[]"]').selectpicker({
+            actionsBox: true,
+            liveSearch: true,
+            liveSearchNormalize: true,
+            style: 'btn-outline-secondary'
         });
 
-        $('#filter_form #type').multiselect({
-            onInitialized : function ($aSelect, $aContainer) {
+        $('#filter_form select[name="type[]"]').selectpicker({
+            actionsBox: true,
+            style: 'btn-outline-secondary'
+        });
 
-                var $dropdown = $aContainer.find('.btn');
-                var offset = $dropdown.offset();
-
-                $aContainer.find('.dropdown-menu').css({
-                    position:   'fixed',
-                    top:        (offset.top + $dropdown.outerHeight()),
-                    left:       offset.left,
-                })
-            },
-            buttonWidth: '220px',
-            includeSelectAllOption: true
+        $('#filter_form select[name="success"]').selectpicker({
+            style: 'btn-outline-secondary'
         });
 
         $('.pause-autorefresh').on('click', function(){
