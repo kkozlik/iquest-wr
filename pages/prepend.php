@@ -27,6 +27,7 @@ function set_page_attributes(){
         ),
         'required_javascript' => array(
                     "jquery.min.js",
+                    "popper.min.js",
                     "bootstrap.min.js",
                     "jquery.countdown.min.js",
                     "core/functions.js",

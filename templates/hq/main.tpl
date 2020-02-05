@@ -91,15 +91,20 @@
 
 
     <div class="tab-well" id="graphTab">
-    <ul class="nav nav-tabs">
-      <li class="active">
-        <a href="" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
-      </li>
-      <li><a href="" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a></li>
-    </ul>
-    <div class="well">
-        <object data="" type="image/svg+xml" width="100%"></object>
-    </div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="" data-type="complex">{$lang_str.iquest_txt_graph_complex}</a>
+            </li>
+        </ul>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body p-1">
+                <object data="" type="image/svg+xml" width="100%"></object>
+            </div>
+        </div>
     </div>
 
     <ul class="breadcrumb">
@@ -117,7 +122,7 @@
              * Save tab selection into cookie
              */
             var saveTabSelectionToCookie = function(){
-                var activeTab = $('#graphTab .nav .active a').attr("data-type");
+                var activeTab = $('#graphTab .nav a.active').attr("data-type");
 
                 document.cookie = "graphTypeSelected=" + encodeURIComponent(activeTab);
             }
