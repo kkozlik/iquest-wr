@@ -57,16 +57,20 @@
 
 
 {function iquestPager}
-    <div class="pagination pagination-right"><ul><li>
-        {pager page=$pager
-               class_text=''
-               class_num=''
-               class_numon='active'
-               txt_first='&laquo;&laquo;'
-               txt_prev='&laquo;'
-               txt_next='&raquo;'
-               txt_last='&raquo;&raquo;'
-               display='always'
-               separator='</li><li>'}
-    </li></ul></div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-end">
+            <li class="page-item">
+            {pager page=$pager
+                class_text='page-link'
+                class_num='page-link'
+                class_numon='page-link active'
+                txt_first='&laquo;&laquo;'
+                txt_prev='&laquo;'
+                txt_next='&raquo;'
+                txt_last='&raquo;&raquo;'
+                display='always'
+                separator='</li><li class="page-item">'}
+            </li>
+        </ul>
+    </nav>
 {/function}

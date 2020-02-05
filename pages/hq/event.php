@@ -15,11 +15,11 @@ $filter->set_opt('partial_match', false);
 
 $filter->set_opt('form_submit', array('type' => 'button',
                                       'text' => $lang_str['b_search'],
-                                      'class' => 'btn'));
+                                      'class' => 'btn btn-sm btn-primary'));
 
 $filter->set_opt('form_clear',  array('type' => 'button',
                                       'text' => $lang_str['b_clear_filter'],
-                                      'class' => 'btn'));
+                                      'class' => 'btn btn-sm btn-secondary'));
 
 $apu->set_opt('event_row_template_name', 'hq/event-row.tpl');
 

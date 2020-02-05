@@ -1,38 +1,38 @@
 <?php
 /**
  * Application unit events
- * 
+ *
  * @author    Karel Kozlik
  * @package   serweb
- */ 
+ */
 
 /**
- *  Application unit events 
+ *  Application unit events
  *
  *
  *  This application unit is used for display iquest events
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'msg_update'                    default: $lang_str['msg_changes_saved_s'] and $lang_str['msg_changes_saved_l']
  *   message which should be showed on attributes update - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                 (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']          (form)          
+ *  opt['smarty_form']          (form)
  *   phplib html form
- *   
- *  
+ *
+ *
  *  opt['smarty_pager']             (pager)
  *   associative array containing size of result and which page is returned
  */
@@ -45,21 +45,21 @@ class apu_iquest_event extends apu_base_class{
     protected $pager;
     protected $last_id;
 
-    
+
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function __construct(){
         global $lang_str;
         parent::apu_base_class();
 
-        /* set default values to $this->opt */      
+        /* set default values to $this->opt */
         $this->opt['screen_name'] = "IQUEST Events";
         $this->opt['event_row_template_name'] = "";
 
-        
+
         /*** names of variables assigned to smarty ***/
         /* smarty action */
         $this->opt['smarty_pager'] =        'pager';
@@ -86,9 +86,9 @@ class apu_iquest_event extends apu_base_class{
         if (!isset($_SESSION['apu_iquest_event'][$this->opt['instance_id']])){
             $_SESSION['apu_iquest_event'][$this->opt['instance_id']] = array();
         }
-        
+
         $this->session = &$_SESSION['apu_iquest_event'][$this->opt['instance_id']];
-        
+
         if (is_a($this->sorter, "apu_base_class")){
             /* register callback called on sorter change */
             $this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));
@@ -102,16 +102,16 @@ class apu_iquest_event extends apu_base_class{
             if (!isset($this->session['act_row'])){
                 $this->session['act_row'] = 0;
             }
-            
+
             if (isset($_GET['act_row'])) $this->session['act_row'] = $_GET['act_row'];
         }
-        
+
     }
 
     function get_sorter_columns(){
         return array('name', 'values');
     }
-    
+
     function get_filter_form(){
         global $lang_str;
 
@@ -126,12 +126,12 @@ class apu_iquest_event extends apu_base_class{
         foreach($types as $v){
             $type_options[] = array("value" => $v, "label" => $v);
         }
-        
+
         $succes_options = array();
         $succes_options[] = array("value" => "", "label" => $lang_str['iquest_event_all']);
         $succes_options[] = array("value" => "1", "label" => "OK");
         $succes_options[] = array("value" => "0", "label" => "Error");
-        
+
         $f = array();
 
         $f[] = array("type"=>"select",
@@ -171,15 +171,15 @@ class apu_iquest_event extends apu_base_class{
 
         return $f;
     }
-    
+
 
     /**
      *  Parse the date/time from 'date_from' and 'date_to' filters
-     *  and convert it to timestamp     
-     */         
+     *  and convert it to timestamp
+     */
     private function alter_filter_timestamp(&$filter){
         global $lang_str;
-        
+
         if (isset($filter['date_from'])){
             $filter['date_from']->op = ">=";
             $timestamp = strtotime($filter['date_from']->value);
@@ -212,13 +212,13 @@ class apu_iquest_event extends apu_base_class{
             }
         }
 
-        if (isset($filter['date_from']) and 
+        if (isset($filter['date_from']) and
             isset($filter['date_to']) and
             $filter['date_from']->value > $filter['date_to']->value){
-            
+
             ErrorHandler::add_error($lang_str['iquest_event_err_datetime_intersect']);
         }
-    
+
     }
 
     function events_to_smarty($events){
@@ -234,7 +234,7 @@ class apu_iquest_event extends apu_base_class{
         }
     }
 
-    
+
     function action_ajax_latest_events(){
         global $data, $config;
 
@@ -260,12 +260,12 @@ class apu_iquest_event extends apu_base_class{
         $html_rows = array();
         $sm = new Smarty_Serweb();
         $sm->assign("raw_data", $raw_data);
-        
+
         foreach($this->smarty_events as $event){
             $sm->assign("event", $event);
             $html_rows[] = $sm->fetch($this->opt['event_row_template_name']);
         }
-        
+
 
         $response = array(
                         "rows" => $html_rows,
@@ -276,7 +276,7 @@ class apu_iquest_event extends apu_base_class{
 
 
     /**
-     *  Method perform action default 
+     *  Method perform action default
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -312,14 +312,14 @@ class apu_iquest_event extends apu_base_class{
 
         if ($events){
             $last_event = reset($events);
-            $this->last_id = $last_event->id; 
+            $this->last_id = $last_event->id;
         }
 
         action_log($this->opt['screen_name'], $this->action, "View events");
     }
-    
+
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if (isset($_GET['last_id_ajax'])){
@@ -335,7 +335,7 @@ class apu_iquest_event extends apu_base_class{
     }
 
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;

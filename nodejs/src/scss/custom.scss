@@ -200,6 +200,17 @@ div.popover{
     background-color: #F5F5F5;
 }
 
+#event-table{
+    font-size: 0.85rem;
+
+    tr.success td{
+        background-color: #dff0d8;
+    }
+    tr.error td{
+        background-color: #f2dede;
+    }
+}
+
 
 .eventLogDataKey{
 }

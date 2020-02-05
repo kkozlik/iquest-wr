@@ -7,8 +7,8 @@
 <div id="team-ranks" style="width:100%;"></div>
 
 {if $actual_order}
-    <div class="row">
-    <div class="span6 offset3">
+    <div class="row justify-content-md-center">
+    <div class="col col-lg-6">
         <h3 id="rankTableTitle" class="alert alert-info">{$lang_str.iquest_rank_act_order_title}</h3>
 
         <table class="table table-bordered table-striped table-condensed">
