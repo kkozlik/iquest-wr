@@ -21,7 +21,9 @@ function set_page_attributes(){
         'prolog'=>"",
         'separator'=>"",
         'epilog'=>"",
-        'ie_selects' => true,
+        'html_headers' => array(
+            '<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">'
+        ),
         'css_file'=>array(
                     $config->style_src_path."styles.css",
         ),

@@ -1,8 +1,19 @@
 
+/****************
+ *  Common
+ ****************/
 
 .team-name {
     white-space: nowrap;
 }
+
+.btn-outline-secondary{
+    background-color: #f8f9fa;
+}
+
+/******************
+ *  Team interface
+ ******************/
 
 .cgrp-title,
 .solution-title {
@@ -33,32 +44,20 @@
 
 }
 
-.btn-outline-secondary{
-    background-color: #f8f9fa;
-}
+table.clue-list{
+    td{
+        line-height: 30px;
+        padding: 3px 8px;
+    }
 
-/* display correctly tabbed navigation above wells */
-.tab-well .nav-tabs{
-    border-bottom: 0px;
-}
-.tab-well .nav{
-    margin-bottom: 0px;
-}
+    td.new{
+        background-color: #fcf8e3;
+    }
 
-
-table.clue-list td{
-    line-height: 30px;
-    padding: 3px 8px;
+    .btn{
+        margin-left:3px;
+    }
 }
-
-table.clue-list td.new{
-    background-color: #fcf8e3;
-}
-
-table.clue-list .btn{
-    margin-left:3px;
-}
-
 
 span.new,
 span.newhint,
@@ -70,14 +69,6 @@ span.questionmark{
     width: 30px;
     height: 30px;
     margin: 0 1px;
-}
-
-.navbar span.new,
-.navbar span.newhint,
-.navbar span.coin,
-.navbar span.finder,
-.navbar span.questionmark{
-    margin: 5px;
 }
 
 span.new{
@@ -105,29 +96,6 @@ span.coin-animated{
     margin-left: 4px;
 }
 
-
-
-
-.breadcrumb.breadcrumb-btn{
-    padding: 0 15px;
-}
-
-.breadcrumb.breadcrumb-btn li{
-    line-height: 30px;
-    padding: 0px 8px;
-}
-
-.breadcrumb.breadcrumb-btn li.no-btn{
-    padding: 3px 8px;
-}
-
-
-.btn input[type="radio"],
-.btn input[type="checkbox"]{
-    margin-top: 0px;
-    margin-bottom: 2px;
-}
-
 .plaintext{
     background-color: transparent;
     border: none;
@@ -142,6 +110,108 @@ span.coin-animated{
     font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
     font-size: 14px;
 }
+
+.minimized-hidden{
+    display: none !important;
+}
+
+
+/****************
+ *  HQ overview
+ ****************/
+
+.table.summary{
+    font-size: 0.85rem;
+
+    td, th{
+        padding: 0.3rem;
+    }
+
+    th{
+        background-color: #F5F5F5;
+    }
+
+    td{
+        background-color: #F2DEDE;
+        color: #B94A48;
+        text-align:center;
+    }
+
+    td.solved{
+        background-color: #DFF0D8;
+        color: #468847;
+    }
+
+    td.showed,
+    td.scheduled{
+        background-color: #fcf8e3;
+        color: #c09853;
+    }
+
+    td.unused{
+        background-color: #E5E5E5;
+        color: #ADADAD;
+    }
+
+    th.deactivated,
+    th.deactivated a{
+        background-color: #FAA732;
+        color: #FFFFFF;
+    }
+
+    tr.first td{
+        border-top: 1px #ADADAD solid;
+    }
+}
+
+.horizontal-scrollbar{
+    overflow-x: auto;
+}
+
+div.popover{
+    max-width: none;
+}
+
+.inselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/****************
+ *  HQ events
+ ****************/
+
+.form-search select{
+    width: 220px;
+}
+
+.form-search #datetimepicker1 input,
+.form-search #datetimepicker2 input{
+    width: 179px;
+}
+
+
+/* Filter form on events screen */
+.filterForm{
+    background-color: #F5F5F5;
+}
+
+
+.eventLogDataKey{
+}
+
+.eventLogDataValue{
+    font-weight: bold;
+}
+
+
+/****************
+ *  login screen
+ ****************/
 
 .form-signin {
     background-color: #FFFFFF;
@@ -169,90 +239,5 @@ span.coin-animated{
     line-height: 20px;
     font-size:16px;
     margin-bottom: 15px;
-}
-
-.table.summary th{
-    background-color: #F5F5F5;
-}
-
-.table.summary td{
-    background-color: #F2DEDE;
-    color: #B94A48;
-    text-align:center;
-}
-
-.table.summary td.solved{
-    background-color: #DFF0D8;
-    color: #468847;
-}
-
-.table.summary td.showed,
-.table.summary td.scheduled{
-    background-color: #fcf8e3;
-    color: #c09853;
-}
-
-.table.summary td.unused{
-    background-color: #E5E5E5;
-    color: #ADADAD;
-}
-
-.table.summary th.deactivated,
-.table.summary th.deactivated a{
-    background-color: #FAA732;
-    color: #FFFFFF;
-}
-
-.table.summary tr.first td{
-    border-top: 1px #ADADAD solid;
-}
-
-.horizontal-scrollbar{
-    overflow-x: auto;
-}
-
-div.popover{
-    max-width: none;
-}
-
-.nowrap{
-    white-space:nowrap;
-}
-
-.form-search select{
-    width: 220px;
-}
-
-.form-search #datetimepicker1 input,
-.form-search #datetimepicker2 input{
-    width: 179px;
-}
-
-
-/* Filter form on events screen */
-.filterForm{
-    background-color: #F5F5F5;
-}
-
-
-.eventLogDataKey{
-}
-
-.eventLogDataValue{
-    font-weight: bold;
-}
-
-.minimized-hidden{
-    display: none !important;
-}
-
-
-.inselectable {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 

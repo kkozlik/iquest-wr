@@ -13,28 +13,32 @@
 
     {foreach $clues as $clue}
     <div class="datatable clue">
-    <table class="table table-bordered">
-    <tr>
-        <th class="filename">{$clue.filename}
-            {if $clue.type=="coin"}<span class="coin"></span>
-            {elseif $clue.type=="special"}<span class="questionmark"></span>
-            {else}<span class="finder"></span>{/if}
-        </th>
-        <th class="link"><a href="{$clue.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
-    </tr>
-    {call iquestRenderFile file=$clue}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table mb-0">
+            <tr>
+                <th class="filename align-middle">{$clue.filename}
+                    {if $clue.type=="coin"}<span class="coin"></span>
+                    {elseif $clue.type=="special"}<span class="questionmark"></span>
+                    {else}<span class="finder"></span>{/if}
+                </th>
+                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+            </tr>
+            {call iquestRenderFile file=$clue}
+            </table>
+        </div>
     </div>
 
     {foreach $clue.hints as $hint}
     <div class="datatable hint">
-    <table class="table table-bordered">
-    <tr >
-        <th class="filename">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
-        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
-    </tr>
-    {call iquestRenderFile file=$hint}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table mb-0">
+            <tr >
+                <th class="filename align-middle">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+            </tr>
+            {call iquestRenderFile file=$hint}
+            </table>
+        </div>
     </div>
     {/foreach}
     {/foreach}
@@ -50,13 +54,15 @@
     </ul>
 
     <div class="datatable solution">
-    <table class="table table-bordered">
-    <tr>
-        <th class="filename">{$solutions.name}</th>
-        <th class="link">&nbsp;</th>
-    </tr>
-    {call iquestRenderFile file=$solutions}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table mb-0">
+            <tr>
+                <th class="filename align-middle">{$solutions.name}</th>
+                <th class="link align-middle">&nbsp;</th>
+            </tr>
+            {call iquestRenderFile file=$solutions}
+            </table>
+        </div>
     </div>
 
     <ul class="breadcrumb">
@@ -70,13 +76,15 @@
     </ul>
 
     <div class="datatable hint">
-    <table class="table table-bordered">
-    <tr>
-        <th class="filename">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
-        <th class="link"><a href="{$hint.download_file_url|escape}" class="btn"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
-    </tr>
-    {call iquestRenderFile file=$hint}
-    </table>
+        <div class="card mb-3">{* Adding rounded corners to table *}
+            <table class="table mb-0">
+            <tr>
+                <th class="filename align-middle">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+            </tr>
+            {call iquestRenderFile file=$hint}
+            </table>
+        </div>
     </div>
 
     <ul class="breadcrumb">
@@ -90,7 +98,7 @@
     </ul>
 
 
-    <div class="tab-well" id="graphTab">
+    <div id="graphTab">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link active" href="" data-type="simplified">{$lang_str.iquest_txt_graph_simplified}</a>
