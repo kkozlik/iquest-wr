@@ -16,9 +16,9 @@ var svgZoom = {
     svgMaxHeight : null,
     zoomCoef : 1.1,
     lastMousePos : null,
-    
+
     init : function( container ){
-        
+
         this.container = $(container);
         this.svgObj = this.container.contents().find("svg");
 
@@ -30,12 +30,19 @@ var svgZoom = {
 
         this.svgMaxWidth  = this.svgWidth  * 2;
         this.svgMaxHeight = this.svgHeight * 2;
-        
-        $(this.svgObj).bind('mousewheel DOMMouseScroll', $.proxy(this.onMouseWheel, this));
+
+        $(this.svgObj).bind('wheel mousewheel DOMMouseScroll', $.proxy(this.onMouseWheel, this));
         $(this.svgObj).on('mousedown', $.proxy(this.onMouseDown, this));
         $(this.svgObj).on('mouseup', $.proxy(this.onMouseUp, this));
+
+        // jQuery does not support passive event handlers so add this special listener
+        // disable browser zooming
+        $(this.svgObj)[0].addEventListener('wheel', function(event){
+            if (!event.ctrlKey) return;
+            event.preventDefault();
+        }, { passive: false });
     },
-    
+
 
     /**
      * Zoom the image but only if CTRL key is pressed
@@ -43,9 +50,19 @@ var svgZoom = {
     onMouseWheel : function (e){
 
         if (!e.ctrlKey) return;
-        e.preventDefault();
+        // e.preventDefault();
 
-        var scrollUp = (e.originalEvent.wheelDelta > 0 || e.originalEvent.detail < 0); 
+        var scrollUp;
+        if (typeof e.originalEvent.wheelDelta != "undefined"){
+            scrollUp = e.originalEvent.wheelDelta > 0;
+        }
+        else if (typeof e.originalEvent.deltaY != "undefined"){
+            scrollUp = e.originalEvent.deltaY < 0;
+        }
+        else{
+            scrollUp = e.originalEvent.detail < 0;
+        }
+
         var viewBoxParts = this.getViewBoxParts();
 
         var width1  = viewBoxParts[2];
@@ -61,7 +78,7 @@ var svgZoom = {
         else{
             viewBoxParts[2] = viewBoxParts[2] * this.zoomCoef;
             viewBoxParts[3] = viewBoxParts[3] * this.zoomCoef;
-            
+
             if (viewBoxParts[2] > this.svgMaxWidth)  viewBoxParts[2] = this.svgMaxWidth;
             if (viewBoxParts[3] > this.svgMaxHeight) viewBoxParts[3] = this.svgMaxHeight;
         }
@@ -76,10 +93,10 @@ var svgZoom = {
 
     onMouseDown : function (e){
         $(this.svgObj).on("mousemove", $.proxy(function(e){
-        
+
             var p1 = { x: e.pageX, y: e.pageY };
             var p0 = this.lastMousePos || p1;
-            
+
             this.lastMousePos = p1;
 
             var dx = p1.x - p0.x;
@@ -138,7 +155,7 @@ var svgZoom = {
             if (viewBoxParts[0] + viewBoxParts[2] > this.svgWidth)  viewBoxParts[0] = this.svgWidth - viewBoxParts[2];
         }
 
-    
+
         return viewBoxParts;
     }
 }
