@@ -132,8 +132,8 @@
                 '{$my_url}',
                 { last_id_ajax: EventPoller.last_id },
                 function (response) {
-
-                    // @TODO: check for 'redirect' in response - when user is not authorized
+                    // Check for 'redirect' in response - when user is not authorized
+                    if (response.redirect) window.location.href = response.redirect;
 
                     $.each(response.rows, function (i, item) {
                         $('#event-table tbody').prepend(item);

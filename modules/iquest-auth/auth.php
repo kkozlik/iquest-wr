@@ -182,6 +182,7 @@ class Iquest_auth{
             }
 
             if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                http_response_code(200);
                 header("Content-Type: text/json");
                 echo json_encode(["redirect" => $url]);
             }
