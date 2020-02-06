@@ -27,5 +27,7 @@ $controler->add_apu($apu);
 $controler->add_apu($filter);
 $controler->set_template_name('hq/event.tpl');
 $controler->add_required_javascript('bootstrap-select.min.js');
+$controler->add_required_javascript('moment-with-locales.js');
+$controler->add_required_javascript('tempusdominus-bootstrap-4.js');
 $controler->start();
 

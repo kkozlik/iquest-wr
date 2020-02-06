@@ -58,7 +58,7 @@
 
 {function iquestPager}
     <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-end">
+        <ul class="pagination justify-content-end mb-0">
             <li class="page-item">
             {pager page=$pager
                 class_text='page-link'

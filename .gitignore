@@ -15,6 +15,8 @@ pages/js/jquery.min.js
 pages/js/jquery.min.map
 pages/js/popper.min.js
 pages/js/popper.min.js.map
+pages/js/tempusdominus-bootstrap-4.js
+pages/js/moment-with-locales.js
 pages/styles/fonts
 pages/styles/styles.css
 pages/styles/styles.css.map

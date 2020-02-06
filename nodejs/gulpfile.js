@@ -54,6 +54,8 @@ gulp.task('clean', function() {
         OUTPUT_JS_DIR+'/popper.min.js.map',
         OUTPUT_JS_DIR+'/bootstrap-select.min.js',
         OUTPUT_JS_DIR+'/bootstrap-select.min.js.map',
+        OUTPUT_JS_DIR+'/tempusdominus-bootstrap-4.js',
+        OUTPUT_JS_DIR+'/moment-with-locales.js',
 
         // images
         OUTPUT_CSS_DIR+'/images/*',
@@ -83,7 +85,9 @@ gulp.task('js', function() {
             'node_modules/bootstrap/dist/js/bootstrap.min.js',
             'node_modules/jquery/dist/jquery.min.js',
             'node_modules/popper.js/dist/umd/popper.min.js',
-            'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js'
+            'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js',
+            'node_modules/tempusdominus-bootstrap-4/build/js/tempusdominus-bootstrap-4.js',
+            'node_modules/moment/min/moment-with-locales.js'
     ];
 
     if (process.env.NODE_ENV == 'development'){
