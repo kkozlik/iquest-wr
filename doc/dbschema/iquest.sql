@@ -208,6 +208,7 @@ CREATE TABLE IF NOT EXISTS `team` (
   `passwd` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   `wallet` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `tracker_id` VARCHAR(255) NOT NULL COLLATE utf8_czech_ci,
   PRIMARY KEY (`team_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;

@@ -6,6 +6,7 @@ class Iquest_Team{
     public $username;
     public $active;
     public $wallet;
+    public $tracker_id;
 
     static function fetch_by_id($id){
         $records = static::fetch(array("id" => $id));
@@ -36,7 +37,8 @@ class Iquest_Team{
                      t.".$ct->username.",
                      t.".$ct->name.",
                      t.".$ct->active.",
-                     t.".$ct->wallet."
+                     t.".$ct->wallet.",
+                     t.".$ct->tracker_id."
               from ".$tt_name." t ".
               $qw;
 
@@ -52,7 +54,8 @@ class Iquest_Team{
                                                    $row[$ct->username],
                                                    $row[$ct->name],
                                                    $row[$ct->active],
-                                                   $row[$ct->wallet]);
+                                                   $row[$ct->wallet],
+                                                   $row[$ct->tracker_id]);
         }
         $res->free();
         return $out;
@@ -75,12 +78,13 @@ class Iquest_Team{
         return $team;
     }
 
-    function __construct($id, $username, $name, $active, $wallet){
+    function __construct($id, $username, $name, $active, $wallet, $tracker_id){
         $this->id =         $id;
         $this->username =   $username;
         $this->name =       $name;
         $this->active =     $active;
         $this->wallet =     $wallet;
+        $this->tracker_id = $tracker_id;
     }
 
     public function is_active(){
@@ -130,6 +134,7 @@ class Iquest_Team{
         $out['name'] = $this->name;
         $out['active'] = $this->active;
         $out['wallet'] = $this->wallet;
+        $out['tracker_id'] = $this->tracker_id;
         return $out;
     }
 
