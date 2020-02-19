@@ -2,7 +2,7 @@ Source: iquest
 Section: web
 Priority: optional
 Maintainer: Karel Kozlík <kozlik@kufr.cz>
-Build-Depends: debhelper (>= 8.0.0)
+Build-Depends: debhelper (>= 8.0.0), npm
 Standards-Version: 4.1.5.0
 Homepage: https://github.com/kkozlik/iquest-wr/
 Vcs-Git: https://github.com/kkozlik/iquest-wr.git
