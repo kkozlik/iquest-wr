@@ -2,7 +2,7 @@
 
 /**
  *  Node of the Iquest_solution_graph graph
- */ 
+ */
 class Iquest_solution_graph_node{
     const TYPE_CLUE = "clue";
     const TYPE_SOLUTION = "solution";
@@ -23,11 +23,11 @@ class Iquest_solution_graph_node{
         $this->type = $type;
         $this->obj = &$obj;
     }
-    
+
     function is_solution(){
         return ($this->type==self::TYPE_SOLUTION);
     }
-    
+
     function is_clue(){
         return ($this->type==self::TYPE_CLUE);
     }
@@ -35,24 +35,24 @@ class Iquest_solution_graph_node{
     function get_obj(){
         return $this->obj;
     }
-    
+
     function get_node_id(){
-    
+
         if ($this->is_solution()) return "S_".$this->obj->id;
         if ($this->is_clue())     return "C_".$this->obj->id;
-        
+
         throw new UnexpectedValueException("Unknown type of graph node");
     }
-    
+
     /**
      *  Return representation of the node in dot language
-     */         
+     */
     public function to_dot(){
         $dot = "[";
 
         if ($this->type == self::TYPE_SOLUTION){
             $dot .= "shape=box";
-            $dot .=  $this->solved ? ",color=lightgreen,style=filled" : ""; 
+            $dot .=  $this->solved ? ",color=darkolivegreen1,style=filled" : "";
         }
         else{
             $start_cgrp_ids = Iquest_Options::get(Iquest_Options::INITIAL_CGRP_IDS);
@@ -77,7 +77,7 @@ class Iquest_solution_graph_node{
                 }
 
                 $dot .= ",style=filled";
-                $dot .= $this->gained ? ",color=green" : ",color=red";
+                $dot .= $this->gained ? ",color=chartreuse3" : ",color=red";
             }
 
         }
