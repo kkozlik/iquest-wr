@@ -117,26 +117,44 @@
         <div class="card-body p-4">
 
     {$form.start}
-    <div class="row align-items-end">
-        <div class="col-3">
-            <a href="{$all_in_1_url|escape}" class="text-nowrap btn {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" name="allInOneChk" id="allInOneChk" {if $action=='view_all'}checked{/if}>
-                    <label class="custom-control-label" for="allInOneChk">{$lang_str.iquest_all_in_1}</label>
+    <div class="row align-items-center">
+        <div class="col-12 col-sm-6 col-md-3 col-xl-2 pr-md-0">
+            <div class="row mb-1">
+                <div class="col">
+                    <a href="{$all_in_1_url|escape}" class="text-nowrap btn btn-block {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="allInOneChk" id="allInOneChk" {if $action=='view_all'}checked{/if}>
+                            <label class="custom-control-label" for="allInOneChk">{$lang_str.iquest_all_in_1}</label>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        </div>
-        <div class="col">
-            <div class="form-inline justify-content-center">
-                <label for="solution_key" class="mr-2">{$lang_str.iquest_solution_key}:</label>
-                {$form.solution_key}&nbsp;
-                {$form.okey}
+            </div>
+            <div class="row mb-1 mb-md-0">
+                <div class="col">
+                    {if $graph_enabled}
+                        <a href="{$view_graph_url|escape}" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_graph}</a>
+                    {/if}
+                </div>
             </div>
         </div>
-        <div class="col-3">
-            {if $graph_enabled}
-                <a href="{$view_graph_url|escape}" class="float-right btn btn-outline-secondary">{$lang_str.iquest_graph}</a>
-            {/if}
+        <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 order-md-last">
+            <div class="row mb-1">
+                <div class="col">
+                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">Mapa</a>
+                </div>
+            </div>
+            <div class="row mb-1 mb-md-0">
+                <div class="col">
+                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">Overit polohu</a>
+                </div>
+            </div>
+        </div>
+        <div class="col mt-1 mt-md-0">
+            <div class="form-inline justify-content-center">
+                <label for="solution_key" class="mr-2">{$lang_str.iquest_solution_key}:</label>
+                {$formobj->el('solution_key')->add_class('mr-sm-1 mb-1 mb-sm-0')}
+                {$form.okey}
+            </div>
         </div>
     </div>
     {$form.finish}
