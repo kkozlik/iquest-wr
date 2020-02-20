@@ -118,7 +118,7 @@
 
     {$form.start}
     <div class="row align-items-center">
-        <div class="col-12 col-sm-6 col-md-3 col-xl-2 pr-md-0">
+        <div class="col-12 col-sm-{($tracker_enabled) ? 6 : 12} col-md-3 col-xl-2 pr-md-0 align-self-start">
             <div class="row mb-1">
                 <div class="col">
                     <a href="{$all_in_1_url|escape}" class="text-nowrap btn btn-block {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
@@ -129,26 +129,28 @@
                     </a>
                 </div>
             </div>
+            {if $graph_enabled}
             <div class="row mb-1 mb-md-0">
                 <div class="col">
-                    {if $graph_enabled}
-                        <a href="{$view_graph_url|escape}" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_graph}</a>
-                    {/if}
+                    <a href="{$view_graph_url|escape}" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_graph}</a>
                 </div>
             </div>
+            {/if}
         </div>
+        {if $tracker_enabled}
         <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 order-md-last">
             <div class="row mb-1">
                 <div class="col">
-                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">Mapa</a>
+                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_my_position}</a>
                 </div>
             </div>
             <div class="row mb-1 mb-md-0">
                 <div class="col">
-                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">Overit polohu</a>
+                    <a href="#" class="text-nowrap btn btn-block btn-primary">{$lang_str.iquest_verify_tracker}</a>
                 </div>
             </div>
         </div>
+        {/if}
         <div class="col mt-1 mt-md-0">
             <div class="form-inline justify-content-center">
                 <label for="solution_key" class="mr-2">{$lang_str.iquest_solution_key}:</label>
