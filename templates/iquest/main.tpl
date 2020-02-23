@@ -146,7 +146,7 @@
             </div>
             <div class="row mb-1 mb-md-0">
                 <div class="col">
-                    <a href="#" class="text-nowrap btn btn-block btn-primary">{$lang_str.iquest_verify_tracker}</a>
+                    <a href="javascript:" class="text-nowrap btn btn-block btn-primary checkLocationBtn">{$lang_str.iquest_verify_tracker}</a>
                 </div>
             </div>
         </div>
@@ -184,9 +184,12 @@
 
             var locCtl = new LocationCtl();
             locCtl.get_location_url = {$get_location_url|json_encode};
+            locCtl.check_location_url = {$check_location_url|json_encode};
+
             locCtl.mapCanvasId = 'myLocationPopupMapCanvas';
             locCtl.mapPopup = $("#myLocationPopup");
             locCtl.openPopupBtn = $("a.myLocationBtn");
+            locCtl.checkLocationBtn = $("a.checkLocationBtn");
 
             locCtl.init();
 

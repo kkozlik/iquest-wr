@@ -1,3 +1,65 @@
+/**
+ * Show given string as error message on the screen
+ * @param string err
+ */
+function show_error(err){
+    show_msg(err, null, "#errPlaceHolder");
+}
+
+/**
+ * Show given string as info message on the screen
+ * @param string msg
+ */
+function show_info(msg, type){
+    show_msg(msg, type, "#infoPlaceHolder");
+}
+
+/**
+ *  clear all errors displayed
+ */
+function clear_errors(){
+    clear_msg("#errPlaceHolder");
+}
+
+/**
+ *  clear all info messages displayed
+ */
+function clear_info(){
+    clear_msg("#infoPlaceHolder");
+}
+
+/**
+ * Common function to display a message within given parentElement
+ *
+ * @param string msg            message to be displayed
+ * @param string type           the template to choose
+ * @param string parentElement  parent element for the message
+ */
+function show_msg(msg, type, parentElement){
+    parentElement = $(parentElement);
+
+    if (!type) type = "item";
+
+    var item = $(parentElement.data(type+'Template'));
+    item.find('.msgItemText').text(msg);
+
+    var msgEl = parentElement.find('ul');
+    if (!msgEl.length){
+        parentElement.html(parentElement.data('template'));
+    }
+
+    parentElement.find('ul').append(item);
+}
+
+/**
+ * Common function to delete all messages within given parentElement
+ *
+ * @param string parentElement  parent element for the message
+ */
+function clear_msg(parentElement){
+    $(parentElement).html("");
+}
+
 function LocationCtl(){
 
     this.last_location = {};
@@ -7,9 +69,11 @@ function LocationCtl(){
     this.map = null;
 
     this.get_location_url = null;
+    this.check_location_url = null;
     this.mapCanvasId = null;
     this.mapPopup = null;
     this.openPopupBtn = null;
+    this.checkLocationBtn = null;
 
     this.updateInterval = 5000; // [ms]
 }
@@ -49,6 +113,10 @@ LocationCtl.prototype = {
         this.openPopupBtn.on('click', function(e){
             self.mapPopup.modal("show");
         });
+
+        this.checkLocationBtn.on('click', function(e){
+            self.check_location();
+        });
     },
 
     get_location: function(){
@@ -74,6 +142,29 @@ LocationCtl.prototype = {
 
                 self.mapPopup.find(".updateTime").html(data.timestr);
                 self.last_location = data;
+            }
+        });
+    },
+
+    check_location: function(){
+        var self = this;
+
+        if (!this.check_location_url){
+            console.error("check_location_url is not set.");
+            return;
+        }
+
+        clear_errors();
+        clear_info();
+
+        $.ajax({
+            url: this.check_location_url,
+            success: function(data, status){
+
+                if (data.errors){
+                    data.errors.forEach(function(msg){show_error(msg);});
+                }
+
             }
         });
     }

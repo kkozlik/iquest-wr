@@ -124,6 +124,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_view_graph_url'] =   'view_graph_url';
         $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
         $this->opt['smarty_get_location_url'] = 'get_location_url';
+        $this->opt['smarty_check_location_url'] = 'check_location_url';
 
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
@@ -310,6 +311,19 @@ class apu_iquest extends apu_base_class{
             "lon" => 14.170606666667,
             "timestr" => "10s",
             "timestr" => "10s",
+        ]);
+
+        return true;
+    }
+
+    public function action_ajax_check_location(){
+        $this->controler->disable_html_output();
+        header("Content-Type: text/json");
+
+        // @TODO: query traccar for the location
+        echo json_encode([
+            "status" => false,
+            "errors" => ["Tady ses blbe"],
         ]);
 
         return true;
@@ -579,6 +593,12 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['get_location'])){
             $this->action=array('action'=>"ajax_get_location",
+                                 'validate_form'=>false,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['check_location'])){
+            $this->action=array('action'=>"ajax_check_location",
                                  'validate_form'=>false,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -881,6 +901,7 @@ class apu_iquest extends apu_base_class{
                             "?view_all=".($this->session['view_all']?"0":"1")));
 
         $smarty->assign($this->opt['smarty_get_location_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_location=1"));
+        $smarty->assign($this->opt['smarty_check_location_url'], $this->controler->url($_SERVER['PHP_SELF']."?check_location=1"));
     }
 
     /**

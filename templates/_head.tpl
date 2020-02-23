@@ -90,9 +90,7 @@
 {/if}
 
 
-<div id="errPlaceHolder">
 {include file='_errors.tpl' errors=$parameters.errors}
-</div>
 
 {include file='_message.tpl' message=$parameters.message}
 
