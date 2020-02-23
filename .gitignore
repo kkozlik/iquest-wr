@@ -13,11 +13,14 @@ pages/js/bootstrap-select.min.js.map
 pages/js/jquery.js
 pages/js/jquery.min.js
 pages/js/jquery.min.map
+pages/js/leaflet.js
+pages/js/leaflet.js.map
 pages/js/popper.min.js
 pages/js/popper.min.js.map
 pages/js/tempusdominus-bootstrap-4.js
 pages/js/moment-with-locales.js
 pages/styles/fonts
+pages/styles/images
 pages/styles/styles.css
 pages/styles/styles.css.map
 pages/phpinfo.php

@@ -56,6 +56,8 @@ gulp.task('clean', function() {
         OUTPUT_JS_DIR+'/bootstrap-select.min.js.map',
         OUTPUT_JS_DIR+'/tempusdominus-bootstrap-4.js',
         OUTPUT_JS_DIR+'/moment-with-locales.js',
+        OUTPUT_JS_DIR+'/leaflet.js',
+        OUTPUT_JS_DIR+'/leaflet.js.map',
 
         // images
         OUTPUT_CSS_DIR+'/images/*',
@@ -87,7 +89,8 @@ gulp.task('js', function() {
             'node_modules/popper.js/dist/umd/popper.min.js',
             'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js',
             'node_modules/tempusdominus-bootstrap-4/build/js/tempusdominus-bootstrap-4.js',
-            'node_modules/moment/min/moment-with-locales.js'
+            'node_modules/moment/min/moment-with-locales.js',
+            'node_modules/leaflet/dist/leaflet.js'
     ];
 
     if (process.env.NODE_ENV == 'development'){
@@ -96,6 +99,7 @@ gulp.task('js', function() {
         src.push('node_modules/jquery/dist/jquery.min.map');
         src.push('node_modules/popper.js/dist/umd/popper.min.js.map');
         src.push('node_modules/bootstrap-select/dist/js/bootstrap-select.min.js.map');
+        src.push('node_modules/leaflet/dist/leaflet.js.map');
     }
 
     return gulp.src(src)
@@ -104,7 +108,9 @@ gulp.task('js', function() {
 });
 
 gulp.task('images', function() {
-    return copy('src/images/*',     OUTPUT_CSS_DIR+'/images')
+    return copy(['src/images/*',
+                 'node_modules/leaflet/dist/images/*'],
+                 OUTPUT_CSS_DIR+'/images')
            .pipe(browserSync.stream());
 });
 
