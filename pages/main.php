@@ -32,5 +32,6 @@ $smarty->assign("reveal_url", $controler->url("showtargetlocation.php"));
 $smarty->assign("back_url", $back_url);
 
 $controler->add_apu($apu);
+$controler->add_required_javascript('leaflet.js');
 $controler->set_template_name('iquest/main.tpl');
 $controler->start();

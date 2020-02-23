@@ -80,7 +80,7 @@ class apu_iquest extends apu_base_class{
      *  @return array   array of required javascript files
      */
     function get_required_javascript(){
-        return array();
+        return array("module:iquest:main.js");
     }
 
     /**
@@ -123,6 +123,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_get_graph_url'] =    'get_graph_url';
         $this->opt['smarty_view_graph_url'] =   'view_graph_url';
         $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
+        $this->opt['smarty_get_location_url'] = 'get_location_url';
 
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
@@ -294,6 +295,22 @@ class apu_iquest extends apu_base_class{
         header("Content-Type: text/plain");
 
         unset($this->session['hidden_ref_ids'][$this->ref_id]);
+
+        return true;
+    }
+
+    public function action_ajax_get_location(){
+        $this->controler->disable_html_output();
+        header("Content-Type: text/json");
+
+        // @TODO: check if tracking is enabled
+        // @TODO: query traccar for the location
+        echo json_encode([
+            "lat" => 49.290988333333,
+            "lon" => 14.170606666667,
+            "timestr" => "10s",
+            "timestr" => "10s",
+        ]);
 
         return true;
     }
@@ -556,6 +573,12 @@ class apu_iquest extends apu_base_class{
         elseif (isset($_GET['unhide'])){
             $this->ref_id = $_GET['unhide'];
             $this->action=array('action'=>"ajax_unhide",
+                                 'validate_form'=>false,
+                                 'reload'=>false,
+                                 'alone'=>true);
+        }
+        elseif (isset($_GET['get_location'])){
+            $this->action=array('action'=>"ajax_get_location",
                                  'validate_form'=>false,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -848,7 +871,7 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_show_place'], $this->smarty_show_place);
 
         $smarty->assign($this->opt['smarty_graph_enabled'], Iquest_Options::get(Iquest_Options::SHOW_GRAPH));
-        $smarty->assign($this->opt['smarty_tracker_enabled'], false); // @TODO:
+        $smarty->assign($this->opt['smarty_tracker_enabled'], true); // @TODO: set correct value
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
         $smarty->assign($this->opt['smarty_get_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_graph=1"));
@@ -856,6 +879,8 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_all_in_1_url'],
                         $this->controler->url($_SERVER['PHP_SELF'].
                             "?view_all=".($this->session['view_all']?"0":"1")));
+
+        $smarty->assign($this->opt['smarty_get_location_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_location=1"));
     }
 
     /**

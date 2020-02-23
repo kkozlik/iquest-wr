@@ -141,7 +141,7 @@
         <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 order-md-last">
             <div class="row mb-1">
                 <div class="col">
-                    <a href="#" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_my_position}</a>
+                    <a href="javascript:" class="text-nowrap btn btn-block btn-outline-secondary myLocationBtn">{$lang_str.iquest_my_position}</a>
                 </div>
             </div>
             <div class="row mb-1 mb-md-0">
@@ -162,8 +162,34 @@
     {$form.finish}
         </div>
     </div>
+
+    <div id="myLocationPopup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myLocationPopupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h6 class="modal-title" id="myLocationPopupModalLabel">@TODO: moje pozice
+                <br /><small>Pozice získána před <span class="updateTime"></span></small>
+            </h6>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="myLocationPopupMapCanvas" style="min-height:300px;"></div>
+        </div>
+    </div>
+    </div>
+    </div>
+
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var locCtl = new LocationCtl();
+            locCtl.get_location_url = {$get_location_url|json_encode};
+            locCtl.mapCanvasId = 'myLocationPopupMapCanvas';
+            locCtl.mapPopup = $("#myLocationPopup");
+            locCtl.openPopupBtn = $("a.myLocationBtn");
+
+            locCtl.init();
+
             $("#solution_key").focus();
         });
     </script>
