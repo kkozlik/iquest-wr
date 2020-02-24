@@ -168,7 +168,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h6 class="modal-title" id="myLocationPopupModalLabel">@TODO: moje pozice
-                <br /><small>Pozice získána před <span class="updateTime"></span></small>
+                <br /><small>Pozice získána naposledy před <span class="updateTime"></span></small>
             </h6>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">×</button>
         </div>

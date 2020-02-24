@@ -130,6 +130,8 @@ LocationCtl.prototype = {
         $.ajax({
             url: this.get_location_url,
             success: function(data, status){
+                // @TODO: display errors returned from server
+
                 if (data.lat != self.last_location.lat || data.lon != self.last_location.lon){
                     self.map.panTo([data.lat, data.lon]);
 
@@ -140,7 +142,7 @@ LocationCtl.prototype = {
                     self.marker.addTo(self.map);
                 }
 
-                self.mapPopup.find(".updateTime").html(data.timestr);
+                self.mapPopup.find(".updateTime").text(data.lastupdate+" ("+data.lastupdate_ts+")");
                 self.last_location = data;
             }
         });

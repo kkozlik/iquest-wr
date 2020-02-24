@@ -237,6 +237,11 @@ class Traccar{
     public function get_pos_by_dev($devId){
         $dev = $this->get_device($devId);
 
+        if (!$dev){
+            sw_log("Cannot get device ID='$devId'", PEAR_LOG_ERR);
+            return null;
+        }
+
         if (!$dev->positionId){
             sw_log("Position is not set for device '$devId'", PEAR_LOG_INFO);
             return null;

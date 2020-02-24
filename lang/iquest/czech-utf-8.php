@@ -28,6 +28,8 @@ $lang_str['iquest_err_hint_no_money'] =                 "Nemáte dostatek peněz
 $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
+$lang_str['iquest_err_tracker_get_location'] =          "Nepodařilo se zjistit vaší pozici.";
+
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> {$lang_str['iquest_txt_coin_symbol']})";

@@ -51,6 +51,7 @@ class apu_iquest extends apu_base_class{
     protected $clue_grp;
     protected $hint;
     protected $solution;
+    protected $tracker;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_cgrp;
@@ -151,6 +152,8 @@ class apu_iquest extends apu_base_class{
         if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();
         if (!isset($this->session['hidden_ref_ids']))   $this->session['hidden_ref_ids'] = array();
         if (!isset($this->session['view_all']))         $this->session['view_all'] = false;
+
+        $this->tracker = new Iquest_Tracker($this->team_id);
     }
 
     function get_timeouts(){
@@ -304,14 +307,20 @@ class apu_iquest extends apu_base_class{
         $this->controler->disable_html_output();
         header("Content-Type: text/json");
 
-        // @TODO: check if tracking is enabled
-        // @TODO: query traccar for the location
-        echo json_encode([
-            "lat" => 49.290988333333,
-            "lon" => 14.170606666667,
-            "timestr" => "10s",
-            "timestr" => "10s",
-        ]);
+        if (!$this->tracker->is_tracking_enabled()){
+            $resp = [];
+            ErrorHandler::add_error("Tracking is not enabled");
+        }
+        else{
+            $resp = $this->tracker->get_location();
+        }
+
+        // Add errors to response
+        $eh = ErrorHandler::singleton();
+        $errors = $eh->get_errors_array();
+        $resp['errors'] = $errors;
+
+        echo json_encode($resp);
 
         return true;
     }
