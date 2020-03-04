@@ -146,7 +146,7 @@
             </div>
             <div class="row mb-1 mb-md-0">
                 <div class="col">
-                    <a href="javascript:" class="text-nowrap btn btn-block btn-primary checkLocationBtn">{$lang_str.iquest_verify_tracker}</a>
+                    <a href="{$check_location_url|escape}" class="text-nowrap btn btn-block btn-primary checkLocationBtn">{$lang_str.iquest_verify_tracker}</a>
                 </div>
             </div>
         </div>

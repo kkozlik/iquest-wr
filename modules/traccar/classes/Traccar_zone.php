@@ -3,9 +3,9 @@
 class Traccar_zone{
 
     public $id;
-    public $iqKey;
     public $name;
     public $description;
+    public $attributes;
 
     static $zones = null;
 
@@ -15,10 +15,7 @@ class Traccar_zone{
         $o->id = $apiObj['id'];
         $o->name = $apiObj['name'];
         $o->description = $apiObj['description'];
-
-        if (!empty($apiObj['attributes']['iq-key'])){
-            $o->iqKey = $apiObj['attributes']['iq-key'];
-        }
+        $o->attributes = $apiObj['attributes'];
 
         return $o;
     }

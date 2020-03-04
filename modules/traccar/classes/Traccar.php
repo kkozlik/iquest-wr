@@ -198,6 +198,8 @@ class Traccar{
 
         curl_close($curl);
 
+        sw_log(__CLASS__."::".__FUNCTION__.": response: '$output'", PEAR_LOG_DEBUG);
+
         // If curl return just true, because the output has been redirected to a file,
         // return the true directly without json_decode
         if ($output === true) return true;
@@ -222,6 +224,12 @@ class Traccar{
     }
 
 
+    /**
+     * Get zones by device ID
+     *
+     * @param string $devId
+     * @return array of Traccar_zone objects
+     */
     public function get_zone_by_dev($devId){
         $dev = $this->get_device($devId);
 

@@ -113,10 +113,6 @@ LocationCtl.prototype = {
         this.openPopupBtn.on('click', function(e){
             self.mapPopup.modal("show");
         });
-
-        this.checkLocationBtn.on('click', function(e){
-            self.check_location();
-        });
     },
 
     get_location: function(){
@@ -144,29 +140,6 @@ LocationCtl.prototype = {
 
                 self.mapPopup.find(".updateTime").text(data.lastupdate+" ("+data.lastupdate_ts+")");
                 self.last_location = data;
-            }
-        });
-    },
-
-    check_location: function(){
-        var self = this;
-
-        if (!this.check_location_url){
-            console.error("check_location_url is not set.");
-            return;
-        }
-
-        clear_errors();
-        clear_info();
-
-        $.ajax({
-            url: this.check_location_url,
-            success: function(data, status){
-
-                if (data.errors){
-                    data.errors.forEach(function(msg){show_error(msg);});
-                }
-
             }
         });
     }

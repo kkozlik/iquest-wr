@@ -325,17 +325,20 @@ class apu_iquest extends apu_base_class{
         return true;
     }
 
-    public function action_ajax_check_location(){
-        $this->controler->disable_html_output();
-        header("Content-Type: text/json");
+    public function action_check_location(){
+        global $lang_str;
 
-        // @TODO: query traccar for the location
-        echo json_encode([
-            "status" => false,
-            "errors" => ["Tady ses blbe"],
-        ]);
+        // Solve the solution and open another tasks
+        if ($this->solution){
+            $this->solution->solve($this->team_id);
 
-        return true;
+            action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
+
+            Iquest_info_msg::add_msg($lang_str['iquest_msg_location_correct']);
+        }
+
+        $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
+        return $get;
     }
 
 
@@ -586,6 +589,11 @@ class apu_iquest extends apu_base_class{
                                 'validate_form'=>true,
                                 'reload'=>true);
         }
+        elseif (isset($_GET['check_location'])){
+            $this->action=array('action'=>"check_location",
+                                 'validate_form'=>true,
+                                 'reload'=>true);
+        }
         elseif (isset($_GET['hide'])){
             $this->ref_id = $_GET['hide'];
             $this->action=array('action'=>"ajax_hide",
@@ -602,12 +610,6 @@ class apu_iquest extends apu_base_class{
         }
         elseif (isset($_GET['get_location'])){
             $this->action=array('action'=>"ajax_get_location",
-                                 'validate_form'=>false,
-                                 'reload'=>false,
-                                 'alone'=>true);
-        }
-        elseif (isset($_GET['check_location'])){
-            $this->action=array('action'=>"ajax_check_location",
                                  'validate_form'=>false,
                                  'reload'=>false,
                                  'alone'=>true);
@@ -692,6 +694,10 @@ class apu_iquest extends apu_base_class{
     function form_invalid(){
         if ($this->action['action'] == "solve"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Key entering failed", false, array("errors"=>$this->controler->errors));
+            if (false === $this->action_default()) return false;
+        }
+        elseif ($this->action['action'] == "check_location"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Location check failed", false, array("errors"=>$this->controler->errors));
             if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "buy_hint"){
@@ -858,6 +864,19 @@ class apu_iquest extends apu_base_class{
             return true;
         }
 
+        if ($this->action['action'] == "check_location"){
+            if (Iquest::is_over()){
+                ErrorHandler::add_error($lang_str['iquest_err_contest_over']);
+                return false;
+            }
+
+            $result = $this->tracker->check_location($this->controler);
+
+            if (!$result['status']) return false;
+            if ($result['solution']) $this->solution = $result['solution'];
+
+            return true;
+        }
 
         // Action: solve
         $form_ok = true;

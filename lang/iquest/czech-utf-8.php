@@ -29,10 +29,12 @@ $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není spr�
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
 $lang_str['iquest_err_tracker_get_location'] =          "Nepodařilo se zjistit vaší pozici.";
+$lang_str['iquest_err_tracker_wrong_location'] =        "V tuto chvíli a na tomto místě nezískáte nic.";
 
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> {$lang_str['iquest_txt_coin_symbol']})";
+$lang_str['iquest_msg_location_correct'] =              "Gratulujeme, jste na správném místě";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";

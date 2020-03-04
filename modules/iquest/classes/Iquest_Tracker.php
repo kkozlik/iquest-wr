@@ -5,6 +5,12 @@ class Iquest_Tracker{
     private $team = null;
     private $traccar = null;
 
+
+    // zone priority - in case user is in multiple zones, the zone with higher priority is selected
+    const ZONE_ATTR_PRIO = "iq-priority";
+    const ZONE_ATTR_KEY  = "iq-key";
+    const ZONE_ATTR_MSG  = "iq-msg";
+
     public function __construct($team_id){
         $this->team_id = $team_id;
     }
@@ -27,6 +33,7 @@ class Iquest_Tracker{
 
         // @TODO: make token and address configurable
         $this->traccar = new Traccar([
+                'auth_token' => 'lrCZSmzQsyIHFiJNA1HqZCR5zsO59kJC',
                 'server_addr' => '44.177.215.1'
             ]);
 
@@ -70,6 +77,58 @@ class Iquest_Tracker{
         ];
 
         return $out;
+    }
+
+
+    public function check_location(){
+        global $lang_str;
+
+        // @TODO: add Iquest_event ??
+        $traccar = $this->get_traccar();
+        $team = $this->get_team();
+
+        $selectedZone = null;
+        $zones = $traccar->get_zone_by_dev($team->tracker_id);
+
+        foreach($zones as $zone){
+            if (!$selectedZone) { $selectedZone = $zone; continue; }
+
+            if (isset($selectedZone->attributes[self::ZONE_ATTR_PRIO])){
+                if ($zone->attributes[self::ZONE_ATTR_PRIO] and
+                    (int)$zone->attributes[self::ZONE_ATTR_PRIO] > (int)$selectedZone->attributes[self::ZONE_ATTR_PRIO]) $selectedZone = $zone;
+            }
+            else{
+                if (isset($zone->attributes[self::ZONE_ATTR_PRIO])) $selectedZone = $zone;
+                elseif($zone->attributes[self::ZONE_ATTR_KEY] and !isset($selectedZone->attributes[self::ZONE_ATTR_KEY])) $selectedZone = $zone;
+            }
+        }
+
+        $result = [
+            'status' => false,
+            'solution' => null
+        ];
+
+        if (!$selectedZone){
+            ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
+            return $result;
+        }
+
+        if (!empty($selectedZone->attributes[self::ZONE_ATTR_MSG])){
+            $result['status'] = true;
+            Iquest_info_msg::add_msg($selectedZone->attributes[self::ZONE_ATTR_MSG]);
+        }
+
+        if (!empty($selectedZone->attributes[self::ZONE_ATTR_KEY])){
+            // @TODO: use different error messages (location related) in verify_key()
+            $solution = Iquest_Solution::verify_key($selectedZone->attributes[self::ZONE_ATTR_KEY], $this->team_id);
+
+            if ($solution){
+                $result['status'] = true;
+                $result['solution'] = $solution;
+            }
+        }
+
+        return $result;
     }
 
 }
