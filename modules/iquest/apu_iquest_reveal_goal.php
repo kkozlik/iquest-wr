@@ -82,12 +82,6 @@ class apu_iquest_reveal_goal extends apu_base_class{
         if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
         $this->team_id = $this->opt['team_id'];
 
-        if (!isset($_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']] = array();
-        }
-
-        $this->session = &$_SESSION['apu_iquest_reveal_goal'][$this->opt['instance_id']];
-
 
         // Verify that the goal could be revealed, exit otherwise
 

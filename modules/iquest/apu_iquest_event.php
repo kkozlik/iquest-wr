@@ -83,12 +83,6 @@ class apu_iquest_event extends apu_base_class{
     function init(){
         parent::init();
 
-        if (!isset($_SESSION['apu_iquest_event'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest_event'][$this->opt['instance_id']] = array();
-        }
-
-        $this->session = &$_SESSION['apu_iquest_event'][$this->opt['instance_id']];
-
         if (is_a($this->sorter, "apu_base_class")){
             /* register callback called on sorter change */
             $this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));

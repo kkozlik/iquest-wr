@@ -1,45 +1,45 @@
 <?php
 /**
- * Application unit iquest 
- * 
+ * Application unit iquest
+ *
  * @author    Karel Kozlik
  * @version   $Id: application_layer_cz,v 1.10 2007/09/17 18:56:31 kozlik Exp $
  * @package   serweb
- */ 
+ */
 
 
 /**
- *  Application unit iquest 
+ *  Application unit iquest
  *
  *
  *  This application unit is used for display and edit LB Proxies
- *     
+ *
  *  Configuration:
  *  --------------
- *  
+ *
  *  'msg_update'                    default: $lang_str['msg_changes_saved_s'] and $lang_str['msg_changes_saved_l']
  *   message which should be showed on attributes update - assoc array with keys 'short' and 'long'
- *                              
+ *
  *  'form_name'                     (string) default: ''
  *   name of html form
- *  
+ *
  *  'form_submit'               (assoc)
- *   assotiative array describe submit element of form. For details see description 
+ *   assotiative array describe submit element of form. For details see description
  *   of method add_submit in class form_ext
- *  
+ *
  *  'smarty_form'               name of smarty variable - see below
  *  'smarty_action'                 name of smarty variable - see below
- *  
+ *
  *  Exported smarty variables:
  *  --------------------------
- *  opt['smarty_form']              (form)          
+ *  opt['smarty_form']              (form)
  *   phplib html form
- *   
+ *
  *  opt['smarty_action']            (action)
  *    tells what should smarty display. Values:
- *    'default' - 
+ *    'default' -
  *    'was_updated' - when user submited form and data was succefully stored
- *  
+ *
  */
 
 class apu_iquest_hq extends apu_base_class{
@@ -64,8 +64,8 @@ class apu_iquest_hq extends apu_base_class{
     protected $smarty_action = "default";
 
     /**
-     *  constructor 
-     *  
+     *  constructor
+     *
      *  initialize internal variables
      */
     function __construct(){
@@ -100,12 +100,6 @@ class apu_iquest_hq extends apu_base_class{
     function init(){
         parent::init();
 
-        if (!isset($_SESSION['apu_iquest_hq'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest_hq'][$this->opt['instance_id']] = array();
-        }
-        
-        $this->session = &$_SESSION['apu_iquest_hq'][$this->opt['instance_id']];
-        
         if (is_a($this->sorter, "apu_base_class")){
             /* register callback called on sorter change */
             //$this->sorter->set_opt('on_change_callback', array(&$this, 'sorter_changed'));
@@ -116,7 +110,7 @@ class apu_iquest_hq extends apu_base_class{
     function get_sorter_columns(){
         return array('name', 'rank');
     }
-    
+
     function action_get_clue(){
         $this->controler->disable_html_output();
         $this->clue->flush_content($this->download);
@@ -155,9 +149,9 @@ class apu_iquest_hq extends apu_base_class{
 
         return true;
     }
-    
+
     /**
-     *  Method perform action view_grp 
+     *  Method perform action view_grp
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -189,7 +183,7 @@ class apu_iquest_hq extends apu_base_class{
     }
 
     /**
-     *  Method perform action view_solution 
+     *  Method perform action view_solution
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -204,7 +198,7 @@ class apu_iquest_hq extends apu_base_class{
     }
 
     /**
-     *  Method perform action view_hint 
+     *  Method perform action view_hint
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -219,13 +213,13 @@ class apu_iquest_hq extends apu_base_class{
     }
 
     function action_view_graph(){
-        
+
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View graph");
         return true;
     }
 
     /**
-     *  Method perform action default 
+     *  Method perform action default
      *
      *  @return array           return array of $_GET params fo redirect or FALSE on failure
      */
@@ -256,12 +250,12 @@ class apu_iquest_hq extends apu_base_class{
 
                 $rank1 = $actual_order[$a->id];
                 $rank2 = $actual_order[$b->id];
-                
+
                 if ($rank1 == $rank2) return 0;
                 if ($order_desc) return ($rank1 > $rank2) ? -1 : 1;
                 else             return ($rank1 < $rank2) ? -1 : 1;
             });
-        
+
         }
 
 
@@ -294,14 +288,14 @@ class apu_iquest_hq extends apu_base_class{
 
                 if (!isset($clue_groups[$next_cgrp_id_a]) and
                     !isset($clue_groups[$next_cgrp_id_b])){
-                    
+
                     return $solutions[$a]->name > $solutions[$b]->name;
                 }
 
                 if (!isset($clue_groups[$next_cgrp_id_a])) return 1;
                 if (!isset($clue_groups[$next_cgrp_id_b])) return -1;
 
-                return $clue_groups[$next_cgrp_id_a]->ordering - 
+                return $clue_groups[$next_cgrp_id_a]->ordering -
                        $clue_groups[$next_cgrp_id_b]->ordering;
             });
             $this->smarty_groups[$k] = $v->to_smarty();
@@ -324,14 +318,14 @@ class apu_iquest_hq extends apu_base_class{
                                                                       "gained_at_date" => "",
                                                                       "gained" => false);
                 if (!empty($open_cgrps[$cgrp->id][$team->id])){
-                    $this->smarty_cgrp_team[$cgrp->id][$team->id] = 
+                    $this->smarty_cgrp_team[$cgrp->id][$team->id] =
                         array("gained_at"       => date("H:i:s", $open_cgrps[$cgrp->id][$team->id]),
                               "gained_at_date"  => date("d.m.Y", $open_cgrps[$cgrp->id][$team->id]),
                               "gained"          => true);
                 }
             }
         }
-        
+
         $this->smarty_solution_team = array();
         foreach($solutions as $solution){
             $this->smarty_solution_team[$solution->id] = array();
@@ -380,10 +374,10 @@ class apu_iquest_hq extends apu_base_class{
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View default screen");
         return true;
     }
-    
+
 
     /**
-     *  check _get and _post arrays and determine what we will do 
+     *  check _get and _post arrays and determine what we will do
      */
     function determine_action(){
         if (isset($_GET['view_grp'])){
@@ -451,7 +445,7 @@ class apu_iquest_hq extends apu_base_class{
     }
 
     /**
-     *  validate html form 
+     *  validate html form
      *
      *  @return bool            TRUE if given values of form are OK, FALSE otherwise
      */
@@ -461,7 +455,7 @@ class apu_iquest_hq extends apu_base_class{
         /* Check that clue group exists before showing it */
         if ($this->action['action'] == "view_grp"){
             $opt = array("ref_id" => $this->ref_id);
-        
+
             $this->clue_grp = Iquest_ClueGrp::fetch($opt);
             if (!$this->clue_grp){
                 ErrorHandler::add_error("Unknown clue group!");
@@ -476,7 +470,7 @@ class apu_iquest_hq extends apu_base_class{
         /* Check that solution exists before showing it */
         if ($this->action['action'] == "view_solution"){
             $opt = array("ref_id" => $this->ref_id);
-        
+
             $this->solution = Iquest_Solution::fetch($opt);
             if (!$this->solution){
                 ErrorHandler::add_error("Unknown solution!");
@@ -497,7 +491,7 @@ class apu_iquest_hq extends apu_base_class{
                 sw_log("Unknown clue: '".$this->ref_id."'", PEAR_LOG_INFO);
                 return false;
             }
-            
+
             return true;
         }
 
@@ -536,10 +530,10 @@ class apu_iquest_hq extends apu_base_class{
         }
 
         return false;
-    }    
+    }
 
     /**
-     *  assign variables to smarty 
+     *  assign variables to smarty
      */
     function pass_values_to_html(){
         global $smarty;
@@ -560,7 +554,7 @@ class apu_iquest_hq extends apu_base_class{
                                                   "?get_graph=".RawURLEncode($this->team_id)));
         }
     }
-    
+
 }
 
 

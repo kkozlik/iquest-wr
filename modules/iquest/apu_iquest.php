@@ -141,12 +141,6 @@ class apu_iquest extends apu_base_class{
         if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
         $this->team_id = $this->opt['team_id'];
 
-        if (!isset($_SESSION['apu_iquest'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest'][$this->opt['instance_id']] = array();
-        }
-
-        $this->session = &$_SESSION['apu_iquest'][$this->opt['instance_id']];
-
         if (!isset($this->session['known_cgrps']))      $this->session['known_cgrps'] = array();
         if (!isset($this->session['known_hints']))      $this->session['known_hints'] = array();
         if (!isset($this->session['known_solutions']))  $this->session['known_solutions'] = array();

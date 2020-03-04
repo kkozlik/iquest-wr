@@ -83,12 +83,6 @@ class apu_iquest_giveitup extends apu_base_class{
 
         if (is_null($this->opt['team_id'])) throw new Exception("team_id is not set");
         $this->team_id = $this->opt['team_id'];
-
-        if (!isset($_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']])){
-            $_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']] = array();
-        }
-
-        $this->session = &$_SESSION['apu_iquest_giveitup'][$this->opt['instance_id']];
     }
 
 
