@@ -298,6 +298,8 @@ class apu_iquest extends apu_base_class{
     }
 
     public function action_ajax_get_location(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
         $this->controler->disable_html_output();
         header("Content-Type: text/json");
 
@@ -382,24 +384,32 @@ class apu_iquest extends apu_base_class{
     }
 
     function action_get_clue(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
         $this->controler->disable_html_output();
         $this->clue->flush_content($this->download);
         return true;
     }
 
     function action_get_hint(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
         $this->controler->disable_html_output();
         $this->hint->flush_content($this->download);
         return true;
     }
 
     function action_get_solution(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
         $this->controler->disable_html_output();
         $this->solution->flush_content($this->download);
         return true;
     }
 
     function action_get_graph(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
         $this->controler->disable_html_output();
 
         $cgrp_url = $_SERVER['PHP_SELF'].
