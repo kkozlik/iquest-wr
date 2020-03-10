@@ -40,6 +40,10 @@ case "$1" in
         touch /var/log/iquest
         chown www-data:iquest /var/log/iquest
         chmod 664 /var/log/iquest
+
+        touch /var/lib/iquest/traccar-cookie.txt
+        chown www-data:iquest /var/lib/iquest/traccar-cookie.txt
+        chmod 600 /var/lib/iquest/traccar-cookie.txt
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

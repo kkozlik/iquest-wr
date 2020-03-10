@@ -2,7 +2,6 @@
 
 class Traccar{
     const PATH_PREFIX =     "api/";
-    const COOKIE_FILE =     "/tmp/iquest-traccar.txt";  // @TODO: make configurable
 
     protected $scheme = "http";
     protected $server_addr = "localhost";
@@ -19,7 +18,7 @@ class Traccar{
     }
 
     private function auth(){
-        global $lang_str;
+        global $lang_str, $config;
 
         $curl = curl_init();
 
@@ -32,8 +31,8 @@ class Traccar{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        curl_setopt($curl, CURLOPT_COOKIEJAR, self::COOKIE_FILE);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, self::COOKIE_FILE);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $config->traccar_cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $config->traccar_cookie_file);
 
         sw_log(__CLASS__."::".__FUNCTION__.": Executing API query: url:'$url'", PEAR_LOG_DEBUG);
 
@@ -107,7 +106,7 @@ class Traccar{
     }
 
     private function query_server($path, $params=[], $opts=[]){
-        global $lang_str;
+        global $lang_str, $config;
 
         $curl = curl_init();
 
@@ -141,8 +140,8 @@ class Traccar{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        curl_setopt($curl, CURLOPT_COOKIEJAR, self::COOKIE_FILE);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, self::COOKIE_FILE);
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $config->traccar_cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $config->traccar_cookie_file);
 
         if (!empty($opts['timeout'])){
             curl_setopt($curl, CURLOPT_TIMEOUT, $opts['timeout']);

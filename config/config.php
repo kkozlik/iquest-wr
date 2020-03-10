@@ -46,6 +46,7 @@
 
     $config->img_src_path =     $config->root_path."img/";
     $config->iquest_data_dir = realpath($_SERWEB["approotdir"]."data")."/";
+    $config->traccar_cookie_file = "/var/lib/iquest/traccar-cookie.txt";
 
     // Directory where smarty stores compiled templates
     $config->smarty_compile_dir = realpath($_SERWEB["approotdir"]."smarty")."/";
