@@ -31,10 +31,9 @@ class Iquest_Tracker{
     private function get_traccar(){
         if ($this->traccar) return $this->traccar;
 
-        // @TODO: make token and address configurable
         $this->traccar = new Traccar([
-                'auth_token' => 'lrCZSmzQsyIHFiJNA1HqZCR5zsO59kJC',
-                'server_addr' => '44.177.215.1'
+                'auth_token' => Iquest_Options::get(Iquest_Options::TRACCAR_AUTH_TOKEN),
+                'server_addr' => Iquest_Options::get(Iquest_Options::TRACCAR_ADDR)
             ]);
 
         return $this->traccar;

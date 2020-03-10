@@ -696,6 +696,9 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::LOGO, "");
         Iquest_Options::set(Iquest_Options::GAME_NAME, "");
         Iquest_Options::set(Iquest_Options::HQ_LOGIN, array());
+        Iquest_Options::set(Iquest_Options::TRACCAR_ENABLED, 0);
+        Iquest_Options::set(Iquest_Options::TRACCAR_ADDR, "");
+        Iquest_Options::set(Iquest_Options::TRACCAR_AUTH_TOKEN, "");
     }
 
     /**
