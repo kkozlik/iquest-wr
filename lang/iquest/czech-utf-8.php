@@ -17,6 +17,7 @@ $lang_str['iquest_verify_tracker'] =                    "Ověřit polohu";
 $lang_str['iquest_my_position'] =                       "Zobrazit polohu";
 
 
+$lang_str['iquest_err_internal_error'] =                "Internal error. Check log for details.";
 $lang_str['iquest_err_key_invalid'] =                   "Sorry, tento kód není správně.";
 $lang_str['iquest_err_key_empty'] =                     "Nevyplnil jste kód řešení úkolu.";
 $lang_str['iquest_err_key_dup'] =                       "Tento kód už jste zadal a úkol máte vyřešený";

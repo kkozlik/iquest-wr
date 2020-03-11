@@ -923,7 +923,7 @@ class apu_iquest extends apu_base_class{
         $smarty->assign($this->opt['smarty_show_place'], $this->smarty_show_place);
 
         $smarty->assign($this->opt['smarty_graph_enabled'], Iquest_Options::get(Iquest_Options::SHOW_GRAPH));
-        $smarty->assign($this->opt['smarty_tracker_enabled'], true); // @TODO: set correct value
+        $smarty->assign($this->opt['smarty_tracker_enabled'], Iquest_Tracker::is_tracking_enabled());
 
         $smarty->assign($this->opt['smarty_main_url'], $this->controler->url($_SERVER['PHP_SELF']));
         $smarty->assign($this->opt['smarty_get_graph_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_graph=1"));

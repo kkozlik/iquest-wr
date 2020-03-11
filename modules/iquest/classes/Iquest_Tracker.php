@@ -40,17 +40,25 @@ class Iquest_Tracker{
     }
 
     public function is_tracking_enabled(){
-        // @TODO: implement
-        return true;
+        // @TODO: implement conditional
+        return Iquest_Options::get(Iquest_Options::TRACCAR_ENABLED);
     }
 
     public function get_location(){
         global $config, $lang_str;
 
-        $traccar = $this->get_traccar();
+        $position = null;
         $team = $this->get_team();
 
-        $position = $traccar->get_pos_by_dev($team->tracker_id);
+        try{
+            $traccar = $this->get_traccar();
+            $position = $traccar->get_pos_by_dev($team->tracker_id);
+        }
+        catch(Traccar_api_query_exception $e){
+            sw_log_exception($e);
+            ErrorHandler::add_error($lang_str['iquest_err_internal_error']);
+            return [];
+        }
 
         if (!$position){
             ErrorHandler::add_error($lang_str['iquest_err_tracker_get_location']);
@@ -83,29 +91,37 @@ class Iquest_Tracker{
         global $lang_str;
 
         // @TODO: add Iquest_event ??
-        $traccar = $this->get_traccar();
-        $team = $this->get_team();
 
         $selectedZone = null;
-        $zones = $traccar->get_zone_by_dev($team->tracker_id);
-
-        foreach($zones as $zone){
-            if (!$selectedZone) { $selectedZone = $zone; continue; }
-
-            if (isset($selectedZone->attributes[self::ZONE_ATTR_PRIO])){
-                if ($zone->attributes[self::ZONE_ATTR_PRIO] and
-                    (int)$zone->attributes[self::ZONE_ATTR_PRIO] > (int)$selectedZone->attributes[self::ZONE_ATTR_PRIO]) $selectedZone = $zone;
-            }
-            else{
-                if (isset($zone->attributes[self::ZONE_ATTR_PRIO])) $selectedZone = $zone;
-                elseif($zone->attributes[self::ZONE_ATTR_KEY] and !isset($selectedZone->attributes[self::ZONE_ATTR_KEY])) $selectedZone = $zone;
-            }
-        }
+        $team = $this->get_team();
 
         $result = [
             'status' => false,
             'solution' => null
         ];
+
+        try{
+            $traccar = $this->get_traccar();
+            $zones = $traccar->get_zone_by_dev($team->tracker_id);
+
+            foreach($zones as $zone){
+                if (!$selectedZone) { $selectedZone = $zone; continue; }
+
+                if (isset($selectedZone->attributes[self::ZONE_ATTR_PRIO])){
+                    if ($zone->attributes[self::ZONE_ATTR_PRIO] and
+                        (int)$zone->attributes[self::ZONE_ATTR_PRIO] > (int)$selectedZone->attributes[self::ZONE_ATTR_PRIO]) $selectedZone = $zone;
+                }
+                else{
+                    if (isset($zone->attributes[self::ZONE_ATTR_PRIO])) $selectedZone = $zone;
+                    elseif($zone->attributes[self::ZONE_ATTR_KEY] and !isset($selectedZone->attributes[self::ZONE_ATTR_KEY])) $selectedZone = $zone;
+                }
+            }
+        }
+        catch(Traccar_api_query_exception $e){
+            sw_log_exception($e);
+            ErrorHandler::add_error($lang_str['iquest_err_internal_error']);
+            return $result;
+        }
 
         if (!$selectedZone){
             ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
