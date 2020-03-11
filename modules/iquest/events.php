@@ -8,12 +8,15 @@ class Iquest_Events{
     const LOGOUT = "logout";
     const GIVEITUP = "giveitup";
     const COIN_SPEND = "coin_spend";
+    const LOCATION_CHECK = "location_check";
 
     public static $supported_types = array(self::LOGGED,
                                            self::KEY,
                                            self::LOGOUT,
                                            self::GIVEITUP,
-                                           self::COIN_SPEND);
+                                           self::COIN_SPEND,
+                                           self::LOCATION_CHECK,
+                                           );
 
     public $id;
     public $team_id;
@@ -207,9 +210,12 @@ class Iquest_Events{
                 }
             }
             break;
+        case self::LOCATION_CHECK:
+            if (isset($this->data['zone']))         $out['zone']['text'] = $this->data['zone'];
+            break;
         }
 
-        if (isset($this->data['note']))           $out['note']['text'] = $this->data['note'];
+        if (isset($this->data['note']))             $out['note']['text'] = $this->data['note'];
         if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
 
         switch($this->type){

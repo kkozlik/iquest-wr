@@ -90,8 +90,6 @@ class Iquest_Tracker{
     public function check_location(){
         global $lang_str;
 
-        // @TODO: add Iquest_event ??
-
         $selectedZone = null;
         $team = $this->get_team();
 
@@ -125,6 +123,11 @@ class Iquest_Tracker{
 
         if (!$selectedZone){
             ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
+
+            Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
+                    false,
+                    array());
+
             return $result;
         }
 
@@ -142,6 +145,10 @@ class Iquest_Tracker{
                 $result['solution'] = $solution;
             }
         }
+
+        Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
+                true,
+                array("zone" => $selectedZone->name));
 
         return $result;
     }
