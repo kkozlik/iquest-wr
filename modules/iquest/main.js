@@ -126,7 +126,12 @@ LocationCtl.prototype = {
         $.ajax({
             url: this.get_location_url,
             success: function(data, status){
-                // @TODO: display errors returned from server
+                clear_msg(self.mapPopup.find(".errPlaceHolder"));
+                if (data.errors){
+                    $.each(data.errors, function(index, err){
+                        show_msg(err, null, self.mapPopup.find(".errPlaceHolder"));
+                    });
+                }
 
                 if (data.lat != self.last_location.lat || data.lon != self.last_location.lon){
                     self.map.panTo([data.lat, data.lon]);

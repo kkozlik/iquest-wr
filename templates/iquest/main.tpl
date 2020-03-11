@@ -141,7 +141,7 @@
         <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 order-md-last">
             <div class="row mb-1">
                 <div class="col">
-                    <a href="javascript:" class="text-nowrap btn btn-block btn-outline-secondary myLocationBtn">{$lang_str.iquest_my_position}</a>
+                    <a href="javascript:" class="text-nowrap btn btn-block btn-outline-secondary myLocationBtn">{$lang_str.iquest_show_position}</a>
                 </div>
             </div>
             <div class="row mb-1 mb-md-0">
@@ -167,12 +167,17 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h6 class="modal-title" id="myLocationPopupModalLabel">@TODO: moje pozice
+            <h6 class="modal-title" id="myLocationPopupModalLabel">{$lang_str.iquest_your_position}
                 <br /><small>Pozice získána naposledy před <span class="updateTime"></span></small>
             </h6>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">×</button>
         </div>
         <div class="modal-body">
+            <div class="errPlaceHolder"
+                data-template="{$smarty.capture.errorTplStart|escape}{$smarty.capture.errorTplEnd|escape}"
+                data-item-template="{$smarty.capture.errorItemTpl|escape}"
+            ></div>
+
             <div id="myLocationPopupMapCanvas" style="min-height:300px;"></div>
         </div>
     </div>

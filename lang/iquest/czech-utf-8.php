@@ -14,7 +14,8 @@ $lang_str['iquest_graph'] =                             "Struktura soutěže";
 $lang_str['iquest_view'] =                              "Zobrazit";
 $lang_str['iquest_minimize'] =                          "Minimalizovat";
 $lang_str['iquest_verify_tracker'] =                    "Ověřit polohu";
-$lang_str['iquest_my_position'] =                       "Zobrazit polohu";
+$lang_str['iquest_show_position'] =                     "Zobrazit polohu";
+$lang_str['iquest_your_position'] =                     "Vaše poloha";
 
 
 $lang_str['iquest_err_internal_error'] =                "Internal error. Check log for details.";
