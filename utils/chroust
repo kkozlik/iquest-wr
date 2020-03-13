@@ -849,7 +849,7 @@ class Chroust{
 
             if ($next_cgrp->isConditional()){
                 try{
-                    $next_cgrp->parseCondition();
+                    Iquest_Condition::parseCondition($next_cgrp->condition);
                 }
                 catch(Exception $e){
                     throw new Iquest_VerifyFailedException(

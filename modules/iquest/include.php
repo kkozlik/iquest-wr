@@ -35,6 +35,8 @@ require_once( "classes/Iquest_solution_graph_node.php" );
 require_once( "classes/Iquest_solution_graph.php" );
 require_once( "classes/Iquest_contest_graph_simplified.php" );
 
+require_once( "classes/Iquest_Condition.php" );
+
 require_once( "classes/Iquest_Team.php" );
 require_once( "classes/Iquest_team_rank.php" );
 
