@@ -39,11 +39,11 @@ class Iquest_Hint extends Iquest_file{
                       , ".$ct->for_sale;
 
             if (!empty($opt['accessible'])){
-                $qw[] = "t.".$ct->show_at." <= now()";
+                $qw[] = "(t.{$ct->show_at} <= now() and t.{$ct->show_at} != 0)";
             }
 
             if (!empty($opt['not_accessible'])){
-                $qw[] = "t.".$ct->show_at." > now()";
+                $qw[] = "(t.{$ct->show_at} > now() or t.{$ct->show_at} = 0)";
             }
 
             if (!empty($opt['for_sale'])){
@@ -125,10 +125,9 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
-        // if timeout is not specified set it to far future, the hint has to be buyed then
-        if (!$timeout) $timeout = 2147483647; // (2^31)-1 - max integer value on 32bit systems
-
-        //@TODO: pri moc velkym timeoutu (2147483647) se vzteka maria DB -> poresit. Bud pouzivat nulu nebo extra sloupec
+        // if timeout is not specified set it to zero
+        if ($timeout) $timeout_sql = "addtime(now(), sec_to_time(".$data->sql_format($timeout, "n")."))";
+        else $timeout_sql = 0;
 
         $q="insert into ".$t_name." (
                     ".$c->hint_id.",
@@ -137,7 +136,7 @@ class Iquest_Hint extends Iquest_file{
                     ".$c->for_sale.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")),
+                    $timeout_sql,
                     ".$data->sql_format($for_sale,  "n").")";
 
         $res=$data->db->query($q);
@@ -167,7 +166,7 @@ class Iquest_Hint extends Iquest_file{
         $qw = array();
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
         $qw[] = $ct->hint_id." in (".$q2.")";
-        $qw[] = $ct->show_at." > now()";
+        $qw[] = "({$ct->show_at} > now() or {$ct->show_at}=0)";
         $qw = " where ".implode(' and ', $qw);
 
         $q = "delete from ".$tt_name.$qw;
@@ -208,6 +207,12 @@ class Iquest_Hint extends Iquest_file{
         return true;
     }
 
+    /**
+     * Return next hint to be shown (by timeout)
+     *
+     * @param int $team_id
+     * @return assoc
+     */
     static function get_next_scheduled($team_id){
         global $data, $config;
 
