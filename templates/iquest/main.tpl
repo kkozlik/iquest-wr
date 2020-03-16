@@ -304,7 +304,7 @@
     {foreach $clue_groups as $group}
     <tr><td {if $group.new or $group.new_hints}class="new"{/if}>
         <a href="{$group.detail_url|escape}">{$group.name}</a>
-        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn btn-sm btn-outline-secondary float-right" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
+        {if $group.hints_for_sale}<a href="{$group.buy_url|escape}" class="btn btn-sm btn-outline-secondary float-right" style="margin-top: 2px;" onclick="return linkConfirmation(this, '{$group.buy_confirmation|escape:js}')">{$lang_str.iquest_btn_buy_hint} {$group.hint_price|escape}</a>{/if}
         {if $group.new}<span class="new"></span>{/if}
         {if $group.new_hints}<span class="newhint"></span>{/if}
     </td></tr>
