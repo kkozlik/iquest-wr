@@ -116,6 +116,46 @@ class Iquest_Condition{
     }
 
     /**
+     * Implementation of OPENED(...) condition. It should return true if all clue groups
+     * specified as params are opened.
+     *
+     *  Allowed options:
+     *   - team_id (required)        - The team the condition is evaluated for
+     *
+     * @param array $params     Params of the OPENED(...) condition. It should be array of clue group IDs
+     * @param array $options
+     * @return bool
+     */
+    private static function cond_opened($params, $options){
+        $open_cgrp_cache = [];
+
+        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+
+        if (!isset($options['team_id'])){
+            throw new Iquest_Condition_exception("'team_id' option is not set for the condition");
+        }
+
+        if (isset($open_cgrp_cache[$options['team_id']])){
+            $cgrps = $open_cgrp_cache[$options['team_id']];
+        }
+        else{
+            $opt = array("team_id" => $options['team_id']);
+            $cgrps = Iquest_ClueGrp::fetch_cgrp_open($opt);
+            $open_cgrp_cache[$options['team_id']] = $cgrps;
+        }
+
+        foreach($params as $cgrp_id){
+            if (!isset($cgrps[$cgrp_id])){
+                sw_log(__CLASS__.":".__FUNCTION__.": cgrp '$cgrp_id' is not opened yet. Evaluating condition as false.", PEAR_LOG_INFO);
+                return false;
+            }
+        }
+
+        sw_log(__CLASS__.":".__FUNCTION__.": All clue groups '".implode("', '", $params)."' are opened. Evaluating condition as true.", PEAR_LOG_INFO);
+        return true;
+    }
+
+    /**
      * Implementation of TRUE() condition. It always return true.
      * Use of this condition have same behavior as if not condition is used.
      * But it has a side effect: It draw the arrow in dashed style in the contest graph.
