@@ -10,6 +10,7 @@ class Iquest_Tracker{
     const ZONE_ATTR_PRIO = "iq-priority";
     const ZONE_ATTR_KEY  = "iq-key";
     const ZONE_ATTR_MSG  = "iq-msg";
+    const ZONE_ATTR_COND = "iq-condition";
 
     public function __construct($team_id){
         $this->team_id = $team_id;
@@ -106,6 +107,14 @@ class Iquest_Tracker{
             $zones = $traccar->get_zone_by_dev($team->tracker_id);
 
             foreach($zones as $zone){
+                if (!empty($zone->attributes[self::ZONE_ATTR_COND])){
+                    // skip zone if condition evalueate to false
+                    if (!Iquest_Condition::evalueateCondition($zone->attributes[self::ZONE_ATTR_COND], ['team_id' => $this->team_id])) {
+                        sw_log("check_location - skipping zone {$zone->name}. Condition not met: {$zone->attributes[self::ZONE_ATTR_COND]}", PEAR_LOG_INFO);
+                        continue;
+                    }
+                }
+
                 if (!$selectedZone) { $selectedZone = $zone; continue; }
 
                 if (isset($selectedZone->attributes[self::ZONE_ATTR_PRIO])){
@@ -133,6 +142,8 @@ class Iquest_Tracker{
 
             return $result;
         }
+
+        sw_log("check_location - selected zone {$selectedZone->name}.", PEAR_LOG_INFO);
 
         if (!empty($selectedZone->attributes[self::ZONE_ATTR_MSG])){
             $result['status'] = true;
