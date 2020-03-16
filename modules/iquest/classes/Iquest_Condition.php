@@ -10,10 +10,14 @@ class Iquest_Condition{
     const COND_PREFIX = "cond_";
 
     /**
-     * Evaluate condition whether next clue group could be shown
+     * Evaluate a condition
      *
-     * @param Iquest_Solution $solution
-     * @param int $team_id
+     *  Allowed options:
+     *   - team_id              - ID of tham the condition is evaluated for
+     *   - current_solution     - Instance of Iquest_Solution - When a solution is being solved it is stored to this option
+     *
+     * @param string    $condition
+     * @param array     $options
      * @return bool
      */
     public static function evalueateCondition($condition, $options){

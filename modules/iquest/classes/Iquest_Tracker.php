@@ -40,8 +40,11 @@ class Iquest_Tracker{
     }
 
     public function is_tracking_enabled(){
-        // @TODO: implement conditional
-        return Iquest_Options::get(Iquest_Options::TRACCAR_ENABLED);
+        $enabled = Iquest_Options::get(Iquest_Options::TRACCAR_ENABLED);
+
+        if (is_numeric($enabled)) return (bool)$enabled;
+
+        return Iquest_Condition::evalueateCondition($enabled, ['team_id' => $this->team_id]);
     }
 
     public function get_location(){
