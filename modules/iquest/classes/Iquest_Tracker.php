@@ -151,8 +151,12 @@ class Iquest_Tracker{
         }
 
         if (!empty($selectedZone->attributes[self::ZONE_ATTR_KEY])){
-            // @TODO: use different error messages (location related) in verify_key()
-            $solution = Iquest_Solution::verify_key($selectedZone->attributes[self::ZONE_ATTR_KEY], $this->team_id);
+            // Use different (location related) error messages in verify_key()
+            $opt = [ 'err' => [
+                        'key_dup' => $lang_str['iquest_err_tracker_location_dup'],
+                        'key_not_reachable' => $lang_str['iquest_err_tracker_location_not_reachable'],
+                    ]];
+            $solution = Iquest_Solution::verify_key($selectedZone->attributes[self::ZONE_ATTR_KEY], $this->team_id, $opt);
 
             if ($solution){
                 $result['status'] = true;

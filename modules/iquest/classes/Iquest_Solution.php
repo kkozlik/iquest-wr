@@ -19,21 +19,21 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  Instantiate solution by key
-     */         
+     */
     static function &by_key($key){
         return Iquest_key::obj_by_key($key, get_called_class());
     }
 
     /**
      *  Instantiate solution by id
-     */         
+     */
     static function &by_id($id){
         $objs = self::fetch(array("id"=>$id));
         if (!$objs) {
             $null = null; //reference have to be returned
             return $null;
         }
-        
+
         $obj = reset($objs);
         return $obj;
     }
@@ -44,17 +44,17 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  Fetch all solutions that are accessible to the team
-     */         
+     */
     static function fetch_accessible($team_id){
         $opt = array("team_id" => $team_id,
                      "accessible" => true);
-    
+
         return static::fetch($opt);
     }
 
     /**
      *  Fetch solution from DB
-     */         
+     */
     static function fetch($opt=array()){
         global $data, $config;
 
@@ -76,20 +76,20 @@ class Iquest_Solution extends Iquest_file{
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
         if (isset($opt['team_id'])){
-    
+
             // Generate virtual table we are joining with
             $q_join = "select t.".$ct->show_at.",
                               t.".$ct->solved_at.",
                               t.".$ct->team_id.",
                               t.".$ct->solution_id."
-                       from ".$tt_name." t 
+                       from ".$tt_name." t
                        where t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "N");
-    
+
             $join[] = " left join (".$q_join.") tt on c.".$cc->id." = tt.".$ct->solution_id;
-    
+
             $cols .= ", UNIX_TIMESTAMP(tt.".$ct->show_at.") as ".$ct->show_at;
             $cols .= ", UNIX_TIMESTAMP(tt.".$ct->solved_at.") as ".$ct->solved_at;
-        
+
             if (!empty($opt['accessible'])){
                 $qw[] = "tt.".$ct->show_at." <= now()";
                 $qw[] = "UNIX_TIMESTAMP(tt.".$ct->show_at.") != 0";
@@ -110,13 +110,13 @@ class Iquest_Solution extends Iquest_file{
                      c.".$cc->ref_id.",
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
-                     time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.", 
+                     time_to_sec(c.".$cc->timeout.") as ".$cc->timeout.",
                      c.".$cc->countdown_start.",
                      c.".$cc->comment.",
                      c.".$cc->name.",
                      c.".$cc->key.",
                      c.".$cc->coin_value.
-                     $cols." 
+                     $cols."
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
 
@@ -129,8 +129,8 @@ class Iquest_Solution extends Iquest_file{
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
             if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
             if (!isset($row[$ct->solved_at])) $row[$ct->solved_at] = null;
-            
-            $out[$row[$cc->id]] =  new Iquest_Solution($row[$cc->id], 
+
+            $out[$row[$cc->id]] =  new Iquest_Solution($row[$cc->id],
                                                        $row[$cc->ref_id],
                                                        $row[$cc->filename],
                                                        $row[$cc->content_type],
@@ -150,10 +150,10 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  Fetch solutions by the clue-group-id that leads to the solution.
-     *  
+     *
      *  If team_id provided the fetched solutions contain correct
      *  'show_at' and 'solved_at' attributes for the team.
-     */         
+     */
     static function fetch_by_opening_cgrp($cgrp_id, $team_id=null){
         global $data, $config;
 
@@ -175,14 +175,14 @@ class Iquest_Solution extends Iquest_file{
         else $qw = "";
 
         // needed for 'show-at' attribute
-        $q2 = "select UNIX_TIMESTAMP(t.".$ct->show_at.") 
-               from ".$tt_name." t 
+        $q2 = "select UNIX_TIMESTAMP(t.".$ct->show_at.")
+               from ".$tt_name." t
                where t.".$ct->team_id." = ".$data->sql_format($team_id, "N")." and
                      t.".$ct->solution_id."=s.".$cs->id;
 
         // needed for 'solved-at' attribute
-        $q3 = "select UNIX_TIMESTAMP(t2.".$ct->solved_at.") 
-               from ".$tt_name." t2 
+        $q3 = "select UNIX_TIMESTAMP(t2.".$ct->solved_at.")
+               from ".$tt_name." t2
                where t2.".$ct->team_id." = ".$data->sql_format($team_id, "N")." and
                      t2.".$ct->solution_id."=s.".$cs->id;
 
@@ -190,7 +190,7 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->ref_id.",
                      s.".$cs->filename.",
                      s.".$cs->content_type.",
-                     time_to_sec(s.".$cs->timeout.") as ".$cs->timeout.", 
+                     time_to_sec(s.".$cs->timeout.") as ".$cs->timeout.",
                      s.".$cs->countdown_start.",
                      s.".$cs->comment.",
                      s.".$cs->name.",
@@ -208,7 +208,7 @@ class Iquest_Solution extends Iquest_file{
 
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$cs->id]] =  new Iquest_Solution($row[$cs->id], 
+            $out[$row[$cs->id]] =  new Iquest_Solution($row[$cs->id],
                                                        $row[$cs->ref_id],
                                                        $row[$cs->filename],
                                                        $row[$cs->content_type],
@@ -228,11 +228,11 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  De-schedule displaying of solution $id for team $team_id.
-     *  If the solution is not displayed yet, it will not be displayed never.     
-     */             
+     *  If the solution is not displayed yet, it will not be displayed never.
+     */
     static function deschedule($id, $team_id){
         global $data, $config;
-    
+
         /* table's name */
         $tt_name  = &$config->data_sql->iquest_solution_team->table_name;
         /* col names */
@@ -242,7 +242,7 @@ class Iquest_Solution extends Iquest_file{
 
         if (is_array($id))  $qw[] = $data->get_sql_in($ct->solution_id, $id, true);
         else                $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
-        
+
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
         $qw[] = $ct->show_at." > now()";
         $qw = " where ".implode(' and ', $qw);
@@ -252,14 +252,14 @@ class Iquest_Solution extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
     /**
      *  Schedule displaying of solution for team $team_id.
-     *  This function do not check whether solution is already scheduled!     
-     */         
+     *  This function do not check whether solution is already scheduled!
+     */
     static function schedule($id, $team_id, $timeout){
         global $data, $config;
 
@@ -269,8 +269,8 @@ class Iquest_Solution extends Iquest_file{
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
         $q="insert into ".$t_name." (
-                    ".$c->solution_id.", 
-                    ".$c->team_id.", 
+                    ".$c->solution_id.",
+                    ".$c->team_id.",
                     ".$c->show_at.",
                     ".$c->solved_at.")
             values (".$data->sql_format($id,        "s").",
@@ -280,7 +280,7 @@ class Iquest_Solution extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
@@ -318,13 +318,13 @@ class Iquest_Solution extends Iquest_file{
         $record_exists = (bool)$row[0];
 
         if ($record_exists){
-            $q = "update $t_name 
+            $q = "update $t_name
                   set ".$c->solved_at."=now()".$qw;
         }
         else{
             $q="insert into ".$t_name." (
-                        ".$c->solution_id.", 
-                        ".$c->team_id.", 
+                        ".$c->solution_id.",
+                        ".$c->team_id.",
                         ".$c->show_at.",
                         ".$c->solved_at.")
                 values (".$data->sql_format($id,        "s").",
@@ -353,7 +353,7 @@ class Iquest_Solution extends Iquest_file{
         else $qw = "";
 
         $q = "select UNIX_TIMESTAMP(".$c->show_at.") as ".$c->show_at.",
-                     ".$c->solution_id." 
+                     ".$c->solution_id."
               from ".$t_name.$qw;
 
         $q .= " order by ".$c->show_at;
@@ -368,7 +368,7 @@ class Iquest_Solution extends Iquest_file{
                        "solution_id" => $row[$c->solution_id]);
         }
         $res->free();
-        
+
         return $out;
     }
 
@@ -385,7 +385,10 @@ class Iquest_Solution extends Iquest_file{
         global $lang_str;
 
         if (empty($key)){
-            ErrorHandler::add_error($lang_str['iquest_err_key_empty']);
+            $err = $lang_str['iquest_err_key_empty'];
+            if (!empty($opts['err']['key_empty'])) $err = $opts['err']['key_empty'];
+
+            ErrorHandler::add_error($err);
             self::log_invalid_key($key, $team_id);
             return null;
         }
@@ -393,13 +396,19 @@ class Iquest_Solution extends Iquest_file{
         $solution = Iquest_Solution::by_key($key);
 
         if (!$solution){
-            ErrorHandler::add_error($lang_str['iquest_err_key_invalid']);
+            $err = $lang_str['iquest_err_key_invalid'];
+            if (!empty($opts['err']['key_invalid'])) $err = $opts['err']['key_invalid'];
+
+            ErrorHandler::add_error($err);
             self::log_invalid_key($key, $team_id);
             return null;
         }
 
         if ($solution->is_solved($team_id)){
-            ErrorHandler::add_error($lang_str['iquest_err_key_dup']);
+            $err = $lang_str['iquest_err_key_dup'];
+            if (!empty($opts['err']['key_dup'])) $err = $opts['err']['key_dup'];
+
+            ErrorHandler::add_error($err);
             self::log_invalid_key($key, $team_id);
             return null;
         }
@@ -416,7 +425,10 @@ class Iquest_Solution extends Iquest_file{
         if ($check_order and
             !$solution->is_reachable($team_id)){
 
-            ErrorHandler::add_error($lang_str['iquest_err_key_not_reachable']);
+            $err = $lang_str['iquest_err_key_not_reachable'];
+            if (!empty($opts['err']['key_not_reachable'])) $err = $opts['err']['key_not_reachable'];
+
+            ErrorHandler::add_error($err);
             self::log_invalid_key($key, $team_id);
             return null;
         }
@@ -439,10 +451,10 @@ class Iquest_Solution extends Iquest_file{
                             $event_data);
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $name, 
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $name,
                          $timeout, $countdown_start, $key, $coin_value, $show_at=null, $solved_at=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
-        
+
         $this->name = $name;
         $this->timeout = $timeout;
         $this->countdown_start = $countdown_start;
@@ -473,13 +485,13 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  Check whether the solution is reachable by given team.
-     *  The solution is reachable if the team gained at least one clue leading 
+     *  The solution is reachable if the team gained at least one clue leading
      *  to the solution.
-     *  
-     *  @return bool                     
-     */         
+     *
+     *  @return bool
+     */
     function is_reachable($team_id){
-    
+
         $clue_grps = Iquest_ClueGrp::fetch_by_pointing_to_solution($this->id, $team_id);
 
         foreach($clue_grps as $clue_grp){
@@ -506,7 +518,7 @@ class Iquest_Solution extends Iquest_file{
 
     /**
      *  Retrieve the show_at value for given team
-     */         
+     */
     function get_show_at($team_id){
 
         if (is_null($this->show_at)) $this->query_team_info($team_id);
@@ -614,7 +626,7 @@ class Iquest_Solution extends Iquest_file{
 
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$c->cgrp_id]] =  new Iquest_Solution_Next_Cgrp($row[$c->cgrp_id], 
+            $out[$row[$c->cgrp_id]] =  new Iquest_Solution_Next_Cgrp($row[$c->cgrp_id],
                                                                      $row[$c->condition]);
         }
         $res->free();
@@ -687,13 +699,13 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $c      = &$config->data_sql->iquest_solution->cols;
         $cn     = &$config->data_sql->iquest_solution_next_cgrp->cols;
-    
+
         $q = "insert into ".$t_name."(
                     ".$c->id.",
                     ".$c->ref_id.",
                     ".$c->filename.",
                     ".$c->content_type.",
-                    ".$c->comment.", 
+                    ".$c->comment.",
                     ".$c->name.",
                     ".$c->key.",
                     ".$c->coin_value.",
@@ -715,7 +727,7 @@ class Iquest_Solution extends Iquest_file{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         foreach($this->next_cgrps as $next_cgrp){
             $q = "insert into ".$tn_name."(
                         ".$cn->solution_id.",
@@ -727,11 +739,11 @@ class Iquest_Solution extends Iquest_file{
                         ".$data->sql_format($next_cgrp->cgrp_id,    "s").",
                         ".$data->sql_format($next_cgrp->condition,  "s")."
                   )";
-            
+
             $res=$data->db->query($q);
             if ($data->dbIsError($res)) throw new DBException($res);
         }
-    
+
     }
 
     function to_smarty(){
