@@ -26,12 +26,12 @@ install: build
 	mkdir -p $(DESTDIR)/usr/share/iquest
 	mkdir -p $(DESTDIR)/usr/share/doc/iquest
 	mkdir -p $(DESTDIR)/etc/iquest
-	mkdir -p $(DESTDIR)/etc/php5/conf.d
-	mkdir -p $(DESTDIR)/etc/php5/apache2/conf.d
+	mkdir -p $(DESTDIR)/etc/php/7.3/conf.d
+	mkdir -p $(DESTDIR)/etc/php/7.3/apache2/conf.d
 	mkdir -p $(DESTDIR)/var/lib/iquest/data
 	mkdir -p $(DESTDIR)/var/lib/iquest/smarty
 	cp -r $(CURDIR)/config/*    $(DESTDIR)/etc/iquest
-	cp -r $(CURDIR)/doc/php/*   $(DESTDIR)/etc/php5/conf.d
+	cp -r $(CURDIR)/doc/php/*   $(DESTDIR)/etc/php/7.3/conf.d
 	cp -r $(CURDIR)/doc/*       $(DESTDIR)/usr/share/doc/iquest
 	cp -r $(CURDIR)/functions   $(DESTDIR)/usr/share/iquest
 	cp -r $(CURDIR)/lang        $(DESTDIR)/usr/share/iquest
@@ -43,7 +43,7 @@ install: build
 	rm $(DESTDIR)/etc/iquest/set_env.developer.php
 	rm $(DESTDIR)/etc/iquest/iquest.apache.developer
 	ln -sf /etc/iquest $(DESTDIR)/usr/share/iquest/config
-	ln -sf /etc/php5/conf.d/30-iquest.ini $(DESTDIR)/etc/php5/apache2/conf.d/30-iquest.ini
+	ln -sf /etc/php/7.3/conf.d/30-iquest.ini $(DESTDIR)/etc/php/7.3/apache2/conf.d/30-iquest.ini
 	ln -sf /var/lib/iquest/data $(DESTDIR)/usr/share/iquest/data
 	ln -sf /var/lib/iquest/smarty $(DESTDIR)/usr/share/iquest/smarty
 
