@@ -11,6 +11,12 @@
     background-color: #f8f9fa;
 }
 
+// Who know why this is not beeing generated from bootstrap scss
+.custom-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
 /******************
  *  Team interface
  ******************/
