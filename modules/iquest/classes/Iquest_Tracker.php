@@ -48,6 +48,49 @@ class Iquest_Tracker{
         return Iquest_Condition::evalueateCondition($enabled, ['team_id' => $this->team_id]);
     }
 
+    /**
+     * Set position of given device to specified position in traccar
+     *
+     * @param string $devId
+     * @param float $lat
+     * @param float $lon
+     * @return bool
+     */
+    public static function set_position($devId, $lat, $lon){
+        global $lang_str;
+
+        $server_addr = Iquest_Options::get(Iquest_Options::TRACCAR_ADDR);
+
+        $devId = rawurlencode($devId);
+        $lat   = rawurlencode($lat);
+        $lon   = rawurlencode($lon);
+
+        $url = "http://$server_addr:5055/?id=$devId&lat=$lat&lon=$lon";
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        sw_log(__CLASS__."::".__FUNCTION__.": Executing Traccar OSMAnd query: url:'$url'", PEAR_LOG_DEBUG);
+
+        if (PHPlib::$session) PHPlib::$session->close_session();
+        $output = curl_exec($curl);
+        if (PHPlib::$session) PHPlib::$session->reopen_session();
+
+        if (false === $output){
+            $err = $lang_str['traccar_err_api_call_error'].curl_error($curl);
+            curl_close($curl);
+
+            ErrorHandler::add_error($err);
+            sw_log(__CLASS__.": Failed to query url: ".$url, PEAR_LOG_ERR);
+            sw_log(__CLASS__.": ".$err, PEAR_LOG_ERR);
+            return false;
+        }
+
+        curl_close($curl);
+        return true;
+    }
+
     public function get_location(){
         global $config, $lang_str;
 
@@ -134,6 +177,7 @@ class Iquest_Tracker{
         }
 
         if (!$selectedZone){
+            // @TODO: indikovat stari ziskane pozice, pripadne upozornit na prilis stara data
             ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
 
             Iquest_Events::add(Iquest_Events::LOCATION_CHECK,

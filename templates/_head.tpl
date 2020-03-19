@@ -48,6 +48,11 @@
                     <a class="nav-link" href='{$parameters.events_url|escape}'>{$lang_str.iquest_l_events}</a>
                 </li>
             {/if}
+            {if $parameters.set_position_url|default:0}
+                <li class="nav-item">
+                    <a class="nav-link" href='{$parameters.set_position_url|escape}'>{$lang_str.iquest_l_set_position}</a>
+                </li>
+            {/if}
             {if $parameters.giveitup_url|default:0}
                 <li class="nav-item">
                     <a class="nav-link" href='{$parameters.giveitup_url|escape}'>{$lang_str.iquest_l_give_it_up}</a>
