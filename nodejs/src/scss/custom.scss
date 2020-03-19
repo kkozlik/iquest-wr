@@ -17,6 +17,13 @@
     -moz-appearance: none;
 }
 
+
+@media (min-width: map-get($grid-breakpoints, "md")) {
+  .w-md-25 {
+    width: 25% !important;
+  }
+}
+
 /******************
  *  Team interface
  ******************/

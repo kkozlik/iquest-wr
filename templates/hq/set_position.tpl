@@ -4,22 +4,21 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-<div class="row flex-grow-1 mb-4">
-    <div class="col h-100">
+<div class="d-flex flex-column flex-md-row flex-grow-1 mb-2 mb-md-4">
+    <div class="flex-md-grow-1 h-100">
         <div id="mapCanvas" class="w-100 h-100"></div>
     </div>
-    <div class="col-2">
-        <div class="form-group">
+    <div class="ml-md-3 w-100 w-md-25">
+    <div class="row mt-2 mt-md-0">
+        <div class="form-group col-6 col-md-12">
             <label for="team_id">Tým</label>
             {$formobj->el('team_id')}
         </div>
-        {* <div class="form-group">
-            <button type="button" class="btn btn-outline-secondary">Nastav ID trackeru</button>
-        </div> *}
-        <div class="form-group">
+        <div class="form-group col-6 col-md-12">
             <label for="tracker_id">ID trackeru</label>
             <input type="text" class="form-control" id="tracker_id" >
         </div>
+    </div>
     </div>
 </div>
 
