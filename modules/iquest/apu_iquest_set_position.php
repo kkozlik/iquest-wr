@@ -120,6 +120,29 @@ class apu_iquest_set_position extends apu_base_class{
                                  'reload'=>false);
     }
 
+    function create_html_form(){
+        parent::create_html_form();
+
+        $teams = Iquest_Team::fetch(array('order_by' => 'name'));
+        $team_options = array();
+        $team_options[] = array("value" => "",
+                                "label" => "-- žádný --",
+                                "extrahtml" => "data-tracker-id='".htmlspecialchars($v->tracker_id)."'");
+
+        foreach($teams as $v){
+            $team_options[] = array("value" => $v->id,
+                                    "label" => $v->name,
+                                    "extrahtml" => "data-tracker-id='".htmlspecialchars($v->tracker_id)."'");
+        }
+
+        $this->f->add_element(array("type"=>"select",
+                                    "name"=>"team_id",
+                                    "options"=>$team_options,
+                                    "value"=>"",
+                                    "size"=>1,
+                              ));
+    }
+
     /**
      *  assign variables to smarty
      */

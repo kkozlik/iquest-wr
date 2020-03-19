@@ -9,6 +9,7 @@ function SetLocationCtl(){
     this.set_position_url = null;
     this.mapCanvasId = null;
     this.inpDevId = null;
+    this.inpTeam = null;
 
 }
 
@@ -40,6 +41,18 @@ SetLocationCtl.prototype = {
             self.marker.addTo(self.map);
 
             self.set_position(e.latlng);
+        });
+
+        this.inpTeam.on('change', function(e){
+            var teamId = self.inpTeam.val();
+            if (teamId == ""){
+                self.inpDevId.prop('disabled', false);
+            }
+            else{
+                var devId = self.inpTeam.find('option[value='+teamId+']').data('trackerId');
+                self.inpDevId.prop('disabled', true);
+                self.inpDevId.val(devId);
+            }
         });
     },
 
