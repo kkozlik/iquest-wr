@@ -90,6 +90,60 @@ function set_clock(selector, time){
     }, 1000);
 }
 
+/**
+ * Storage object that works on top of window.sessionStorage. It enhance the storage
+ * to provide several storages. And also allow to store any type of data (not just strings)
+ *
+ * @param {string} storageId    Id of the storage. If not set the window.location.pathname is used as ID.
+ */
+var SessionStorage = function(storageId){
+
+    if (typeof(storageId) != "undefined") this.storageId = storageId;
+    else                                  this.storageId = window.location.pathname;
+}
+
+SessionStorage.prototype = {
+    constructor: SessionStorage,
+
+    /**
+     *  Return the storage object of this.storageId
+     */
+    getStorage : function(){
+        var storage = sessionStorage.getItem(this.storageId);
+
+        if (storage)    storage = JSON.parse(storage);
+        else            storage = {};
+
+        return storage;
+    },
+
+    /**
+     *  Save an object as storage ID = this.storageId
+     */
+    saveStorage : function(storage){
+        storage = JSON.stringify(storage) ;
+        return sessionStorage.setItem(this.storageId, storage);
+    },
+
+    /**
+     * Get item of given key from the storage
+     */
+    getItem : function(key){
+        var storage = this.getStorage();
+        if (typeof(storage[key]) == "undefined") return null;
+        return storage[key];
+    },
+
+    /**
+     * Save an item as key to the storage
+     */
+    setItem : function(key, value){
+        var storage = this.getStorage();
+        storage[key] = value;
+        this.saveStorage(storage);
+    }
+}
+
 
 $(document).ready(function() {
 

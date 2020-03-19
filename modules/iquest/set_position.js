@@ -11,6 +11,7 @@ function SetLocationCtl(){
     this.inpDevId = null;
     this.inpTeam = null;
 
+    this.storage = new SessionStorage();
 }
 
 SetLocationCtl.prototype = {
@@ -23,7 +24,15 @@ SetLocationCtl.prototype = {
             console.error("mapCanvasId is not set.");
         }
 
-        this.map = L.map(this.mapCanvasId, {zoom: 15});
+        var mapCenter = this.storage.getItem('mapCenter');
+        var mapZoom = this.storage.getItem('mapZoom');
+
+        if (mapZoom == null) mapZoom = 15;
+        if (mapCenter == null) mapCenter = [49.2975044, 14.1265233];
+
+
+        this.map = L.map(this.mapCanvasId, {zoom: mapZoom});
+        this.map.panTo(mapCenter);
 
         L.tileLayer('https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}', {
             attribution: '<img src="https://mapy.cz/img/logo-small.svg" style="height: 10px" />',
@@ -32,7 +41,6 @@ SetLocationCtl.prototype = {
         }).addTo(this.map);
 
 
-        this.map.panTo([49.2975044, 14.1265233]);   // @TODO: remember last position
 
         this.map.on('click', function(e) {
 
@@ -43,8 +51,19 @@ SetLocationCtl.prototype = {
             self.set_position(e.latlng);
         });
 
+        this.map.on("moveend", function () {
+            self.storage.setItem('mapCenter', self.map.getCenter());
+        });
+
+        this.map.on("zoomend", function () {
+            self.storage.setItem('mapZoom', self.map.getZoom());
+        });
+
         this.inpTeam.on('change', function(e){
             var teamId = self.inpTeam.val();
+
+            self.storage.setItem('teamId', teamId);
+
             if (teamId == ""){
                 self.inpDevId.prop('disabled', false);
             }
@@ -52,8 +71,26 @@ SetLocationCtl.prototype = {
                 var devId = self.inpTeam.find('option[value='+teamId+']').data('trackerId');
                 self.inpDevId.prop('disabled', true);
                 self.inpDevId.val(devId);
+
+                self.storage.setItem('devId', devId);
             }
         });
+
+        this.inpDevId.on('keyup', function(e){
+            self.storage.setItem('devId', $(this).val());
+        });
+
+        var teamId = this.storage.getItem('teamId');
+        var devId = this.storage.getItem('devId');
+
+        if (devId != null) {
+            this.inpDevId.val(devId);
+        }
+
+        if (teamId != null) {
+            this.inpTeam.val(teamId);
+            this.inpTeam.change();
+        }
     },
 
     set_position: function(latlng){
