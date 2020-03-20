@@ -655,6 +655,15 @@ class Chroust{
             }
         }
 
+        if (Iquest_Options::get(Iquest_Options::TRACCAR_ENABLED)){
+            if (!Iquest_Options::get(Iquest_Options::TRACCAR_ADDR)){
+                throw new Iquest_InvalidConfigException('Tracking is enabled but address of traccar server is not set.');
+            }
+            if (!Iquest_Options::get(Iquest_Options::TRACCAR_AUTH_TOKEN)){
+                throw new Iquest_InvalidConfigException('Tracking is enabled but authentication token for traccar server is not set.');
+            }
+        }
+
         // Verify that the graph of clues and solutions is continuous.
         // Use any fake number as team_id. We do not need to have graph for any team.
         $graph = new Iquest_solution_graph(9999);
