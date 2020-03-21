@@ -241,6 +241,10 @@ class Traccar{
         return $zones;
     }
 
+    public function get_zone_by_name($name){
+        return Traccar_zone::fetch_by_name($this, $name);
+    }
+
     public function get_pos_by_dev($devId){
         $dev = $this->get_device($devId);
 
@@ -256,6 +260,10 @@ class Traccar{
         $pos = Traccar_position::fetch($this, $dev->positionId);
 
         return $pos;
+    }
+
+    public function update_zone(Traccar_zone $zone){
+        return $zone->update($this);
     }
 
 }
