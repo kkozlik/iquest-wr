@@ -10,6 +10,11 @@ class Chroust{
 
     static $id2ref_id = array();
 
+    static $parsed_data = array(
+        "clues" => array(),
+        "hints" => array(),
+        "solutions" => array()
+    );
 
     static function prune_data_dir(){
         global $config;
@@ -232,6 +237,8 @@ class Chroust{
         $next_cgrps = $metadata->get_solution_next_cgrp();
         $coin_value = $metadata->get_solution_coin_value();
 
+        $traccar_zones = $metadata->get_solution_traccar_zones();
+
         if (!$filename and $timeout > 0){
             throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
         }
@@ -276,6 +283,9 @@ class Chroust{
                 $countdown_start, $key, $coin_value);
 
         $solution->set_next_cgrps($next_cgrps);
+
+        $solution->aditional_data = new stdClass();
+        $solution->aditional_data->traccar_zones = $traccar_zones;
 
         $solution->insert();
         return $solution;
@@ -550,7 +560,9 @@ class Chroust{
             }
         }
 
-
+        static::$parsed_data["clues"]     = array_merge(static::$parsed_data["clues"],     $clues);
+        static::$parsed_data["hints"]     = array_merge(static::$parsed_data["hints"],     $hints);
+        static::$parsed_data["solutions"] = array_merge(static::$parsed_data["solutions"], $solutions);
     }
 
     /**
@@ -679,6 +691,28 @@ class Chroust{
         }
     }
 
+    static function traccar_update(){
+
+        $traccar = new Traccar([
+            'auth_token' => Iquest_Options::get(Iquest_Options::TRACCAR_AUTH_TOKEN),
+            'server_addr' => Iquest_Options::get(Iquest_Options::TRACCAR_ADDR)
+        ]);
+
+        foreach(static::$parsed_data["solutions"] as $solution){
+            foreach($solution->aditional_data->traccar_zones as $zone_name){
+                Console::log("Updating traccar zone: $zone_name", Console::CYAN);
+
+                $zone = $traccar->get_zone_by_name($zone_name);
+                if (!$zone) throw new Iquest_InvalidConfigException("Cannot find traccar zone: '$zone_name' defined for solution $solution->id.");
+
+                $zone->attributes[Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
+                $traccar->update_zone($zone);
+
+                // @TODO: set zone condition
+            }
+        }
+    }
+
     static function canonicalize_name($str){
         $str = remove_diacritics($str);
         $str = strtolower($str);
@@ -715,7 +749,7 @@ class Chroust{
     }
 
     static function usage(){
-        echo "Usage: ".$_SERVER['argv'][0]." [--verbose] [--preserve-user-data|--clear-user-data] <datadir> \n\n";
+        echo "Usage: ".$_SERVER['argv'][0]." [--verbose|-v] [--traccar-update|-t] [--preserve-user-data|--clear-user-data] <datadir> \n\n";
     }
 
     static function main(){
@@ -730,7 +764,8 @@ class Chroust{
             exit;
         }
 
-        $option = array('preserve-user-data' => true);
+        $option = array('preserve-user-data' => true,
+                        'traccar-updade' => false);
         $src_dir = null;
 
         for ($i = 1; $i < $_SERVER["argc"]; $i++){
@@ -741,6 +776,11 @@ class Chroust{
 
             case "--clear-user-data":
                 $option['preserve-user-data'] = false;
+                break;
+
+            case "-t":
+            case "--traccar-update":
+                $option['traccar-updade'] = true;
                 break;
 
             case "-v":
@@ -800,7 +840,9 @@ class Chroust{
             self::init_team_rank($option);
 
 
-
+            if ($option['traccar-updade']){
+                self::traccar_update();
+            }
 
 
 
@@ -915,6 +957,11 @@ class Chroust{
             exit(1);
         }
         catch (Iquest_InvalidConfigException $e){
+            fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
+            self::report_errors($e);
+            exit(1);
+        }
+        catch(Traccar_api_query_exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
             self::report_errors($e);
             exit(1);

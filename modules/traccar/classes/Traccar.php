@@ -41,7 +41,7 @@ class Traccar{
         if (PHPlib::$session) PHPlib::$session->reopen_session();
 
         if (false === $output){
-            $err = $lang_str['traccar_err_api_call_error'].curl_error($curl);
+            $err = $lang_str['traccar_err_api_auth_error'].curl_error($curl);
             curl_close($curl);
 
             sw_log(__CLASS__.": Failed to query url: ".$url, PEAR_LOG_ERR);
@@ -59,7 +59,7 @@ class Traccar{
                 if ($resp and isset($resp['error'])) $reason = $resp['error'];
                 else                                 $reason = $resp_code_err;
 
-                $err = $lang_str['traccar_err_api_call_error'].$reason;
+                $err = $lang_str['traccar_err_api_auth_error'].$reason;
 
                 sw_log(__CLASS__.": Failed to query url: ".$url, PEAR_LOG_ERR);
                 sw_log(__CLASS__.": ".$resp_code_err, PEAR_LOG_ERR);
@@ -176,7 +176,7 @@ class Traccar{
 
                 if($response_code == 401) {
                     sw_log(__CLASS__."::".__FUNCTION__.": Query failed - unauthorized: $output", PEAR_LOG_DEBUG);
-                    throw new Traccar_api_unauthenticated_exception();
+                    throw new Traccar_api_unauthenticated_exception("Traccar response: unauthorized");
                 }
 
                 if($response_code == 400) {

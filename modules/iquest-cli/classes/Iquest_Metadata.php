@@ -258,6 +258,18 @@ class Iquest_Metadata{
         return round($this->data['solution']['coin_value'],2);
     }
 
+    function get_solution_traccar_zones(){
+        if (!isset($this->data['solution']['traccar_zones'])){
+            return array();
+        }
+        if (!is_array($this->data['solution']['traccar_zones'])){
+            $this->data['solution']['traccar_zones'] = array($this->data['solution']['traccar_zones']);
+        }
+
+        return $this->data['solution']['traccar_zones'];
+    }
+
+
     /**
      * Return next clue group of a solution
      *
