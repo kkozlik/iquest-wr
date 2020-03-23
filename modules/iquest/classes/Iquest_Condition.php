@@ -115,21 +115,8 @@ class Iquest_Condition{
         return true;
     }
 
-    /**
-     * Implementation of OPENED(...) condition. It should return true if all clue groups
-     * specified as params are opened.
-     *
-     *  Allowed options:
-     *   - team_id (required)        - The team the condition is evaluated for
-     *
-     * @param array $params     Params of the OPENED(...) condition. It should be array of clue group IDs
-     * @param array $options
-     * @return bool
-     */
-    private static function cond_opened($params, $options){
-        $open_cgrp_cache = [];
-
-        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+    private static function get_opened_cgrps($options){
+        static $open_cgrp_cache = [];
 
         if (!isset($options['team_id'])){
             throw new Iquest_Condition_exception("'team_id' option is not set for the condition");
@@ -144,6 +131,25 @@ class Iquest_Condition{
             $open_cgrp_cache[$options['team_id']] = $cgrps;
         }
 
+        return $cgrps;
+    }
+
+    /**
+     * Implementation of OPENED(...) condition. It should return true if all clue groups
+     * specified as params are opened.
+     *
+     *  Allowed options:
+     *   - team_id (required)        - The team the condition is evaluated for
+     *
+     * @param array $params     Params of the OPENED(...) condition. It should be array of clue group IDs
+     * @param array $options
+     * @return bool
+     */
+    private static function cond_opened($params, $options){
+
+        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+        $cgrps = static::get_opened_cgrps($options);
+
         foreach($params as $cgrp_id){
             if (!isset($cgrps[$cgrp_id])){
                 sw_log(__CLASS__.":".__FUNCTION__.": cgrp '$cgrp_id' is not opened yet. Evaluating condition as false.", PEAR_LOG_INFO);
@@ -154,6 +160,35 @@ class Iquest_Condition{
         sw_log(__CLASS__.":".__FUNCTION__.": All clue groups '".implode("', '", $params)."' are opened. Evaluating condition as true.", PEAR_LOG_INFO);
         return true;
     }
+
+
+    /**
+     * Implementation of OPENED_ANY(...) condition. It should return true if any clue group
+     * specified as params is opened.
+     *
+     *  Allowed options:
+     *   - team_id (required)        - The team the condition is evaluated for
+     *
+     * @param array $params     Params of the OPENED_ANY(...) condition. It should be array of clue group IDs
+     * @param array $options
+     * @return bool
+     */
+    private static function cond_opened_any($params, $options){
+
+        sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
+        $cgrps = static::get_opened_cgrps($options);
+
+        foreach($params as $cgrp_id){
+            if (isset($cgrps[$cgrp_id])){
+                sw_log(__CLASS__.":".__FUNCTION__.": cgrp '$cgrp_id' is opened. Evaluating condition as true.", PEAR_LOG_INFO);
+                return true;
+            }
+        }
+
+        sw_log(__CLASS__.":".__FUNCTION__.": No clue group of '".implode("', '", $params)."' is opened. Evaluating condition as false.", PEAR_LOG_INFO);
+        return false;
+    }
+
 
     /**
      * Implementation of TRUE() condition. It always return true.
