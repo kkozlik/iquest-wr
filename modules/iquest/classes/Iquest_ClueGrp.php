@@ -11,7 +11,7 @@ class Iquest_ClueGrp{
 
     /**
      *  Instantiate clue group by id
-     */         
+     */
     static function &by_id($id){
         static $cache = array();
 
@@ -24,16 +24,16 @@ class Iquest_ClueGrp{
         else{
             $obj = reset($objs);
             $cache[$id] = $obj;
-        } 
-        
+        }
+
         return $cache[$id];
     }
 
 
     /**
      *  Open new clue group for team $team_id.
-     *  This function do not check whether it is already opened!     
-     */         
+     *  This function do not check whether it is already opened!
+     */
     static function open($id, $team_id){
         global $data, $config;
 
@@ -43,8 +43,8 @@ class Iquest_ClueGrp{
         $c       = &$config->data_sql->iquest_cgrp_open->cols;
 
         $q="insert into ".$t_name." (
-                    ".$c->cgrp_id.", 
-                    ".$c->team_id.", 
+                    ".$c->cgrp_id.",
+                    ".$c->team_id.",
                     ".$c->gained_at.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
@@ -53,7 +53,7 @@ class Iquest_ClueGrp{
 
         $res=$data->db->query($q);
         if ($data->dbIsError($res)) throw new DBException($res);
-    
+
         return true;
     }
 
@@ -79,8 +79,8 @@ class Iquest_ClueGrp{
 
         // If team_id is specified, set the gained_at attribute of clue group
         if (isset($opt['team_id'])){
-            $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.") 
-                   from ".$to_name." o 
+            $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.")
+                   from ".$to_name." o
                    where o.".$co->team_id." = ".$data->sql_format($opt['team_id'], "n")." and
                          o.".$co->cgrp_id."=c.".$cc->id;
         }
@@ -88,7 +88,7 @@ class Iquest_ClueGrp{
             $q2 = "NULL";
         }
 
-        // Fetch only clue groups available to a team. Make sense only together 
+        // Fetch only clue groups available to a team. Make sense only together
         // with $opt['team_id']
         if (!empty($opt['available_only']))  $qw[] = "!isnull((".$q2."))";
 
@@ -100,9 +100,9 @@ class Iquest_ClueGrp{
                      c.".$cc->ref_id.",
                      c.".$cc->name.",
                      c.".$cc->ordering.",
-                     (".$q2.") as ".$co->gained_at." 
+                     (".$q2.") as ".$co->gained_at."
               from ".$tc_name." c ".
-              $qw." 
+              $qw."
               order by ".$order_by;
 
         $res=$data->db->query($q);
@@ -110,7 +110,7 @@ class Iquest_ClueGrp{
 
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$cc->id]] =  new Iquest_ClueGrp($row[$cc->id], 
+            $out[$row[$cc->id]] =  new Iquest_ClueGrp($row[$cc->id],
                                                       $row[$cc->ref_id],
                                                       $row[$cc->name],
                                                       $row[$cc->ordering],
@@ -134,7 +134,7 @@ class Iquest_ClueGrp{
 
         $qw = " where ".implode(' and ', $qw);
 
-        $q = "select count(*) 
+        $q = "select count(*)
               from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
@@ -162,9 +162,9 @@ class Iquest_ClueGrp{
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
-        $q = "select o.".$co->team_id.", 
+        $q = "select o.".$co->team_id.",
                      o.".$co->cgrp_id.",
-                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at." 
+                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at."
               from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
@@ -180,11 +180,11 @@ class Iquest_ClueGrp{
 
     /**
      *  Fetch all clue groups that leads to the solution
-     *  
-     *  If $team_id is provided, the 'gained_at' attribute of clue group is 
-     *  correctly filled               
-     */         
-    static function fetch_by_pointing_to_solution($solution_id, $team_id){
+     *
+     *  If $team_id is provided, the 'gained_at' attribute of clue group is
+     *  correctly filled
+     */
+    static function fetch_by_pointing_to_solution($solution_id, $team_id=null){
         global $data, $config;
 
         /* table's name */
@@ -205,8 +205,8 @@ class Iquest_ClueGrp{
         else $qw = "";
 
         // needed for 'gained_at' attribute
-        $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.") 
-               from ".$to_name." o 
+        $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.")
+               from ".$to_name." o
                where o.".$co->team_id." = ".$data->sql_format($team_id, "N")." and
                      o.".$co->cgrp_id."=g.".$cg->id;
 
@@ -214,11 +214,11 @@ class Iquest_ClueGrp{
                      g.".$cg->ref_id.",
                      g.".$cg->name.",
                      g.".$cg->ordering.",
-                     (".$q2.") as ".$co->gained_at." 
+                     (".$q2.") as ".$co->gained_at."
               from ".$ts_name." s
                 join ".$tc_name." c on c.".$cc->id."=s.".$cs->clue_id."
                 join ".$tg_name." g on g.".$cg->id."=c.".$cc->cgrp_id.
-              $qw." 
+              $qw."
               order by ".$co->gained_at." desc";
 
         $res=$data->db->query($q);
@@ -226,7 +226,7 @@ class Iquest_ClueGrp{
 
         $out = array();
         while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$cg->id]] =  new Iquest_ClueGrp($row[$cg->id], 
+            $out[$row[$cg->id]] =  new Iquest_ClueGrp($row[$cg->id],
                                                       $row[$cg->ref_id],
                                                       $row[$cg->name],
                                                       $row[$cg->ordering],
@@ -253,7 +253,7 @@ class Iquest_ClueGrp{
         $t_name  = &$config->data_sql->iquest_cgrp->table_name;
         /* col names */
         $c      = &$config->data_sql->iquest_cgrp->cols;
-    
+
         $q = "insert into ".$t_name."(
                     ".$c->id.",
                     ".$c->ref_id.",
@@ -293,7 +293,7 @@ class Iquest_ClueGrp{
         $hints = Iquest_Hint::fetch($opt);
 
         if (!$hints) return null;
-        
+
         return reset($hints);
     }
 

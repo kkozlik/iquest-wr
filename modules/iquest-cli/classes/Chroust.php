@@ -238,6 +238,7 @@ class Chroust{
         $coin_value = $metadata->get_solution_coin_value();
 
         $traccar_zones = $metadata->get_solution_traccar_zones();
+        $traccar_condition = $metadata->get_solution_traccar_condition();
 
         if (!$filename and $timeout > 0){
             throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
@@ -286,6 +287,7 @@ class Chroust{
 
         $solution->aditional_data = new stdClass();
         $solution->aditional_data->traccar_zones = $traccar_zones;
+        $solution->aditional_data->traccar_condition = $traccar_condition;
 
         $solution->insert();
         return $solution;
@@ -699,16 +701,32 @@ class Chroust{
         ]);
 
         foreach(static::$parsed_data["solutions"] as $solution){
-            foreach($solution->aditional_data->traccar_zones as $zone_name){
-                Console::log("Updating traccar zone: $zone_name", Console::CYAN);
 
-                $zone = $traccar->get_zone_by_name($zone_name);
-                if (!$zone) throw new Iquest_InvalidConfigException("Cannot find traccar zone: '$zone_name' defined for solution $solution->id.");
+            if ($solution->aditional_data->traccar_zones){
+                $opening_cgrps = Iquest_ClueGrp::fetch_by_pointing_to_solution($solution->id);
+                $opening_cgrp_ids = [];
+                foreach($opening_cgrps as $cgrp) $opening_cgrp_ids[] = $cgrp->id;
 
-                $zone->attributes[Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
-                $traccar->update_zone($zone);
+                foreach($solution->aditional_data->traccar_zones as $zone_name){
+                    Console::log("Updating traccar zone: $zone_name", Console::CYAN);
 
-                // @TODO: set zone condition
+                    $zone = $traccar->get_zone_by_name($zone_name);
+                    if (!$zone) throw new Iquest_InvalidConfigException("Cannot find traccar zone: '$zone_name' defined for solution $solution->id.");
+
+                    $zone->attributes[Iquest_Tracker::ZONE_ATTR_KEY]  = $solution->key;
+
+                    if (is_null($solution->aditional_data->traccar_condition)){
+                        $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = "OPENED_ANY(".implode(", ", $opening_cgrp_ids).")";
+                    }
+                    elseif($solution->aditional_data->traccar_condition){
+                        $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = $solution->aditional_data->traccar_condition;
+                    }
+                    else{
+                        unset($zone->attributes[Iquest_Tracker::ZONE_ATTR_COND]);
+                    }
+
+                    $traccar->update_zone($zone);
+                }
             }
         }
     }

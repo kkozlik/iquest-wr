@@ -269,6 +269,14 @@ class Iquest_Metadata{
         return $this->data['solution']['traccar_zones'];
     }
 
+    function get_solution_traccar_condition(){
+        if (!isset($this->data['solution']['traccar_condition'])){
+            return null;
+        }
+
+        return $this->data['solution']['traccar_condition'];
+    }
+
 
     /**
      * Return next clue group of a solution
