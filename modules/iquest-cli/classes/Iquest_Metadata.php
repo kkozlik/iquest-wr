@@ -479,6 +479,36 @@ class Iquest_Metadata{
         Iquest_Options::set(Iquest_Options::HQ_LOGIN, $hq_logins);
     }
 
+    function get_traccar_zones(){
+        $zones = [];
+
+        if (isset($this->data['traccar_zones']['message'])){
+            foreach($this->data['traccar_zones']['message'] as $zone_name => $message){
+                $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_MSG] = $message;
+            }
+        }
+
+        if (isset($this->data['traccar_zones']['condition'])){
+            foreach($this->data['traccar_zones']['condition'] as $zone_name => $condition){
+                $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $condition;
+            }
+        }
+
+        if (isset($this->data['traccar_zones']['key'])){
+            foreach($this->data['traccar_zones']['key'] as $zone_name => $key){
+                $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $key;
+            }
+        }
+
+        if (isset($this->data['traccar_zones']['priority'])){
+            foreach($this->data['traccar_zones']['priority'] as $zone_name => $priority){
+                $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO] = $priority;
+            }
+        }
+
+        return $zones;
+    }
+
     function to_string(){
         $cfg = $this->get_cfg();
 

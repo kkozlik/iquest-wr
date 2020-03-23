@@ -13,7 +13,8 @@ class Chroust{
     static $parsed_data = array(
         "clues" => array(),
         "hints" => array(),
-        "solutions" => array()
+        "solutions" => array(),
+        "traccar_zones" => array()
     );
 
     static function prune_data_dir(){
@@ -562,6 +563,15 @@ class Chroust{
             }
         }
 
+        $zones = $metadata->get_traccar_zones();
+        foreach($zones as $zone_name => $zone){
+            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO] = $zones[Iquest_Tracker::ZONE_ATTR_PRIO];
+            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]  = $zones[Iquest_Tracker::ZONE_ATTR_KEY];
+            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]  = $zones[Iquest_Tracker::ZONE_ATTR_MSG];
+            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $zones[Iquest_Tracker::ZONE_ATTR_COND];
+            static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "$task_dir metadata";
+        }
+
         static::$parsed_data["clues"]     = array_merge(static::$parsed_data["clues"],     $clues);
         static::$parsed_data["hints"]     = array_merge(static::$parsed_data["hints"],     $hints);
         static::$parsed_data["solutions"] = array_merge(static::$parsed_data["solutions"], $solutions);
@@ -700,6 +710,7 @@ class Chroust{
             'server_addr' => Iquest_Options::get(Iquest_Options::TRACCAR_ADDR)
         ]);
 
+        // read zone attributes from parsed solutions
         foreach(static::$parsed_data["solutions"] as $solution){
 
             if ($solution->aditional_data->traccar_zones){
@@ -708,27 +719,41 @@ class Chroust{
                 foreach($opening_cgrps as $cgrp) $opening_cgrp_ids[] = $cgrp->id;
 
                 foreach($solution->aditional_data->traccar_zones as $zone_name){
-                    Console::log("Updating traccar zone: $zone_name", Console::CYAN);
 
-                    $zone = $traccar->get_zone_by_name($zone_name);
-                    if (!$zone) throw new Iquest_InvalidConfigException("Cannot find traccar zone: '$zone_name' defined for solution $solution->id.");
-
-                    $zone->attributes[Iquest_Tracker::ZONE_ATTR_KEY]  = $solution->key;
+                    static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "solution: ".$solution->id;
+                    static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
 
                     if (is_null($solution->aditional_data->traccar_condition)){
-                        $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = "OPENED_ANY(".implode(", ", $opening_cgrp_ids).")";
-                    }
-                    elseif($solution->aditional_data->traccar_condition){
-                        $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = $solution->aditional_data->traccar_condition;
+                        if (!isset(static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND])){
+                            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = "OPENED_ANY(".implode(", ", $opening_cgrp_ids).")";
+                        }
                     }
                     else{
-                        unset($zone->attributes[Iquest_Tracker::ZONE_ATTR_COND]);
+                        static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $solution->aditional_data->traccar_condition;
                     }
-
-                    $traccar->update_zone($zone);
                 }
             }
         }
+
+        // update zones in traccar
+        foreach(static::$parsed_data["traccar_zones"] as $zone_name => $zone_attrs){
+            Console::log("Updating traccar zone: $zone_name", Console::CYAN);
+            Iquest_Verbose_Output::log("Data collected from: ".implode(", ", $zone_attrs['referenced_by']));
+
+            $zone = $traccar->get_zone_by_name($zone_name);
+            if (!$zone) throw new Iquest_InvalidConfigException("Cannot find traccar zone: '$zone_name' referenced by: ".implode(", ", $zone_attrs['referenced_by']).".");
+
+            foreach([Iquest_Tracker::ZONE_ATTR_PRIO, Iquest_Tracker::ZONE_ATTR_KEY, Iquest_Tracker::ZONE_ATTR_MSG] as $attr){
+                unset($zone->attributes[$attr]);
+                if (isset($zone_attrs[$attr])) $zone->attributes[$attr] = $zone_attrs[$attr];
+            }
+
+            unset($zone->attributes[Iquest_Tracker::ZONE_ATTR_COND]);
+            if (!empty($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND])) $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = $zone_attrs[Iquest_Tracker::ZONE_ATTR_COND];
+
+            $traccar->update_zone($zone);
+        }
+
     }
 
     static function canonicalize_name($str){
@@ -839,6 +864,11 @@ class Chroust{
             self::set_defaults();
 
             $top_metadata = self::process_top_metadata($src_dir);
+
+            $zones = $top_metadata->get_traccar_zones();
+            foreach($zones as &$zone) $zone['referenced_by'][] = "Top metadata";
+            static::$parsed_data["traccar_zones"] = $zones;
+
             self::initialize_user_wallets($option);
 
             self::process_data_dir($src_dir, $top_metadata);
