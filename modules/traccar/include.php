@@ -24,5 +24,7 @@ function traccar_init(){
 require_once("classes/Traccar.php");
 require_once("classes/Traccar_exceptions.php");
 require_once("classes/Traccar_device.php");
+require_once("classes/Traccar_group.php");
+require_once("classes/Traccar_permission.php");
 require_once("classes/Traccar_position.php");
 require_once("classes/Traccar_zone.php");

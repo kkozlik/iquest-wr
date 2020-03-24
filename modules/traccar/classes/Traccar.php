@@ -245,6 +245,14 @@ class Traccar{
         return Traccar_zone::fetch_by_name($this, $name);
     }
 
+    public function get_group_by_name($name){
+        return Traccar_group::fetch_by_name($this, $name);
+    }
+
+    public function add_zone_to_group($zone_id, $group_id){
+        return Traccar_permission::add_zone_to_group($this, $zone_id, $group_id);
+    }
+
     public function get_pos_by_dev($devId){
         $dev = $this->get_device($devId);
 

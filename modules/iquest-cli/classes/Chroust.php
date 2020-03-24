@@ -737,6 +737,7 @@ class Chroust{
         }
 
         // update zones in traccar
+        $traccar_zones = [];
         foreach(static::$parsed_data["traccar_zones"] as $zone_name => $zone_attrs){
             Console::log("Updating traccar zone: $zone_name", Console::CYAN);
             Iquest_Verbose_Output::log("Data collected from: ".implode(", ", $zone_attrs['referenced_by']));
@@ -752,9 +753,24 @@ class Chroust{
             unset($zone->attributes[Iquest_Tracker::ZONE_ATTR_COND]);
             if (!empty($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND])) $zone->attributes[Iquest_Tracker::ZONE_ATTR_COND] = $zone_attrs[Iquest_Tracker::ZONE_ATTR_COND];
 
+            $traccar_zones[] = $zone;
             $traccar->update_zone($zone);
         }
 
+        // If traccar group name is set, assign zones to that group
+        $traccar_group_name = Iquest_Options::get(Iquest_Options::TRACCAR_GROUP);
+        if ($traccar_group_name){
+
+            $traccar_group = $traccar->get_group_by_name($traccar_group_name);
+            if (!$traccar_group){
+                throw new Iquest_InvalidConfigException("Traccar group '$traccar_group_name' does not exists on the server.");
+            }
+
+            foreach($traccar_zones as $zone){
+                Console::log("Adding traccar zone: {$zone->name} to group: {$traccar_group->name}", Console::CYAN);
+                $traccar->add_zone_to_group($zone->id, $traccar_group->id);
+            }
+        }
     }
 
     static function canonicalize_name($str){
