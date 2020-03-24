@@ -781,16 +781,6 @@ class Chroust{
         return $str;
     }
 
-    static function report_errors($e){
-        if (is_a($e, "PearErrorException")){
-            fwrite(STDERR, $e->pear_err->getMessage()." - ".$e->pear_err->getUserInfo()."\n");
-        }
-        else{
-            fwrite(STDERR, $e->getMessage()."\n");
-        }
-        if ($e->getPrevious()) self::report_errors($e->getPrevious());
-    }
-
     static function utf_8_sprintf ($format) {
         $args = func_get_args();
 
@@ -1016,24 +1006,24 @@ class Chroust{
         }
         catch (Iquest_VerifyFailedException $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
-            self::report_errors($e);
+            Console_Cli::print_exception_error($e);
             fwrite(STDERR, "\n");
             fwrite(STDERR, $e->get_info());
             exit(1);
         }
         catch (Iquest_InvalidConfigException $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
-            self::report_errors($e);
+            Console_Cli::print_exception_error($e);
             exit(1);
         }
         catch(Traccar_api_query_exception $e){
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
-            self::report_errors($e);
+            Console_Cli::print_exception_error($e);
             exit(1);
         }
         catch (exception $e){
             fwrite(STDERR, "\nUnexpected exception. See PHP error log for details:\n");
-            self::report_errors($e);
+            Console_Cli::print_exception_error($e);
             throw $e;
         }
 

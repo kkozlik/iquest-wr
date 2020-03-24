@@ -2,7 +2,7 @@
 /**
  * PHP Colored CLI
  * Used to log strings with custom colors to console using php
- * 
+ *
  * Copyright (C) 2013 Sallar Kaboli <sallar.kaboli@gmail.com>
  * MIT Liencesed
  * http://opensource.org/licenses/MIT
@@ -11,7 +11,7 @@
  * (C) Jesse Donat https://github.com/donatj
  */
 class Console {
- 
+
     const NORMAL  =         'normal';
     const BOLD  =           'bold';
 
@@ -34,13 +34,13 @@ class Console {
     const YELLOW  =         'yellow';
     const WHITE  =          'white';
     const MAGENTA  =        'magenta';
- 
+
     const UNDERLINE  =      'underline';
     const REVERSE  =        'reverse';
     const BLINK  =          'blink';
     const HIDDEN  =         'hidden';
- 
- 
+
+
     static $foreground_colors = array(
         self::BOLD         => '1',    self::DIM          => '2',
         self::BLACK        => '0;30', self::DARK_GRAY    => '1;30',
@@ -53,16 +53,16 @@ class Console {
         self::LIGHT_GRAY   => '0;37', self::WHITE        => '1;37',
         self::NORMAL       => '0;39',
     );
-    
+
     static $background_colors = array(
         self::BLACK        => '40',   self::RED          => '41',
         self::GREEN        => '42',   self::YELLOW       => '43',
         self::BLUE         => '44',   self::MAGENTA      => '45',
         self::CYAN         => '46',   self::LIGHT_GRAY   => '47',
     );
- 
+
     static $options = array(
-        self::UNDERLINE    => '4',    self::BLINK         => '5', 
+        self::UNDERLINE    => '4',    self::BLINK         => '5',
         self::REVERSE      => '7',    self::HIDDEN        => '8',
     );
 
@@ -107,7 +107,7 @@ class Console {
             self::$colors_supported = false;
             return self::$colors_supported;
         }
-    
+
         $out = exec("tput colors");
         if (!is_numeric($out)) {
             self::$colors_supported = false;
@@ -117,7 +117,7 @@ class Console {
             self::$colors_supported = false;
             return self::$colors_supported;
         }
-        
+
         self::$colors_supported = true;
         return self::$colors_supported;
     }
@@ -146,14 +146,14 @@ class Console {
     {
         return self::$color($str, $background_color);
     }
-    
+
     /**
      * Anything below this point (and its related variables):
      * Colored CLI Output is: (C) Jesse Donat
      * https://gist.github.com/donatj/1315354
      * -------------------------------------------------------------
      */
-    
+
     /**
      * Catches static calls (Wildcard)
      * @param  string $foreground_color Text Color
@@ -164,7 +164,7 @@ class Console {
     {
         $string         = $args[0];
         $colored_string = "";
-  
+
         // Check if given foreground color found
         if( isset(self::$foreground_colors[$foreground_color]) ) {
             $colored_string .= "\033[" . self::$foreground_colors[$foreground_color] . "m";
@@ -172,7 +172,7 @@ class Console {
         else{
             die( $foreground_color . ' not a valid color');
         }
-        
+
         array_shift($args);
 
         foreach( $args as $option ){
@@ -184,14 +184,14 @@ class Console {
                 $colored_string .= "\033[" . self::$options[$option] . "m";
             }
         }
-        
+
         // Add string and end coloring
         $colored_string .= $string . "\033[0m";
-        
+
         return $colored_string;
-        
+
     }
- 
+
     /**
      * Plays a bell sound in console (if available)
      * @param  integer $count Bell play count
@@ -200,10 +200,23 @@ class Console {
     public static function bell($count = 1) {
         echo str_repeat("\007", $count);
     }
- 
+
 }
 
 class Console_Cli{
+
+    public static function print_exception_error($e){
+        if (is_a($e, "PearErrorException")){
+            $userInfo = "";
+            if (method_exists($e->pear_err, "getUserInfo")) $userInfo = $e->pear_err->getUserInfo();
+            fwrite(STDERR, $e->pear_err->getMessage()." - ".$userInfo."\n");
+        }
+        else{
+            fwrite(STDERR, $e->getMessage()."\n");
+        }
+        if ($e->getPrevious()) static::print_exception_error($e->getPrevious());
+    }
+
     public static function print_errors(){
         $eh = &ErrorHandler::singleton();
         $errors = $eh->get_errors_array();
