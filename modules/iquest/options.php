@@ -20,6 +20,7 @@ class Iquest_Options{
     const TRACCAR_ENABLED       = "traccar_enabled";
     const TRACCAR_ADDR          = "traccar_addr";
     const TRACCAR_AUTH_TOKEN    = "traccar_auth_token";
+    const TRACCAR_GROUP         = "traccar_group";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -60,6 +61,7 @@ class Iquest_Options{
                                              self::TRACCAR_ENABLED,
                                              self::TRACCAR_ADDR,
                                              self::TRACCAR_AUTH_TOKEN,
+                                             self::TRACCAR_GROUP,
                                              );
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -80,6 +82,7 @@ class Iquest_Options{
                                              self::TRACCAR_ENABLED,
                                              self::TRACCAR_ADDR,
                                              self::TRACCAR_AUTH_TOKEN,
+                                             self::TRACCAR_GROUP,
                                             );
     /** Options cache */
     private static $options = null;

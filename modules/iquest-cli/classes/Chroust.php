@@ -109,6 +109,7 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::TRACCAR_ENABLED, 0);
         Iquest_Options::set(Iquest_Options::TRACCAR_ADDR, "");
         Iquest_Options::set(Iquest_Options::TRACCAR_AUTH_TOKEN, "");
+        Iquest_Options::set(Iquest_Options::TRACCAR_GROUP, "");
     }
 
     /**
