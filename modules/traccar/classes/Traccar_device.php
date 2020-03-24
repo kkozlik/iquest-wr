@@ -2,7 +2,7 @@
 
 class Traccar_device{
 
-    public $id;
+    public $id=-1;
     public $groupId;
     public $name;
     public $uniqueId;
@@ -26,6 +26,18 @@ class Traccar_device{
         return $o;
     }
 
+    public function to_api_obj(){
+        $apiObj = [];
+
+        $apiObj['id'] = $this->id;
+        $apiObj['name'] = $this->name;
+        $apiObj['uniqueId'] = $this->uniqueId;
+        $apiObj['groupId'] = $this->groupId;
+
+        return $apiObj;
+    }
+
+
     public static function fetch($server, $uniqueId){
         try{
             $resp = $server->query('devices', ['uniqueId' => $uniqueId]);
@@ -36,5 +48,24 @@ class Traccar_device{
             return null;
         }
     }
+
+    public function insert($server){
+        return $server->query("devices",
+                                [],
+                                ['method' => 'POST',
+                                 'body' => $this->to_api_obj(),
+                                ]
+                               );
+    }
+
+    public function update($server){
+        return $server->query("devices/{$this->id}",
+                                [],
+                                ['method' => 'PUT',
+                                 'body' => $this->to_api_obj(),
+                                ]
+                               );
+    }
+
 }
 

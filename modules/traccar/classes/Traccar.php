@@ -222,6 +222,13 @@ class Traccar{
         return $devices[$devId];
     }
 
+    public function insert_device(Traccar_device $device){
+        return $device->insert($this);
+    }
+
+    public function update_device(Traccar_device $device){
+        return $device->update($this);
+    }
 
     /**
      * Get zones by device ID
