@@ -43,7 +43,8 @@ case "$1" in
 
         touch /var/lib/iquest/traccar-cookie.txt
         chown www-data:iquest /var/lib/iquest/traccar-cookie.txt
-        chmod 600 /var/lib/iquest/traccar-cookie.txt
+        chmod 660 /var/lib/iquest/traccar-cookie.txt
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
