@@ -34,6 +34,7 @@ $lang_str['iquest_err_tracker_get_location'] =          "Nepodařilo se zjistit 
 $lang_str['iquest_err_tracker_wrong_location'] =        "V tuto chvíli a na tomto místě nezískáte nic.";
 $lang_str['iquest_err_tracker_location_dup'] =          "Na tomto místě jste již byl a úkol máte vyřešený";
 $lang_str['iquest_err_tracker_location_not_reachable']= "Toto místo je sice v určité fázy soutěže platné, nicméně ještě jste k němu nezískali žádnou indicii.";
+$lang_str['iquest_err_tracker_old_location'] =          "Vaši polohu jsme naposledy zaznamenali před více než <age>. Zkontrolujte funkci trackeru.";
 
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
