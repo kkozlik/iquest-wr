@@ -128,6 +128,7 @@ class Iquest_Tracker{
             "lon"           => $position->longitude,
             "lastupdate"    => $lastupdate,
             "lastupdate_ts" => $lastupdate_ts,
+            "age"           => $now->getTimestamp() - $position->time->getTimestamp(),
         ];
 
         return $out;

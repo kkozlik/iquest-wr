@@ -169,6 +169,7 @@
         <div class="modal-header">
             <h6 class="modal-title" id="myLocationPopupModalLabel">{$lang_str.iquest_your_position}
                 <br /><small>Pozice získána naposledy před <span class="updateTime"></span></small>
+                <br /><small class="d-none text-danger tracker-warning">Zkontrolujte funkci trackeru!</small>
             </h6>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">×</button>
         </div>

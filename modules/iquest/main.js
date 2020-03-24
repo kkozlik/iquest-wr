@@ -115,6 +115,12 @@ LocationCtl.prototype = {
         });
     },
 
+    get_color: function(age){
+        if (age < 3*60) return "text-success";  // less than 3 min
+        if (age < 10*60) return "text-warning"; // less than 10 min
+        return "text-danger";
+    },
+
     get_location: function(){
         var self = this;
 
@@ -143,7 +149,14 @@ LocationCtl.prototype = {
                     self.marker.addTo(self.map);
                 }
 
-                self.mapPopup.find(".updateTime").text(data.lastupdate+" ("+data.lastupdate_ts+")");
+                var timeStr = $('<span>')
+                                .addClass(self.get_color(data.age))
+                                .text(data.lastupdate+" ("+data.lastupdate_ts+")");
+                self.mapPopup.find(".updateTime").html(timeStr);
+
+                if (data.age > 3*60) self.mapPopup.find('.tracker-warning').removeClass('d-none');
+                else                 self.mapPopup.find('.tracker-warning').addClass('d-none');
+
                 self.last_location = data;
             }
         });
