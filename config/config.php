@@ -56,6 +56,10 @@
     $config->log_level = "PEAR_LOG_DEBUG";
 
     $config->custom_act_log_function = "iquest_action_log";
+    $config->custom_log_function = "iquest_log";
+
+    // Whether include file and line identification in the log messages
+    $config->iquest_log_include_file = false;
 
     $config->html_doctype = "html";
 

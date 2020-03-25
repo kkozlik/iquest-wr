@@ -24,6 +24,23 @@ function iquest_action_log($screen_name, $action, $msg=null, $success = true, $o
     sw_log($log_msg, PEAR_LOG_INFO);
 }
 
+/**
+ * Customized log function
+ */
+function iquest_log($priority, $message, $file, $line){
+    global $serwebLog, $config;
+
+    if (!is_string($message)) $message = json_encode($message);
+
+    if ($config->iquest_log_include_file) $message= $file.":".$line.": ".$message;
+
+    if (class_exists('Iquest_auth')){
+        $username = Iquest_auth::get_logged_in_username();
+        if ($username) $message = "[User: $username] ".$message;
+    }
+
+    return $serwebLog->log($message, $priority);
+}
 
 function remove_diacritics($str){
     global $config;
@@ -41,5 +58,3 @@ function remove_diacritics($str){
 
     return $str;
 }
-
-?>
