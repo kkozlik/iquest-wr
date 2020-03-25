@@ -72,39 +72,6 @@ class apu_iquest_set_position extends apu_base_class{
         echo json_encode($resp);
 
         return true;
-
-
-        $raw_data = false;
-        if (is_a($this->filter, "apu_base_class")){
-            $opt['filter'] = $this->filter->get_filter();
-            $this->alter_filter_timestamp($opt['filter']);
-            $filter_values = $this->filter->get_filter_values();
-            if (!empty($filter_values['raw_data'])) $raw_data = true;
-        }
-        $opt['filter']['id'] = new Filter("id", $this->last_id, ">");
-
-        $events = Iquest_Events::fetch($opt);
-        $this->events_to_smarty($events);
-
-        $last_id = $this->last_id;
-        $last_event = end($events);
-        if ($last_event) $last_id = $last_event->id;
-
-        $html_rows = array();
-        $sm = new Smarty_Serweb();
-        $sm->assign("raw_data", $raw_data);
-
-        foreach($this->smarty_events as $event){
-            $sm->assign("event", $event);
-            $html_rows[] = $sm->fetch($this->opt['event_row_template_name']);
-        }
-
-
-        $response = array(
-                        "rows" => $html_rows,
-                        "last_id" => $last_id,
-                    );
-        echo json_encode($response);
     }
 
 
