@@ -91,15 +91,14 @@ class Iquest_Tracker{
         return true;
     }
 
-    public function get_location(){
+    public function get_location_of_device($devId){
         global $config, $lang_str;
 
         $position = null;
-        $team = $this->get_team();
 
         try{
             $traccar = $this->get_traccar();
-            $position = $traccar->get_pos_by_dev($team->tracker_id);
+            $position = $traccar->get_pos_by_dev($devId);
         }
         catch(Traccar_api_query_exception $e){
             sw_log_exception($e);
@@ -132,6 +131,11 @@ class Iquest_Tracker{
         ];
 
         return $out;
+    }
+
+    public function get_team_location(){
+        $team = $this->get_team();
+        return $this->get_location_of_device($team->tracker_id);
     }
 
 

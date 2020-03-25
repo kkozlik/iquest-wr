@@ -5,13 +5,18 @@ function SetLocationCtl(){
     this.marker = null;
 
     this.map = null;
+    this.timer = null;
 
+    this.get_position_url = null;
     this.set_position_url = null;
     this.mapCanvasId = null;
     this.inpDevId = null;
     this.inpTeam = null;
+    this.updateTimeEl = null;
 
     this.storage = new SessionStorage();
+
+    this.updateInterval = 5000; // [ms]
 }
 
 SetLocationCtl.prototype = {
@@ -73,6 +78,8 @@ SetLocationCtl.prototype = {
                 self.inpDevId.val(devId);
 
                 self.storage.setItem('devId', devId);
+
+                self.get_position();
             }
         });
 
@@ -91,6 +98,12 @@ SetLocationCtl.prototype = {
             this.inpTeam.val(teamId);
             this.inpTeam.change();
         }
+
+        this.get_position();
+        this.timer = window.setInterval(function(){
+            self.get_position();
+        }, this.updateInterval);
+
     },
 
     set_position: function(latlng){
@@ -132,4 +145,71 @@ SetLocationCtl.prototype = {
             }
         });
     },
+
+    get_color: function(age){
+        if (age < 3*60) return "text-success";  // less than 3 min
+        if (age < 10*60) return "text-warning"; // less than 10 min
+        return "text-danger";
+    },
+
+    get_position: function(){
+        var self = this;
+
+        var devId = $(this.inpDevId).val();
+        if (!devId) return;
+
+        if (!this.get_position_url){
+            console.error("get_position_url is not set.");
+            return;
+        }
+
+        $.ajax({
+            url: this.get_position_url,
+            data: {
+                devId: devId
+            },
+            success: function(data, status){
+
+                // if (data.errors){
+                //     $.each(data.errors, function(index, err){
+                //         show_error(err);
+                //     });
+                // }
+
+                if (!data.lat || !data.lon) {
+                    if (self.updateTimeEl){
+                        self.updateTimeEl.text("-----");
+                    }
+                    return;
+                };
+
+                if (!self.marker){
+                    self.marker = L.marker([data.lat, data.lon]);
+                    self.marker.addTo(self.map);
+
+                    self.map.panTo([data.lat, data.lon]);
+                }
+                else {
+                    var marker_location = self.marker.getLatLng();
+                    if (data.lat != marker_location.lat || data.lon != marker_location.lng){
+
+                        self.marker.remove();
+                        self.marker = L.marker([data.lat, data.lon]);
+                        self.marker.addTo(self.map);
+
+                        self.map.panTo([data.lat, data.lon]);
+                    }
+                }
+
+                if (self.updateTimeEl){
+                    var timeStr = $('<span>')
+                                    .addClass(self.get_color(data.age))
+                                    .text(data.lastupdate+" ("+data.lastupdate_ts+")");
+                    self.updateTimeEl.html(timeStr);
+                }
+
+            }
+        });
+    }
+
 }

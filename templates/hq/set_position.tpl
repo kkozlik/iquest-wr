@@ -10,15 +10,19 @@
     </div>
     <div class="ml-md-3 w-100 w-md-25">
     <div class="row mt-2 mt-md-0">
-        <div class="form-group col-6 col-md-12">
+        <div class="form-group col-6 col-md-12 mb-2">
             <label for="team_id">Tým</label>
             {$formobj->el('team_id')}
         </div>
-        <div class="form-group col-6 col-md-12">
+        <div class="form-group col-6 col-md-12 mb-2">
             <label for="tracker_id">ID trackeru</label>
             <input type="text" class="form-control" id="tracker_id" >
         </div>
     </div>
+    <div class="row">
+        <div class="col">
+            <small>Pozice aktualizována naposledy před <span class="updateTime text-nowrap"></span></small>
+        </div>
     </div>
 </div>
 
@@ -36,7 +40,9 @@
         locCtl.inpDevId = $('#tracker_id');
         locCtl.inpTeam = $('#team_id');
         locCtl.mapCanvasId = 'mapCanvas';
+        locCtl.updateTimeEl = $('.updateTime');
         locCtl.set_position_url = {$ajax_set_position_url|json_encode};
+        locCtl.get_position_url = {$ajax_get_position_url|json_encode};
 
         locCtl.init();
     });

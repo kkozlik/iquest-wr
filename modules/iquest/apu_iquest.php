@@ -308,7 +308,7 @@ class apu_iquest extends apu_base_class{
             ErrorHandler::add_error("Tracking is not enabled");
         }
         else{
-            $resp = $this->tracker->get_location();
+            $resp = $this->tracker->get_team_location();
         }
 
         // Add errors to response

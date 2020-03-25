@@ -30,6 +30,35 @@ class apu_iquest_set_position extends apu_base_class{
         $this->opt['screen_name'] = "IQUEST Set Position";
 
         $this->opt['smarty_ajax_set_position_url'] =       'ajax_set_position_url';
+        $this->opt['smarty_ajax_get_position_url'] =       'ajax_get_position_url';
+    }
+
+    function action_ajax_get_position(){
+        if (PHPlib::$session) PHPlib::$session->close_session();
+
+        $this->controler->disable_html_output();
+        header("Content-Type: text/json");
+
+        $ok = true;
+        $resp = [];
+
+        if (empty($_GET['devId'])){
+            ErrorHandler::add_error("'devId' is not set"); $ok = false;
+        }
+
+        if ($ok){
+            $tracker = new Iquest_Tracker(null);
+            $resp = $tracker->get_location_of_device($_GET['devId']);
+        }
+
+        // Add errors to response
+        $eh = ErrorHandler::singleton();
+        $errors = $eh->get_errors_array();
+        $resp['errors'] = $errors;
+
+        echo json_encode($resp);
+
+        return true;
     }
 
     function action_ajax_set_position(){
@@ -82,6 +111,12 @@ class apu_iquest_set_position extends apu_base_class{
                                 'reload'=>false,
                                 'alone'=>true);
         }
+        elseif (isset($_GET['ajax_get_position'])){
+            $this->action=array('action'=>"ajax_get_position",
+                                'validate_form'=>false,
+                                'reload'=>false,
+                                'alone'=>true);
+        }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
                                  'reload'=>false);
@@ -117,5 +152,6 @@ class apu_iquest_set_position extends apu_base_class{
         global $smarty;
 
         $smarty->assign($this->opt['smarty_ajax_set_position_url'], $this->controler->url($_SERVER['PHP_SELF']."?ajax_set_position=1"));
+        $smarty->assign($this->opt['smarty_ajax_get_position_url'], $this->controler->url($_SERVER['PHP_SELF']."?ajax_get_position=1"));
     }
 }
