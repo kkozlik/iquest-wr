@@ -413,6 +413,9 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
                     // add the solution to the output
                     $out[] = $node->get_obj();
+                    // Once node is added to output array, no need to walk
+                    // through another clues pointing to solution.
+                    break;
                 }
             }
         }

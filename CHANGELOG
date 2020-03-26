@@ -2,6 +2,8 @@
 * Allow negative coin values
 * Include team name in log messages
 * Ability to use tracker to verify location
+* HQ: event log - Team_logged event not contain info (#23)
+* duplicite keys in log 'err key entered' (#4)
 
 rel 0.2.10
 * fix permissions for /var/lib/iquest/smarty dir (#14)
