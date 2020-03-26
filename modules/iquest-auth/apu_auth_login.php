@@ -106,7 +106,8 @@ class apu_auth_login extends apu_base_class{
 
         Iquest_Events::add(Iquest_Events::LOGGED,
                            true,
-                           array("uname" => $this->username));
+                           array("uname" => $this->username,
+                                 "perms" => $this->opt['required_capabilities']));
 
         $this->controler->change_url_for_reload($this->opt['redirect_on_login']);
         return true;
@@ -119,7 +120,8 @@ class apu_auth_login extends apu_base_class{
 
         Iquest_Events::add(Iquest_Events::LOGOUT,
                         true,
-                        array());
+                        array("uname" => Iquest_auth::get_logged_in_username(),
+                              "perms" => $this->opt['required_capabilities']));
 
         action_log(null, null, "User '$user' logged out");
 
@@ -182,7 +184,8 @@ class apu_auth_login extends apu_base_class{
         Iquest_Events::add(Iquest_Events::LOGGED,
                            false,
                            array("uname" => isset($_POST['uname']) ? $_POST['uname'] : null,
-                                 "passw" => isset($_POST['passw']) ? $_POST['passw'] : null));
+                                 "passw" => isset($_POST['passw']) ? $_POST['passw'] : null,
+                                 "perms" => $this->opt['required_capabilities']));
     }
 
     /* validate html form */

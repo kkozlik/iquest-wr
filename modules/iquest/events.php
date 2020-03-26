@@ -213,6 +213,11 @@ class Iquest_Events{
         case self::LOCATION_CHECK:
             if (isset($this->data['zone']))         $out['zone']['text'] = $this->data['zone'];
             break;
+        case self::LOGGED:
+        case self::LOGOUT:
+            if (isset($this->data['uname']))        $out['username']['text'] = $this->data['uname'];
+            if (isset($this->data['perms']) and in_array('hq', $this->data['perms'])) $out['login to']['text'] = "HQ interface";
+            break;
         }
 
         if (isset($this->data['note']))             $out['note']['text'] = $this->data['note'];
