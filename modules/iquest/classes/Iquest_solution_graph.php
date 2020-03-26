@@ -2,8 +2,8 @@
 require_once("Iquest_graph_abstract.php");
 
 /**
- *  Class holding graph of clue/solution dependencies 
- */ 
+ *  Class holding graph of clue/solution dependencies
+ */
 class Iquest_solution_graph extends Iquest_graph_abstract{
     private $team_id;
     private $cgroups;
@@ -15,7 +15,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
     /**
      *  Create the graph for a team
-     */         
+     */
     function __construct($team_id){
         $this->team_id = $team_id;
 
@@ -32,7 +32,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         foreach($this->solutions as &$solution){
 
             // create nodes for task solutions
-            $this->nodes["S_".$solution->id] = 
+            $this->nodes["S_".$solution->id] =
                 new Iquest_solution_graph_node(Iquest_solution_graph_node::TYPE_SOLUTION, $solution);
 
             // if team has gained the clue group, mark the solution as solved
@@ -51,7 +51,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
                     foreach($clues as &$clue){
                         if (!isset($this->edges["S_".$solution->id])) $this->edges["S_".$solution->id] = array();
                         $this->edges["S_".$solution->id][] = "C_".$clue->id;
-                        
+
                         if (!isset($this->reverse_edges["C_".$clue->id])) $this->reverse_edges["C_".$clue->id] = array();
                         $this->reverse_edges["C_".$clue->id][] = "S_".$solution->id;
                     }
@@ -65,9 +65,9 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             $clues = $cgroup->get_clues();
             foreach($clues as &$clue){
                 // create graph nodes for the clues
-                $this->nodes["C_".$clue->id] = 
+                $this->nodes["C_".$clue->id] =
                     new Iquest_solution_graph_node(Iquest_solution_graph_node::TYPE_CLUE, $clue);
-                    
+
                 // if team has gained the clue group, mark the clue as gained
                 if ($cgroup->gained_at){
                     $this->nodes["C_".$clue->id]->gained = true;
@@ -78,7 +78,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
     /**
      *  Load clue2solution linkings and create the clue=>solution graph edges
-     */         
+     */
     private function load_clue2solution(){
         global $data, $config;
 
@@ -91,12 +91,12 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         $q = "select ".$c->clue_id.",
                      ".$c->solution_id."
               from ".$t_name;
-    
+
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         // walk through the rows
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             // and create the clue=>solution edges
             if (!isset($this->edges["C_".$row[$c->clue_id]])) $this->edges["C_".$row[$c->clue_id]] = array();
             $this->edges["C_".$row[$c->clue_id]][] = "S_".$row[$c->solution_id];
@@ -105,19 +105,19 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             if (!isset($this->reverse_edges["S_".$row[$c->solution_id]])) $this->reverse_edges["S_".$row[$c->solution_id]] = array();
             $this->reverse_edges["S_".$row[$c->solution_id]][] = "C_".$row[$c->clue_id];
         }
-        $res->free();
-    } 
+        $res->closeCursor();
+    }
 
 
     /**
      *  Mark all nodes from which the final task could be reached without
      *  meeting already solved tasks in the way.
-     *            
+     *
      *  It is done by walking the graph in reversed order from the final task.
-     *  
+     *
      *  If the $include_coin_waypoints is set to TRUE, include also nodes
-     *  from which any waypoint valuated by coins could be reached.               
-     */         
+     *  from which any waypoint valuated by coins could be reached.
+     */
     protected function mark_accessible_nodes($include_coin_waypoints){
 
         // reset all nodes visited flag
@@ -138,7 +138,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         }
 
         //add nodes of final clue group to the queue
-        foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
+        foreach($clues as &$clue) $queue[] = "C_".$clue->id;
 
 
         sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
@@ -150,23 +150,23 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             $opt = array();
             $opt['filter']['coin_value'] = new Filter("coin_value", 0, ">");
             $solutions = Iquest_Solution::fetch($opt);
-            
+
             // add the related nodes to the queue too
             foreach($solutions as $solution){
                 if (!isset($this->nodes["S_".$solution->id])){
                     throw new UnexpectedValueException("Node for solution ID='{$solution->id}' does not exists in the graph.");
                 }
-                
+
                 // but only if they are not solved yet
                 if ($this->nodes["S_".$solution->id]->solved) continue;
-                
+
                 //add node to the queue
                 $queue[] = "S_".$solution->id;
             }
         }
 
         sw_log("mark_accessible_nodes: queue2: ".json_encode($queue), PEAR_LOG_DEBUG);
-        
+
         // as long as there are nodes in in the queue, fetch node from the queue...
         while(!is_null($node_id = array_shift($queue))){
             // and set it's visited flag to true
@@ -176,7 +176,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
             // We are walking the graph in reversed order. If there are any
             // edges leading TO this node walk through them. Get all nodes
-            // FROM what leads edge TO current node 
+            // FROM what leads edge TO current node
             if (isset($this->reverse_edges[$node_id])){
                 foreach($this->reverse_edges[$node_id] as $from_node_id){
 
@@ -194,13 +194,13 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             }
             sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
         }
-    
+
     }
 
     /**
-     *  Check whether graph is continuous. I.e. whether all nodes could be 
+     *  Check whether graph is continuous. I.e. whether all nodes could be
      *  accessed from initial clue group.
-     */         
+     */
     public function check_graph_continuous(){
 
         // reset all nodes visited flag
@@ -223,7 +223,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             }
 
             //add nodes of initial clue group to the queue
-            foreach($clues as &$clue) $queue[] = "C_".$clue->id; 
+            foreach($clues as &$clue) $queue[] = "C_".$clue->id;
         }
 
         sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
@@ -237,7 +237,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
             // We are walking the graph in reversed order. If there are any
             // edges leading TO this node walk through them. Get all nodes
-            // FROM what leads edge TO current node 
+            // FROM what leads edge TO current node
             if (isset($this->edges[$node_id])){
                 foreach($this->edges[$node_id] as $to_node_id){
 
@@ -264,19 +264,19 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
         foreach($this->nodes as &$node){
             if (!$node->visited) {
-                if ($node->is_clue() and 
+                if ($node->is_clue() and
                     $node->get_obj()->cgrp_id==$reveal_goal_cgrp_id){
-                    
+
                     // It is OK that clue group revaling goal is not accessible.
                     // Skip it.
                     continue;
-                } 
+                }
 
                 if ($node->is_clue())       $unaccessible_cgrps[]     = $node->get_obj()->cgrp_id;
                 if ($node->is_solution())   $unaccessible_solutions[] = $node->get_obj()->id;
             }
         }
-    
+
         $err = "";
         if ($unaccessible_cgrps){
             $err .= "Clue groups: ".
@@ -296,11 +296,11 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
     /**
      *  Return list of IDs of clues that has been already gained by the team,
      *  but that are not needed anymore (has been used to solve a task solution).
-     *  
+     *
      *  It is done by walking the graph in reversed order from the final task.
      *  All clues that are reachable from the final task or from any waypoint
-     *  valuated by coins (not meeting a solved task) are still needed.                         
-     */         
+     *  valuated by coins (not meeting a solved task) are still needed.
+     */
     public function get_unneded_clues(){
 
         $this->mark_accessible_nodes(true);
@@ -324,14 +324,14 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
 
     /**
-     *  Return list of IDs of task solutions that are not needed anymore 
+     *  Return list of IDs of task solutions that are not needed anymore
      *  (Either has been already solved or solving them do not help with
      *  reaching final task).
-     *  
+     *
      *  It is done by walking the graph in reversed order from the final task.
      *  All solutions that are rachable from the final task (not meeting a solved task)
-     *  are still needed.                         
-     */         
+     *  are still needed.
+     */
     public function get_unneded_solutions(){
 
         $this->mark_accessible_nodes(false);
@@ -354,11 +354,11 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
 
     /**
      *  Get distance to finish of the contest
-     *  
+     *
      *  It is done by walking the graph in reversed order from the final task.
      *  All nodes that are rachable from the final task (not meeting a solved task)
      *  are counted to the distance.
-     */         
+     */
     public function get_distance_to_finish(){
 
         $this->mark_accessible_nodes(false);
@@ -370,29 +370,29 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             if (!$node->visited) continue;
 
             if ($node->is_clue()){
-                // Whole clue-group should be counted only once. 
+                // Whole clue-group should be counted only once.
                 // Therefore the $dist should not be incremented on every clue.
                 // Visited clue groups are counted in separate array
                 $clue = $node->get_obj();
                 $cgrps_visited[$clue->cgrp_id] = true;
                 continue;
             }
-            
+
             // node is a solution
             $dist++;
         }
-        
+
         // add the number of visited clue groups
         $dist += count($cgrps_visited);
-        
+
         return $dist;
     }
 
 
     /**
      *  Get solutions that are not solved yet, but the team has at least one clue
-     *  to the solution.     
-     */         
+     *  to the solution.
+     */
     public function get_active_solutions(){
         $out = array();
 
@@ -410,20 +410,20 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
                     $node2 = $this->nodes[$node2_id];
                     if (!$node2->is_clue()) continue;
                     if (!$node2->gained) continue;
-                    
+
                     // add the solution to the output
                     $out[] = $node->get_obj();
                 }
             }
         }
-        
+
         return $out;
     }
 
     /**
-     *  Get clues which team already gained and that are leading to a solution 
+     *  Get clues which team already gained and that are leading to a solution
      *  that is not solved yet
-     */         
+     */
     public function get_active_clues(){
         $out = array();
 
@@ -441,21 +441,21 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
                     $node2 = $this->nodes[$node2_id];
                     if (!$node2->is_clue()) continue;
                     if (!$node2->gained) continue;
-                    
+
                     // add the solution to the output
                     $obj = $node2->get_obj();
                     $out[$obj->id] = $obj;
                 }
             }
         }
-        
+
         return $out;
     }
 
 
     /**
      *  Generate graph representation in DOT language (for graphviz)
-     */         
+     */
     protected function get_dot(){
         $out = "digraph G {\n";
 

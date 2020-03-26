@@ -55,7 +55,6 @@ class Chroust{
         foreach($tables as $table){
             Console::log("Erasing DB table: ".$table, Console::YELLOW);
             $res=$data->db->query("delete from ".$table);
-            if ($data->dbIsError($res)) throw new DBException($res);
         }
     }
 
@@ -69,7 +68,6 @@ class Chroust{
             $res=$data->db->query(
                 "update {$config->data_sql->iquest_team->table_name}
                  set {$config->data_sql->iquest_team->cols->wallet}=$initial_value");
-            if ($data->dbIsError($res)) throw new DBException($res);
         }
     }
 
@@ -634,10 +632,10 @@ class Chroust{
               from ".$t_name;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         // walk through the rows
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             if (!isset($solutions[$row[$c->solution_id]])){
                 throw new Iquest_VerifyFailedException(
                             "Clue2solution '{$row[$c->clue_id]}, {$row[$c->solution_id]}' reference non existing solution '{$row[$c->solution_id]}'.",
@@ -653,7 +651,7 @@ class Chroust{
             }
 
         }
-        $res->free();
+        $res->closeCursor();
 
 
         //check that all Iquest_Options are set

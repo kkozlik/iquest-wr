@@ -46,10 +46,10 @@ class Iquest_Team{
 
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$ct->id]] =  new Iquest_Team($row[$ct->id],
                                                    $row[$ct->username],
                                                    $row[$ct->name],
@@ -57,7 +57,7 @@ class Iquest_Team{
                                                    $row[$ct->wallet],
                                                    $row[$ct->tracker_id]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -125,7 +125,6 @@ class Iquest_Team{
               where ".$ct->id." = ".$data->sql_format($this->id, "n");
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
     function to_smarty(){

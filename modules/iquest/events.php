@@ -77,7 +77,6 @@ class Iquest_Events{
                 ".$data->sql_format(json_encode($event_data), "S").")";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
     }
 
@@ -114,10 +113,11 @@ class Iquest_Events{
                     left join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
 
             $res=$data->db->query($q);
-            if (MDB2::isError($res)) throw new DBException($res);
-            $row=$res->fetchRow(MDB2_FETCHMODE_ORDERED);
+            $res->setFetchMode(PDO::FETCH_NUM);
+
+            $row=$res->fetch();
             $data->set_num_rows($row[0]);
-            $res->free();
+            $res->closeCursor();
 
             if (!empty($opt['count_only'])) return $row[0];
 
@@ -142,10 +142,10 @@ class Iquest_Events{
         $q .= !empty($opt['use_pager']) ? $data->get_sql_limit_phrase() : "";
 
         $res=$data->db->query($q);
-        if (MDB2::isError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out=array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
 
             $out[] =  new Iquest_Events($row[$c->id],
                                         $row[$c->team_id],
@@ -156,7 +156,7 @@ class Iquest_Events{
                                         $row[$ct->name]);
 
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -283,5 +283,3 @@ class Iquest_Events{
     }
 
 }
-
-?>

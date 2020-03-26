@@ -104,13 +104,13 @@ class Iquest_Options{
               from ".$t_name;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         self::$options = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             self::$options[$row[$c->name]] = json_decode($row[$c->value], true);
         }
-        $res->free();
+        $res->closeCursor();
 
         return true;
     }
@@ -173,7 +173,6 @@ class Iquest_Options{
               where ".$c->name." = ".$data->sql_format($option_name, "s");
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
 
         $q = "insert into ".$t_name."(
@@ -184,7 +183,6 @@ class Iquest_Options{
                 ".$data->sql_format(json_encode($option_value), "s").")";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         if (!is_null(self::$options)) self::$options[$option_name] = $option_value;
 

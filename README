@@ -2,9 +2,7 @@ Dependencies
 ------------
  * serweb-frmwrk (https://github.com/kkozlik/serweb-frmwrk)
  * php-log
- * php-mdb2
- * php5-mysql
- * pear: MDB2#mysqli
+ * php-mysql
  * graphviz
 
 

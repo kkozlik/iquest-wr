@@ -52,7 +52,6 @@ class Iquest_ClueGrp{
 
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -106,17 +105,17 @@ class Iquest_ClueGrp{
               order by ".$order_by;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$cc->id]] =  new Iquest_ClueGrp($row[$cc->id],
                                                       $row[$cc->ref_id],
                                                       $row[$cc->name],
                                                       $row[$cc->ordering],
                                                       $row[$co->gained_at]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -138,11 +137,11 @@ class Iquest_ClueGrp{
               from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_NUM);
 
-        $row = $res->fetchRow(MDB2_FETCHMODE_ORDERED);
+        $row = $res->fetch();
         $out = !empty($row[0]);
-        $res->free();
+        $res->closeCursor();
 
         return $out;
     }
@@ -168,13 +167,13 @@ class Iquest_ClueGrp{
               from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$co->cgrp_id]][$row[$co->team_id]] = $row[$co->gained_at];
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -222,17 +221,17 @@ class Iquest_ClueGrp{
               order by ".$co->gained_at." desc";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$cg->id]] =  new Iquest_ClueGrp($row[$cg->id],
                                                       $row[$cg->ref_id],
                                                       $row[$cg->name],
                                                       $row[$cg->ordering],
                                                       $row[$co->gained_at]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -268,7 +267,6 @@ class Iquest_ClueGrp{
               )";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
     function get_clues(){

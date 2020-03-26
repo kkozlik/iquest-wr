@@ -16,8 +16,6 @@ class Iquest_Hint extends Iquest_file{
     static function fetch($opt=array()){
         global $data, $config;
 
-        $data->connect_to_db();
-
         /* table's name */
         $th_name  = &$config->data_sql->iquest_hint->table_name;
         $tc_name  = &$config->data_sql->iquest_clue->table_name;
@@ -90,10 +88,10 @@ class Iquest_Hint extends Iquest_file{
         }
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             if (!isset($row[$ct->show_at]))  $row[$ct->show_at] = null;
             if (!isset($row[$ct->for_sale])) $row[$ct->for_sale] = null;
 
@@ -109,7 +107,7 @@ class Iquest_Hint extends Iquest_file{
                                                    $row[$ct->show_at],
                                                    $row[$ct->for_sale]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -140,7 +138,6 @@ class Iquest_Hint extends Iquest_file{
                     ".$data->sql_format($for_sale,  "n").")";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -172,7 +169,6 @@ class Iquest_Hint extends Iquest_file{
         $q = "delete from ".$tt_name.$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -202,7 +198,6 @@ class Iquest_Hint extends Iquest_file{
                     ".$c->team_id." = ".$data->sql_format($team_id, "n");
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -236,14 +231,14 @@ class Iquest_Hint extends Iquest_file{
         $q .= $data->get_sql_limit_phrase(0, 1);
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = null;
-        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        if ($row=$res->fetch()){
             $out=array("show_at"     => $row[$c->show_at],
                        "hint_id" => $row[$c->hint_id]);
         }
-        $res->free();
+        $res->closeCursor();
 
         return $out;
     }
@@ -291,7 +286,6 @@ class Iquest_Hint extends Iquest_file{
               )";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
 

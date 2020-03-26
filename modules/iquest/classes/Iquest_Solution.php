@@ -120,13 +120,11 @@ class Iquest_Solution extends Iquest_file{
               from ".$tc_name." c ".implode(" ", $join).
               $qw.$order;
 
-        sw_log("Iquest_Solution::fetch: query: $q", PEAR_LOG_DEBUG);
-
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             if (!isset($row[$ct->show_at])) $row[$ct->show_at] = null;
             if (!isset($row[$ct->solved_at])) $row[$ct->solved_at] = null;
 
@@ -143,7 +141,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$ct->show_at],
                                                        $row[$ct->solved_at]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -204,10 +202,10 @@ class Iquest_Solution extends Iquest_file{
               $qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$cs->id]] =  new Iquest_Solution($row[$cs->id],
                                                        $row[$cs->ref_id],
                                                        $row[$cs->filename],
@@ -221,7 +219,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$ct->show_at],
                                                        $row[$ct->solved_at]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -251,7 +249,6 @@ class Iquest_Solution extends Iquest_file{
               set ".$ct->show_at."=FROM_UNIXTIME(0)".$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -279,7 +276,6 @@ class Iquest_Solution extends Iquest_file{
                     FROM_UNIXTIME(0))";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         return true;
     }
@@ -311,9 +307,10 @@ class Iquest_Solution extends Iquest_file{
         $q = "select count(*) from ".$t_name.$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-        $row=$res->fetchRow(MDB2_FETCHMODE_ORDERED);
-        $res->free();
+        $res->setFetchMode(PDO::FETCH_NUM);
+
+        $row=$res->fetch();
+        $res->closeCursor();
 
         $record_exists = (bool)$row[0];
 
@@ -334,7 +331,6 @@ class Iquest_Solution extends Iquest_file{
         }
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
     }
 
     static function get_next_scheduled($team_id){
@@ -360,14 +356,14 @@ class Iquest_Solution extends Iquest_file{
         $q .= $data->get_sql_limit_phrase(0, 1);
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = null;
-        if ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        if ($row=$res->fetch()){
             $out=array("show_at"     => $row[$c->show_at],
                        "solution_id" => $row[$c->solution_id]);
         }
-        $res->free();
+        $res->closeCursor();
 
         return $out;
     }
@@ -580,16 +576,16 @@ class Iquest_Solution extends Iquest_file{
               from ".$t_name.$qw;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$c->solution_id]][$row[$c->team_id]] = array(
                 "show_at"   => $row[$c->show_at],
                 "solved_at" => $row[$c->solved_at],
             );
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
@@ -622,14 +618,14 @@ class Iquest_Solution extends Iquest_file{
               $qw." order by c.".$cc->ordering;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
+        while ($row=$res->fetch()){
             $out[$row[$c->cgrp_id]] =  new Iquest_Solution_Next_Cgrp($row[$c->cgrp_id],
                                                                      $row[$c->condition]);
         }
-        $res->free();
+        $res->closeCursor();
         $this->next_cgrps = $out;
     }
 
@@ -726,7 +722,6 @@ class Iquest_Solution extends Iquest_file{
               )";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
 
         foreach($this->next_cgrps as $next_cgrp){
             $q = "insert into ".$tn_name."(
@@ -741,7 +736,6 @@ class Iquest_Solution extends Iquest_file{
                   )";
 
             $res=$data->db->query($q);
-            if ($data->dbIsError($res)) throw new DBException($res);
         }
 
     }

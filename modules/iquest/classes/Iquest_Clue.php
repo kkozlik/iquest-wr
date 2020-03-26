@@ -6,7 +6,7 @@ class Iquest_Clue extends Iquest_file{
     public $ordering;
     public $type;
     public $point_to; // point to solution
-    
+
     private $hints = null;
 
     const TYPE_REGULAR = "regular";
@@ -16,11 +16,9 @@ class Iquest_Clue extends Iquest_file{
 
     /**
      *  Fetch clues form DB
-     */         
+     */
     static function fetch($opt=array()){
         global $data, $config;
-
-        $data->connect_to_db();
 
         /* table's name */
         $tc_name  = &$config->data_sql->iquest_clue->table_name;
@@ -40,19 +38,19 @@ class Iquest_Clue extends Iquest_file{
                      c.".$cc->cgrp_id.",
                      c.".$cc->filename.",
                      c.".$cc->content_type.",
-                     c.".$cc->type.", 
-                     c.".$cc->comment.", 
-                     c.".$cc->ordering." 
+                     c.".$cc->type.",
+                     c.".$cc->comment.",
+                     c.".$cc->ordering."
               from ".$tc_name." c ".
               $qw."
               order by c.".$cc->ordering;
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
 
         $out = array();
-        while ($row=$res->fetchRow(MDB2_FETCHMODE_ASSOC)){
-            $out[$row[$cc->id]] =  new Iquest_Clue($row[$cc->id], 
+        while ($row=$res->fetch()){
+            $out[$row[$cc->id]] =  new Iquest_Clue($row[$cc->id],
                                                    $row[$cc->ref_id],
                                                    $row[$cc->filename],
                                                    $row[$cc->content_type],
@@ -61,13 +59,13 @@ class Iquest_Clue extends Iquest_file{
                                                    $row[$cc->cgrp_id],
                                                    $row[$cc->ordering]);
         }
-        $res->free();
+        $res->closeCursor();
         return $out;
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $type, $comment, $cgrp_id, $ordering, $point_to=array()){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
-        
+
         $this->cgrp_id = $cgrp_id;
         $this->type = $type;
         $this->ordering = $ordering;
@@ -83,14 +81,14 @@ class Iquest_Clue extends Iquest_file{
         /* col names */
         $cc      = &$config->data_sql->iquest_clue->cols;
         $cs      = &$config->data_sql->iquest_clue2solution->cols;
-    
+
         $q = "insert into ".$tc_name."(
                     ".$cc->id.",
                     ".$cc->ref_id.",
                     ".$cc->filename.",
                     ".$cc->content_type.",
                     ".$cc->type.",
-                    ".$cc->comment.", 
+                    ".$cc->comment.",
                     ".$cc->cgrp_id.",
                     ".$cc->ordering."
               )
@@ -106,8 +104,6 @@ class Iquest_Clue extends Iquest_file{
               )";
 
         $res=$data->db->query($q);
-        if ($data->dbIsError($res)) throw new DBException($res);
-
 
         foreach($this->point_to as $sol_id){
             $q = "insert into ".$ts_name."(
@@ -118,20 +114,19 @@ class Iquest_Clue extends Iquest_file{
                         ".$data->sql_format($this->id,  "s").",
                         ".$data->sql_format($sol_id,    "s")."
                   )";
-            
+
             $res=$data->db->query($q);
-            if ($data->dbIsError($res)) throw new DBException($res);
         }
     }
 
-    
+
     function get_accessible_hints($team_id){
         if (!is_null($this->hints)) return $this->hints;
-    
+
         $opt = array("clue_id" => $this->id,
                      "team_id" => $team_id,
                      "accessible" => true);
-    
+
         $this->hints = Iquest_Hint::fetch($opt);
         return $this->hints;
     }
