@@ -11,6 +11,8 @@ class Iquest_auth{
     public static $login_page_url;
     protected static $async_request = false;
 
+    protected static $team_cache = [];
+
     public static function set_assync($val){
         static::$async_request = (bool)$val;
     }
@@ -149,9 +151,11 @@ class Iquest_auth{
         $authz = Iquest_authZ::singleton();
         if (!$authz->authorize(['team'])) return null;
 
-        // @TODO: caching and handle the case team is not logged in
         $uid = Iquest_auth::get_logged_in_uid();
-        return Iquest_Team::fetch_by_id($uid);
+        if (isset(static::$team_cache[$uid])) return static::$team_cache[$uid];
+
+        static::$team_cache[$uid] = Iquest_Team::fetch_by_id($uid);
+        return static::$team_cache[$uid];
     }
     public static function has_identity(){
         $authn = Iquest_authN::singleton();
