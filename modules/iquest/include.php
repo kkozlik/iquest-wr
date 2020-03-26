@@ -14,7 +14,13 @@
 function iquest_init(){
     global $config, $_SERWEB, $lang_str, $data;
 
-    $data->connect_to_db();
+    try{
+        $data->connect_to_db();
+    }
+    catch(Exception $e){
+        sw_log_exception($e, PEAR_LOG_ALERT);
+        $GLOBALS['controler']->internal_server_error($e);
+    }
 
     /* load lang file for this module */
     load_another_lang('iquest');
