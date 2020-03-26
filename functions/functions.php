@@ -39,6 +39,10 @@ function iquest_log($priority, $message, $file, $line){
         if ($username) $message = "[User: $username] ".$message;
     }
 
+    if (class_exists('PHPlib') and PHPlib::$session){
+        $message = "[".substr(PHPlib::$session->id, 0, 8)."] $message";
+    }
+
     return $serwebLog->log($message, $priority);
 }
 
