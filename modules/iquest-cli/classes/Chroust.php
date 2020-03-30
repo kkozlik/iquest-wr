@@ -240,6 +240,10 @@ class Chroust{
         $traccar_zones = $metadata->get_solution_traccar_zones();
         $traccar_condition = $metadata->get_solution_traccar_condition();
 
+        if ($coin_value == 0 and ! $next_cgrps){
+            Console::log("*** WARNING: Neither coin_value nor next_cgrp_id is set for solution. This looks to be a dead end.", Console::YELLOW);
+        }
+
         if (!$filename and $timeout > 0){
             throw new Iquest_InvalidConfigException("No solution file exists, but timeout (for displaying it) is set.");
         }
