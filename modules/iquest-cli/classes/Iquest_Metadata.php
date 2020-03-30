@@ -132,7 +132,7 @@ class Iquest_Metadata{
     function get_cgrp_name(){
 
         if (!isset($this->data['cgrp']['name'])){
-            throw new Iquest_InvalidConfigException("name for clue group is not set.");
+            throw new Iquest_InvalidConfigException("Name for clue group is not set.");
         }
 
         $charset = $this->get_charset(self::METADATA_FILE);
@@ -143,10 +143,9 @@ class Iquest_Metadata{
         return $this->data['cgrp']['name'];
     }
 
-    function get_cgrp_order(){
-
+    function get_cgrp_order($warn=true){
         if (!isset($this->data['cgrp']['order'])){
-            Console::log( "*** WARNING: order for clue group is not set.", Console::YELLOW);
+            if ($warn) Console::log( "*** WARNING: 'order' value is not set.", Console::YELLOW);
             return 0;
         }
 
@@ -182,16 +181,23 @@ class Iquest_Metadata{
 
     function get_solution_name(){
 
-        if (!isset($this->data['solution']['name'])){
-            return $this->get_cgrp_name();
+        $name = null;
+        if (!empty($this->data['solution']['name'])){
+            $name = $this->data['solution']['name'];
+        }
+        elseif (!empty($this->data['cgrp']['name'])){
+            $name = $this->data['cgrp']['name'];
+        }
+        else{
+            throw new Iquest_InvalidConfigException("Name for solution is not set.");
         }
 
         $charset = $this->get_charset(self::METADATA_FILE);
         if ($charset != "UTF-8"){
-            return iconv($charset, "UTF-8", $this->data['solution']['name']);
+            return iconv($charset, "UTF-8", $name);
         }
 
-        return $this->data['solution']['name'];
+        return $name;
     }
 
     function get_solution_key(){
@@ -539,7 +545,7 @@ class Iquest_Metadata{
         $str .= "** CLUE GROUP:\n";
         $str .= "   ID: ".$cgrp_id.
                   " NAME: ".$cgrp_name.
-                  " ORDER: ".$this->get_cgrp_order()."\n";
+                  " ORDER: ".$this->get_cgrp_order(false)."\n";
         $str .= "   START: ".$this->is_start_cgrp().
                   " FINAL: ".$this->is_final_cgrp().
                   " GIVE IT UP: ".$this->is_reveal_goal_cgrp()."\n";

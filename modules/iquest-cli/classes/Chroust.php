@@ -202,7 +202,7 @@ class Chroust{
         }
 
         self::$summary['hints'][] = array("cgrp_name" => $metadata->get_cgrp_name(),
-                                          "ordering"  => $metadata->get_cgrp_order(),
+                                          "ordering"  => $metadata->get_cgrp_order(false),
                                           "clue_id"   => $clue_id,
                                           "hint_nr"   => $hint_nr,
                                           "price"     => $price,
@@ -274,7 +274,7 @@ class Chroust{
 
         self::$summary['keys'][] = array("name" => $name,
                                          "key"  => $metadata->get_solution_key(),
-                                         "ordering" => $metadata->get_cgrp_order(),
+                                         "ordering" => $metadata->get_cgrp_order(false),
                                          "coin_value" => $coin_value,
                                          "timeout" =>    $timeout,
                                          "next_cgrp_id" => $next_cgrps ? $next_cgrps_str :  null);
