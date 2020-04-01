@@ -6,6 +6,7 @@ class Iquest_Team{
     public $username;
     public $active;
     public $wallet;
+    public $bomb;
     public $tracker_id;
 
     static function fetch_by_id($id){
@@ -38,6 +39,7 @@ class Iquest_Team{
                      t.".$ct->name.",
                      t.".$ct->active.",
                      t.".$ct->wallet.",
+                     t.".$ct->bomb.",
                      t.".$ct->tracker_id."
               from ".$tt_name." t ".
               $qw;
@@ -55,6 +57,7 @@ class Iquest_Team{
                                                    $row[$ct->name],
                                                    $row[$ct->active],
                                                    $row[$ct->wallet],
+                                                   $row[$ct->bomb],
                                                    $row[$ct->tracker_id]);
         }
         $res->closeCursor();
@@ -78,12 +81,13 @@ class Iquest_Team{
         return $team;
     }
 
-    function __construct($id, $username, $name, $active, $wallet, $tracker_id){
+    function __construct($id, $username, $name, $active, $wallet, $bomb, $tracker_id){
         $this->id =         $id;
         $this->username =   $username;
         $this->name =       $name;
         $this->active =     $active;
         $this->wallet =     $wallet;
+        $this->bomb =       (float)$bomb;
         $this->tracker_id = $tracker_id;
     }
 
@@ -111,6 +115,12 @@ class Iquest_Team{
         $this->update();
     }
 
+    function add_bomb($value){
+        $this->bomb += $value;
+        $this->update();
+    }
+
+
     private function update(){
         global $data, $config;
 
@@ -121,7 +131,8 @@ class Iquest_Team{
 
         $q = "update ".$tt_name." set
                 ".$ct->active." = ".$data->sql_format($this->active, "n").",
-                ".$ct->wallet." = ".$data->sql_format($this->wallet, "n")."
+                ".$ct->wallet." = ".$data->sql_format($this->wallet, "n").",
+                ".$ct->bomb."   = ".$data->sql_format($this->bomb, "n")."
               where ".$ct->id." = ".$data->sql_format($this->id, "n");
 
         $res=$data->db->query($q);
@@ -133,6 +144,7 @@ class Iquest_Team{
         $out['name'] = $this->name;
         $out['active'] = $this->active;
         $out['wallet'] = $this->wallet;
+        $out['bomb']   = $this->bomb;
         $out['tracker_id'] = $this->tracker_id;
         return $out;
     }

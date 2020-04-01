@@ -12,6 +12,8 @@ class Iquest_Options{
     const REVEAL_GOAL_CGRP_ID   = "reveal_goal_cgrp_id";
     const WALLET_ACTIVE         = "wallet_active";
     const WALLET_INITIAL_VALUE  = "wallet_initial_value";
+    const BOMB_ACTIVE           = "bomb_active";
+    const BOMB_INITIAL_VALUE    = "bomb_initial_value";
     const CHECK_KEY_ORDER       = "check_key_order";
     const KEY_PREFIX            = "key_prefix";
     const LOGO                  = "logo";
@@ -46,6 +48,8 @@ class Iquest_Options{
                                              self::REVEAL_GOAL_CGRP_ID,
                                              self::WALLET_ACTIVE,
                                              self::WALLET_INITIAL_VALUE,
+                                             self::BOMB_ACTIVE,
+                                             self::BOMB_INITIAL_VALUE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
@@ -67,6 +71,8 @@ class Iquest_Options{
     public static $set_in_global_ini = array(self::START_TIME,
                                              self::END_TIME,
                                              self::WALLET_INITIAL_VALUE,
+                                             self::BOMB_ACTIVE,
+                                             self::BOMB_INITIAL_VALUE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,

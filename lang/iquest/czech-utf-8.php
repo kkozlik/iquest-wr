@@ -39,6 +39,7 @@ $lang_str['iquest_err_tracker_old_location'] =          "Vaši polohu jsme napos
 
 $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný kód řešení je správně";
 $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> {$lang_str['iquest_txt_coin_symbol']})";
+$lang_str['iquest_msg_bomb_gained'] =                   "Získali jste bombu! (<value>)";
 $lang_str['iquest_msg_location_correct'] =              "Gratulujeme, jste na správném místě";
 
 $lang_str['iquest_l_back'] =                            "Zpět";

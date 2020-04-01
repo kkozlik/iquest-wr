@@ -61,13 +61,15 @@ class Chroust{
     static function initialize_user_wallets($option){
         global $data, $config;
 
-        $initial_value = (float)Iquest_Options::get(Iquest_Options::WALLET_INITIAL_VALUE);
+        $wallet_initial_value = (float)Iquest_Options::get(Iquest_Options::WALLET_INITIAL_VALUE);
+        $bomb_initial_value = (float)Iquest_Options::get(Iquest_Options::BOMB_INITIAL_VALUE);
 
         if (empty($option['preserve-user-data'])){
-            Console::log("Wiping user wallets", Console::YELLOW);
+            Console::log("Wiping user wallets and bombs", Console::YELLOW);
             $res=$data->db->query(
                 "update {$config->data_sql->iquest_team->table_name}
-                 set {$config->data_sql->iquest_team->cols->wallet}=$initial_value");
+                 set {$config->data_sql->iquest_team->cols->wallet}=$wallet_initial_value,
+                     {$config->data_sql->iquest_team->cols->bomb}=$bomb_initial_value");
         }
     }
 
@@ -94,6 +96,7 @@ class Chroust{
      */
     static function set_defaults(){
         Iquest_Options::set(Iquest_Options::WALLET_INITIAL_VALUE, 0);
+        Iquest_Options::set(Iquest_Options::BOMB_INITIAL_VALUE, 0);
         Iquest_Options::set(Iquest_Options::CHECK_KEY_ORDER, 0);
         Iquest_Options::set(Iquest_Options::SHOW_PLACE, 1);
         Iquest_Options::set(Iquest_Options::HIDE_PLACE_TIMEOUT, 0);
@@ -236,12 +239,13 @@ class Chroust{
         $countdown_start = $metadata->get_solution_countdown_start();
         $next_cgrps = $metadata->get_solution_next_cgrp();
         $coin_value = $metadata->get_solution_coin_value();
+        $bomb_value = $metadata->get_solution_bomb_value();
 
         $traccar_zones = $metadata->get_solution_traccar_zones();
         $traccar_condition = $metadata->get_solution_traccar_condition();
 
-        if ($coin_value == 0 and ! $next_cgrps){
-            Console::log("*** WARNING: Neither coin_value nor next_cgrp_id is set for solution. This looks to be a dead end.", Console::YELLOW);
+        if ($coin_value == 0 and $bomb_value == 0 and ! $next_cgrps){
+            Console::log("*** WARNING: Neither coin_value nor bomb_value nor next_cgrp_id is set for solution. This looks to be a dead end.", Console::YELLOW);
         }
 
         if (!$filename and $timeout > 0){
@@ -280,12 +284,13 @@ class Chroust{
                                          "key"  => $metadata->get_solution_key(),
                                          "ordering" => $metadata->get_cgrp_order(false),
                                          "coin_value" => $coin_value,
+                                         "bomb_value" => $bomb_value,
                                          "timeout" =>    $timeout,
                                          "next_cgrp_id" => $next_cgrps ? $next_cgrps_str :  null);
 
         $solution = new Iquest_Solution($solution_id, $ref_id,
                 $filename, $content_type, null, $name, $timeout,
-                $countdown_start, $key, $coin_value);
+                $countdown_start, $key, $coin_value, $bomb_value);
 
         $solution->set_next_cgrps($next_cgrps);
 
@@ -602,6 +607,28 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::WALLET_ACTIVE, ($coin_value>0) ? 1 : 0);
     }
 
+    /**
+     *  Set value of BOMB_ACTIVE option in dependency whether
+     *  there are any hints that could be bought
+     */
+    static function set_bomb_active(){
+        // Check whether the BOMB_ACTIVE is already set from metadata file. If so
+        // just return. Otherwise catch the exception thrown and set the BOMB_ACTIVE flag.
+        try{
+            $option_value = Iquest_Options::get(Iquest_Options::BOMB_ACTIVE);
+            return;
+        }
+        catch(RuntimeException $e){}
+
+        $bomb_value = 0;
+
+        foreach(self::$summary['keys'] as $row){
+            $bomb_value += abs($row['bomb_value']);
+        }
+
+        Iquest_Options::set(Iquest_Options::BOMB_ACTIVE, ($bomb_value>0) ? 1 : 0);
+    }
+
     static function verify(){
         global $data, $config;
 
@@ -891,6 +918,7 @@ class Chroust{
             }
 
             self::set_wallet_active();
+            self::set_bomb_active();
 
             self::verify();
 
@@ -970,6 +998,7 @@ class Chroust{
             $fields_headers = array('name'          => "Name ",
                                     'key'           => "Key ",
                                     'coin_value'    => "Coin ",
+                                    'bomb_value'    => "Bomb ",
                                     'timeout'       => "Timeout ",
                                     'next_cgrp_id'  => "NextCgrps ",
                                     );
@@ -982,14 +1011,16 @@ class Chroust{
             self::print_table_separator($fields_widths);
 
             $fstring = self::get_formating_string($fields_widths, "|");
-            $total_coins = $total_timeout = 0;
+            $total_bombs = $total_coins = $total_timeout = 0;
             foreach(self::$summary['keys'] as $row){
                 $total_coins += $row['coin_value'];
+                $total_bombs += $row['bomb_value'];
                 $total_timeout += $row['timeout'];
                 echo self::utf_8_sprintf($fstring,
                             $row['name'],
                             $row['key'],
                             $row['coin_value']!=0?$row['coin_value']:"---",
+                            $row['bomb_value']!=0?$row['bomb_value']:"---",
                             $row['timeout']>0?gmdate("H:i:s", $row['timeout']):"---",
                             $row['next_cgrp_id']?$row['next_cgrp_id']:"---");
             }
@@ -999,6 +1030,7 @@ class Chroust{
                         "Total:",
                         "",
                         $total_coins,
+                        $total_bombs,
                         self::format_time($total_timeout),
                         "");
 
@@ -1022,6 +1054,16 @@ class Chroust{
             fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
             Console_Cli::print_exception_error($e);
             exit(1);
+        }
+        catch(PDOException $e){
+            $message = "DB query failed";
+            if ($e->query){
+                $message .= ":\n{$e->query}";
+            }
+
+            fwrite(STDERR, "\n$message\n");
+            Console_Cli::print_exception_error($e);
+            throw $e;
         }
         catch (exception $e){
             fwrite(STDERR, "\nUnexpected exception. See PHP error log for details:\n");

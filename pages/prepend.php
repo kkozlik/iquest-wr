@@ -70,6 +70,13 @@ $GLOBALS['controler']->attach_listener("pre_html_output", function($event){
         $GLOBALS['page_attributes']['game_name'] = "";
     }
 
+    try{
+        $GLOBALS['page_attributes']['display_bomb'] = Iquest_Options::get(Iquest_Options::BOMB_ACTIVE);
+    }
+    catch(RuntimeException $e){
+        $GLOBALS['page_attributes']['display_bomb'] = false;
+    }
+
     if (!$GLOBALS['page_attributes']['game_name']) $GLOBALS['page_attributes']['game_name'] = "I.Quest";
 
     $GLOBALS['page_attributes']['html_title'] = $GLOBALS['page_attributes']['game_name'];

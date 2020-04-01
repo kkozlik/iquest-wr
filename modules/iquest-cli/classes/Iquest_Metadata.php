@@ -264,6 +264,13 @@ class Iquest_Metadata{
         return round($this->data['solution']['coin_value'],2);
     }
 
+    function get_solution_bomb_value(){
+        if (!isset($this->data['solution']['bomb_value'])){
+            return 0;
+        }
+        return round($this->data['solution']['bomb_value'],2);
+    }
+
     function get_solution_traccar_zones(){
         if (!isset($this->data['solution']['traccar_zones'])){
             return array();
@@ -557,6 +564,7 @@ class Iquest_Metadata{
         $str .= "   TIMEOUT: ".$this->get_solution_timeout().
                   " COUNTDOWN START: ".$this->get_solution_countdown_start().
                   " COIN VALUE: ".$this->get_solution_coin_value().
+                  " BOMB VALUE: ".$this->get_solution_bomb_value().
                   " NEXT CGRP IDS: ".$next_cgrps_str."\n";
 
         $str .= "** CLUES:\n";

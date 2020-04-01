@@ -149,6 +149,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             // get the solutions that gain some coins
             $opt = array();
             $opt['filter']['coin_value'] = new Filter("coin_value", 0, ">");
+            $opt['filter']['bomb_value'] = new Filter("bomb_value", 0, ">");
             $solutions = Iquest_Solution::fetch($opt);
 
             // add the related nodes to the queue too

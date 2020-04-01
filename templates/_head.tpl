@@ -71,6 +71,11 @@
                     {$lang_str.iquest_txt_wallet_state}<br />{$team.wallet|string_format:"%.2f"} {$lang_str.iquest_txt_coin_symbol}
                 </li>
             {/if}
+            {if $parameters.display_bomb|default:0 and $team|default:0}
+                <li class="navbar-text bomb">
+                    {$team.bomb|string_format:"%.2f"}💣
+                </li>
+            {/if}
         </ul>
     </div>
 

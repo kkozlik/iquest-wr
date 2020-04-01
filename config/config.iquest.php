@@ -115,6 +115,7 @@ $config->data_sql->iquest_solution->cols->timeout =         "timeout";
 $config->data_sql->iquest_solution->cols->countdown_start = "countdown_start";
 $config->data_sql->iquest_solution->cols->comment =         "comment";
 $config->data_sql->iquest_solution->cols->coin_value =      "coin_value";
+$config->data_sql->iquest_solution->cols->bomb_value =      "bomb_value";
 
 
 /**
@@ -201,4 +202,5 @@ $config->data_sql->iquest_team->cols->username =    "username";
 $config->data_sql->iquest_team->cols->passwd =      "passwd";
 $config->data_sql->iquest_team->cols->active =      "active";
 $config->data_sql->iquest_team->cols->wallet =      "wallet";
+$config->data_sql->iquest_team->cols->bomb =        "bomb";
 $config->data_sql->iquest_team->cols->tracker_id =  "tracker_id";

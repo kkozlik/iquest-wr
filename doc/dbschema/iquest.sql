@@ -165,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `timeout` time NOT NULL,
   `countdown_start` enum('all','single') COLLATE utf8_czech_ci NOT NULL DEFAULT 'all' COMMENT 'Specify when to start the timeout countdown. The default value ''all'' means it should start counting down once all clues pointed to this solution are gained. If the value is set to ''single'' it''s sufficient to gain just one clue pointing to this solution.',
   `coin_value` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `bomb_value` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
   UNIQUE KEY `solution_key_UNIQUE` (`solution_key`)
@@ -208,6 +209,7 @@ CREATE TABLE IF NOT EXISTS `team` (
   `passwd` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `active` int(11) NOT NULL DEFAULT '1',
   `wallet` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `bomb` decimal(5,2) NOT NULL DEFAULT '0.00',
   `tracker_id` VARCHAR(255) NOT NULL COLLATE utf8_czech_ci,
   PRIMARY KEY (`team_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)

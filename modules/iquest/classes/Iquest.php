@@ -130,6 +130,7 @@ class Iquest{
         }
 
         self::gain_coins($team_id, $solution->coin_value);
+        self::gain_bombs($team_id, $solution->bomb_value);
 
         // 3. Schedule show time for new hints
         foreach($next_cgrp_ids as $next_cgrp_id){
@@ -199,6 +200,27 @@ class Iquest{
 
             $team = Iquest_Team::fetch_by_id($team_id);
             $team->wallet_add_money($value);
+        }
+    }
+
+    /**
+     *  Add bombs to the team
+     */
+    public static function gain_bombs($team_id, $value){
+        global $lang_str;
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
+
+        if ($value != 0){
+            sw_log($log_prefix."*** Gained bombs ($value)", PEAR_LOG_INFO);
+
+            Iquest_info_msg::add_msg(
+                str_replace("<value>",
+                            $value,
+                            $lang_str['iquest_msg_bomb_gained']), "bomb");
+
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $team->add_bomb($value);
         }
     }
 

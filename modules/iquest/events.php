@@ -191,6 +191,12 @@ class Iquest_Events{
                 $out['coin gained']['text'] = $this->data['solution']['coin_value'];
             }
 
+            if (isset($this->data['solution']['bomb_value']) and
+                $this->data['solution']['bomb_value'] != 0){
+
+                $out['bomb gained']['text'] = $this->data['solution']['bomb_value'];
+            }
+
             if (isset($this->data['solution']['show_at']) and $this->data['solution']['show_at'] != 0){
                 if ($this->data['solution']['show_at'] < $this->timestamp){
                     $out['timeout']['text'] = "expired";
