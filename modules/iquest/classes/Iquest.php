@@ -79,6 +79,35 @@ class Iquest{
     }
 
 
+    public static function blow_up(Iquest_Solution $solution, $team_id){
+        global $data;
+
+        $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
+        $bomb_value = 1; // always cost one bomb
+
+        // If solution is already solved, skip it.
+        if ($solution->is_solved($team_id)){
+            sw_log($log_prefix."Cannot blow up solution (ID={$solution->id}). It's already solved", PEAR_LOG_INFO);
+            return;
+        }
+
+        $data->transaction_start();
+
+        // 1. Spend bomb
+        sw_log($log_prefix."*** Spending bomb ({$bomb_value})", PEAR_LOG_INFO);
+
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team->remove_bomb($bomb_value);
+
+        // 2. Schedule the solution to show now
+        sw_log($log_prefix."*** Showing the solution (ID={$solution->id})", PEAR_LOG_INFO);
+
+        Iquest_Solution::schedule_update($solution->id, $team_id, 0);
+
+        $data->transaction_commit();
+    }
+
+
     static function solution_found($solution, $team_id){
         global $data;
 

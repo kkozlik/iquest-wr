@@ -8,6 +8,7 @@ class Iquest_Events{
     const LOGOUT = "logout";
     const GIVEITUP = "giveitup";
     const COIN_SPEND = "coin_spend";
+    const BLOW_UP = "blow_up";
     const LOCATION_CHECK = "location_check";
 
     public static $supported_types = array(self::LOGGED,
@@ -15,6 +16,7 @@ class Iquest_Events{
                                            self::LOGOUT,
                                            self::GIVEITUP,
                                            self::COIN_SPEND,
+                                           self::BLOW_UP,
                                            self::LOCATION_CHECK,
                                            );
 
@@ -213,6 +215,15 @@ class Iquest_Events{
 
                 if (isset($opt['hint_url'])){
                     $out['hint']['url']  = str_replace("<id>", RawURLEncode($this->data['hint']['ref_id']), $opt['hint_url']);
+                }
+            }
+            break;
+        case self::BLOW_UP:
+            if (isset($this->data['solution']['id']))   {
+                $out['solution']['text'] = $this->data['solution']['id'];
+
+                if (isset($opt['solution_url']) and !empty($this->data['solution']['filename'])){
+                    $out['solution']['url']  = str_replace("<id>", RawURLEncode($this->data['solution']['ref_id']), $opt['solution_url']);
                 }
             }
             break;

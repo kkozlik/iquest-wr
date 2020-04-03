@@ -13,6 +13,7 @@
     {foreach $clue_grp.clues as $clue}
     <div class="datatable clue" id="{$clue.ref_id|escape}" {if $clue.hidden}style="display: none;"{/if}>
         <div class="card mb-3">{* Adding rounded corners to table *}
+            {$colspan=3}
             <table class="table shrinkable mb-0">
             <tr>
                 <th class="filename align-middle">{$clue.filename|escape}
@@ -20,12 +21,17 @@
                     {elseif $clue.type=="special"}<span class="questionmark"></span>
                     {else}<span class="finder"></span>{/if}
                 </th>
+                {if $clue.blowable}{$colspan=$colspan+1}
+                    <th class="link align-middle">
+                        <a href="{$clue.blow_up_url|escape}" class="btn btn-sm btn-outline-secondary" title="{$lang_str.iquest_blow_up|escape}"><i class="fas fa-bomb"></i></a>
+                    </th>
+                {/if}
                 <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
                 <th class="buttons align-middle">
                     <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary btn-sm minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="fas fa-chevron-down"></i></a>
                 </th>
             </tr>
-            {call iquestRenderFile file=$clue colspan=3}
+            {call iquestRenderFile file=$clue colspan=$colspan}
             </table>
         </div>
     </div>

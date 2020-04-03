@@ -7,6 +7,7 @@ $lang_str['iquest_avail_tasks'] =                       "Dostupné úkoly";
 $lang_str['iquest_avail_solutions'] =                   "Řešení úkolů";
 $lang_str['iquest_solution_key'] =                      "Kód řešení úkolu";
 $lang_str['iquest_download'] =                          "Stáhnout";
+$lang_str['iquest_blow_up'] =                           "Odpálit";
 $lang_str['iquest_hint'] =                              "Nápověda";
 $lang_str['iquest_solution'] =                          "Řešení";
 $lang_str['iquest_all_in_1'] =                          "Vše v jednom";
@@ -26,6 +27,8 @@ $lang_str['iquest_err_key_not_reachable'] =             "Tento kód je sice plat
 $lang_str['iquest_err_contest_over'] =                  "Soutěž skončila!";
 $lang_str['iquest_err_no_hint_for_sale'] =              "Žádná další nápověda pro tento úkol není na prodej.";
 $lang_str['iquest_err_hint_no_money'] =                 "Nemáte dostatek peněz pro získání další nápovědy. Její cena je <price> {$lang_str['iquest_txt_coin_symbol']}.";
+$lang_str['iquest_err_no_bomb'] =                       "Nemáte bombu.";
+$lang_str['iquest_err_cannot_blow_up'] =                "Tento úkol nelze odpálit.";
 
 $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
@@ -41,6 +44,7 @@ $lang_str['iquest_msg_key_correct'] =                   "Gratulujeme, zadaný k�
 $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<value> {$lang_str['iquest_txt_coin_symbol']})";
 $lang_str['iquest_msg_bomb_gained'] =                   "Získali jste bombu! (<value>)";
 $lang_str['iquest_msg_location_correct'] =              "Gratulujeme, jste na správném místě";
+$lang_str['iquest_msg_blowned_up'] =                    "Úkol odpálen. Správné řešení zpřístupněno.";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";
@@ -102,4 +106,3 @@ $lang_str['iquest_rank_team'] =                         "Tým";
 $lang_str['iquest_rank_act_order_title'] =              "Aktuální pořadí týmů";
 $lang_str['iquest_rank_time_order_title'] =             "Pořadí týmů k";
 
-?>

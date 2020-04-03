@@ -10,8 +10,14 @@ class Iquest_Team{
     public $tracker_id;
 
     static function fetch_by_id($id){
+        static $team_cache = [];
+
+        if (isset($team_cache[$id])) return $team_cache[$id];
+
         $records = static::fetch(array("id" => $id));
-        return reset($records);
+        $team_cache[$id] = reset($records);
+
+        return $team_cache[$id];
     }
 
     static function fetch($opt=array()){
@@ -117,6 +123,16 @@ class Iquest_Team{
 
     function add_bomb($value){
         $this->bomb += $value;
+        $this->update();
+    }
+
+    function remove_bomb($value){
+
+        if ($this->bomb < $value) {
+            throw new UnderflowException("Cannot remove bomb ($value), not enought bombs available. Bomb value: {$this->bomb}");
+        }
+
+        $this->bomb -= $value;
         $this->update();
     }
 

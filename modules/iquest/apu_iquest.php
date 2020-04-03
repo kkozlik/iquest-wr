@@ -152,13 +152,14 @@ class apu_iquest extends apu_base_class{
 
     function get_timeouts(){
 
-        $next_solution = Iquest_Solution::get_next_scheduled($this->team_id);
+        $next_solutions = Iquest_Solution::get_scheduled_solutions($this->team_id);
         $next_hint     = Iquest_Hint::get_next_scheduled($this->team_id);
 
         $countdown_limit_hint = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_HINT);
         $countdown_limit_solution = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_SOLUTION);
 
-        if ($next_solution){
+        if ($next_solutions){
+            $next_solution = reset($next_solutions);
             $show_after = $next_solution['show_at'] - time();
             if ($show_after > 0 and
                 ($show_after < $countdown_limit_solution or
@@ -254,11 +255,13 @@ class apu_iquest extends apu_base_class{
 
             $hints = $clues[$k]->get_accessible_hints($this->team_id);
             $smarty_clue = $clues[$k]->to_smarty();
+            $smarty_clue['blowable'] = $clues[$k]->is_blowable($this->team_id);
             $smarty_clue['hidden'] = isset($this->session['hidden_ref_ids'][$v->ref_id]);
             $smarty_clue['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id), false);
             $smarty_clue['download_file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_clue=".RawURLEncode($clues[$k]->ref_id)."&download=1", false);
             $smarty_clue['hide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?hide=".RawURLEncode($clues[$k]->ref_id));
             $smarty_clue['unhide_url'] = $this->controler->url($_SERVER['PHP_SELF']."?unhide=".RawURLEncode($clues[$k]->ref_id));
+            $smarty_clue['blow_up_url'] = $this->controler->url($_SERVER['PHP_SELF']."?blow_up=".RawURLEncode($clues[$k]->ref_id));
 
             foreach($smarty_clue['hints'] as $hk => $hv){
                 $smarty_clue['hints'][$hk]['file_url'] = $this->controler->url($_SERVER['PHP_SELF']."?get_hint=".RawURLEncode($hv['ref_id']), false);
@@ -373,6 +376,33 @@ class apu_iquest extends apu_base_class{
         $this->session[self::SESS_URL_TOKEN] = "";
 
         action_log($this->opt['screen_name'], $this->action, " Hint bought: ".$this->hint->id);
+
+        $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
+
+        if (!empty($_GET['view_grp_detail'])){
+            $get[] = "view_grp=".RawURLEncode($this->ref_id);
+        }
+
+        return $get;
+    }
+
+    /**
+     *  Method perform action blow_up
+     *
+     *  @return array           return array of $_GET params fo redirect or FALSE on failure
+     */
+    public function action_blow_up(){
+        global $lang_str;
+
+        Iquest_Events::add(Iquest_Events::BLOW_UP,
+                           true,
+                           array("solution" => $this->solution));
+
+        Iquest::blow_up($this->solution, $this->team_id);
+
+        action_log($this->opt['screen_name'], $this->action, " Solution blowned up: ".$this->solution->id);
+
+        Iquest_info_msg::add_msg($lang_str['iquest_msg_blowned_up']);
 
         $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
 
@@ -624,6 +654,12 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>true);
         }
+        elseif (isset($_GET['blow_up'])){
+            $this->ref_id = $_GET['blow_up'];
+            $this->action=array('action'=>"blow_up",
+                                 'validate_form'=>true,
+                                 'reload'=>true);
+        }
         elseif (isset($_GET['view_grp'])){
             $this->smarty_action = 'view_grp';
             $this->ref_id = $_GET['view_grp'];
@@ -706,6 +742,19 @@ class apu_iquest extends apu_base_class{
         }
         elseif ($this->action['action'] == "buy_hint"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Buy hint failed", false, array("errors"=>$this->controler->errors));
+
+            if (!empty($_GET['view_grp_detail']) and
+                $this->clue_grp){
+
+                $this->smarty_action = 'view_grp';
+                if (false === $this->action_view_grp()) return false;
+            }
+            else{
+                if (false === $this->action_default()) return false;
+            }
+        }
+        elseif ($this->action['action'] == "blow_up"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Blow up failed", false, array("errors"=>$this->controler->errors));
 
             if (!empty($_GET['view_grp_detail']) and
                 $this->clue_grp){
@@ -862,6 +911,45 @@ class apu_iquest extends apu_base_class{
                 ErrorHandler::add_error(str_replace("<price>",
                                                     $this->hint->price,
                                                     $lang_str['iquest_err_hint_no_money']));
+                return false;
+            }
+
+            return true;
+        }
+
+        if ($this->action['action'] == "blow_up"){
+
+            $team = Iquest_Team::fetch_by_id($this->team_id);
+            if ($team->bomb < 1){
+                ErrorHandler::add_error($lang_str['iquest_err_no_bomb']);
+                return false;
+            }
+
+            $opt = array("ref_id" => $this->ref_id);
+
+            $this->clue = Iquest_Clue::fetch($opt);
+            if (!$this->clue){
+                ErrorHandler::add_error("Unknown clue!");
+                sw_log("Unknown or not accessible clue: '".$this->ref_id."'", PEAR_LOG_INFO);
+                return false;
+            }
+            $this->clue = reset($this->clue);
+
+            if (!$this->clue->is_blowable($this->team_id)){
+                ErrorHandler::add_error($lang_str['iquest_err_cannot_blow_up']);
+                Iquest_Events::add(Iquest_Events::BLOW_UP,
+                                false,
+                                array("Errors" => Array("Clue (ID={$clue->id}) is not blowable.")));
+                return false;
+            }
+
+            $this->solution = $this->clue->get_solution_to_blow_up();
+
+            if (!$this->solution){
+                ErrorHandler::add_error($lang_str['iquest_err_cannot_blow_up']);
+                Iquest_Events::add(Iquest_Events::BLOW_UP,
+                                false,
+                                array("Errors" => Array("Clue (ID={$clue->id}) - cannot get the solution.")));
                 return false;
             }
 

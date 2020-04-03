@@ -63,7 +63,28 @@ class Iquest_Clue extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $type, $comment, $cgrp_id, $ordering, $point_to=array()){
+    protected static function fetchPointedSolutionIds($clue_id){
+        global $data, $config;
+
+        $ts_name  = &$config->data_sql->iquest_clue2solution->table_name;
+        $cs      = &$config->data_sql->iquest_clue2solution->cols;
+
+        $q = "select ".$cs->solution_id."
+              from ".$ts_name."
+              where {$cs->clue_id}=".$data->sql_format($clue_id, "s");
+
+        $res=$data->db->query($q);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
+
+        $out = array();
+        while ($row=$res->fetch()){
+            $out[] = $row[$cs->solution_id];
+        }
+        $res->closeCursor();
+        return $out;
+    }
+
+    function __construct($id, $ref_id, $filename, $content_type, $type, $comment, $cgrp_id, $ordering, $point_to=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
 
         $this->cgrp_id = $cgrp_id;
@@ -119,6 +140,41 @@ class Iquest_Clue extends Iquest_file{
         }
     }
 
+
+    public function is_blowable($team_id){
+
+        $team = Iquest_Team::fetch_by_id($team_id);
+        if ($team->bomb < 1) return false;
+
+        $point_to = $this->get_point_to();
+        if (!$point_to) return false;
+        if (count($point_to) > 1) return false;  // cannot blow-up, we do not know which solution of those pointed shall be blown
+
+        $point_to = reset($point_to);
+        $scheduled_solutions = Iquest_Solution::get_scheduled_solutions($team_id);
+
+        foreach($scheduled_solutions as $solution){
+            if ($solution['solution_id'] == $point_to) return true;
+        }
+
+        return false;
+    }
+
+    public function get_point_to(){
+        if (!is_null($this->point_to)) return $this->point_to;
+        $this->point_to = self::fetchPointedSolutionIds($this->id);
+        return $this->point_to;
+    }
+
+    public function get_solution_to_blow_up(){
+        $point_to = $this->get_point_to();
+        if (!$point_to) return false;
+        if (count($point_to) > 1) return false;  // cannot blow-up, we do not know which solution of those pointed shall be blown
+
+        $point_to = reset($point_to);
+
+        return Iquest_Solution::by_id($point_to);
+    }
 
     function get_accessible_hints($team_id){
         if (!is_null($this->hints)) return $this->hints;

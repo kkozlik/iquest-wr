@@ -287,6 +287,32 @@ class Iquest_Solution extends Iquest_file{
     }
 
     /**
+     *  Update schedule displaying of solution for team $team_id.
+     *  This function do not check whether solution is already scheduled!
+     */
+    public static function schedule_update($id, $team_id, $timeout){
+        global $data, $config;
+
+        /* table's name */
+        $t_name  = &$config->data_sql->iquest_solution_team->table_name;
+        /* col names */
+        $c       = &$config->data_sql->iquest_solution_team->cols;
+
+        $qw = array();
+        $qw[] = $c->solution_id." = ".$data->sql_format($id, "s");
+        $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
+        $qw[] = $c->show_at." > now()";
+        $qw = " where ".implode(' and ', $qw);
+
+        $q = "update $t_name
+              set ".$c->show_at."=addtime(now(), sec_to_time(".$data->sql_format($timeout, "n")."))".$qw;
+
+        $res=$data->db->query($q);
+
+        return true;
+    }
+
+    /**
      * Mark given sulution as solved by the team
      *
      * @param string $id
@@ -359,19 +385,28 @@ class Iquest_Solution extends Iquest_file{
               from ".$t_name.$qw;
 
         $q .= " order by ".$c->show_at;
-        $q .= $data->get_sql_limit_phrase(0, 1);
 
         $res=$data->db->query($q);
         $res->setFetchMode(PDO::FETCH_ASSOC);
 
-        $out = null;
-        if ($row=$res->fetch()){
-            $out=array("show_at"     => $row[$c->show_at],
-                       "solution_id" => $row[$c->solution_id]);
+        $out = [];
+        while ($row=$res->fetch()){
+            $out[]=array("show_at"     => $row[$c->show_at],
+                         "solution_id" => $row[$c->solution_id]);
         }
         $res->closeCursor();
 
         return $out;
+    }
+
+    public static function get_scheduled_solutions($team_id){
+        static $scheduled_solutions = [];
+
+        if (!isset($scheduled_solutions[$team_id])){
+            $scheduled_solutions[$team_id] = Iquest_Solution::get_next_scheduled($team_id);
+        }
+
+        return $scheduled_solutions[$team_id];
     }
 
 
