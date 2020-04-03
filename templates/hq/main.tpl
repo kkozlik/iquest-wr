@@ -208,7 +208,7 @@
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
         <span class="text-nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>
-        <span class="text-nowrap">({$team.bomb}💣)</span>
+        {if $team.bomb}<span class="text-nowrap">({$team.bomb}💣)</span>{/if}
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
         {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a><br /><strong>Datum: </strong>`$cgrp_team[$group.id][$team.id].gained_at_date|escape`"}

@@ -73,7 +73,14 @@
             {/if}
             {if $parameters.display_bomb|default:0 and $team|default:0}
                 <li class="navbar-text bomb">
-                    {$team.bomb|string_format:"%.2f"}💣
+                    {if $team.bomb >= 10}
+                        <span class="align-middle" title="Máte {$team.bomb|string_format:"%.2f"} bomb">{$team.bomb|floor|string_format:"%2d"}💣</span>
+                    {elseif $team.bomb > 0}
+                        <span class="fa-stack bomb-icon" title="Máte {$team.bomb|string_format:"%.2f"} bomb">
+                            <i class="fas fa-bomb fa-stack-2x"></i>
+                            <strong class="bomb-number fa-stack-1x">{$team.bomb|floor|string_format:"%1d"}</strong>
+                        </span>
+                    {/if}
                 </li>
             {/if}
         </ul>

@@ -17,5 +17,20 @@
         text-align: center;
         padding: 2px 10px
     }
+
+    li.bomb{
+        .bomb-icon{
+            margin-top: -4px;
+            margin-bottom: -4px;
+
+            .bomb-number{
+                color: map-get($theme-colors, "dark");
+                margin-top: 0.35em;
+                margin-left: -0.15em;
+            }
+        }
+
+
+    }
 }
 
