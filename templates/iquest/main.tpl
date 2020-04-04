@@ -241,6 +241,8 @@
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
+    {call print_key_input}
+
     {call print_clue_grp_title clue_grp=$clue_grp}
     {call print_clue_grp clue_grp=$clue_grp}
 
