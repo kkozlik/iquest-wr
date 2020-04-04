@@ -123,48 +123,70 @@
         <div class="card-body p-4">
 
     {$form.start}
-    <div class="row align-items-center">
-        <div class="col-12 col-sm-{($tracker_enabled) ? 6 : 12} col-md-3 col-xl-2 pr-md-0 align-self-start">
-            <div class="row mb-1">
-                <div class="col">
-                    <a href="{$all_in_1_url|escape}" class="text-nowrap btn btn-block {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" name="allInOneChk" id="allInOneChk" {if $action=='view_all'}checked{/if}>
-                            <label class="custom-control-label" for="allInOneChk">{$lang_str.iquest_all_in_1}</label>
-                        </div>
-                    </a>
-                </div>
+
+    {$buttons=[]}
+
+    {capture append="buttons"}
+        <a href="{$all_in_1_url|escape}" class="text-nowrap btn btn-block {if $action=='view_all'}btn-dark{else}btn-outline-secondary{/if}">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="allInOneChk" id="allInOneChk" {if $action=='view_all'}checked{/if}>
+                <label class="custom-control-label" for="allInOneChk">{$lang_str.iquest_all_in_1}</label>
             </div>
-            {if $graph_enabled}
-            <div class="row mb-1 mb-md-0">
-                <div class="col">
-                    <a href="{$view_graph_url|escape}" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_graph}</a>
-                </div>
+        </a>
+    {/capture}
+
+    {if $graph_enabled}
+        {capture append="buttons"}
+            <a href="{$view_graph_url|escape}" class="text-nowrap btn btn-block btn-outline-secondary">{$lang_str.iquest_graph}</a>
+        {/capture}
+    {/if}
+
+    {if $tracker_enabled}
+        {capture append="buttons"}
+            <a href="javascript:" class="text-nowrap btn btn-block btn-outline-secondary myLocationBtn">{$lang_str.iquest_show_position}</a>
+        {/capture}
+        {capture append="buttons"}
+            <a href="{$check_location_url|escape}" class="text-nowrap btn btn-block btn-primary checkLocationBtn">{$lang_str.iquest_verify_tracker}</a>
+        {/capture}
+    {/if}
+
+
+    {$i=0}
+    <div class="row align-items-center">
+        <div class="col-12 col-sm-{(count($buttons) > 1) ? 6 : 12} col-md-3 col-xl-2 pr-md-0 align-self-end">
+            <div class="row mt-1 mt-md-0">
+                <div class="col">{$buttons[$i++]}</div>
+            </div>
+            {if count($buttons) > 3}
+            <div class="row mt-1">
+                <div class="col">{$buttons[$i++]}</div>
             </div>
             {/if}
         </div>
-        {if $tracker_enabled}
-        <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 order-md-last">
-            <div class="row mb-1">
-                <div class="col">
-                    <a href="javascript:" class="text-nowrap btn btn-block btn-outline-secondary myLocationBtn">{$lang_str.iquest_show_position}</a>
-                </div>
+        {if count($buttons) > 1}
+        <div class="col-12 col-sm-6 col-md-3 col-xl-2 pl-md-0 align-self-end order-md-last">
+            <div class="row mt-1 mt-md-0">
+                <div class="col">{$buttons[$i++]}</div>
             </div>
-            <div class="row mb-1 mb-md-0">
-                <div class="col">
-                    <a href="{$check_location_url|escape}" class="text-nowrap btn btn-block btn-primary checkLocationBtn">{$lang_str.iquest_verify_tracker}</a>
-                </div>
+            {if count($buttons) > 2}
+            <div class="row mt-1">
+                <div class="col">{$buttons[$i++]}</div>
             </div>
+            {/if}
         </div>
         {/if}
-        <div class="col mt-1 mt-md-0">
-            <div class="form-inline justify-content-center">
+        <div class="col mt-2 mt-md-0 align-self-end align-self-lg-center">
+            <div class="form-inline justify-content-center {*mb-1*}">
                 <label for="solution_key" class="mr-2">{$lang_str.iquest_solution_key}:</label>
-                {$formobj->el('solution_key')->add_class('mr-sm-1 mb-1 mb-sm-0')}
-                {$form.okey}
+
+                <div class="input-group">
+                    {$formobj->el('solution_key')}
+                    <div class="input-group-append">{$form.okey}</div>
+                </div>
             </div>
         </div>
     </div>
+
     {$form.finish}
         </div>
     </div>
