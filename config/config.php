@@ -64,8 +64,6 @@
 
     $config->html_doctype = "html";
 
-    $config->html_headers[] = "<!--[if lt IE 9]><LINK REL=\"StyleSheet\" HREF=\"".htmlspecialchars($config->style_src_path."ie.css")."\" TYPE=\"text/css\" /><![endif]-->\n";
-
 
 // The 'common' and 'iquest-auth' module shall be always loaded
 $config->modules["common"] = true;
