@@ -4,6 +4,7 @@
 * Ability to use tracker to verify location
 * HQ: event log - Team_logged event not contain info (#23)
 * duplicite keys in log 'err key entered' (#4)
+* Bombs
 
 rel 0.2.10
 * fix permissions for /var/lib/iquest/smarty dir (#14)
