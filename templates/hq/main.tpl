@@ -21,7 +21,7 @@
                     {elseif $clue.type=="special"}<span class="questionmark"></span>
                     {else}<span class="finder"></span>{/if}
                 </th>
-                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
             </tr>
             {call iquestRenderFile file=$clue}
             </table>
@@ -34,7 +34,7 @@
             <table class="table mb-0">
             <tr >
                 <th class="filename align-middle">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
-                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
             </tr>
             {call iquestRenderFile file=$hint}
             </table>
@@ -80,7 +80,7 @@
             <table class="table mb-0">
             <tr>
                 <th class="filename align-middle">{$lang_str.iquest_hint}: {$hint.filename} (timeout: {$hint.timeout}, price: {$hint.price} {$lang_str.iquest_txt_coin_symbol})</th>
-                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
             </tr>
             {call iquestRenderFile file=$hint}
             </table>

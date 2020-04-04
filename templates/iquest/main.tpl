@@ -26,7 +26,7 @@
                         <a href="{$clue.blow_up_url|escape}" class="btn btn-sm btn-outline-secondary" title="{$lang_str.iquest_blow_up|escape}"><i class="fas fa-bomb"></i></a>
                     </th>
                 {/if}
-                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
                 <th class="buttons align-middle">
                     <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary btn-sm minimize-btn" data-obj-id="{$clue.ref_id|escape}" data-url-hide="{$clue.hide_url}"><i class="fas fa-chevron-down"></i></a>
                 </th>
@@ -45,7 +45,7 @@
                     {$lang_str.iquest_hint}: {$hint.filename|escape}
                     {if $hint.new}<span class="new"></span>{/if}
                 </th>
-                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary"><i class="icon-download-alt"></i> {$lang_str.iquest_download}</a></th>
+                <th class="link align-middle"><a href="{$hint.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
                 <th class="buttons align-middle">
                     <a href="#" title="{$lang_str.iquest_minimize}" class="btn btn-outline-secondary btn-sm minimize-btn" data-obj-id="{$hint.ref_id|escape}" data-url-hide="{$hint.hide_url}"><i class="fas fa-chevron-down"></i></a>
                 </th>
