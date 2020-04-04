@@ -23,7 +23,7 @@
                 </th>
                 {if $clue.blowable}{$colspan=$colspan+1}
                     <th class="link align-middle">
-                        <a href="{$clue.blow_up_url|escape}" class="btn btn-sm btn-outline-secondary" title="{$lang_str.iquest_blow_up|escape}"><i class="fas fa-bomb"></i></a>
+                        <a href="{$clue.blow_up_url|escape}" class="btn btn-sm btn-outline-secondary" title="{$lang_str.iquest_blow_up|escape}" onclick="return linkConfirmation(this, '{$lang_str.iquest_blow_up_confirmation|escape:js}')"><i class="fas fa-bomb"></i></a>
                     </th>
                 {/if}
                 <th class="link align-middle"><a href="{$clue.download_file_url|escape}" class="btn btn-sm btn-outline-secondary text-nowrap"><i class="fas fa-download"></i> {$lang_str.iquest_download}</a></th>
