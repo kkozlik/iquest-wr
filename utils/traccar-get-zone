@@ -1,0 +1,70 @@
+#!/usr/bin/env php
+<?php
+
+if (!isset($_SERVER['SERVER_NAME'])) $_SERVER['SERVER_NAME']='';
+
+$_required_modules = array('iquest', 'iquest-cli', 'auth', 'console');
+
+require_once(dirname(__FILE__)."/../config/set_env.php");
+require_once(dirname(__FILE__)."/../functions/functions.php");
+require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
+
+function usage(){
+
+    echo "Get definition of traccar zone.\n\n";
+    echo "Usage: ".$_SERVER['argv'][0]." <zone_name>\n\n";
+
+}
+
+
+function traccar_get_zone($zone_name){
+    $traccar = new Traccar([
+        'auth_token' => Iquest_Options::get(Iquest_Options::TRACCAR_AUTH_TOKEN),
+        'server_addr' => Iquest_Options::get(Iquest_Options::TRACCAR_ADDR)
+    ]);
+
+    return $traccar->get_zone_by_name($zone_name);
+}
+
+function main(){
+
+    if ($_SERVER['argc'] != 2){
+        usage();
+        exit;
+    }
+
+    try{
+        $zone=traccar_get_zone($_SERVER['argv'][1]);
+
+        if (!$zone) {
+            echo "Zone not found\n";
+            exit(1);
+        }
+
+        echo "Area: {$zone->area}\n";
+        echo "Attributes: \n";
+        foreach($zone->attributes as $name => $value){
+            echo " * $name = $value\n";
+        }
+
+    }
+    catch (Iquest_InvalidConfigException $e){
+        fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
+        Console_Cli::print_exception_error($e);
+        exit(1);
+    }
+    catch(Traccar_api_query_exception $e){
+        fwrite(STDERR, "\nSORRY VOLE ERROR:\n");
+        Console_Cli::print_exception_error($e);
+        exit(1);
+    }
+    catch (exception $e){
+        fwrite(STDERR, "\nUnexpected exception. See PHP error log for details:\n");
+        Console_Cli::print_exception_error($e);
+        throw $e;
+    }
+
+}
+
+
+main();

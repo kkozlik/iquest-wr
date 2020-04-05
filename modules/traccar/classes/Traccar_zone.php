@@ -30,7 +30,7 @@ class Traccar_zone{
         $apiObj['id'] = $this->id;
         $apiObj['name'] = $this->name;
         $apiObj['description'] = $this->description;
-        $apiObj['attributes'] = $this->attributes;
+        $apiObj['attributes'] = new ArrayObject($this->attributes);
         $apiObj['calendarId'] = $this->calendarId;
         $apiObj['area'] = $this->area;
 
