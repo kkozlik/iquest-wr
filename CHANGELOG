@@ -5,6 +5,7 @@
 * HQ: event log - Team_logged event not contain info (#23)
 * duplicite keys in log 'err key entered' (#4)
 * Bombs
+* Wrapper CLI script installed to the executable PATH
 
 rel 0.2.10
 * fix permissions for /var/lib/iquest/smarty dir (#14)

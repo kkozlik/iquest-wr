@@ -1,0 +1,54 @@
+#!/usr/bin/env php
+<?php
+
+function available_commands(){
+    $dir = scandir(__DIR__, SCANDIR_SORT_ASCENDING);
+    $out = [];
+    foreach($dir as $entry){
+        if ($entry[0] == '.') continue;
+        if ($entry == basename($_SERVER['argv'][0])) continue;
+        if (!is_executable(__DIR__.'/'.$entry)) continue;
+
+        // $entry = preg_replace('/(.php)$/', '', $entry);
+        $out[] = $entry;
+    }
+    return $out;
+}
+
+function usage(){
+    echo "Usage: ".$_SERVER['argv'][0]." <command> [arguments] \n\n";
+    echo "Available commands: \n";
+    foreach(available_commands() as $entry) echo " - $entry\n";
+}
+
+
+if (!isset($_SERVER['argv'][1])){
+    usage();
+    exit(1);
+}
+
+$cmd = $_SERVER['argv'][1];
+
+if (!in_array($cmd, available_commands())){
+    fwrite(STDERR, "Unknown command: '$cmd'\n\n");
+    usage();
+    exit(2);
+}
+
+$cmd = __DIR__.'/'.$cmd;
+
+// Add arguments to cmd
+$arguments = $_SERVER['argv'];
+array_shift($arguments);  // name of the program
+array_shift($arguments);  // the command to exec
+
+foreach($arguments as $arg){
+    $cmd .= " ".escapeshellarg($arg);
+}
+
+// echo $cmd."\n";
+
+// The script command simulate a terminal and allow colorized output
+system('script -q -c '.escapeshellarg($cmd)." /dev/null", $reval);
+exit($reval);
+

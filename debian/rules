@@ -46,6 +46,7 @@ install: build
 	ln -sf /etc/php/7.3/conf.d/30-iquest.ini $(DESTDIR)/etc/php/7.3/apache2/conf.d/30-iquest.ini
 	ln -sf /var/lib/iquest/data $(DESTDIR)/usr/share/iquest/data
 	ln -sf /var/lib/iquest/smarty $(DESTDIR)/usr/share/iquest/smarty
+	ln -sf /usr/share/iquest/utils/iquest $(DESTDIR)/usr/bin/iquest
 
 # Do not compress the DB schema file
 override_dh_compress:
