@@ -1,3 +1,18 @@
+iquest (20.4.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * fix rank table is generation (#25)
+  * Allow negative coin values
+  * Include team name in log messages
+  * Ability to use tracker to verify location
+  * HQ: event log - Team_logged event not contain info (#23)
+  * duplicite keys in log 'err key entered' (#4)
+  * Bombs
+  * Wrapper CLI script installed to the executable PATH
+  * change version number scheme to year.month.release
+ 
+ --  <kk@kk-iquest.kufr.cz>  Mon, 06 Apr 2020 21:27:42 +0200
+
 iquest (0.2.90) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]

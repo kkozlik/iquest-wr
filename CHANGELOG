@@ -1,3 +1,4 @@
+rel 20.4.0
 * fix rank table is generation (#25)
 * Allow negative coin values
 * Include team name in log messages
@@ -6,6 +7,7 @@
 * duplicite keys in log 'err key entered' (#4)
 * Bombs
 * Wrapper CLI script installed to the executable PATH
+* change version number scheme to year.month.release
 
 rel 0.2.10
 * fix permissions for /var/lib/iquest/smarty dir (#14)
