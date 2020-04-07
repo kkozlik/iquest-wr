@@ -139,7 +139,7 @@ class Iquest_Events{
                 left join ".$tt_name." t on t.".$ct->id." = e.".$c->team_id.$qw;
 
 
-        if ($o_order_by) $q .= " order by ".$c->$o_order_by." ".$o_order_desc;
+        if ($o_order_by) $q .= " order by ".$c->$o_order_by." ".$o_order_desc.", {$c->id} $o_order_desc";
 
         $q .= !empty($opt['use_pager']) ? $data->get_sql_limit_phrase() : "";
 
