@@ -1,6 +1,6 @@
 {* Smarty *}
 
-{include file='_head.tpl'}
+{include file='_head.tpl' container="container-fluid"}
 
 {include file="iquest/iquest-functions.tpl"}
 

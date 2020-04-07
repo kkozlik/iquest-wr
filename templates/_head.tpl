@@ -93,7 +93,7 @@
 <br />
 {/if}
 
-<div class="container" id="page_container">
+<div class="{$container|default:"container"}" id="page_container">
 
 {if $contest_over|default:false}
     <div class="alert alert-danger">
