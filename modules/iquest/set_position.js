@@ -170,11 +170,12 @@ SetLocationCtl.prototype = {
             },
             success: function(data, status){
 
-                // if (data.errors){
-                //     $.each(data.errors, function(index, err){
-                //         show_error(err);
-                //     });
-                // }
+                if (data.errors){
+                    clear_errors();
+                    $.each(data.errors, function(index, err){
+                        show_error(err);
+                    });
+                }
 
                 if (!data.lat || !data.lon) {
                     if (self.updateTimeEl){
