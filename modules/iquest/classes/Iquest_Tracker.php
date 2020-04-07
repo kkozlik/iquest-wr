@@ -138,6 +138,20 @@ class Iquest_Tracker{
         return $this->get_location_of_device($team->tracker_id);
     }
 
+    public function get_zones_by_device($devId){
+        $zones = [];
+        try{
+            $traccar = $this->get_traccar();
+            $zones = $traccar->get_zone_by_dev($devId);
+        }
+        catch(Traccar_api_query_exception $e){
+            sw_log_exception($e);
+            ErrorHandler::add_error($lang_str['iquest_err_internal_error']);
+            return [];
+        }
+
+        return $zones;
+    }
 
     public function check_location(){
         global $lang_str;

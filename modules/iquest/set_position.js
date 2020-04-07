@@ -13,6 +13,7 @@ function SetLocationCtl(){
     this.inpDevId = null;
     this.inpTeam = null;
     this.updateTimeEl = null;
+    this.zoneEl = null;
 
     this.storage = new SessionStorage();
 
@@ -142,6 +143,8 @@ SetLocationCtl.prototype = {
                         show_info(msg);
                     });
                 }
+
+                self.get_position();
             }
         });
     },
@@ -176,6 +179,8 @@ SetLocationCtl.prototype = {
                         show_error(err);
                     });
                 }
+
+                self.render_zones(data.zones);
 
                 var location = data.location;
 
@@ -213,6 +218,45 @@ SetLocationCtl.prototype = {
 
             }
         });
+    },
+
+    render_zones: function(zones){
+        var self = this;
+        this.zoneEl.empty();
+
+        if (!zones) return;
+        if (!zones.length) return;
+
+        var wrapper=$("<div class='mt-md-4'>");
+
+        $.each(zones, function(key, zone){
+
+            var attrs = $('<span>');
+
+            $.each(zone.attributes, function(attr_name, attr_val){
+                var attr = $('<small>')
+                    .append($('<span class="text-primary text-nowrap pr-1">').text(attr_name+":"))
+                    .append($('<span>').text(attr_val));
+
+                attrs.append(attr);
+                attrs.append('<span>, </span>');
+            });
+            attrs.children().last().remove(); // remove the last comma
+
+            var col = $('<div class="col">');
+            col.append($("<small class='badge badge-info mr-1'>").text("Zona: "+zone.name));
+            col.append(document.createTextNode("{"));
+            col.append(attrs);
+            col.append(document.createTextNode("}"));
+
+
+            var div = $('<div class="row">').append(col);
+
+            wrapper.append(div);
+        });
+
+        self.zoneEl.append(wrapper);
+
     }
 
 }

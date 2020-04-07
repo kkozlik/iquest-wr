@@ -52,6 +52,7 @@ class apu_iquest_set_position extends apu_base_class{
         if ($ok){
             $tracker = new Iquest_Tracker(null);
             $resp['location'] = $tracker->get_location_of_device($_GET['devId']);
+            $resp['zones'] = $tracker->get_zones_by_device($_GET['devId']);
         }
 
         // Add errors to response

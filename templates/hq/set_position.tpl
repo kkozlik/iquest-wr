@@ -24,6 +24,9 @@
             <small>Pozice aktualizována naposledy před <span class="updateTime text-nowrap"></span></small>
         </div>
     </div>
+    <div class="zonePlaceholder">
+    </div>
+
 </div>
 
 
@@ -41,6 +44,7 @@
         locCtl.inpTeam = $('#team_id');
         locCtl.mapCanvasId = 'mapCanvas';
         locCtl.updateTimeEl = $('.updateTime');
+        locCtl.zoneEl = $('.zonePlaceholder');
         locCtl.set_position_url = {$ajax_set_position_url|json_encode};
         locCtl.get_position_url = {$ajax_get_position_url|json_encode};
 
