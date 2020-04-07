@@ -221,8 +221,12 @@ class Iquest_Tracker{
             }
         }
 
+        if (!$result['status']){
+            ErrorHandler::add_error("Invalid zone definition.");
+        }
+
         Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
-                true,
+                $result['status'],
                 array("zone" => $selectedZone->name));
 
         return $result;
