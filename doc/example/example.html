@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="generator" content="PSPad editor, www.pspad.com">
+<title></title>
+
+<style>
+.img{
+    text-align:center;
+}
+
+.clue{
+    font-style: italic;
+    color: #555555;
+}
+
+.solution{
+    font-style: italic;
+    color: #555555;
+}
+
+.ini{
+    background: lightgrey;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+</style>
+
+</head>
+<body>
+
+
+<h1>Příklad obecné struktury soutěže</h1> 
+
+<p>
+V následujícím příkladu popisuji jak by mohla vypadat struktura nelineární 
+soutěže (nebo jen její časti) a jak se mění vnitřní stavy systému v průběhu 
+zadávání soutěžních kódů. V případě lineární soutěže, funguje systém uvnitř  
+naprosto stejně. Jenom graf indicií a řešení je mnohem jednodušší a neobsahuje 
+různá rozvětvení.  
+</p>
+
+<p>
+Předpokládejme že soutěžní tým se v soutěži dostal do fáze kdy získal <span class="clue">indicii 5</span>.
+Zároveň předpokládejme že <span class="solution">řešení 9</span> je cílový waypoint a že pro každou indicii 
+je definovaná nějaká nápověda (v grafu nejsou zobrazené).
+</p>
+
+<ul class="ini">
+<li>Vazba Indicie -&gt; nápověda se v .ini souboru definuje pomocí položky "<strong>[hint] clue_IDs</strong>".</li>
+<li>Vazba Indicie -&gt; řešení se v .ini souboru definuje pomocí položky "<strong>[clue] point_to</strong>".</li>
+<li>Vazba řešení -&gt; skupina indicií se v .ini souboru definuje pomocí položky "<strong>[solution] next_cgrp_id</strong>".</li>
+</ul>
+
+<div class="img"><img src="graf1.png"></div>
+
+<p>Ve chvíli kdy soutěžní tým získá <span class="clue">indicie 5</span>, proběhne následující:</p>
+
+<ol>
+<li>Naplánuje se zobrazení nápověd pro <span class="clue">indicie 5a a 5b</span></li>
+<li>Naplánuje se prozrazení <span class="solution">řešení 5</span></li>
+<li>Prozrazení <span class="solution">řešení 7</span> se neplánuje, soutěžní tým
+    ještě nezískal všechny indicie které na něj odkazují.</li>
+</ol>
+
+<p>Nyní předpokládejme že se soutěžnímu týmu podaří rozluštit 
+<span class="clue">indicii 5a</span>, dorazí na waypoint 
+<span class="solution">řešení 7</span> a zadá soutěžní kód.
+Graf soutěže se změní následovně:</p>
+
+<div class="img"><img src="graf2.png"></div>
+
+<p>Uvnitř systému probíhá toto:</p>
+
+<ol>
+<li>Zobrazí se <span class="clue">indicie 9a</span></li>
+<li>Naplánuje se kdy se má zobrazit nápověda pro <span class="clue">indicii 9a</span></li>
+<li>Prozrazení <span class="solution">řešení 9</span> se <strong>ne</strong>naplánuje, 
+    tým ještě nemá všechny indicie, které na něj odkazují.</li>
+<li>Pokud ještě nebyla zobrazena nápověda pro <span class="clue">indicii 5a</span>, 
+    její naplánování se zruší a nebude zobrazená nikdy - není již potřeba.</li>
+<li>Plán pro zobrazení nápovědy pro <span class="clue">indicii 5b</span> není dotčen.</li>
+</ol>
+
+<p>Nyní soutěžní tým rozluští 
+<span class="clue">indicii 5b</span>, dorazí na waypoint 
+<span class="solution">řešení 5</span> a zadá soutěžní kód.
+Graf soutěže se změní následovně:</p>
+
+<div class="img"><img src="graf3.png"></div>
+
+
+<p>Uvnitř systému probíhá toto:</p>
+
+<ol>
+<li>Zobrazí se <span class="clue">indicie 6a a 6b</span></li>
+<li>Naplánuje se kdy se má zobrazit nápověda pro <span class="clue">indicii 6b</span></li>
+<li>Zobrazení nápovědy pro <span class="clue">indicii 6a</span> se <strong>ne</strong>plánuje.
+    <span class="solution">Řešení 7</span> je známé. Vyluštění této indicie už nijak 
+    nepomůže v tom dostat se do cíle. Systém tuto situaci rozezná tak, že v grafu
+    <strong>neexistuje žádná cesta</strong> <span class="clue">indicie 6a</span> -&gt; ... -&gt; 
+    <span class="solution">řešení 9</span>, která by procházela pouze přes dosud 
+    nerozluštěná řešení.</li>
+<li>Ze stejného důvodu se <strong>ne</strong>plánuje ani prozrazení <span class="solution">řešení 6</span>.</li>
+<li>Naplánuje se prozrazení <span class="solution">řešení 8</span></li>
+<li>Pokud ještě nebyla zobrazena nápověda pro <span class="clue">indicii 5b</span>, 
+    její naplánování se zruší a nebude zobrazená nikdy, v opačném případě zůstává zobrazená dál.</li>
+</ol>
+
+<p>Pozn.: Pokud by soutěžní tým v tomto okamžiku vyluštil <span class="solution">řešení 6</span>
+a zadal soutěžní kód, tak by se pouze zobrazily <span class="clue">indicie 7</span>.
+Nic víc by se nestalo. Žádné plánování zobrazení nápověd apod.</p>
+
+<p>Nakonec soutěžní tým rozluští 
+<span class="clue">indicii 6b</span>, dorazí na waypoint 
+<span class="solution">řešení 8</span> a zadá soutěžní kód.
+Graf soutěže se změní následovně:</p>
+
+<div class="img"><img src="graf4.png"></div>
+
+<p>Uvnitř systému probíhá toto:</p>
+
+<ol>
+<li>Zobrazí se <span class="clue">indicie 10a</span></li>
+<li>Naplánuje se kdy se má zobrazit nápověda pro <span class="clue">indicii 10a</span></li>
+<li>Naplánuje se prozrazení <span class="solution">řešení 9</span></li>
+<li>Pokud ještě nebyla zobrazena nápověda pro <span class="clue">indicii 6b</span>, 
+    její naplánování se zruší a nebude zobrazená nikdy, v opačném případě zůstává zobrazená dál.</li>
+</ol>
+
+<p>
+Následně při zadání kódu <span class="solution">řešení 9</span> se už jen zruší 
+plán zobrazení všech zbývajících nápověd a řešení a zobrazí se <span class="clue">indicie cíl</span>,
+obsahující gratulaci a instrukce v cíli.
+</p>
+
+
+
+  </body>
+</html>
