@@ -228,7 +228,11 @@ class Iquest_Events{
             }
             break;
         case self::LOCATION_CHECK:
-            if (isset($this->data['zone']))         $out['zone']['text'] = $this->data['zone'];
+            if (isset($this->data['selected_zone']))    $out['selected_zone']['text'] = $this->data['selected_zone'];
+            if (!empty($this->data['zones']))           $out['zones']['text'] = implode(", ", $this->data['zones']);
+            if (isset($this->data['lat']) and isset($this->data['lon'])){
+                $out['lokace']['text'] = sprintf("N%2.5f, E%2.5f", $this->data['lat'], $this->data['lon']);
+            }
             break;
         case self::LOGGED:
         case self::LOGOUT:

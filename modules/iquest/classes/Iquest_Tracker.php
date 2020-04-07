@@ -186,7 +186,23 @@ class Iquest_Tracker{
             return $result;
         }
 
+        $zone_names = [];
+        foreach($zones as $zone) $zone_names[] = $zone->name;
+
         if (!$selectedZone){
+
+            $position = null;
+            $event_data=['zones' => $zone_names];
+            try{
+                $position = $traccar->get_pos_by_dev($team->tracker_id);
+                $event_data["lat"] = $position->latitude;
+                $event_data["lon"] = $position->longitude;
+            }
+            catch(Traccar_api_query_exception $e){
+                sw_log_exception($e);
+                ErrorHandler::add_error($lang_str['iquest_err_internal_error']);
+            }
+
             ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
 
             if ($data_age > 3*60){
@@ -195,19 +211,22 @@ class Iquest_Tracker{
 
             Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
                     false,
-                    array());
+                    $event_data);
 
             return $result;
         }
 
         sw_log("check_location - selected zone {$selectedZone->name}.", PEAR_LOG_INFO);
+        $invalidZone = true;
 
         if (!empty($selectedZone->attributes[self::ZONE_ATTR_MSG])){
+            $invalidZone = false;
             $result['status'] = true;
             Iquest_info_msg::add_msg($selectedZone->attributes[self::ZONE_ATTR_MSG]);
         }
 
         if (!empty($selectedZone->attributes[self::ZONE_ATTR_KEY])){
+            $invalidZone = false;
             // Use different (location related) error messages in verify_key()
             $opt = [ 'err' => [
                         'key_dup' => $lang_str['iquest_err_tracker_location_dup'],
@@ -221,13 +240,14 @@ class Iquest_Tracker{
             }
         }
 
-        if (!$result['status']){
+        if ($invalidZone){
             ErrorHandler::add_error("Invalid zone definition.");
         }
 
         Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
                 $result['status'],
-                array("zone" => $selectedZone->name));
+                array("selected_zone" => $selectedZone->name,
+                      "zones"         => $zone_names));
 
         return $result;
     }
