@@ -573,10 +573,10 @@ class Chroust{
 
         $zones = $metadata->get_traccar_zones();
         foreach($zones as $zone_name => $zone){
-            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO] = $zones[Iquest_Tracker::ZONE_ATTR_PRIO];
-            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]  = $zones[Iquest_Tracker::ZONE_ATTR_KEY];
-            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]  = $zones[Iquest_Tracker::ZONE_ATTR_MSG];
-            static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $zones[Iquest_Tracker::ZONE_ATTR_COND];
+            if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO]))  static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO] = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_PRIO];
+            if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]))   static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]  = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_KEY];
+            if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]))   static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]  = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_MSG];
+            if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_COND]))  static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_COND];
             static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "$task_dir metadata";
         }
 

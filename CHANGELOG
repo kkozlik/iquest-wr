@@ -1,3 +1,5 @@
+* fix problem that attributes set in [traccar_zones] metadata section are not respected
+
 rel 20.4.0
 * fix rank table is generation (#25)
 * Allow negative coin values
