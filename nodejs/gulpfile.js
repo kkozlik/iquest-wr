@@ -58,6 +58,8 @@ gulp.task('clean', function() {
         OUTPUT_JS_DIR+'/moment-with-locales.js',
         OUTPUT_JS_DIR+'/leaflet.js',
         OUTPUT_JS_DIR+'/leaflet.js.map',
+        OUTPUT_JS_DIR+'/jquery.floatThead.js',
+        OUTPUT_JS_DIR+'/jquery.floatThead.min.js',
 
         // images
         OUTPUT_CSS_DIR+'/images/*',
@@ -90,7 +92,8 @@ gulp.task('js', function() {
             'node_modules/bootstrap-select/dist/js/bootstrap-select.min.js',
             'node_modules/tempusdominus-bootstrap-4/build/js/tempusdominus-bootstrap-4.js',
             'node_modules/moment/min/moment-with-locales.js',
-            'node_modules/leaflet/dist/leaflet.js'
+            'node_modules/leaflet/dist/leaflet.js',
+            'node_modules/floatthead/dist/jquery.floatThead.min.js'
     ];
 
     if (process.env.NODE_ENV == 'development'){
@@ -100,6 +103,7 @@ gulp.task('js', function() {
         src.push('node_modules/popper.js/dist/umd/popper.min.js.map');
         src.push('node_modules/bootstrap-select/dist/js/bootstrap-select.min.js.map');
         src.push('node_modules/leaflet/dist/leaflet.js.map');
+        src.push('node_modules/floatthead/dist/jquery.floatThead.js');
     }
 
     return gulp.src(src)

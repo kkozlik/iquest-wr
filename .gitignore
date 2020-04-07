@@ -13,6 +13,8 @@ pages/js/bootstrap-select.min.js
 pages/js/bootstrap-select.min.js.map
 pages/js/jquery.js
 pages/js/jquery.min.js
+pages/js/jquery.floatThead.js
+pages/js/jquery.floatThead.min.js
 pages/js/jquery.min.map
 pages/js/leaflet.js
 pages/js/leaflet.js.map
