@@ -40,7 +40,10 @@ class apu_iquest_set_position extends apu_base_class{
         header("Content-Type: text/json");
 
         $ok = true;
-        $resp = [];
+        $resp = [
+            'location' => new ArrayObject(),
+            'zones' => []
+        ];
 
         if (empty($_GET['devId'])){
             ErrorHandler::add_error("'devId' is not set"); $ok = false;
@@ -48,7 +51,7 @@ class apu_iquest_set_position extends apu_base_class{
 
         if ($ok){
             $tracker = new Iquest_Tracker(null);
-            $resp = $tracker->get_location_of_device($_GET['devId']);
+            $resp['location'] = $tracker->get_location_of_device($_GET['devId']);
         }
 
         // Add errors to response

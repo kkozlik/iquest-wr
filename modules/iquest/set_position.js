@@ -177,7 +177,9 @@ SetLocationCtl.prototype = {
                     });
                 }
 
-                if (!data.lat || !data.lon) {
+                var location = data.location;
+
+                if (!location.lat || !location.lon) {
                     if (self.updateTimeEl){
                         self.updateTimeEl.text("-----");
                     }
@@ -185,27 +187,27 @@ SetLocationCtl.prototype = {
                 };
 
                 if (!self.marker){
-                    self.marker = L.marker([data.lat, data.lon]);
+                    self.marker = L.marker([location.lat, location.lon]);
                     self.marker.addTo(self.map);
 
-                    self.map.panTo([data.lat, data.lon]);
+                    self.map.panTo([location.lat, location.lon]);
                 }
                 else {
                     var marker_location = self.marker.getLatLng();
-                    if (data.lat != marker_location.lat || data.lon != marker_location.lng){
+                    if (location.lat != marker_location.lat || location.lon != marker_location.lng){
 
                         self.marker.remove();
-                        self.marker = L.marker([data.lat, data.lon]);
+                        self.marker = L.marker([location.lat, location.lon]);
                         self.marker.addTo(self.map);
 
-                        self.map.panTo([data.lat, data.lon]);
+                        self.map.panTo([location.lat, location.lon]);
                     }
                 }
 
                 if (self.updateTimeEl){
                     var timeStr = $('<span>')
-                                    .addClass(self.get_color(data.age))
-                                    .text(data.lastupdate+" ("+data.lastupdate_ts+")");
+                                    .addClass(self.get_color(location.age))
+                                    .text(location.lastupdate+" ("+location.lastupdate_ts+")");
                     self.updateTimeEl.html(timeStr);
                 }
 
