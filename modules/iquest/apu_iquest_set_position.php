@@ -128,8 +128,7 @@ class apu_iquest_set_position extends apu_base_class{
         $teams = Iquest_Team::fetch(array('order_by' => 'name'));
         $team_options = array();
         $team_options[] = array("value" => "",
-                                "label" => "-- žádný --",
-                                "extrahtml" => "data-tracker-id='".htmlspecialchars($v->tracker_id)."'");
+                                "label" => "-- žádný --");
 
         foreach($teams as $v){
             $team_options[] = array("value" => $v->id,
