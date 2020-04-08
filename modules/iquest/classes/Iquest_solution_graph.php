@@ -149,6 +149,23 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             // get the solutions that gain some coins
             $opt = array();
             $opt['filter']['coin_value'] = new Filter("coin_value", 0, ">");
+            $solutions = Iquest_Solution::fetch($opt);
+
+            // add the related nodes to the queue too
+            foreach($solutions as $solution){
+                if (!isset($this->nodes["S_".$solution->id])){
+                    throw new UnexpectedValueException("Node for solution ID='{$solution->id}' does not exists in the graph.");
+                }
+
+                // but only if they are not solved yet
+                if ($this->nodes["S_".$solution->id]->solved) continue;
+
+                //add node to the queue
+                $queue[] = "S_".$solution->id;
+            }
+
+            // get the solutions that gain some bombs
+            $opt = array();
             $opt['filter']['bomb_value'] = new Filter("bomb_value", 0, ">");
             $solutions = Iquest_Solution::fetch($opt);
 
