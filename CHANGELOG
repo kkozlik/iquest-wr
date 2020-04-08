@@ -4,6 +4,7 @@
 * Improve LOCATION_CHECK events
 * HQ:set position screen display also matching zones
 * chroust: print zone summary
+* chroust: adding check that there is either a key or a message specified for each zone
 
 rel 20.4.0
 * fix rank table is generation (#25)

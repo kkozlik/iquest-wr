@@ -929,7 +929,7 @@ class Chroust{
             if ($option['traccar-updade']){
                 self::traccar_update();
 
-                // TODO: zone check
+                self::zone_check();
 
                 // Do not print zone summary if traccar has not been updated.
                 // The self::traccar_update() function set most of the data in
@@ -1075,6 +1075,16 @@ class Chroust{
             fwrite(STDERR, "\nUnexpected exception. See PHP error log for details:\n");
             Console_Cli::print_exception_error($e);
             throw $e;
+        }
+    }
+
+    static function zone_check(){
+        foreach(static::$parsed_data["traccar_zones"] as $zone => $zone_attrs){
+            if (empty($zone_attrs[Iquest_Tracker::ZONE_ATTR_KEY]) and
+                empty($zone_attrs[Iquest_Tracker::ZONE_ATTR_MSG])){
+
+                Console::log("*** WARNING: There is neither a KEY nor a MESSAGE specified for zone: $zone", Console::YELLOW);
+            }
         }
     }
 
