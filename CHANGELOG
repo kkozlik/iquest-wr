@@ -3,6 +3,7 @@
 * check_location: return error when zone have neither key nor message defined
 * Improve LOCATION_CHECK events
 * HQ:set position screen display also matching zones
+* chroust: print zone summary
 
 rel 20.4.0
 * fix rank table is generation (#25)

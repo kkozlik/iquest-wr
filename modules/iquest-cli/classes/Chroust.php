@@ -295,6 +295,7 @@ class Chroust{
         $solution->set_next_cgrps($next_cgrps);
 
         $solution->aditional_data = new stdClass();
+        $solution->aditional_data->dir = $metadata->dir;
         $solution->aditional_data->traccar_zones = $traccar_zones;
         $solution->aditional_data->traccar_condition = $traccar_condition;
 
@@ -577,7 +578,7 @@ class Chroust{
             if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]))   static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY]  = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_KEY];
             if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]))   static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_MSG]  = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_MSG];
             if (isset($zones[$zone_name][Iquest_Tracker::ZONE_ATTR_COND]))  static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND] = $zones[$zone_name][Iquest_Tracker::ZONE_ATTR_COND];
-            static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "$task_dir metadata";
+            static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "metadata (traccar_zones): ".basename($task_dir);
         }
 
         static::$parsed_data["clues"]     = array_merge(static::$parsed_data["clues"],     $clues);
@@ -750,7 +751,7 @@ class Chroust{
 
                 foreach($solution->aditional_data->traccar_zones as $zone_name){
 
-                    static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "solution: ".$solution->id;
+                    static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "metadata (solution): ".basename($solution->aditional_data->dir);
                     static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
 
                     if (is_null($solution->aditional_data->traccar_condition)){
@@ -927,9 +928,14 @@ class Chroust{
 
             if ($option['traccar-updade']){
                 self::traccar_update();
+
+                // TODO: zone check
+
+                // Do not print zone summary if traccar has not been updated.
+                // The self::traccar_update() function set most of the data in
+                // static::$parsed_data["traccar_zones"] array
+                self::print_zone_summary();
             }
-
-
 
             echo "\n";
             Console::log("Hint summary:", Console::LIGHT_GREEN, false, Console::UNDERLINE);
@@ -1070,9 +1076,43 @@ class Chroust{
             Console_Cli::print_exception_error($e);
             throw $e;
         }
+    }
 
+    static function print_zone_summary(){
 
+        echo "\n";
+        Console::log("Traccar zone summary:", Console::LIGHT_GREEN, true, Console::UNDERLINE);
 
+        ksort(static::$parsed_data["traccar_zones"]);
+
+        foreach(static::$parsed_data["traccar_zones"] as $zone => $zone_attrs){
+            Console::log("");
+            Console::log("  Zone: $zone", Console::LIGHT_BLUE);
+
+            if (isset($zone_attrs[Iquest_Tracker::ZONE_ATTR_PRIO])){
+                Console::log("    Priority: ", Console::YELLOW, false);
+                Console::log($zone_attrs[Iquest_Tracker::ZONE_ATTR_PRIO]);
+            }
+            if (isset($zone_attrs[Iquest_Tracker::ZONE_ATTR_KEY])){
+                Console::log("    Key: ", Console::YELLOW, false);
+                Console::log($zone_attrs[Iquest_Tracker::ZONE_ATTR_KEY]);
+            }
+            if (isset($zone_attrs[Iquest_Tracker::ZONE_ATTR_MSG])){
+                Console::log("    Message: ", Console::YELLOW, false);
+                Console::log($zone_attrs[Iquest_Tracker::ZONE_ATTR_MSG]);
+            }
+            if (isset($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND])){
+                Console::log("    Condition: ", Console::YELLOW, false);
+                Console::log($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND]);
+            }
+
+            if (isset($zone_attrs['referenced_by'])){
+                foreach($zone_attrs['referenced_by'] as $ref){
+                    Console::log("    Set in: ", Console::YELLOW, false);
+                    Console::log($ref);
+                }
+            }
+        }
     }
 
     static function get_field_widths($fields, $fields_headers){

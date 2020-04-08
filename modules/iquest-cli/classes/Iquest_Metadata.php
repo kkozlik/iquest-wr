@@ -49,6 +49,7 @@ class Iquest_Metadata{
     }
 
     function __construct($dir, $parent_metadata=null){
+        $this->dir              = $dir;
         $this->data             = $this->get_metadata($dir.self::METADATA_FILE);
         $this->parent_metadata  = $parent_metadata;
     }
