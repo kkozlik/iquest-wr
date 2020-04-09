@@ -80,4 +80,9 @@ class Iquest_authZ{
 
         return true;
     }
+
+    public function has_capability($capability){
+        $capabilities = $this->getCapabilities();
+        return isset($capabilities[$capability]);
+    }
 }

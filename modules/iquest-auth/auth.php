@@ -149,7 +149,7 @@ class Iquest_auth{
 
         // if the logged in user is not team but HQ, return null
         $authz = Iquest_authZ::singleton();
-        if (!$authz->authorize(['team'])) return null;
+        if (!$authz->has_capability('team')) return null;
 
         $uid = Iquest_auth::get_logged_in_uid();
         if (isset(static::$team_cache[$uid])) return static::$team_cache[$uid];
