@@ -1,3 +1,5 @@
+* delete session on logout
+
 rel 20.4.1
 * fix problem that attributes set in [traccar_zones] metadata section are not respected
 * HQ:main screen - use full width of the browser window

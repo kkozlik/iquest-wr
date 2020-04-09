@@ -126,6 +126,7 @@ class apu_auth_login extends apu_base_class{
         action_log(null, null, "User '$user' logged out");
 
         $auth->clearIdentity();
+        if (PHPlib::$session) PHPlib::$session->delete();
 
         if ($this->opt['redirect_on_logout']){
             $this->controler->change_url_for_reload($this->opt['redirect_on_logout']);
@@ -146,7 +147,7 @@ class apu_auth_login extends apu_base_class{
         elseif (isset($_GET['logout'])){
              $this->action=array('action'=>"logout",
                                  'validate_form'=>false,
-                                 'reload'=>false);
+                                 'reload'=>true);
         }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
