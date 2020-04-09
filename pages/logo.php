@@ -1,6 +1,6 @@
 <?php
 $_data_layer_required_methods=array();
-$_phplib_page_open = array("sess" => "iquest_session");
+$_phplib_page_open = array();
 $_required_modules = array('iquest');
 
 require dirname(__FILE__)."/prepend.php";
