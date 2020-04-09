@@ -389,18 +389,15 @@ class Iquest_Metadata{
             return null;
         }
 
-        if (!isset($clue_IDs[$hint_nr])){
-            $clue_ID = (int)end($clue_IDs);
-            $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
+        if (isset($clue_IDs[$hint_nr])){
+            $clue_ID = $clue_IDs[$hint_nr];
         }
         else{
-            if ($clue_IDs[$hint_nr] == 'L') return self::LAST_CLUE;
-
-            $clue_ID = (int)$clue_IDs[$hint_nr];
-            $clue_ID = $this->get_cgrp_id()."-".$clue_ID;
+            $clue_ID = end($clue_IDs);
         }
 
-        return $clue_ID;
+        if ($clue_ID == 'L') return self::LAST_CLUE;
+        else                 return $this->get_cgrp_id()."-".$clue_ID;
     }
 
     function get_hint_timeout($hint_nr){

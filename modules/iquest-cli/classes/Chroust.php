@@ -197,7 +197,7 @@ class Chroust{
 
         // Check whether the clue ID is valid
         if (!isset($clues[$clue_id])){
-            throw new Iquest_InvalidConfigException("Invalid clue_ID '$clue_id' specified for a hint.");
+            throw new Iquest_InvalidConfigException("Invalid clue_ID '$clue_id' specified for hint $hint_nr.");
         }
 
         if (!$timeout and !$price){
