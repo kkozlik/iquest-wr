@@ -1,3 +1,11 @@
+iquest (20.4.2) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * delete session on logout
+  * chroust: invalid interpretation of clue_IDs=L if there are more hints
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 09 Apr 2020 22:24:42 +0200
+
 iquest (20.4.1) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
