@@ -8,6 +8,7 @@ class Iquest_Condition{
      * Prefix of methods implementing conditions
      */
     const COND_PREFIX = "cond_";
+    const VERIFY_PREFIX = "verify_";
 
     /**
      * Evaluate a condition
@@ -33,9 +34,26 @@ class Iquest_Condition{
                                 $options);
         }
         catch(Iquest_Condition_exception $e){
-            sw_log(__CLASS__.":".__FUNCTION__.": Error while evalueating condition '$condition'. Is the condition defined on proper place?", PEAR_LOG_ERROR);
-            sw_log_exception($e, PEAR_LOG_ERROR);
+            sw_log(__CLASS__.":".__FUNCTION__.": Error while evalueating condition '$condition'. Is the condition defined on proper place?", PEAR_LOG_ERR);
+            sw_log_exception($e, PEAR_LOG_ERR);
             return false;
+        }
+    }
+
+    public static function verifyCondition($condition, $options=[]){
+
+        $parsed_condition = static::parseCondition($condition);
+
+        try{
+            return call_user_func(array(get_called_class(),
+                                        static::VERIFY_PREFIX.$parsed_condition['function']),
+                                $parsed_condition['params'],
+                                $options);
+        }
+        catch(Iquest_Condition_exception $e){
+            sw_log(__CLASS__.":".__FUNCTION__.": Error while verify condition '$condition'. Is the condition defined on proper place?", PEAR_LOG_ERR);
+            sw_log_exception($e, PEAR_LOG_ERR);
+            throw $e;
         }
     }
 
@@ -115,6 +133,15 @@ class Iquest_Condition{
         return true;
     }
 
+    private static function verify_depends($params, $options){
+        $solutions = Iquest_Solution::fetch();
+        foreach($params as $solution_id){
+            if (!isset($solutions[$solution_id])){
+                throw new Iquest_Condition_exception("Unknown solution '$solution_id'");
+            }
+        }
+    }
+
     private static function get_opened_cgrps($options){
         static $open_cgrp_cache = [];
 
@@ -161,6 +188,14 @@ class Iquest_Condition{
         return true;
     }
 
+    private static function verify_opened($params, $options){
+        $cgrps = Iquest_ClueGrp::fetch();
+        foreach($params as $cgrp_id){
+            if (!isset($cgrps[$cgrp_id])){
+                throw new Iquest_Condition_exception("Unknown clue group '$cgrp_id'");
+            }
+        }
+    }
 
     /**
      * Implementation of OPENED_ANY(...) condition. It should return true if any clue group
@@ -189,6 +224,10 @@ class Iquest_Condition{
         return false;
     }
 
+    private static function verify_opened_any($params, $options){
+        static::verify_opened($params, $options);
+    }
+
 
     /**
      * Implementation of TRUE() condition. It always return true.
@@ -205,6 +244,8 @@ class Iquest_Condition{
         return true;
     }
 
+    private static function verify_true($params, $options){}
+
     /**
      * Implementation of FALSE() condition. It always return false
      *
@@ -217,5 +258,7 @@ class Iquest_Condition{
         sw_log(__CLASS__.":".__FUNCTION__.": params:".json_encode($params), PEAR_LOG_DEBUG);
         return false;
     }
+
+    private static function verify_false($params, $options){}
 
 }

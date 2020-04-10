@@ -1,3 +1,5 @@
+* chroust: verify conditions
+
 rel 20.4.2
 * delete session on logout
 * chroust: invalid interpretation of clue_IDs=L if there are more hints

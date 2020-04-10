@@ -647,6 +647,20 @@ class Chroust{
                     );
                 }
             }
+
+            // verify the conditions of solutions
+            foreach($solution->get_next_cgrps() as $next_cgrp){
+                if (!$next_cgrp->isConditional()) continue;
+
+                try{
+                    Iquest_Condition::verifyCondition($next_cgrp->condition);
+                }
+                catch(Exception $e){
+                    throw new Iquest_VerifyFailedException(
+                                "next_cgrp_id of solution '{$solution->id}' contain invalid condition '{$next_cgrp->condition}'. ".$e->getMessage()
+                    );
+                }
+            }
         }
 
 
@@ -1085,6 +1099,19 @@ class Chroust{
 
                 Console::log("*** WARNING: There is neither a KEY nor a MESSAGE specified for zone: $zone", Console::YELLOW);
             }
+
+            if (!empty($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND])){
+                // verify the zone condition
+                try{
+                    Iquest_Condition::verifyCondition($zone_attrs[Iquest_Tracker::ZONE_ATTR_COND]);
+                }
+                catch(Exception $e){
+                    throw new Iquest_VerifyFailedException(
+                                "Condition of zone '{$zone}' is invalid: '{$zone_attrs[Iquest_Tracker::ZONE_ATTR_COND]}'. ".$e->getMessage()
+                    );
+                }
+            }
+
         }
     }
 
