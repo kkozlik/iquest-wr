@@ -1,3 +1,12 @@
+iquest (20.4.3) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * chroust: verify conditions
+  * schedule hint/solutions according to start_time instead of current time on start
+  * HQ:main screen - fixed table header positioning
+
+ --  <kk@kk-iquest.kufr.cz>  Thu, 23 Apr 2020 22:33:27 +0200
+
 iquest (20.4.2) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
