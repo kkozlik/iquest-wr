@@ -177,7 +177,7 @@
 {else}
 
     <div class="horizontal-scrollbar" id="scroll-wrapper">
-    <table class="table table-bordered summary" id="clueTable">
+    <table class="table table-bordered summary mb-0" id="clueTable">
     <thead>
     <tr>
     <th rowspan="2" style="vertical-align: middle;">
@@ -270,7 +270,10 @@
         // So enable it only on not mobile device.
 
         var $table = $('#clueTable');
-        $table.floatThead();
+        $table.floatThead({
+            position: 'absolute',
+            top: $('.navbar').height(),
+        });
 
 
         // Kinetic is not needed on android. Its functionality is already in

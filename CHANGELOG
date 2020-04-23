@@ -1,5 +1,6 @@
 * chroust: verify conditions
 * schedule hint/solutions according to start_time instead of current time on start
+* HQ:main screen - fixed table header positioning
 
 rel 20.4.2
 * delete session on logout
