@@ -34,7 +34,7 @@ class Iquest_ClueGrp{
      *  Open new clue group for team $team_id.
      *  This function do not check whether it is already opened!
      */
-    static function open($id, $team_id){
+    static function open($id, $team_id, $open_ts = null){
         global $data, $config;
 
         /* table's name */
@@ -42,13 +42,15 @@ class Iquest_ClueGrp{
         /* col names */
         $c       = &$config->data_sql->iquest_cgrp_open->cols;
 
+        if (!$open_ts) $open_ts = time();
+
         $q="insert into ".$t_name." (
                     ".$c->cgrp_id.",
                     ".$c->team_id.",
                     ".$c->gained_at.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    now())";
+                    FROM_UNIXTIME(".$data->sql_format($open_ts, "n")."))";
 
 
         $res=$data->db->query($q);

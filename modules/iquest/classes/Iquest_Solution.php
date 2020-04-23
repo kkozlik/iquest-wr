@@ -263,13 +263,15 @@ class Iquest_Solution extends Iquest_file{
      *  Schedule displaying of solution for team $team_id.
      *  This function do not check whether solution is already scheduled!
      */
-    static function schedule($id, $team_id, $timeout){
+    static function schedule($id, $team_id, $timeout, $open_ts = null){
         global $data, $config;
 
         /* table's name */
         $t_name  = &$config->data_sql->iquest_solution_team->table_name;
         /* col names */
         $c       = &$config->data_sql->iquest_solution_team->cols;
+
+        if (!$open_ts) $open_ts = time();
 
         $q="insert into ".$t_name." (
                     ".$c->solution_id.",
@@ -278,7 +280,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->solved_at.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    addtime(now(), sec_to_time(".$data->sql_format($timeout, "n").")),
+                    FROM_UNIXTIME(".$data->sql_format($open_ts + $timeout, "n")."),
                     FROM_UNIXTIME(0))";
 
         $res=$data->db->query($q);

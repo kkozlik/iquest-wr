@@ -42,17 +42,20 @@ class Iquest{
         $log_prefix = __FUNCTION__.": Team (ID=$team_id) ";
         sw_log($log_prefix."*** Starting contest for Team", PEAR_LOG_INFO);
 
+        $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
+        if (!$start_time) $start_time = time();
+
         foreach(array_reverse($cgrp_ids) as $cgrp_id)
         {
             // 1. Open new clue group
-            self::_open_cgrp($cgrp_id, $team_id, $log_prefix);
+            self::_open_cgrp($cgrp_id, $team_id, $log_prefix, $start_time);
 
             // 2. Schedule show time for new hints
-            self::_schedule_new_hints($cgrp_id, $team_id, $log_prefix);
+            self::_schedule_new_hints($cgrp_id, $team_id, $log_prefix, $start_time);
 
             // 3. If team gained all clues that lead to some task_solution
             //    schedule showing of the solution
-            self::_schedule_solution($cgrp_id, $team_id, $log_prefix);
+            self::_schedule_solution($cgrp_id, $team_id, $log_prefix, $start_time);
         }
     }
 
@@ -256,10 +259,10 @@ class Iquest{
     /**
      *  Open new clue group
      */
-    private static function _open_cgrp($cgrp_id, $team_id, $log_prefix){
+    private static function _open_cgrp($cgrp_id, $team_id, $log_prefix, $open_ts = null){
         if (!Iquest_ClueGrp::is_accessible($cgrp_id, $team_id)){
             sw_log($log_prefix."*** Opening clue group (ID=$cgrp_id)", PEAR_LOG_INFO);
-            Iquest_ClueGrp::open($cgrp_id, $team_id);
+            Iquest_ClueGrp::open($cgrp_id, $team_id, $open_ts);
         }
     }
 
@@ -267,7 +270,7 @@ class Iquest{
     /**
      *  Schedule show time for new hints
      */
-    private static function _schedule_new_hints($cgrp_id, $team_id, $log_prefix){
+    private static function _schedule_new_hints($cgrp_id, $team_id, $log_prefix, $open_ts = null){
         sw_log($log_prefix."*** Schedule show times for new hints.", PEAR_LOG_INFO);
 
         $clue_grp = &Iquest_ClueGrp::by_id($cgrp_id);
@@ -283,7 +286,7 @@ class Iquest{
 
             foreach($hints as $hk=>$hv){
                 sw_log($log_prefix."    scheduling to show hint (ID={$hv->id}) after ".gmdate('H:i:s', $hv->timeout), PEAR_LOG_INFO);
-                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout, ($hv->price > 0));
+                Iquest_Hint::schedule($hv->id, $team_id, $hv->timeout, ($hv->price > 0), $open_ts);
             }
 
             unset($hints);
@@ -298,7 +301,7 @@ class Iquest{
      *  If team gained all clues that lead to some task_solution schedule
      *  showing of the solution
      */
-    private static function _schedule_solution($cgrp_id, $team_id, $log_prefix){
+    private static function _schedule_solution($cgrp_id, $team_id, $log_prefix, $open_ts = null){
 
         sw_log($log_prefix."*** Check what solutions could be scheduled to show.", PEAR_LOG_INFO);
 
@@ -341,7 +344,7 @@ class Iquest{
             if ($schedule_solution){
                 if ($opening_solution->timeout > 0){
                     sw_log($log_prefix."      Scheduling show solution (ID={$opening_solution->id}) after ".gmdate('H:i:s', $opening_solution->timeout), PEAR_LOG_INFO);
-                    Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout);
+                    Iquest_Solution::schedule($opening_solution->id, $team_id, $opening_solution->timeout, $open_ts);
                 }
                 else{
                     sw_log($log_prefix."      Solution (ID={$opening_solution->id}) should not be scheduled to show due to it's timeout is not set.", PEAR_LOG_INFO);

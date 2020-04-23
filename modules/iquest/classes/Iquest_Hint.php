@@ -115,7 +115,7 @@ class Iquest_Hint extends Iquest_file{
      *  Schedule time to show new hint for team $team_id.
      *  This function do not check whether it is already scheduled!
      */
-    static function schedule($id, $team_id, $timeout, $for_sale){
+    static function schedule($id, $team_id, $timeout, $for_sale, $open_ts = null){
         global $data, $config;
 
         /* table's name */
@@ -123,9 +123,11 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
+        if (!$open_ts) $open_ts = time();
+
         // if timeout is not specified set it to zero
-        if ($timeout) $timeout_sql = "addtime(now(), sec_to_time(".$data->sql_format($timeout, "n")."))";
-        else $timeout_sql = 0;
+        if ($timeout) $show_at_sql = "FROM_UNIXTIME(".$data->sql_format($open_ts + $timeout, "n").")";
+        else $show_at_sql = 0;
 
         $q="insert into ".$t_name." (
                     ".$c->hint_id.",
@@ -134,7 +136,7 @@ class Iquest_Hint extends Iquest_file{
                     ".$c->for_sale.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    $timeout_sql,
+                    $show_at_sql,
                     ".$data->sql_format($for_sale,  "n").")";
 
         $res=$data->db->query($q);
