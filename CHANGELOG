@@ -1,3 +1,8 @@
+* Include sysuser to log messages when executed from cli
+* Faster graph traversal, limit logging
+* Faster log rotating
+* Fix text messages
+
 rel 20.4.3
 * chroust: verify conditions
 * schedule hint/solutions according to start_time instead of current time on start
