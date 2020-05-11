@@ -1,3 +1,13 @@
+iquest (20.5.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Include sysuser to log messages when executed from cli
+  * Faster graph traversal, limit logging
+  * Faster log rotating
+  * Fix text messages
+
+ --  <kk@kk-iquest.kufr.cz>  Mon, 11 May 2020 22:56:29 +0200
+
 iquest (20.4.3) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
