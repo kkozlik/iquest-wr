@@ -39,6 +39,11 @@ function iquest_log($priority, $message, $file, $line){
         if ($username) $message = "[User: $username] ".$message;
     }
 
+    if (php_sapi_name() == "cli"){
+        $sys_user = posix_getpwuid(posix_geteuid());
+        if ($sys_user) $message = "[SysUser: {$sys_user['name']}] ".$message;
+    }
+
     if (class_exists('PHPlib') and PHPlib::$session){
         $message = "[".substr(PHPlib::$session->id, 0, 8)."] $message";
     }
