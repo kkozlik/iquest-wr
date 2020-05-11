@@ -35,7 +35,7 @@ $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
 $lang_str['iquest_err_tracker_get_location'] =          "Nepodařilo se zjistit vaší pozici.";
 $lang_str['iquest_err_tracker_wrong_location'] =        "V tuto chvíli a na tomto místě nezískáte nic.";
-$lang_str['iquest_err_tracker_location_dup'] =          "Na tomto místě jste již byl a úkol máte vyřešený";
+$lang_str['iquest_err_tracker_location_dup'] =          "Na tomto místě jste již byl a úkol máte vyřešený (a nebo někdo z vašich kolegů klkl rychleji)";
 $lang_str['iquest_err_tracker_location_not_reachable']= "Toto místo je sice v určité fázy soutěže platné, nicméně ještě jste k němu nezískali žádnou indicii.";
 $lang_str['iquest_err_tracker_old_location'] =          "Vaše poloha se déle než <age> neaktualizovala. Zkontrolujte funkci trackeru.";
 
@@ -55,7 +55,7 @@ $lang_str['iquest_l_give_it_up'] =                      "Vzdát to";
 $lang_str['iquest_l_logout'] =                          "Odhlásit se";
 
 $lang_str['iquest_txt_next_hint'] =                     "Další nápovědu získáte za";
-$lang_str['iquest_txt_next_solution'] =                 "Řešení vám prozradíme za";
+$lang_str['iquest_txt_next_solution'] =                 "Jedno z řešení vám prozradíme za";
 $lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
 $lang_str['iquest_txt_your_place'] =                    "Vaše pořadí";
 $lang_str['iquest_txt_gained_at'] =                     "Dosaženo";
