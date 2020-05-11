@@ -1,8 +1,8 @@
 # logrotate configuration for iquest
 /var/log/iquest {
-    weekly
-    rotate 4
+    daily
+    rotate 7
     missingok
     compress
 }
-   
+
