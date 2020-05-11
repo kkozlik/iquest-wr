@@ -190,7 +190,7 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             // and set it's visited flag to true
             $this->nodes[$node_id]->visited = true;
 
-            sw_log("mark_accessible_nodes: visited node: $node_id", PEAR_LOG_DEBUG);
+            // sw_log("mark_accessible_nodes: visited node: $node_id", PEAR_LOG_DEBUG);
 
             // We are walking the graph in reversed order. If there are any
             // edges leading TO this node walk through them. Get all nodes
@@ -205,12 +205,15 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
                     if ($this->nodes[$from_node_id]->is_solution() and
                         $this->nodes[$from_node_id]->solved)  continue;
 
+                    // skip already queued nodes
+                    if (in_array($from_node_id, $queue)) continue;
+
                     // add node to queue
                     $queue[] = $from_node_id;
-                    sw_log("mark_accessible_nodes: adding node: $from_node_id", PEAR_LOG_DEBUG);
+                    // sw_log("mark_accessible_nodes: adding node: $from_node_id", PEAR_LOG_DEBUG);
                 }
             }
-            sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
+            // sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
         }
 
     }
@@ -244,30 +247,32 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
             foreach($clues as &$clue) $queue[] = "C_".$clue->id;
         }
 
-        sw_log("mark_accessible_nodes: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
+        sw_log("check_graph_continuous: queue: ".json_encode($queue), PEAR_LOG_DEBUG);
 
         // as long as there are nodes in the queue, fetch node from the queue...
         while(!is_null($node_id = array_shift($queue))){
             // and set it's visited flag to true
             $this->nodes[$node_id]->visited = true;
 
-            sw_log("mark_accessible_nodes: visited node: $node_id", PEAR_LOG_DEBUG);
+            // sw_log("check_graph_continuous: visited node: $node_id", PEAR_LOG_DEBUG);
 
-            // We are walking the graph in reversed order. If there are any
-            // edges leading TO this node walk through them. Get all nodes
-            // FROM what leads edge TO current node
+            // We are walking the graph in forward order. If there are any
+            // edges leading FROM this node walk through them. Get all nodes
+            // TO which an edge leads FROM current node
             if (isset($this->edges[$node_id])){
                 foreach($this->edges[$node_id] as $to_node_id){
 
                     // if the node has been already visited, skip it
                     if ($this->nodes[$to_node_id]->visited) continue;
+                    // skip already queued nodes
+                    if (in_array($to_node_id, $queue)) continue;
 
                     // add node to queue
                     $queue[] = $to_node_id;
-                    sw_log("mark_accessible_nodes: adding node: $to_node_id", PEAR_LOG_DEBUG);
+                    // sw_log("check_graph_continuous: adding node: $to_node_id", PEAR_LOG_DEBUG);
                 }
             }
-            sw_log("mark_accessible_nodes: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
+            // sw_log("check_graph_continuous: queue3: ".json_encode($queue), PEAR_LOG_DEBUG);
         }
 
 
