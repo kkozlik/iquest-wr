@@ -34,7 +34,7 @@ $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není spr�
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
 
 $lang_str['iquest_err_tracker_get_location'] =          "Nepodařilo se zjistit vaší pozici.";
-$lang_str['iquest_err_tracker_wrong_location'] =        "V tuto chvíli a na tomto místě nezískáte tímto způsobem žádný soutěžní kód. Ujistěte se že na tomto místě nemáte získávat fyzický soutěžní kód.";
+$lang_str['iquest_err_tracker_wrong_location'] =        "V tuto chvíli a na tomto místě nezískáte tímto způsobem žádný soutěžní kód. Ujistěte se, že na tomto místě nemáte získávat fyzický soutěžní kód.";
 $lang_str['iquest_err_tracker_location_dup'] =          "Na tomto místě jste již byl a úkol máte vyřešený (a nebo někdo z vašich kolegů klkl rychleji)";
 $lang_str['iquest_err_tracker_location_not_reachable']= "Toto místo je sice v určité fázy soutěže platné, nicméně ještě jste k němu nezískali žádnou indicii.";
 $lang_str['iquest_err_tracker_old_location'] =          "Vaše poloha se déle než <age> neaktualizovala. Zkontrolujte funkci trackeru.";
