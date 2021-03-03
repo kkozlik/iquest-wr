@@ -91,8 +91,8 @@ class Iquest_Team{
         $this->id =         $id;
         $this->username =   $username;
         $this->name =       $name;
-        $this->active =     $active;
-        $this->wallet =     $wallet;
+        $this->active =     (int)$active;
+        $this->wallet =     (float)$wallet;
         $this->bomb =       (float)$bomb;
         $this->tracker_id = $tracker_id;
     }
