@@ -204,3 +204,4 @@ $config->data_sql->iquest_team->cols->active =      "active";
 $config->data_sql->iquest_team->cols->wallet =      "wallet";
 $config->data_sql->iquest_team->cols->bomb =        "bomb";
 $config->data_sql->iquest_team->cols->tracker_id =  "tracker_id";
+$config->data_sql->iquest_team->cols->time_shift =  "time_shift";

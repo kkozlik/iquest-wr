@@ -211,6 +211,7 @@ CREATE TABLE IF NOT EXISTS `team` (
   `wallet` decimal(5,2) NOT NULL DEFAULT '0.00',
   `bomb` decimal(5,2) NOT NULL DEFAULT '0.00',
   `tracker_id` VARCHAR(255) NOT NULL COLLATE utf8_czech_ci,
+  `time_shift` TIME NOT NULL,
   PRIMARY KEY (`team_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;

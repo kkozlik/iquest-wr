@@ -58,18 +58,19 @@ class Chroust{
         }
     }
 
-    static function initialize_user_wallets($option){
+    static function initialize_user_data($option){
         global $data, $config;
 
         $wallet_initial_value = (float)Iquest_Options::get(Iquest_Options::WALLET_INITIAL_VALUE);
         $bomb_initial_value = (float)Iquest_Options::get(Iquest_Options::BOMB_INITIAL_VALUE);
 
         if (empty($option['preserve-user-data'])){
-            Console::log("Wiping user wallets and bombs", Console::YELLOW);
+            Console::log("Wiping user data", Console::YELLOW);
             $res=$data->db->query(
                 "update {$config->data_sql->iquest_team->table_name}
                  set {$config->data_sql->iquest_team->cols->wallet}=$wallet_initial_value,
-                     {$config->data_sql->iquest_team->cols->bomb}=$bomb_initial_value");
+                     {$config->data_sql->iquest_team->cols->bomb}=$bomb_initial_value,
+                     {$config->data_sql->iquest_team->cols->time_shift}='00:00:00'");
         }
     }
 
@@ -920,7 +921,7 @@ class Chroust{
             foreach($zones as &$zone) $zone['referenced_by'][] = "Top metadata";
             static::$parsed_data["traccar_zones"] = $zones;
 
-            self::initialize_user_wallets($option);
+            self::initialize_user_data($option);
 
             self::process_data_dir($src_dir, $top_metadata);
 

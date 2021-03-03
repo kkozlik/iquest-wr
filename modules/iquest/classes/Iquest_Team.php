@@ -8,6 +8,7 @@ class Iquest_Team{
     public $wallet;
     public $bomb;
     public $tracker_id;
+    public $time_shift;
 
     static function fetch_by_id($id){
         static $team_cache = [];
@@ -46,7 +47,8 @@ class Iquest_Team{
                      t.".$ct->active.",
                      t.".$ct->wallet.",
                      t.".$ct->bomb.",
-                     t.".$ct->tracker_id."
+                     t.".$ct->tracker_id.",
+                     time_to_sec(t.".$ct->time_shift.")
               from ".$tt_name." t ".
               $qw;
 
@@ -64,7 +66,8 @@ class Iquest_Team{
                                                    $row[$ct->active],
                                                    $row[$ct->wallet],
                                                    $row[$ct->bomb],
-                                                   $row[$ct->tracker_id]);
+                                                   $row[$ct->tracker_id],
+                                                   $row[$ct->time_shift]);
         }
         $res->closeCursor();
         return $out;
@@ -87,7 +90,7 @@ class Iquest_Team{
         return $team;
     }
 
-    function __construct($id, $username, $name, $active, $wallet, $bomb, $tracker_id){
+    function __construct($id, $username, $name, $active, $wallet, $bomb, $tracker_id, $time_shift){
         $this->id =         $id;
         $this->username =   $username;
         $this->name =       $name;
@@ -95,6 +98,7 @@ class Iquest_Team{
         $this->wallet =     (float)$wallet;
         $this->bomb =       (float)$bomb;
         $this->tracker_id = $tracker_id;
+        $this->time_shift = (int)$time_shift;
     }
 
     public function is_active(){
@@ -136,6 +140,10 @@ class Iquest_Team{
         $this->update();
     }
 
+    public function shift_time($secs){
+        $this->time_shift += $secs;
+        $this->update();
+    }
 
     private function update(){
         global $data, $config;
@@ -146,9 +154,10 @@ class Iquest_Team{
         $ct      = &$config->data_sql->iquest_team->cols;
 
         $q = "update ".$tt_name." set
-                ".$ct->active." = ".$data->sql_format($this->active, "n").",
-                ".$ct->wallet." = ".$data->sql_format($this->wallet, "n").",
-                ".$ct->bomb."   = ".$data->sql_format($this->bomb, "n")."
+                ".$ct->active."     = ".$data->sql_format($this->active, "n").",
+                ".$ct->wallet."     = ".$data->sql_format($this->wallet, "n").",
+                ".$ct->bomb."       = ".$data->sql_format($this->bomb, "n").",
+                ".$ct->time_shift." = sec_to_time(".$data->sql_format($this->time_shift, "n").")
               where ".$ct->id." = ".$data->sql_format($this->id, "n");
 
         $res=$data->db->query($q);
@@ -162,6 +171,7 @@ class Iquest_Team{
         $out['wallet'] = $this->wallet;
         $out['bomb']   = $this->bomb;
         $out['tracker_id'] = $this->tracker_id;
+        $out['time_shift'] = $this->time_shift;
         return $out;
     }
 
