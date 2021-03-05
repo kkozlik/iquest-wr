@@ -57,6 +57,7 @@ $lang_str['iquest_l_logout'] =                          "Odhlásit se";
 $lang_str['iquest_txt_next_hint'] =                     "Další nápovědu získáte za";
 $lang_str['iquest_txt_next_solution'] =                 "Jedno z řešení vám prozradíme za";
 $lang_str['iquest_txt_current_time'] =                  "Aktuální čas";
+$lang_str['iquest_txt_play_time'] =                     "Herní čas";
 $lang_str['iquest_txt_your_place'] =                    "Vaše pořadí";
 $lang_str['iquest_txt_gained_at'] =                     "Dosaženo";
 

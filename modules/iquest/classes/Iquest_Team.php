@@ -48,7 +48,7 @@ class Iquest_Team{
                      t.".$ct->wallet.",
                      t.".$ct->bomb.",
                      t.".$ct->tracker_id.",
-                     time_to_sec(t.".$ct->time_shift.")
+                     time_to_sec(t.".$ct->time_shift.") as time_shift
               from ".$tt_name." t ".
               $qw;
 
@@ -67,7 +67,7 @@ class Iquest_Team{
                                                    $row[$ct->wallet],
                                                    $row[$ct->bomb],
                                                    $row[$ct->tracker_id],
-                                                   $row[$ct->time_shift]);
+                                                   $row['time_shift']);
         }
         $res->closeCursor();
         return $out;
@@ -143,6 +143,10 @@ class Iquest_Team{
     public function shift_time($secs){
         $this->time_shift += $secs;
         $this->update();
+    }
+
+    public function get_time(){
+        return time() + $this->time_shift;
     }
 
     private function update(){

@@ -94,6 +94,7 @@ class Iquest_team_rank{
             }
         }
 
+        // TODO: upadte this function, take into account time shifts...
         $last_rank_obj->timestamp = time();
         $last_rank_obj->team_id = $team_id;
         $last_rank_obj->insert();

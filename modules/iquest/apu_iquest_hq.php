@@ -348,7 +348,7 @@ class apu_iquest_hq extends apu_base_class{
                     $time_to_show = "";
 
                     if ($scheduled){
-                        $time_to_show = $solution_team[$solution->id][$team->id]['show_at'] - time();
+                        $time_to_show = $solution_team[$solution->id][$team->id]['show_at'] - time(); // TODO: shall this be updated for time shifts??
                         if ($time_to_show < 0) $showed =true;
                         else {
                             $hours = floor($time_to_show / 3600);

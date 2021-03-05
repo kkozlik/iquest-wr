@@ -313,7 +313,7 @@ class Iquest{
 
             // if solution is already scheduled, skip it
             if (!is_null($opening_solution->show_at)){
-                sw_log($log_prefix."      It's already scheduled to ".date($opening_solution->show_at), PEAR_LOG_INFO);
+                sw_log($log_prefix."      It's already scheduled to ".date("Y-m-d H:i:s", $opening_solution->show_at), PEAR_LOG_INFO);
                 continue;
             }
 

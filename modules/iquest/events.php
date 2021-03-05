@@ -55,6 +55,8 @@ class Iquest_Events{
             $team_id = Iquest_auth::get_logged_in_uid();
         }
 
+        // TODO: include time shift in the event data
+
         if (self::$extra_data) $event_data = array_merge($event_data, self::$extra_data);
 
         $eh = &ErrorHandler::singleton();

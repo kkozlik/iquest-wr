@@ -205,6 +205,7 @@
 
     {foreach $teams as $team}
     <tr class="first">
+    {* // TODO: display time shifts *}
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
         <span class="text-nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>

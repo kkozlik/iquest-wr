@@ -84,7 +84,10 @@ $GLOBALS['controler']->attach_listener("pre_html_output", function($event){
     $team = Iquest_auth::get_logged_in_team();
     if ($team) $GLOBALS['smarty']->assign("team_name", $team->name);
 
-    $GLOBALS['controler']->set_onload_js("set_clock('#current_time', ".time().");");
-    $GLOBALS['smarty']->assign("current_time", date("H:i:s"));
+    $time = $team->get_time();
+
+    $GLOBALS['controler']->set_onload_js("set_clock('#current_time', ".$time.");");
+    $GLOBALS['smarty']->assign("current_time", date("H:i:s", $time));
+    $GLOBALS['smarty']->assign("time_shift", $team->time_shift);
 });
 

@@ -42,7 +42,7 @@ class Iquest_ClueGrp{
         /* col names */
         $c       = &$config->data_sql->iquest_cgrp_open->cols;
 
-        if (!$open_ts) $open_ts = time();
+        if (!$open_ts) $open_ts = time(); // TODO: shall this be updated for time shifts??
 
         $q="insert into ".$t_name." (
                     ".$c->cgrp_id.",

@@ -92,7 +92,7 @@ class Iquest_Solution extends Iquest_file{
             $cols .= ", UNIX_TIMESTAMP(tt.".$ct->solved_at.") as ".$ct->solved_at;
 
             if (!empty($opt['accessible'])){
-                $qw[] = "tt.".$ct->show_at." <= now()";
+                $qw[] = "tt.".$ct->show_at." <= now()";  //TODO: update for time_shifts
                 $qw[] = "UNIX_TIMESTAMP(tt.".$ct->show_at.") != 0";
             }
 
@@ -248,7 +248,7 @@ class Iquest_Solution extends Iquest_file{
         else                $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
 
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $ct->show_at." > now()";
+        $qw[] = $ct->show_at." > now()";  //TODO: update for time_shifts
         $qw = " where ".implode(' and ', $qw);
 
         $q = "update $tt_name
@@ -271,7 +271,7 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
-        if (!$open_ts) $open_ts = time();
+        if (!$open_ts) $open_ts = time(); // TODO: shall this be updated for time shifts??
 
         $q="insert into ".$t_name." (
                     ".$c->solution_id.",
@@ -303,9 +303,10 @@ class Iquest_Solution extends Iquest_file{
         $qw = array();
         $qw[] = $c->solution_id." = ".$data->sql_format($id, "s");
         $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $c->show_at." > now()";
+        $qw[] = $c->show_at." > now()";  //TODO: update for time_shifts
         $qw = " where ".implode(' and ', $qw);
 
+        //TODO: update for time_shifts
         $q = "update $t_name
               set ".$c->show_at."=addtime(now(), sec_to_time(".$data->sql_format($timeout, "n")."))".$qw;
 
@@ -349,10 +350,12 @@ class Iquest_Solution extends Iquest_file{
         $record_exists = (bool)$row[0];
 
         if ($record_exists){
+            //TODO: update for time_shifts
             $q = "update $t_name
                   set ".$c->solved_at."=now()".$qw;
         }
         else{
+            //TODO: update for time_shifts
             $q="insert into ".$t_name." (
                         ".$c->solution_id.",
                         ".$c->team_id.",
@@ -376,7 +379,7 @@ class Iquest_Solution extends Iquest_file{
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
         $qw = array();
-        $qw[] = $c->show_at." > now()";
+        $qw[] = $c->show_at." > now()"; //TODO: update for time_shifts
         $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);

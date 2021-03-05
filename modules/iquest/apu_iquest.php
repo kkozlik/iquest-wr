@@ -160,7 +160,7 @@ class apu_iquest extends apu_base_class{
 
         if ($next_solutions){
             $next_solution = reset($next_solutions);
-            $show_after = $next_solution['show_at'] - time();
+            $show_after = $next_solution['show_at'] - time(); // TODO: shall this be updated for time shifts??
             if ($show_after > 0 and
                 ($show_after < $countdown_limit_solution or
                  $countdown_limit_solution == 0)){
@@ -171,7 +171,7 @@ class apu_iquest extends apu_base_class{
         }
 
         if ($next_hint){
-            $show_after = $next_hint['show_at'] - time();
+            $show_after = $next_hint['show_at'] - time(); // TODO: shall this be updated for time shifts??
             if ($show_after > 0 and
                 ($show_after < $countdown_limit_hint or
                  $countdown_limit_hint == 0)){

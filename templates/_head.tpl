@@ -63,7 +63,12 @@
             </li>
 
             <li class="navbar-text clock">
-                {$lang_str.iquest_txt_current_time}<br /><span id="current_time">{$current_time}</span>
+                {if $time_shift}
+                    {* // TODO: better and human friendly visualization of time_shift *}
+                    {$lang_str.iquest_txt_play_time}<br /><span id="current_time" title="Shifted: {$time_shift}">{$current_time}</span>
+                {else}
+                    {$lang_str.iquest_txt_current_time}<br /><span id="current_time">{$current_time}</span>
+                {/if}
             </li>
 
             {if $parameters.display_wallet|default:0 and $team|default:0}
