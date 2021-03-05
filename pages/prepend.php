@@ -82,12 +82,17 @@ $GLOBALS['controler']->attach_listener("pre_html_output", function($event){
     $GLOBALS['page_attributes']['html_title'] = $GLOBALS['page_attributes']['game_name'];
 
     $team = Iquest_auth::get_logged_in_team();
-    if ($team) $GLOBALS['smarty']->assign("team_name", $team->name);
+    if ($team) {
+        $GLOBALS['smarty']->assign("team_name", $team->name);
+        $GLOBALS['smarty']->assign("time_shift", $team->time_shift);
 
-    $time = $team->get_time();
+        $time = $team->get_time();
+    }
+    else{
+        $time = time();
+    }
 
     $GLOBALS['controler']->set_onload_js("set_clock('#current_time', ".$time.");");
     $GLOBALS['smarty']->assign("current_time", date("H:i:s", $time));
-    $GLOBALS['smarty']->assign("time_shift", $team->time_shift);
 });
 

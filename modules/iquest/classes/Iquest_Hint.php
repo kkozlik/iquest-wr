@@ -31,17 +31,20 @@ class Iquest_Hint extends Iquest_file{
         if (isset($opt['clue_id'])) $qw[] = "h.".$ch->clue_id." = ".$data->sql_format($opt['clue_id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "h.".$ch->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['team_id'])){
+            $team = Iquest_Team::fetch_by_id($opt['team_id']);
+            $team_time_sql = $team->get_time_sql();
+
             $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
             $join[] = " join ".$tt_name." t on h.".$ch->id." = t.".$ct->hint_id;
             $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at."
                       , ".$ct->for_sale;
 
-            if (!empty($opt['accessible'])){ //TODO: update for time_shifts
-                $qw[] = "(t.{$ct->show_at} <= now() and t.{$ct->show_at} != 0)";
+            if (!empty($opt['accessible'])){
+                $qw[] = "(t.{$ct->show_at} <= $team_time_sql and t.{$ct->show_at} != 0)";
             }
 
-            if (!empty($opt['not_accessible'])){ //TODO: update for time_shifts
-                $qw[] = "(t.{$ct->show_at} > now() or t.{$ct->show_at} = 0)";
+            if (!empty($opt['not_accessible'])){
+                $qw[] = "(t.{$ct->show_at} > $team_time_sql or t.{$ct->show_at} = 0)";
             }
 
             if (!empty($opt['for_sale'])){
@@ -123,7 +126,12 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
-        if (!$open_ts) $open_ts = time(); // TODO: shall this be updated for time shifts??
+        if (!$open_ts) {
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $open_ts = $team->get_time();
+        }
+
+        // TODO: store current time shift in the table, update all INSER/UPDATE statements...
 
         // if timeout is not specified set it to zero
         if ($timeout) $show_at_sql = "FROM_UNIXTIME(".$data->sql_format($open_ts + $timeout, "n").")";
@@ -158,6 +166,9 @@ class Iquest_Hint extends Iquest_file{
         $ch      = &$config->data_sql->iquest_hint->cols;
         $ct      = &$config->data_sql->iquest_hint_team->cols;
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         $q2 = "select ".$ch->id."
                from ".$th_name."
                where ".$data->get_sql_in($ch->clue_id, $clue_ids, true);
@@ -165,7 +176,7 @@ class Iquest_Hint extends Iquest_file{
         $qw = array();
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
         $qw[] = $ct->hint_id." in (".$q2.")";
-        $qw[] = "({$ct->show_at} > now() or {$ct->show_at}=0)"; //TODO: update for time_shifts
+        $qw[] = "({$ct->show_at} > $team_time_sql or {$ct->show_at}=0)";
         $qw = " where ".implode(' and ', $qw);
 
         $q = "delete from ".$tt_name.$qw;
@@ -193,9 +204,11 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
-        //TODO: update for time_shifts
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         $q = "update ".$t_name." set
-                ".$c->show_at." = now(),
+                ".$c->show_at." = $team_time_sql,
                 ".$c->for_sale." = 0
               where ".$c->hint_id." = ".$data->sql_format($id,      "s")." and
                     ".$c->team_id." = ".$data->sql_format($team_id, "n");
@@ -219,8 +232,11 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         $qw = array();
-        $qw[] = $c->show_at." > now()";  //TODO: update for time_shifts
+        $qw[] = $c->show_at." > $team_time_sql";
         $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);

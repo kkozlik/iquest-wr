@@ -77,6 +77,8 @@ class Iquest_Solution extends Iquest_file{
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
         if (isset($opt['team_id'])){
+            $team = Iquest_Team::fetch_by_id($opt['team_id']);
+            $team_time_sql = $team->get_time_sql();
 
             // Generate virtual table we are joining with
             $q_join = "select t.".$ct->show_at.",
@@ -92,7 +94,7 @@ class Iquest_Solution extends Iquest_file{
             $cols .= ", UNIX_TIMESTAMP(tt.".$ct->solved_at.") as ".$ct->solved_at;
 
             if (!empty($opt['accessible'])){
-                $qw[] = "tt.".$ct->show_at." <= now()";  //TODO: update for time_shifts
+                $qw[] = "tt.".$ct->show_at." <= $team_time_sql";
                 $qw[] = "UNIX_TIMESTAMP(tt.".$ct->show_at.") != 0";
             }
 
@@ -242,13 +244,16 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $ct      = &$config->data_sql->iquest_solution_team->cols;
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         $qw = array();
 
         if (is_array($id))  $qw[] = $data->get_sql_in($ct->solution_id, $id, true);
         else                $qw[] = $ct->solution_id." = ".$data->sql_format($id, "s");
 
         $qw[] = $ct->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $ct->show_at." > now()";  //TODO: update for time_shifts
+        $qw[] = $ct->show_at." > $team_time_sql";
         $qw = " where ".implode(' and ', $qw);
 
         $q = "update $tt_name
@@ -271,7 +276,12 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
-        if (!$open_ts) $open_ts = time(); // TODO: shall this be updated for time shifts??
+        if (!$open_ts) {
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $open_ts = $team->get_time();
+        }
+
+        // TODO: store current time shift in the table, update all INSER/UPDATE statements...
 
         $q="insert into ".$t_name." (
                     ".$c->solution_id.",
@@ -300,15 +310,18 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+        $team_time = $team->get_time();
+
         $qw = array();
         $qw[] = $c->solution_id." = ".$data->sql_format($id, "s");
         $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
-        $qw[] = $c->show_at." > now()";  //TODO: update for time_shifts
+        $qw[] = $c->show_at." > $team_time_sql";
         $qw = " where ".implode(' and ', $qw);
 
-        //TODO: update for time_shifts
         $q = "update $t_name
-              set ".$c->show_at."=addtime(now(), sec_to_time(".$data->sql_format($timeout, "n")."))".$qw;
+              set ".$c->show_at."=FROM_UNIXTIME(".$data->sql_format($team_time + $timeout, "n").")".$qw;
 
         $res=$data->db->query($q);
 
@@ -349,13 +362,14 @@ class Iquest_Solution extends Iquest_file{
 
         $record_exists = (bool)$row[0];
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         if ($record_exists){
-            //TODO: update for time_shifts
             $q = "update $t_name
-                  set ".$c->solved_at."=now()".$qw;
+                  set ".$c->solved_at."=$team_time_sql $qw";
         }
         else{
-            //TODO: update for time_shifts
             $q="insert into ".$t_name." (
                         ".$c->solution_id.",
                         ".$c->team_id.",
@@ -364,7 +378,7 @@ class Iquest_Solution extends Iquest_file{
                 values (".$data->sql_format($id,        "s").",
                         ".$data->sql_format($team_id,   "n").",
                         FROM_UNIXTIME(0),
-                        now())";
+                        $team_time_sql)";
         }
 
         $res=$data->db->query($q);
@@ -378,8 +392,11 @@ class Iquest_Solution extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_solution_team->cols;
 
+        $team = Iquest_Team::fetch_by_id($team_id);
+        $team_time_sql = $team->get_time_sql();
+
         $qw = array();
-        $qw[] = $c->show_at." > now()"; //TODO: update for time_shifts
+        $qw[] = $c->show_at." > $team_time_sql";
         $qw[] = $c->team_id." = ".$data->sql_format($team_id, "n");
 
         if ($qw) $qw = " where ".implode(' and ', $qw);

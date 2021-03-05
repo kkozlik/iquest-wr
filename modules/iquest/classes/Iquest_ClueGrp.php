@@ -42,7 +42,12 @@ class Iquest_ClueGrp{
         /* col names */
         $c       = &$config->data_sql->iquest_cgrp_open->cols;
 
-        if (!$open_ts) $open_ts = time(); // TODO: shall this be updated for time shifts??
+        if (!$open_ts) {
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $open_ts = $team->get_time();
+        }
+
+        // TODO: store current time shift in the table, update all INSER/UPDATE statements...
 
         $q="insert into ".$t_name." (
                     ".$c->cgrp_id.",

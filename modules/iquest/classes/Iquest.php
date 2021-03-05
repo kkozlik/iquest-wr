@@ -43,7 +43,10 @@ class Iquest{
         sw_log($log_prefix."*** Starting contest for Team", PEAR_LOG_INFO);
 
         $start_time = Iquest_Options::get(Iquest_Options::START_TIME);
-        if (!$start_time) $start_time = time();
+        if (!$start_time) {
+            $team = Iquest_Team::fetch_by_id($team_id);
+            $start_time = $team->get_time();
+        }
 
         foreach(array_reverse($cgrp_ids) as $cgrp_id)
         {

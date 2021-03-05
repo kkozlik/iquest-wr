@@ -157,10 +157,11 @@ class apu_iquest extends apu_base_class{
 
         $countdown_limit_hint = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_HINT);
         $countdown_limit_solution = Iquest_Options::get(Iquest_Options::COUNTDOWN_LIMIT_SOLUTION);
+        $team = Iquest_Team::fetch_by_id($this->team_id);
 
         if ($next_solutions){
             $next_solution = reset($next_solutions);
-            $show_after = $next_solution['show_at'] - time(); // TODO: shall this be updated for time shifts??
+            $show_after = $next_solution['show_at'] - $team->get_time();
             if ($show_after > 0 and
                 ($show_after < $countdown_limit_solution or
                  $countdown_limit_solution == 0)){
@@ -171,7 +172,7 @@ class apu_iquest extends apu_base_class{
         }
 
         if ($next_hint){
-            $show_after = $next_hint['show_at'] - time(); // TODO: shall this be updated for time shifts??
+            $show_after = $next_hint['show_at'] - $team->get_time();
             if ($show_after > 0 and
                 ($show_after < $countdown_limit_hint or
                  $countdown_limit_hint == 0)){
