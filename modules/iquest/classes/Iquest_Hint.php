@@ -6,6 +6,7 @@ class Iquest_Hint extends Iquest_file{
     public $clue_id;
     public $timeout;
     public $show_at;
+    public $time_shift;
     public $for_sale;
     public $price;
     public $ordering;
@@ -37,6 +38,7 @@ class Iquest_Hint extends Iquest_file{
             $qw[] = "t.".$ct->team_id." = ".$data->sql_format($opt['team_id'], "s");
             $join[] = " join ".$tt_name." t on h.".$ch->id." = t.".$ct->hint_id;
             $cols .= ", UNIX_TIMESTAMP(t.".$ct->show_at.") as ".$ct->show_at."
+                      , time_to_sec(t.".$ct->time_shift.") as ".$ct->time_shift."
                       , ".$ct->for_sale;
 
             if (!empty($opt['accessible'])){
@@ -95,8 +97,9 @@ class Iquest_Hint extends Iquest_file{
 
         $out = array();
         while ($row=$res->fetch()){
-            if (!isset($row[$ct->show_at]))  $row[$ct->show_at] = null;
-            if (!isset($row[$ct->for_sale])) $row[$ct->for_sale] = null;
+            if (!isset($row[$ct->show_at]))     $row[$ct->show_at] = null;
+            if (!isset($row[$ct->time_shift]))  $row[$ct->time_shift] = null;
+            if (!isset($row[$ct->for_sale]))    $row[$ct->for_sale] = null;
 
             $out[$row[$ch->id]] =  new Iquest_Hint($row[$ch->id],
                                                    $row[$ch->ref_id],
@@ -108,6 +111,7 @@ class Iquest_Hint extends Iquest_file{
                                                    $row[$ch->price],
                                                    $row[$ch->ordering],
                                                    $row[$ct->show_at],
+                                                   $row[$ct->time_shift],
                                                    $row[$ct->for_sale]);
         }
         $res->closeCursor();
@@ -126,12 +130,8 @@ class Iquest_Hint extends Iquest_file{
         /* col names */
         $c       = &$config->data_sql->iquest_hint_team->cols;
 
-        if (!$open_ts) {
-            $team = Iquest_Team::fetch_by_id($team_id);
-            $open_ts = $team->get_time();
-        }
-
-        // TODO: store current time shift in the table, update all INSER/UPDATE statements...
+        $team = Iquest_Team::fetch_by_id($team_id);
+        if (!$open_ts) $open_ts = $team->get_time();
 
         // if timeout is not specified set it to zero
         if ($timeout) $show_at_sql = "FROM_UNIXTIME(".$data->sql_format($open_ts + $timeout, "n").")";
@@ -141,10 +141,12 @@ class Iquest_Hint extends Iquest_file{
                     ".$c->hint_id.",
                     ".$c->team_id.",
                     ".$c->show_at.",
+                    ".$c->time_shift.",
                     ".$c->for_sale.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
                     $show_at_sql,
+                    {$team->get_timeshift_sql()},
                     ".$data->sql_format($for_sale,  "n").")";
 
         $res=$data->db->query($q);
@@ -206,9 +208,11 @@ class Iquest_Hint extends Iquest_file{
 
         $team = Iquest_Team::fetch_by_id($team_id);
         $team_time_sql = $team->get_time_sql();
+        $team_timeshift_sql = $team->get_timeshift_sql();
 
         $q = "update ".$t_name." set
                 ".$c->show_at." = $team_time_sql,
+                ".$c->time_shift." = $team_timeshift_sql,
                 ".$c->for_sale." = 0
               where ".$c->hint_id." = ".$data->sql_format($id,      "s")." and
                     ".$c->team_id." = ".$data->sql_format($team_id, "n");
@@ -262,7 +266,7 @@ class Iquest_Hint extends Iquest_file{
         return $out;
     }
 
-    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null, $for_sale=null){
+    function __construct($id, $ref_id, $filename, $content_type, $comment, $clue_id, $timeout, $price, $ordering, $show_at=null, $time_shift=null, $for_sale=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
 
         $this->clue_id = $clue_id;
@@ -270,6 +274,7 @@ class Iquest_Hint extends Iquest_file{
         $this->price = $price;
         $this->ordering = $ordering;
         $this->show_at = $show_at;
+        $this->time_shift = $time_shift;
         $this->for_sale = $for_sale;
     }
 

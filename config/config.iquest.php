@@ -30,6 +30,7 @@ $config->data_sql->iquest_cgrp_open->table_name =      "open_cgrp_team";
 $config->data_sql->iquest_cgrp_open->cols->team_id =   "team_id";
 $config->data_sql->iquest_cgrp_open->cols->cgrp_id =   "cgrp_id";
 $config->data_sql->iquest_cgrp_open->cols->gained_at = "gained_at";
+$config->data_sql->iquest_cgrp_open->cols->time_shift ="time_shift";
 
 
 
@@ -94,6 +95,7 @@ $config->data_sql->iquest_hint_team->table_name =           "hint_team";
 $config->data_sql->iquest_hint_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_hint_team->cols->hint_id =        "hint_id";
 $config->data_sql->iquest_hint_team->cols->show_at =        "show_at";
+$config->data_sql->iquest_hint_team->cols->time_shift =     "time_shift";
 $config->data_sql->iquest_hint_team->cols->for_sale =       "for_sale";
 
 
@@ -143,6 +145,7 @@ $config->data_sql->iquest_solution_team->cols->team_id =        "team_id";
 $config->data_sql->iquest_solution_team->cols->solution_id =    "solution_id";
 $config->data_sql->iquest_solution_team->cols->show_at =        "show_at";
 $config->data_sql->iquest_solution_team->cols->solved_at =      "solved_at";
+$config->data_sql->iquest_solution_team->cols->time_shift =     "time_shift";
 
 
 

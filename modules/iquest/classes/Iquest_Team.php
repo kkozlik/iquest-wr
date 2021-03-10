@@ -160,6 +160,11 @@ class Iquest_Team{
         return "FROM_UNIXTIME(".$data->sql_format($this->get_time(), "n").")";
     }
 
+    public function get_timeshift_sql(){
+        global $data;
+        return "sec_to_time(".$data->sql_format($this->time_shift, "n").")";
+    }
+
     private function update(){
         global $data, $config;
 

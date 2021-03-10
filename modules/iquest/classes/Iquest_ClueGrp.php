@@ -6,6 +6,7 @@ class Iquest_ClueGrp{
     public $name;
     public $ordering;
     public $gained_at;
+    public $time_shift;
 
     protected $clues=null;
 
@@ -42,20 +43,18 @@ class Iquest_ClueGrp{
         /* col names */
         $c       = &$config->data_sql->iquest_cgrp_open->cols;
 
-        if (!$open_ts) {
-            $team = Iquest_Team::fetch_by_id($team_id);
-            $open_ts = $team->get_time();
-        }
-
-        // TODO: store current time shift in the table, update all INSER/UPDATE statements...
+        $team = Iquest_Team::fetch_by_id($team_id);
+        if (!$open_ts) $open_ts = $team->get_time();
 
         $q="insert into ".$t_name." (
                     ".$c->cgrp_id.",
                     ".$c->team_id.",
-                    ".$c->gained_at.")
+                    ".$c->gained_at.",
+                    ".$c->time_shift.")
             values (".$data->sql_format($id,        "s").",
                     ".$data->sql_format($team_id,   "n").",
-                    FROM_UNIXTIME(".$data->sql_format($open_ts, "n")."))";
+                    FROM_UNIXTIME(".$data->sql_format($open_ts, "n")."),
+                    {$team->get_timeshift_sql()})";
 
 
         $res=$data->db->query($q);
@@ -74,6 +73,8 @@ class Iquest_ClueGrp{
         $co      = &$config->data_sql->iquest_cgrp_open->cols;
 
         $qw = array();
+        $join = array();
+        $cols = "";
 
         if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
@@ -85,29 +86,29 @@ class Iquest_ClueGrp{
 
         // If team_id is specified, set the gained_at attribute of clue group
         if (isset($opt['team_id'])){
-            $q2 = "select UNIX_TIMESTAMP(o.".$co->gained_at.")
-                   from ".$to_name." o
-                   where o.".$co->team_id." = ".$data->sql_format($opt['team_id'], "n")." and
-                         o.".$co->cgrp_id."=c.".$cc->id;
+            $cols .= ", UNIX_TIMESTAMP(o.".$co->gained_at.") as {$co->gained_at}
+                      , time_to_sec(o.".$co->time_shift.") as ".$co->time_shift;
+
+            $join[] = "left join $to_name o on o.{$co->team_id} = ".$data->sql_format($opt['team_id'], "n")." and
+                                               o.{$co->cgrp_id}=c.{$cc->id}";
         }
         else{
-            $q2 = "NULL";
+            $cols .= ", null as {$co->gained_at}
+                      , null as {$co->time_shift}";
         }
 
         // Fetch only clue groups available to a team. Make sense only together
         // with $opt['team_id']
-        if (!empty($opt['available_only']))  $qw[] = "!isnull((".$q2."))";
+        if (!empty($opt['available_only']))  $qw[] = "!isnull({$co->gained_at})";
 
         if ($qw) $qw = " where ".implode(' and ', $qw);
         else $qw = "";
 
-
         $q = "select c.".$cc->id.",
                      c.".$cc->ref_id.",
                      c.".$cc->name.",
-                     c.".$cc->ordering.",
-                     (".$q2.") as ".$co->gained_at."
-              from ".$tc_name." c ".
+                     c.".$cc->ordering.$cols."
+              from ".$tc_name." c ".implode(" ", $join).
               $qw."
               order by ".$order_by;
 
@@ -120,7 +121,8 @@ class Iquest_ClueGrp{
                                                       $row[$cc->ref_id],
                                                       $row[$cc->name],
                                                       $row[$cc->ordering],
-                                                      $row[$co->gained_at]);
+                                                      $row[$co->gained_at],
+                                                      $row[$co->time_shift]);
         }
         $res->closeCursor();
         return $out;
@@ -242,13 +244,14 @@ class Iquest_ClueGrp{
         return $out;
     }
 
-    function __construct($id, $ref_id, $name, $ordering, $gained_at=null){
+    function __construct($id, $ref_id, $name, $ordering, $gained_at=null, $time_shift=null){
 
         $this->id =         $id;
         $this->ref_id =     $ref_id;
         $this->name =       $name;
         $this->ordering =   $ordering;
         $this->gained_at =  $gained_at;
+        $this->time_shift = $time_shift;
     }
 
 
