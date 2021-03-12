@@ -13,6 +13,10 @@
     -moz-appearance: none;
 }
 
+.text-xs {
+    font-size: 70%;
+    font-weight: 400;
+}
 
 @media (min-width: map-get($grid-breakpoints, "md")) {
   .w-md-25 {

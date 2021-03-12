@@ -7,7 +7,11 @@
 
 {$data_content="<pre>`$event.data_formated`</pre>"}
 <tr class="{if $event.success}success{else}error{/if}">
-    <td class="text-nowrap">{$event.timestamp}</td>
+    <td class="text-nowrap text-center">{$event.timestamp}
+        {if $event.playtime and 0 != $event.time_shift|default:0}
+            <br/><span class="text-xs">{$event.playtime}</span>
+        {/if}
+    </td>
     <td >{$event.team_name}</td>
     <td >{$event.type}</td>
     {if $raw_data}

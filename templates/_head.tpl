@@ -63,7 +63,7 @@
             </li>
 
             <li class="navbar-text clock">
-                {if $time_shift}
+                {if $time_shift|default:false}
                     {* // TODO: better and human friendly visualization of time_shift *}
                     {$lang_str.iquest_txt_play_time}<br /><span id="current_time" title="Shifted: {$time_shift}">{$current_time}</span>
                 {else}

@@ -16,7 +16,7 @@ class Iquest_Team{
         if (isset($team_cache[$id])) return $team_cache[$id];
 
         $records = static::fetch(array("id" => $id));
-        if (!count($records)) throw new Exception("Team ID=$id does not exists.");
+        if (!count($records)) throw new UnexpectedValueException("Team ID=$id does not exists.");
         $team_cache[$id] = reset($records);
 
         return $team_cache[$id];
@@ -158,6 +158,10 @@ class Iquest_Team{
     public function get_time_sql(){
         global $data;
         return "FROM_UNIXTIME(".$data->sql_format($this->get_time(), "n").")";
+    }
+
+    public function get_timeshift(){
+        return $this->time_shift;
     }
 
     public function get_timeshift_sql(){

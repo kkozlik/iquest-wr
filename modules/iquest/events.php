@@ -55,9 +55,13 @@ class Iquest_Events{
             $team_id = Iquest_auth::get_logged_in_uid();
         }
 
-        // TODO: include time shift in the event data
-
         if (self::$extra_data) $event_data = array_merge($event_data, self::$extra_data);
+
+        $team = Iquest_auth::get_logged_in_team();
+        if ($team){
+            $event_data['playtime'] = $team->get_time();
+            $event_data['time_shift'] = $team->get_timeshift();
+        }
 
         $eh = &ErrorHandler::singleton();
         $errors = $eh->get_errors_array();
@@ -245,6 +249,13 @@ class Iquest_Events{
 
         if (isset($this->data['note']))             $out['note']['text'] = $this->data['note'];
         if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
+        if (isset($this->data['time_shift']) and $this->data['time_shift']){
+            $hours = floor($this->data['time_shift'] / 3600);
+            $mins  = floor($this->data['time_shift'] / 60 % 60);
+            $secs  = floor($this->data['time_shift'] % 60);
+
+            $out['timeshift']['text'] = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+        }
 
         switch($this->type){
         case self::KEY:
@@ -300,6 +311,8 @@ class Iquest_Events{
         $out['id'] = $this->id;
         $out['team_id'] = $this->team_id;
         $out['timestamp'] = date("d.m.Y H:i:s", $this->timestamp);
+        $out['playtime'] = isset($this->data['playtime']) ? date("d.m.Y H:i:s", $this->data['playtime']) : null;
+        $out['time_shift'] = isset($this->data['time_shift']) ? $this->data['time_shift'] : null;
         $out['type'] = $this->type;
         $out['success'] = $this->success;
         $out['data'] = $this->data;
