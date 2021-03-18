@@ -11,26 +11,32 @@
         <img src="{$parameters.logo_url|escape}" alt="{$parameters.game_name|escape}">
     </span>
 
+    <div class="navbar-text timeouts mx-auto d-lg-none">
+        {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: <span class="hint_countdown">{$next_hint}</span></div>{/if}
+        {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: <span class="solution_countdown">{$next_solution}</span></div>{/if}
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
 
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-            <li class="navbar-text team-name px-2">
+            <li class="navbar-text team-name px-2 text-center">
                 {$team_name|default:""|escape}
             </li>
             {if $show_place|default:false}
-                <li class="navbar-text px-2">
+                <li class="navbar-text px-2 text-center">
                     {$lang_str.iquest_txt_your_place}: {$team_place|default:""|escape}
                 </li>
             {/if}
         </ul>
-    </div>
 
-    <div class="navbar-text timeouts mx-auto">
-        {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: <span id="hint_countdown">{$next_hint}</span></div>{/if}
-        {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: <span id="solution_countdown">{$next_solution}</span></div>{/if}
-    </div>
-
-    <div class="collapse navbar-collapse">
+        <div class="navbar-text timeouts mx-auto d-none d-lg-block">
+            {if $next_hint}<div>{$lang_str.iquest_txt_next_hint}: <span class="hint_countdown">{$next_hint}</span></div>{/if}
+            {if $next_solution}<div>{$lang_str.iquest_txt_next_solution}: <span class="solution_countdown">{$next_solution}</span></div>{/if}
+        </div>
 
         <ul class="navbar-nav ml-auto">
             {if $parameters.overview_url|default:0}
@@ -53,14 +59,6 @@
                     <a class="nav-link" href='{$parameters.set_position_url|escape}'>{$lang_str.iquest_l_set_position}</a>
                 </li>
             {/if}
-            {if $parameters.giveitup_url|default:0}
-                <li class="nav-item">
-                    <a class="nav-link" href='{$parameters.giveitup_url|escape}'>{$lang_str.iquest_l_give_it_up}</a>
-                </li>
-            {/if}
-            <li class="nav-item">
-                <a class="nav-link" href='{$parameters.logout_url|escape}'>{$lang_str.iquest_l_logout}</a>
-            </li>
 
             <li class="navbar-text clock">
                 {if $time_shift|default:false}
@@ -88,12 +86,48 @@
                     {/if}
                 </li>
             {/if}
+
+            {$menu_items=[]}
+            {if $parameters.giveitup_url|default:0}
+                {$menu_items[]=[
+                    'url'=>$parameters.giveitup_url,
+                    'label'=>$lang_str.iquest_l_give_it_up
+                ]}
+            {/if}
+
+            {$menu_items[]=[
+                'url'=>$parameters.logout_url,
+                'label'=>$lang_str.iquest_l_logout
+            ]}
+
+
+            {if $menu_items|count > 1}
+                <li class="nav-item dropdown d-none d-lg-block">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Menu
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        {foreach $menu_items as $menu_item}
+                            <a class="dropdown-item" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                        {/foreach}
+                    </div>
+                </li>
+
+                {foreach $menu_items as $menu_item}
+                    <li class="nav-item d-block d-lg-none">
+                        <a class="nav-link" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                    </li>
+                {/foreach}
+            {else}
+                {foreach $menu_items as $menu_item}
+                    <li class="nav-item">
+                        <a class="nav-link" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                    </li>
+                {/foreach}
+            {/if}
+
         </ul>
     </div>
-
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 </div>
 <br />
 {/if}
