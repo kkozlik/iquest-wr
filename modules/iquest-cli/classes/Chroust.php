@@ -735,8 +735,10 @@ class Chroust{
         }
 
         // Verify that the graph of clues and solutions is continuous.
-        // Use any fake number as team_id. We do not need to have graph for any team.
-        $graph = new Iquest_solution_graph(9999);
+        // Use any valid team_id does not matter on it.
+        $team = reset(Iquest_Team::fetch());
+
+        $graph = new Iquest_solution_graph($team->id);
         $graph_errors = $graph->check_graph_continuous();
         if ($graph_errors){
             Console::log("\n".str_repeat("*", 80), Console::LIGHT_PURPLE);
