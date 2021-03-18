@@ -51,6 +51,7 @@ $lang_str['iquest_l_overview'] =                        "Přehled";
 $lang_str['iquest_l_team_rank'] =                       "Průběžné pořadí";
 $lang_str['iquest_l_events'] =                          "Log událostí";
 $lang_str['iquest_l_set_position'] =                    "Nastav polohu";
+$lang_str['iquest_l_timeshift'] =                       "Časový skok";
 $lang_str['iquest_l_give_it_up'] =                      "Vzdát to";
 $lang_str['iquest_l_logout'] =                          "Odhlásit se";
 

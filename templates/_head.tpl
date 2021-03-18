@@ -88,6 +88,13 @@
             {/if}
 
             {$menu_items=[]}
+            {if $parameters.timeshift_url|default:0}
+                {$menu_items[]=[
+                    'url'=>$parameters.timeshift_url,
+                    'label'=>$lang_str.iquest_l_timeshift
+                ]}
+            {/if}
+
             {if $parameters.giveitup_url|default:0}
                 {$menu_items[]=[
                     'url'=>$parameters.giveitup_url,

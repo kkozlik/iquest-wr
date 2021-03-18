@@ -14,6 +14,7 @@ class Iquest_Options{
     const WALLET_INITIAL_VALUE  = "wallet_initial_value";
     const BOMB_ACTIVE           = "bomb_active";
     const BOMB_INITIAL_VALUE    = "bomb_initial_value";
+    const TIMESHIFT_ACTIVE      = "timeshift_active";
     const CHECK_KEY_ORDER       = "check_key_order";
     const KEY_PREFIX            = "key_prefix";
     const LOGO                  = "logo";
@@ -50,6 +51,7 @@ class Iquest_Options{
                                              self::WALLET_INITIAL_VALUE,
                                              self::BOMB_ACTIVE,
                                              self::BOMB_INITIAL_VALUE,
+                                             self::TIMESHIFT_ACTIVE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,
@@ -73,6 +75,7 @@ class Iquest_Options{
                                              self::WALLET_INITIAL_VALUE,
                                              self::BOMB_ACTIVE,
                                              self::BOMB_INITIAL_VALUE,
+                                             self::TIMESHIFT_ACTIVE,
                                              self::CHECK_KEY_ORDER,
                                              self::COUNTDOWN_LIMIT_HINT,
                                              self::COUNTDOWN_LIMIT_SOLUTION,

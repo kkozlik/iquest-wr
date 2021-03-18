@@ -104,6 +104,7 @@ class Chroust{
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH, 1);
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH_CGRP_NAMES, 0);
         Iquest_Options::set(Iquest_Options::SHOW_GRAPH_MARK_SOLVED, 1);
+        Iquest_Options::set(Iquest_Options::TIMESHIFT_ACTIVE, 0);
         Iquest_Options::set(Iquest_Options::KEY_PREFIX, "");
         Iquest_Options::set(Iquest_Options::LOGO, "");
         Iquest_Options::set(Iquest_Options::GAME_NAME, "");
