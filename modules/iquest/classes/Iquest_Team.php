@@ -187,7 +187,37 @@ class Iquest_Team{
         $res=$data->db->query($q);
     }
 
-    function to_smarty(){
+    /**
+     * Calculate timeshift increment by the timeouts to get next hint or solution
+     *
+     * Return zero if no hint or solution is scheduled to show
+     *
+     * @return int
+     */
+    public function calculate_timeshift_increment(){
+        $next_solutions = Iquest_Solution::get_scheduled_solutions($this->id);
+        $next_hint     = Iquest_Hint::get_next_scheduled($this->id);
+
+        $solution_show_after = 0;
+        $hint_show_after = 0;
+
+        if ($next_solutions){
+            $next_solution = reset($next_solutions);
+            $solution_show_after = $next_solution['show_at'] - $this->get_time();
+        }
+
+        if ($next_hint){
+            $hint_show_after = $next_hint['show_at'] - $this->get_time();
+        }
+
+        $timeshift_increment = $solution_show_after;
+        if ($hint_show_after and $hint_show_after < $timeshift_increment){
+            $timeshift_increment = $hint_show_after;
+        }
+        return $timeshift_increment;
+    }
+
+    public function to_smarty(){
         $out = array();
         $out['id'] = $this->id;
         $out['name'] = $this->name;

@@ -29,6 +29,7 @@ $lang_str['iquest_err_no_hint_for_sale'] =              "Žádná další nápov
 $lang_str['iquest_err_hint_no_money'] =                 "Nemáte dostatek peněz pro získání další nápovědy. Její cena je <price> {$lang_str['iquest_txt_coin_symbol']}.";
 $lang_str['iquest_err_no_bomb'] =                       "Nemáte bombu.";
 $lang_str['iquest_err_cannot_blow_up'] =                "Tento úkol nelze odpálit.";
+$lang_str['iquest_err_timeshift_nothing_scheduled'] =   "Momentálně není aktivní žádný časovač pro zobrazení řešení či nápovědy.";
 
 $lang_str['iquest_err_passw_invalid'] =                 "Sorry, heslo není správně.";
 $lang_str['iquest_err_passw_empty'] =                   "Nevyplnil jste heslo.";
@@ -45,6 +46,7 @@ $lang_str['iquest_msg_coin_gained'] =                   "Získali jste minci! (<
 $lang_str['iquest_msg_bomb_gained'] =                   "Získali jste bombu! (<value>)";
 $lang_str['iquest_msg_location_correct'] =              "Gratulujeme, jste na správném místě";
 $lang_str['iquest_msg_blowned_up'] =                    "Úkol odpálen. Správné řešení zpřístupněno.";
+$lang_str['iquest_msg_timeshift'] =                     "Čas posunut o <value>";
 
 $lang_str['iquest_l_back'] =                            "Zpět";
 $lang_str['iquest_l_overview'] =                        "Přehled";

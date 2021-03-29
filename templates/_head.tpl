@@ -88,9 +88,9 @@
             {/if}
 
             {$menu_items=[]}
-            {if $parameters.timeshift_url|default:0}
+            {if $timeshift_url|default:0 and $parameters.timeshift_active|default:0}
                 {$menu_items[]=[
-                    'url'=>$parameters.timeshift_url,
+                    'url'=>$timeshift_url,
                     'label'=>$lang_str.iquest_l_timeshift
                 ]}
             {/if}

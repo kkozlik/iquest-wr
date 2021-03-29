@@ -78,12 +78,11 @@ $GLOBALS['controler']->attach_listener("pre_html_output", function($event){
     }
 
     try{
-        $GLOBALS['page_attributes']['timeshift_url'] = null;
-        if (Iquest_Options::get(Iquest_Options::TIMESHIFT_ACTIVE)){
-            $GLOBALS['page_attributes']['timeshift_url'] = $GLOBALS['controler']->url('main.php?timeshift=1');
-        }
+        $GLOBALS['page_attributes']['timeshift_active'] = Iquest_Options::get(Iquest_Options::TIMESHIFT_ACTIVE);
     }
-    catch(RuntimeException $e){}
+    catch(RuntimeException $e){
+        $GLOBALS['page_attributes']['timeshift_active'] = false;
+    }
 
     if (!$GLOBALS['page_attributes']['game_name']) $GLOBALS['page_attributes']['game_name'] = "I.Quest";
 

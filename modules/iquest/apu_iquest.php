@@ -52,6 +52,7 @@ class apu_iquest extends apu_base_class{
     protected $hint;
     protected $solution;
     protected $tracker;
+    protected $timeshift_increment=0;
     protected $smarty_action = 'default';
     protected $smarty_groups;
     protected $smarty_cgrp;
@@ -126,6 +127,7 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_all_in_1_url'] =     'all_in_1_url';
         $this->opt['smarty_get_location_url'] = 'get_location_url';
         $this->opt['smarty_check_location_url'] = 'check_location_url';
+        $this->opt['smarty_timeshift_url'] =    'timeshift_url';
 
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
@@ -414,6 +416,27 @@ class apu_iquest extends apu_base_class{
         return $get;
     }
 
+    public function action_timeshift(){
+        global $lang_str;
+
+        $team = Iquest_Team::fetch_by_id($this->team_id);
+        $team->shift_time($this->timeshift_increment);
+
+        // Time shifted, reset the URL token so new one will be generated
+        $this->session[self::SESS_URL_TOKEN] = "";
+
+        Iquest_Events::add(Iquest_Events::TIMESHIFT,
+                           true,
+                           array("timeshift_incremented" => $this->timeshift_increment));
+
+        action_log($this->opt['screen_name'], $this->action, " Fastforward time by: ".Iquest_Utils::sec2time($this->timeshift_increment));
+
+        Iquest_info_msg::add_msg(str_replace("<value>", Iquest_Utils::sec2time($this->timeshift_increment), $lang_str['iquest_msg_timeshift']));
+
+        $get = array('apu_iquest='.RawURLEncode($this->opt['instance_id']));
+        return $get;
+    }
+
     function action_get_clue(){
         if (PHPlib::$session) PHPlib::$session->close_session();
 
@@ -661,6 +684,11 @@ class apu_iquest extends apu_base_class{
                                  'validate_form'=>true,
                                  'reload'=>true);
         }
+        elseif (isset($_GET['timeshift']) and Iquest_Options::get(Iquest_Options::TIMESHIFT_ACTIVE)){
+            $this->action=array('action'=>"timeshift",
+                                'validate_form'=>true,
+                                'reload'=>true);
+        }
         elseif (isset($_GET['view_grp'])){
             $this->smarty_action = 'view_grp';
             $this->ref_id = $_GET['view_grp'];
@@ -766,6 +794,10 @@ class apu_iquest extends apu_base_class{
             else{
                 if (false === $this->action_default()) return false;
             }
+        }
+        elseif ($this->action['action'] == "timeshift"){
+            action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: Timeshift failed", false, array("errors"=>$this->controler->errors));
+            if (false === $this->action_default()) return false;
         }
         elseif ($this->action['action'] == "view_grp"){
             action_log($this->opt['screen_name'], $this->action, "IQUEST MAIN: View clue group failed", false, array("errors"=>$this->controler->errors));
@@ -957,6 +989,32 @@ class apu_iquest extends apu_base_class{
             return true;
         }
 
+        if ($this->action['action'] == "timeshift"){
+
+            // Check that the URL token match to one stored in session
+            if ($this->session[self::SESS_URL_TOKEN] != $_GET[self::GET_URL_TOKEN]){
+                ErrorHandler::add_error("Double request to time shift!");
+                sw_log("Doubled request to time shift. Actual valid token: '".$this->session[self::SESS_URL_TOKEN]."'".
+                       ". URL token: '".$_GET[self::GET_URL_TOKEN]."'", PEAR_LOG_INFO);
+                return false;
+            }
+            else{
+                sw_log("Time shift URL token: '".$_GET[self::GET_URL_TOKEN]."'", PEAR_LOG_INFO);
+            }
+
+            $team = Iquest_Team::fetch_by_id($this->team_id);
+            $timeshift_increment = $team->calculate_timeshift_increment();
+
+            if (!$timeshift_increment){
+                ErrorHandler::add_error($lang_str['iquest_err_timeshift_nothing_scheduled']);
+                return false;
+            }
+
+            $this->timeshift_increment = $timeshift_increment;
+
+            return true;
+        }
+
         if ($this->action['action'] == "check_location"){
             if (Iquest::is_over()){
                 ErrorHandler::add_error($lang_str['iquest_err_contest_over']);
@@ -1023,6 +1081,8 @@ class apu_iquest extends apu_base_class{
 
         $smarty->assign($this->opt['smarty_get_location_url'], $this->controler->url($_SERVER['PHP_SELF']."?get_location=1"));
         $smarty->assign($this->opt['smarty_check_location_url'], $this->controler->url($_SERVER['PHP_SELF']."?check_location=1"));
+
+        $smarty->assign($this->opt['smarty_timeshift_url'], $this->controler->url($_SERVER['PHP_SELF']."?timeshift=1&".$this->get_url_token()));
     }
 
     /**
