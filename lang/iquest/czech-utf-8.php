@@ -70,6 +70,7 @@ $lang_str['iquest_btn_buy_hint'] =                      "Kup nápovědu!";
 $lang_str['iquest_btn_buy_hint_price'] =                "(<price> {$lang_str['iquest_txt_coin_symbol']})";
 $lang_str['iquest_conf_buy_hint'] =                     "Opravdu si přejete utratit <price> {$lang_str['iquest_txt_coin_symbol']} za další nápovědu?";
 $lang_str['iquest_blow_up_confirmation'] =              "Opravdu si přejete použít bombu a získat řešení tohoto úkolu?";
+$lang_str['iquest_conf_timeshift'] =                    "Opravdu si přejete posunout virtuální herní čas až do okamžiku zobrazení další nápovědy nebo řešení?";
 
 $lang_str['iquest_txt_contest_begins_at'] =             "Soutěž začíná <date> v <time>.";
 $lang_str['iquest_txt_time_remaining'] =                "Zbývající čas";

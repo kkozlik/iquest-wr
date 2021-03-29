@@ -91,7 +91,8 @@
             {if $timeshift_url|default:0 and $parameters.timeshift_active|default:0}
                 {$menu_items[]=[
                     'url'=>$timeshift_url,
-                    'label'=>$lang_str.iquest_l_timeshift
+                    'label'=>$lang_str.iquest_l_timeshift,
+                    'extrahtml'=>"onclick='return linkConfirmation(this, \"`$lang_str.iquest_conf_timeshift`\")'"
                 ]}
             {/if}
 
@@ -115,20 +116,20 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                         {foreach $menu_items as $menu_item}
-                            <a class="dropdown-item" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                            <a class="dropdown-item" href='{$menu_item.url|escape}' {$menu_item.extrahtml|default:''}>{$menu_item.label|escape}</a>
                         {/foreach}
                     </div>
                 </li>
 
                 {foreach $menu_items as $menu_item}
                     <li class="nav-item d-block d-lg-none">
-                        <a class="nav-link" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                        <a class="nav-link" href='{$menu_item.url|escape}' {$menu_item.extrahtml|default:''}>{$menu_item.label|escape}</a>
                     </li>
                 {/foreach}
             {else}
                 {foreach $menu_items as $menu_item}
                     <li class="nav-item">
-                        <a class="nav-link" href='{$menu_item.url|escape}'>{$menu_item.label|escape}</a>
+                        <a class="nav-link" href='{$menu_item.url|escape}' {$menu_item.extrahtml|default:''}>{$menu_item.label|escape}</a>
                     </li>
                 {/foreach}
             {/if}
