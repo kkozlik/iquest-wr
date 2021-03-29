@@ -10,6 +10,7 @@ class Iquest_Events{
     const COIN_SPEND = "coin_spend";
     const BLOW_UP = "blow_up";
     const LOCATION_CHECK = "location_check";
+    const TIMESHIFT = "timeshift";
 
     public static $supported_types = array(self::LOGGED,
                                            self::KEY,
@@ -18,6 +19,7 @@ class Iquest_Events{
                                            self::COIN_SPEND,
                                            self::BLOW_UP,
                                            self::LOCATION_CHECK,
+                                           self::TIMESHIFT,
                                            );
 
     public $id;
@@ -239,6 +241,9 @@ class Iquest_Events{
             if (isset($this->data['lat']) and isset($this->data['lon'])){
                 $out['lokace']['text'] = sprintf("N%2.5f, E%2.5f", $this->data['lat'], $this->data['lon']);
             }
+            break;
+        case self::TIMESHIFT:
+            $out['timeshift_incremented']['text'] = Iquest_Utils::sec2time($this->data['timeshift_incremented']);
             break;
         case self::LOGGED:
         case self::LOGOUT:
