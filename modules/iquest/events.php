@@ -250,11 +250,7 @@ class Iquest_Events{
         if (isset($this->data['note']))             $out['note']['text'] = $this->data['note'];
         if (isset($this->data['errors']))           $out['errors']['text'] = implode("; ", $this->data['errors']);
         if (isset($this->data['time_shift']) and $this->data['time_shift']){
-            $hours = floor($this->data['time_shift'] / 3600);
-            $mins  = floor($this->data['time_shift'] / 60 % 60);
-            $secs  = floor($this->data['time_shift'] % 60);
-
-            $out['timeshift']['text'] = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+            $out['timeshift']['text'] = Iquest_Utils::sec2time($this->data['time_shift']);
         }
 
         switch($this->type){

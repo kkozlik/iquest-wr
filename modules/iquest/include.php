@@ -29,6 +29,7 @@ function iquest_init(){
 
 include_module('traccar');
 
+require_once( "classes/Iquest_Utils.php" );
 require_once( "classes/Iquest.php" );
 
 require_once( "classes/Iquest_Clue.php" );
