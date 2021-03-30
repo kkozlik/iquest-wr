@@ -175,12 +175,13 @@ class Iquest_team_rank{
         global $data, $config;
 
         /* table's name */
-        $t_name  = &$config->data_sql->iquest_team_rank->table_name;
-        /* col names */
-        $c      = &$config->data_sql->iquest_team_rank->cols;
+        $t_name  = $config->data_sql->iquest_team_rank->table_name;
+        $td_name = $config->data_sql->iquest_team_finish_distance->table_name;
 
         $q = "delete from ".$t_name;
+        $res=$data->db->query($q);
 
+        $q = "delete from ".$td_name;
         $res=$data->db->query($q);
     }
 
@@ -223,7 +224,6 @@ class Iquest_team_rank{
         /* col names */
         $c      = &$config->data_sql->iquest_team_rank->cols;
 
-        // TODO: add team id to the primary key
         $q = "insert into ".$t_name."(
                     ".$c->timestamp.",
                     ".$c->distance.",

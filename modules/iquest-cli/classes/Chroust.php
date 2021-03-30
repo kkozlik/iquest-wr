@@ -50,6 +50,7 @@ class Chroust{
             $tables[] = $config->data_sql->iquest_solution_team->table_name;
             $tables[] = $config->data_sql->iquest_event->table_name;
             $tables[] = $config->data_sql->iquest_team_rank->table_name;
+            $tables[] = $config->data_sql->iquest_team_finish_distance->table_name;
         }
 
         foreach($tables as $table){
