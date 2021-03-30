@@ -71,6 +71,10 @@ class apu_iquest_team_rank extends apu_base_class{
 
     function action_default(){
 
+        // Finish distance DB table might contain some records not yet calculated to ranks.
+        // So make sure the ranks are up to date before display them.
+        Iquest_team_rank::update_ranks();
+
         $ranks = Iquest_team_rank::fetch();
         $teams = Iquest_team::fetch();
 

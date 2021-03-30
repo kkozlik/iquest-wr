@@ -53,12 +53,18 @@ class Iquest_team_rank{
         return $out;
     }
 
-    // TODO: make sure this function is executed also when contest is finished - there might be unprocessed entries in iquest_team_finish_distance table
+    /**
+     * Update team rank DB table with records from finish-distance DB table
+     *
+     * @return void
+     */
     public static function update_ranks(){
         global $data, $config;
 
         $t_name = $config->data_sql->iquest_team_finish_distance->table_name;
         $c      = $config->data_sql->iquest_team_finish_distance->cols;
+
+        $end_time = Iquest_Options::get(Iquest_Options::END_TIME);
 
         // This function might behave weird if executed multiple times in parallel.
         // Use semaphore to prevent multiple execution
@@ -76,17 +82,23 @@ class Iquest_team_rank{
                 $last_update_ts = $last_rank_obj->timestamp;
             }
             else{
-                $last_update_ts = time();
+                $last_update_ts = microtime(true);
             }
 
-            $now = microtime(true); // TODO: do not allow $now > contest end time
+            $now = microtime(true);
+
+            // Do not allow $now to be higher then contest end time
+            // Stop rank updates when contest is over. There could be some records
+            // with later timestamps in finish-distance DB table. Those shall not
+            // be calculated to ranks.
+            if ($now > $end_time) $now = $end_time;
 
             $q = "select ".$c->team_id.",
                         UNIX_TIMESTAMP(".$c->timestamp.") as ".$c->timestamp.",
                         ".$c->distance."
                 from ".$t_name."
                 where {$c->timestamp} >  FROM_UNIXTIME(".$data->sql_format($last_update_ts, "n").") and
-                        {$c->timestamp} <= FROM_UNIXTIME(".$data->sql_format($now,            "n").")
+                      {$c->timestamp} <= FROM_UNIXTIME(".$data->sql_format($now,            "n").")
                 order by ".$c->timestamp;
 
             $res=$data->db->query($q);
