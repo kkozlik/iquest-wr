@@ -205,8 +205,10 @@ class Iquest{
 
         // 7. Update ranks
         $team_distance = $graph->get_distance_to_finish();
-        Iquest_team_rank::update_rank($team_id, $team_distance);
+        Iquest_team_rank::add_finish_distance($team_id, $team_distance);
         sw_log($log_prefix."    New distance to finish: $team_distance", PEAR_LOG_INFO);
+
+        Iquest_team_rank::update_ranks();
 
         unset($graph);
 

@@ -191,6 +191,19 @@ $config->data_sql->iquest_team_rank->cols->rank =       "rank";
 $config->data_sql->iquest_team_rank->cols->team_id =    "team_id";
 
 
+/**
+ *      team finish distance
+ */
+$config->data_sql->iquest_team_finish_distance = new stdClass();
+$config->data_sql->iquest_team_finish_distance->cols = new stdClass();
+
+$config->data_sql->iquest_team_finish_distance->table_name =       "team_finish_distance";
+
+$config->data_sql->iquest_team_finish_distance->cols->team_id =    "team_id";
+$config->data_sql->iquest_team_finish_distance->cols->timestamp =  "timestamp";
+$config->data_sql->iquest_team_finish_distance->cols->distance =   "distance";
+
+
 /*
  *  Definition of table team
  */

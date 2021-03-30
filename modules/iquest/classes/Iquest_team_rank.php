@@ -53,7 +53,47 @@ class Iquest_team_rank{
         return $out;
     }
 
-    static function update_rank($team_id, $distance){
+    // TODO: make sure this function is executed also when contest is finished - there might be unprocessed entries in iquest_team_finish_distance table
+    public static function update_ranks(){
+        global $data, $config;
+
+        $t_name = $config->data_sql->iquest_team_finish_distance->table_name;
+        $c      = $config->data_sql->iquest_team_finish_distance->cols;
+
+        $last_rank_obj = self::fetch(array("last"=>true));
+
+        if ($last_rank_obj){
+            $last_rank_obj = reset($last_rank_obj);
+            $last_update_ts = $last_rank_obj->timestamp;
+        }
+        else{
+            $last_update_ts = time();
+        }
+
+        $now = time(); // TODO: do not allow $now > contest end time
+
+        $q = "select ".$c->team_id.",
+                     UNIX_TIMESTAMP(".$c->timestamp.") as ".$c->timestamp.",
+                     ".$c->distance."
+              from ".$t_name."
+              where {$c->timestamp} >  FROM_UNIXTIME(".$data->sql_format($last_update_ts, "n").") and
+                    {$c->timestamp} <= FROM_UNIXTIME(".$data->sql_format($now,            "n").")
+              order by ".$c->timestamp;
+
+        $res=$data->db->query($q);
+        $res->setFetchMode(PDO::FETCH_ASSOC);
+
+        while ($row=$res->fetch()){
+            self::update_rank(
+                $row[$c->timestamp],
+                $row[$c->team_id],
+                $row[$c->distance]
+            );
+        }
+        $res->closeCursor();
+    }
+
+    private static function update_rank($timestamp, $team_id, $distance){
 
         $teams = Iquest_Team::fetch();
         $team_nr = count($teams);
@@ -94,8 +134,7 @@ class Iquest_team_rank{
             }
         }
 
-        // TODO: upadte this function, take into account time shifts...
-        $last_rank_obj->timestamp = time();
+        $last_rank_obj->timestamp = $timestamp;
         $last_rank_obj->team_id = $team_id;
         $last_rank_obj->insert();
     }
@@ -131,6 +170,31 @@ class Iquest_team_rank{
         $res=$data->db->query($q);
     }
 
+    static function add_finish_distance($team_id, $distance){
+        global $data, $config;
+
+        /* table's name */
+        $t_name = $config->data_sql->iquest_team_finish_distance->table_name;
+        /* col names */
+        $c      = $config->data_sql->iquest_team_finish_distance->cols;
+
+        $team = Iquest_Team::fetch_by_id($team_id);
+
+        // TODO: milisecond precission in timestamp
+        $q = "insert into ".$t_name."(
+                    ".$c->team_id.",
+                    ".$c->timestamp.",
+                    ".$c->distance."
+              )
+              values(
+                    ".$data->sql_format($team_id,                 "n").",
+                    ".$team->get_time_sql().",
+                    ".$data->sql_format($distance,   "n")."
+              )";
+
+        $res=$data->db->query($q);
+    }
+
     function __construct($timestamp, $distance, $rank, $team_id=null){
         $this->timestamp = $timestamp;
         $this->distance = $distance;
@@ -146,6 +210,8 @@ class Iquest_team_rank{
         /* col names */
         $c      = &$config->data_sql->iquest_team_rank->cols;
 
+        // TODO: add team id to the primary key
+        // TODO: milisecond precission in timestamp
         $q = "insert into ".$t_name."(
                     ".$c->timestamp.",
                     ".$c->distance.",
