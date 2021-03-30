@@ -60,37 +60,51 @@ class Iquest_team_rank{
         $t_name = $config->data_sql->iquest_team_finish_distance->table_name;
         $c      = $config->data_sql->iquest_team_finish_distance->cols;
 
-        $last_rank_obj = self::fetch(array("last"=>true));
-
-        if ($last_rank_obj){
-            $last_rank_obj = reset($last_rank_obj);
-            $last_update_ts = $last_rank_obj->timestamp;
-        }
-        else{
-            $last_update_ts = time();
+        // This function might behave weird if executed multiple times in parallel.
+        // Use semaphore to prevent multiple execution
+        $sem = new Shm_Semaphore(__FILE__, "i", 1, 0666);
+        if (!$sem->acquire()){
+            sw_log(__CLASS__."::".__FUNCTION__."() - Cannot acquire semaphore", PEAR_LOG_ALERT);
+            return;
         }
 
-        $now = time(); // TODO: do not allow $now > contest end time
+        try{
+            $last_rank_obj = self::fetch(array("last"=>true));
 
-        $q = "select ".$c->team_id.",
-                     UNIX_TIMESTAMP(".$c->timestamp.") as ".$c->timestamp.",
-                     ".$c->distance."
-              from ".$t_name."
-              where {$c->timestamp} >  FROM_UNIXTIME(".$data->sql_format($last_update_ts, "n").") and
-                    {$c->timestamp} <= FROM_UNIXTIME(".$data->sql_format($now,            "n").")
-              order by ".$c->timestamp;
+            if ($last_rank_obj){
+                $last_rank_obj = reset($last_rank_obj);
+                $last_update_ts = $last_rank_obj->timestamp;
+            }
+            else{
+                $last_update_ts = time();
+            }
 
-        $res=$data->db->query($q);
-        $res->setFetchMode(PDO::FETCH_ASSOC);
+            $now = microtime(true); // TODO: do not allow $now > contest end time
 
-        while ($row=$res->fetch()){
-            self::update_rank(
-                $row[$c->timestamp],
-                $row[$c->team_id],
-                $row[$c->distance]
-            );
+            $q = "select ".$c->team_id.",
+                        UNIX_TIMESTAMP(".$c->timestamp.") as ".$c->timestamp.",
+                        ".$c->distance."
+                from ".$t_name."
+                where {$c->timestamp} >  FROM_UNIXTIME(".$data->sql_format($last_update_ts, "n").") and
+                        {$c->timestamp} <= FROM_UNIXTIME(".$data->sql_format($now,            "n").")
+                order by ".$c->timestamp;
+
+            $res=$data->db->query($q);
+            $res->setFetchMode(PDO::FETCH_ASSOC);
+
+            while ($row=$res->fetch()){
+                self::update_rank(
+                    $row[$c->timestamp],
+                    $row[$c->team_id],
+                    $row[$c->distance]
+                );
+            }
+            $res->closeCursor();
         }
-        $res->closeCursor();
+        finally{
+            $sem->release();
+        }
+
     }
 
     private static function update_rank($timestamp, $team_id, $distance){
@@ -180,16 +194,15 @@ class Iquest_team_rank{
 
         $team = Iquest_Team::fetch_by_id($team_id);
 
-        // TODO: milisecond precission in timestamp
         $q = "insert into ".$t_name."(
                     ".$c->team_id.",
                     ".$c->timestamp.",
                     ".$c->distance."
               )
               values(
-                    ".$data->sql_format($team_id,                 "n").",
-                    ".$team->get_time_sql().",
-                    ".$data->sql_format($distance,   "n")."
+                    ".$data->sql_format($team_id,  "n").",
+                    ".$team->get_utime_sql().",
+                    ".$data->sql_format($distance, "n")."
               )";
 
         $res=$data->db->query($q);
@@ -211,7 +224,6 @@ class Iquest_team_rank{
         $c      = &$config->data_sql->iquest_team_rank->cols;
 
         // TODO: add team id to the primary key
-        // TODO: milisecond precission in timestamp
         $q = "insert into ".$t_name."(
                     ".$c->timestamp.",
                     ".$c->distance.",

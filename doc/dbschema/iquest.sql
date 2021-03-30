@@ -224,14 +224,14 @@ CREATE TABLE IF NOT EXISTS `team` (
 # Dumping structure for table iquest.team_finish_distance
 CREATE TABLE `team_finish_distance` (
   `team_id` INT(11) NOT NULL,
-  `timestamp` DATETIME NOT NULL,
+  `timestamp` DATETIME(6) NOT NULL,
   `distance` INT(11) NOT NULL,
   PRIMARY KEY (`team_id`, `timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Dumping structure for table iquest.team_rank
 CREATE TABLE IF NOT EXISTS `team_rank` (
-  `timestamp` datetime NOT NULL,
+  `timestamp` datetime(6) NOT NULL,
   `distance` mediumtext COLLATE utf8_czech_ci NOT NULL,
   `rank` mediumtext COLLATE utf8_czech_ci NOT NULL,
   `team_id` int(10) DEFAULT NULL COMMENT 'ID of team originating the change',

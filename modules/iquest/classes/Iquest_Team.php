@@ -151,6 +151,15 @@ class Iquest_Team{
     }
 
     /**
+     * Return play time of the team in microsecond precission
+     *
+     * @return float
+     */
+    public function get_utime(){
+        return microtime(true) + $this->time_shift;
+    }
+
+    /**
      * Return play time of the team formated to be used in SQL queries
      *
      * @return string
@@ -158,6 +167,16 @@ class Iquest_Team{
     public function get_time_sql(){
         global $data;
         return "FROM_UNIXTIME(".$data->sql_format($this->get_time(), "n").")";
+    }
+
+    /**
+     * Return play time of the team in microsecond precission formated to be used in SQL queries
+     *
+     * @return string
+     */
+    public function get_utime_sql(){
+        global $data;
+        return "FROM_UNIXTIME(".$data->sql_format($this->get_utime(), "n").")";
     }
 
     public function get_timeshift(){
