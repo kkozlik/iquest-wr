@@ -60,14 +60,18 @@
                 </li>
             {/if}
 
-            <li class="navbar-text clock">
-                {if $time_shift|default:false}
-                    {* // TODO: better and human friendly visualization of time_shift *}
-                    {$lang_str.iquest_txt_play_time}<br /><span id="current_time" title="Shifted: {$time_shift}">{$current_time}</span>
-                {else}
+            {if $time_shift|default:false}
+                <li class="navbar-text clock">
+                    {$lang_str.iquest_txt_play_time}<br /><span id="current_time">{$current_time}</span>
+                </li>
+                <li class="navbar-text clock">
+                    {$lang_str.iquest_txt_time_shifted}<br />{Iquest_Utils::sec2time($time_shift)}</span>
+                </li>
+            {else}
+                <li class="navbar-text clock">
                     {$lang_str.iquest_txt_current_time}<br /><span id="current_time">{$current_time}</span>
-                {/if}
-            </li>
+                </li>
+            {/if}
 
             {if $parameters.display_wallet|default:0 and $team|default:0}
                 <li class="navbar-text wallet">
