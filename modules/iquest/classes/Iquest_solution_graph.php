@@ -22,7 +22,6 @@ class Iquest_solution_graph extends Iquest_graph_abstract{
         // fetch clue groups and solutions
         $opt = array("team_id" => $this->team_id);
         $this->cgroups = Iquest_ClueGrp::fetch($opt);
-        $this->cgrp_open = Iquest_ClueGrp::fetch_cgrp_open($opt);
         $this->solutions = Iquest_Solution::fetch($opt);
 
         // create clue => solution edges
