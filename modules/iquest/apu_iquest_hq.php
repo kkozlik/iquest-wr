@@ -315,12 +315,23 @@ class apu_iquest_hq extends apu_base_class{
 
             foreach($teams as $team){
                 $this->smarty_cgrp_team[$cgrp->id][$team->id] = array("gained_at" => "",
-                                                                      "gained_at_date" => "",
+                                                                      "gained_at_full" => "",
+                                                                      "time_shift" => 0,
+                                                                      "time_shift_pretty" => "",
+                                                                      "gained_at_realtime" => "",
+                                                                      "gained_at_realtime_full" => "",
                                                                       "gained" => false);
                 if (!empty($open_cgrps[$cgrp->id][$team->id])){
+                    $gained_at_ts = $open_cgrps[$cgrp->id][$team->id]['gained_at'];
+                    $gained_at_realtime_ts = $open_cgrps[$cgrp->id][$team->id]['gained_at'] - $open_cgrps[$cgrp->id][$team->id]['time_shift'];
+
                     $this->smarty_cgrp_team[$cgrp->id][$team->id] =
-                        array("gained_at"       => date("H:i:s", $open_cgrps[$cgrp->id][$team->id]),
-                              "gained_at_date"  => date("d.m.Y", $open_cgrps[$cgrp->id][$team->id]),
+                        array("gained_at"               => date("H:i:s", $gained_at_ts),
+                              "gained_at_full"          => date(Iquest_Utils::timeFormatByDate($gained_at_ts), $gained_at_ts),
+                              "time_shift"              => $open_cgrps[$cgrp->id][$team->id]['time_shift'],
+                              "time_shift_pretty"       => Iquest_Utils::sec2time($open_cgrps[$cgrp->id][$team->id]['time_shift']),
+                              "gained_at_realtime"      => date("H:i:s", $gained_at_realtime_ts),
+                              "gained_at_realtime_full" => date(Iquest_Utils::timeFormatByDate($gained_at_realtime_ts), $gained_at_realtime_ts),
                               "gained"          => true);
                 }
             }
@@ -332,11 +343,15 @@ class apu_iquest_hq extends apu_base_class{
 
             foreach($teams as $team){
                 $this->smarty_solution_team[$solution->id][$team->id] = array("solved_at" => "",
-                                                                              "solved_at_date" => "",
+                                                                              "solved_at_full" => "",
+                                                                              "solved_at_realtime" => "",
+                                                                              "solved_at_realtime_full" => "",
                                                                               "solved" => false,
                                                                               "showed" => false,
                                                                               "scheduled" => false,
                                                                               "time_to_show" => "",
+                                                                              "time_shift" => 0,
+                                                                              "time_shift_pretty" => "",
                                                                         );
 
                 // If the solution is solved, set the solved date
@@ -351,20 +366,24 @@ class apu_iquest_hq extends apu_base_class{
                         $time_to_show = $solution_team[$solution->id][$team->id]['show_at'] - $team->get_time();
                         if ($time_to_show < 0) $showed =true;
                         else {
-                            $hours = floor($time_to_show / 3600);
-                            $mins = floor($time_to_show / 60 % 60);
-                            $secs = floor($time_to_show % 60);
-                            $time_to_show = sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
+                            $time_to_show = Iquest_Utils::sec2time($time_to_show);
                         }
                     }
 
+                    $solved_at_ts = $solution_team[$solution->id][$team->id]['solved_at'];
+                    $solved_at_realtime_ts = $solution_team[$solution->id][$team->id]['solved_at'] - $solution_team[$solution->id][$team->id]['time_shift'];
+
                     $this->smarty_solution_team[$solution->id][$team->id] =
-                        array("solved_at"       => $solved ? date("H:i:s", $solution_team[$solution->id][$team->id]['solved_at']) : "",
-                              "solved_at_date"  => $solved ? date("d.m.Y", $solution_team[$solution->id][$team->id]['solved_at']) : "",
-                              "solved"          => $solved,
-                              "showed"          => $showed,
-                              "scheduled"       => $scheduled,
-                              "time_to_show"    => $time_to_show,
+                        array("solved_at"               => $solved ? date("H:i:s", $solved_at_ts) : "",
+                              "solved_at_full"          => $solved ? date(Iquest_Utils::timeFormatByDate($solved_at_ts), $solved_at_ts) : "",
+                              "solved_at_realtime"      => $solved ? date("H:i:s", $solved_at_realtime_ts) : "",
+                              "solved_at_realtime_full" => $solved ? date(Iquest_Utils::timeFormatByDate($solved_at_realtime_ts), $solved_at_realtime_ts) : "",
+                              "solved"                  => $solved,
+                              "showed"                  => $showed,
+                              "scheduled"               => $scheduled,
+                              "time_to_show"            => $time_to_show,
+                              "time_shift"              => $solution_team[$solution->id][$team->id]['time_shift'],
+                              "time_shift_pretty"       => Iquest_Utils::sec2time($solution_team[$solution->id][$team->id]['time_shift']),
                         );
                 }
 

@@ -213,7 +213,15 @@
         {if $team.time_shift}<span class="text-nowrap text-info" title="Posun času">({Iquest_Utils::sec2time($team.time_shift)})</span>{/if}
     </th>
         {foreach $clue_groups as $group}{$colspan=$group.solution_ids|count}{if !$colspan}{$colspan=1}{/if}
-        {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Úkol: </strong><a href='`$group.view_url|escape`'>`$group.name|escape`</a><br /><strong>Datum: </strong>`$cgrp_team[$group.id][$team.id].gained_at_date|escape`"}
+        {capture name="cgrp_tooltip" assign="data_content"}{strip}
+            <strong>Tým:  </strong>{$team.name|escape}<br />
+            <strong>Úkol: </strong><a href='{$group.view_url|escape}'>{$group.name|escape}</a><br />
+            <strong>Herní čas:  </strong>{$cgrp_team[$group.id][$team.id].gained_at_full|escape}<br />
+            {if $cgrp_team[$group.id][$team.id].time_shift}
+                <strong>Reálný čas: </strong>{$cgrp_team[$group.id][$team.id].gained_at_realtime_full|escape}<br />
+                <strong>Posun času: </strong>{$cgrp_team[$group.id][$team.id].time_shift_pretty|escape}
+            {/if}
+        {/strip}{/capture}
         <td colspan="{$colspan}"
             class="time-field {if $cgrp_team[$group.id][$team.id].gained}solved{/if}"
             title="{$group.id|escape}"
@@ -227,11 +235,19 @@
     <tr class="second">
         {foreach $clue_groups as $group}
             {foreach $group.solution_ids as $solution_id}
-            {if $solutions.$solution_id.view_url|default:0}
-            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong><a href='`$solutions.$solution_id.view_url|escape`'>`$solutions.$solution_id.name|escape`</a><br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
-            {else}
-            {$data_content="<strong>Tým: </strong>`$team.name|escape`<br /><strong>Řešení: </strong>`$solutions.$solution_id.name|escape`<br /><strong>Datum: </strong>`$solution_team[$solution_id][$team.id].solved_at_date|escape`"}
-            {/if}
+            {capture name="solution_tooltip" assign="data_content"}{strip}
+                <strong>Tým: </strong>{$team.name|escape}<br />
+                {if $solutions.$solution_id.view_url|default:0}
+                    <strong>Řešení: </strong><a href='{$solutions.$solution_id.view_url|escape}'>{$solutions.$solution_id.name|escape}</a><br />
+                {else}
+                    <strong>Řešení: </strong>{$solutions.$solution_id.name|escape}<br />
+                {/if}
+                <strong>Herní čas:  </strong>{$solution_team[$solution_id][$team.id].solved_at_full|escape}<br />
+                {if $solution_team[$solution_id][$team.id].time_shift}
+                    <strong>Reálný čas: </strong>{$solution_team[$solution_id][$team.id].solved_at_realtime_full|escape}<br />
+                    <strong>Posun času: </strong>{$solution_team[$solution_id][$team.id].time_shift_pretty|escape}
+                {/if}
+            {/strip}{/capture}
             {$act_sol_team = $solution_team[$solution_id][$team.id]}
             <td class="time-field {if $act_sol_team.solved}solved{elseif $act_sol_team.showed}showed{elseif $act_sol_team.scheduled}scheduled{/if}"
                 title="{$solutions.$solution_id.id|escape}"

@@ -9,4 +9,9 @@ class Iquest_Utils{
 
         return sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
     }
+
+    public static function timeFormatByDate($ts){
+        if (date("d.m.Y") == date("d.m.Y", $ts)) return "H:i:s";
+        else return "d.m.Y H:i:s";
+    }
 }

@@ -611,7 +611,7 @@ class Iquest_Solution extends Iquest_file{
             "solution_id" =>    $this->id,
         );
 
-        $res = $this->fetch_solution_team($opt);
+        $res = static::fetch_solution_team($opt);
 
         if (isset($res[$this->id][$team_id])){
             $row = $res[$this->id][$team_id];
@@ -630,7 +630,7 @@ class Iquest_Solution extends Iquest_file{
      * @param array $opt
      * @return array  [{show_at: ... , solved_at: ...}, ...]
      */
-    public function fetch_solution_team($opt=array()){
+    public static function fetch_solution_team($opt=array()){
         global $data, $config;
 
         /* table's name */

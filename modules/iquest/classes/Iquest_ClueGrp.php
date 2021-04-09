@@ -172,7 +172,8 @@ class Iquest_ClueGrp{
 
         $q = "select o.".$co->team_id.",
                      o.".$co->cgrp_id.",
-                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at."
+                     UNIX_TIMESTAMP(o.".$co->gained_at.") as ".$co->gained_at.",
+                     time_to_sec(o.".$co->time_shift.") as ".$co->time_shift."
               from ".$to_name." o ".$qw;
 
         $res=$data->db->query($q);
@@ -180,7 +181,10 @@ class Iquest_ClueGrp{
 
         $out = array();
         while ($row=$res->fetch()){
-            $out[$row[$co->cgrp_id]][$row[$co->team_id]] = $row[$co->gained_at];
+            $out[$row[$co->cgrp_id]][$row[$co->team_id]] = [
+                "gained_at" => $row[$co->gained_at],
+                "time_shift" => $row[$co->time_shift],
+            ];
         }
         $res->closeCursor();
         return $out;
