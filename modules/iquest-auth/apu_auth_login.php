@@ -100,7 +100,14 @@ class apu_auth_login extends apu_base_class{
 
     function action_login(){
 
-        setcookie(self::cookie_user, $this->username, time()+31536000, null, $this->opt['cookie_domain']); //cookie expires in one year
+        serwebSetCookie(
+            self::cookie_user,
+            $this->username,
+            [
+                'expires' => time()+31536000,   //cookie expires in one year
+                'domain' =>  $this->opt['cookie_domain'],
+            ]);
+
 
         sw_log("User login: redirecting to page: ".$this->opt['redirect_on_login'], PEAR_LOG_DEBUG);
 
