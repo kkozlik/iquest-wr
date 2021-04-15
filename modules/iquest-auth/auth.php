@@ -43,6 +43,9 @@ class Iquest_auth{
         $authn = Iquest_authN::singleton();
 
         if (!$authn->hasIdentity()){
+            sw_log(__CLASS__."::".__FUNCTION__."(): Unknown user identity", PEAR_LOG_DEBUG);
+            if (!static::$async_request) static::unauthorized();
+
             $adapter = new Iquest_auth_adapter_http();
             $result = $authn->authenticate($adapter);
 
@@ -166,6 +169,8 @@ class Iquest_auth{
         global $config;
 
         if (static::$async_request){
+            sw_log(__CLASS__."::".__FUNCTION__."(): Sending 401 Unauthorized response", PEAR_LOG_DEBUG);
+
             http_response_code(401);
             echo "<h1>401 Unauthorized</h1>\n";
 
@@ -186,12 +191,16 @@ class Iquest_auth{
             }
 
             if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+                sw_log(__CLASS__."::".__FUNCTION__."(): Sending 'redirect' json response", PEAR_LOG_DEBUG);
+
                 http_response_code(200);
                 header("Content-Type: text/json");
                 echo json_encode(["redirect" => $url]);
             }
             else{
-                http_response_code(401);
+                sw_log(__CLASS__."::".__FUNCTION__."(): Redirecting to login screen", PEAR_LOG_DEBUG);
+
+                http_response_code(302);
                 header("Location: ".$url);
             }
         }

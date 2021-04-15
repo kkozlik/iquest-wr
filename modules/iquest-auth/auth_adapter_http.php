@@ -122,7 +122,9 @@ class Iquest_auth_adapter_http implements Iquest_auth_adapter_interface{
     }
 
     protected function setHttpResponse($code, $message){
+        http_response_code($code);
+
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
-        header($protocol." $code $message", true, $code);
+        header($protocol." $code $message", true);
     }
 }
