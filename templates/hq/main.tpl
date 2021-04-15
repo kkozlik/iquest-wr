@@ -176,6 +176,16 @@
     </script>
 {else}
 
+    <div class="text-center">
+    {if Iquest_Options::get(Iquest_Options::TIMESHIFT_ACTIVE)}
+        Zobrazit:
+        {if $display_time!=apu_iquest_hq::DISPLAY_GAMETIME}<a href="{$display_time_url.gametime|escape}">Herní čas</a>{else}<strong>Herní čas</strong>{/if} /
+        {if $display_time!=apu_iquest_hq::DISPLAY_REALTIME}<a href="{$display_time_url.realtime|escape}">Reálný čas</a>{else}<strong>Reálný čas</strong>{/if}
+    {else}
+        &nbsp;
+    {/if}
+    </div>
+
     <div class="horizontal-scrollbar" id="scroll-wrapper">
     <table class="table table-bordered summary mb-0" id="clueTable">
     <thead>
@@ -205,7 +215,7 @@
 
     {foreach $teams as $team}
     <tr class="first">
-    {* // TODO: display time shifts *}
+
     <th {if !$team.active}class="deactivated"{/if} rowspan="2">
         <a href="{$team.graph_url|escape}" {if !$team.active}title="deactivated"{/if}>{$team.name|escape}</a><br />
         <span class="text-nowrap">({$team.wallet} {$lang_str.iquest_txt_coin_symbol})</span>
@@ -228,7 +238,11 @@
             data-toggle="popover"
             data-content="{$data_content|escape}"
         >
-        {$cgrp_team[$group.id][$team.id].gained_at|escape}
+        {if $display_time==apu_iquest_hq::DISPLAY_REALTIME}
+            {$cgrp_team[$group.id][$team.id].gained_at_realtime|escape}
+        {else}
+            {$cgrp_team[$group.id][$team.id].gained_at|escape}
+        {/if}
         </td>
         {/foreach}
     </tr>
@@ -254,7 +268,12 @@
                 data-toggle="popover"
                 data-content="{$data_content|escape}"
             >
-                {if $act_sol_team.solved}{$act_sol_team.solved_at|escape}
+                {if $act_sol_team.solved}
+                    {if $display_time==apu_iquest_hq::DISPLAY_REALTIME}
+                        {$act_sol_team.solved_at_realtime|escape}
+                    {else}
+                        {$act_sol_team.solved_at|escape}
+                    {/if}
                 {elseif $act_sol_team.showed}Prozrazeno
                 {elseif $act_sol_team.scheduled}{$act_sol_team.time_to_show|escape}
                 {/if}

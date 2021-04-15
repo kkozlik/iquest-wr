@@ -63,6 +63,9 @@ class apu_iquest_hq extends apu_base_class{
     protected $smarty_solutions;
     protected $smarty_action = "default";
 
+    const DISPLAY_GAMETIME = "gametime";
+    const DISPLAY_REALTIME = "realtime";
+
     /**
      *  constructor
      *
@@ -87,7 +90,10 @@ class apu_iquest_hq extends apu_base_class{
         $this->opt['smarty_clues'] =        'clues';
         $this->opt['smarty_hint'] =         'hint';
 
+        $this->opt['smarty_display_time'] =     'display_time';
+
         $this->opt['smarty_get_graph_url'] =    'get_graph_url';
+        $this->opt['smarty_display_time_url'] = 'display_time_url';
     }
 
     function set_sorter(&$sorter){
@@ -99,6 +105,8 @@ class apu_iquest_hq extends apu_base_class{
      */
     function init(){
         parent::init();
+
+        if (!isset($this->session['display_time'])) $this->session['display_time'] = self::DISPLAY_GAMETIME;
 
         if (is_a($this->sorter, "apu_base_class")){
             /* register callback called on sorter change */
@@ -215,6 +223,12 @@ class apu_iquest_hq extends apu_base_class{
     function action_view_graph(){
 
         action_log($this->opt['screen_name'], $this->action, "IQUEST: View graph");
+        return true;
+    }
+
+    public function action_set_displayed_time(){
+        if ($_GET['display_time']==self::DISPLAY_REALTIME)  $this->session['display_time'] = self::DISPLAY_REALTIME;
+        else                                                $this->session['display_time'] = self::DISPLAY_GAMETIME;
         return true;
     }
 
@@ -458,6 +472,12 @@ class apu_iquest_hq extends apu_base_class{
                                  'reload'=>false,
                                  'alone'=>true);
         }
+        elseif (isset($_GET['display_time'])){
+            $this->team_id = $_GET['display_time'];
+            $this->action=array('action'=>"set_displayed_time",
+                                 'validate_form'=>false,
+                                 'reload'=>true);
+        }
         else $this->action=array('action'=>"default",
                                  'validate_form'=>false,
                                  'reload'=>false);
@@ -567,14 +587,18 @@ class apu_iquest_hq extends apu_base_class{
         $smarty->assign($this->opt['smarty_clues'], $this->smarty_clues);
         $smarty->assign($this->opt['smarty_hint'], $this->smarty_hint);
 
+        $smarty->assign($this->opt['smarty_display_time'], $this->session['display_time']);
+
         if ($this->action['action'] == "view_graph"){
             $smarty->assign($this->opt['smarty_get_graph_url'],
                             $this->controler->url($_SERVER['PHP_SELF'].
                                                   "?get_graph=".RawURLEncode($this->team_id)));
         }
+
+        $smarty->assign($this->opt['smarty_display_time_url'],[
+                        'gametime' => $this->controler->url($_SERVER['PHP_SELF']."?display_time=".self::DISPLAY_GAMETIME),
+                        'realtime' => $this->controler->url($_SERVER['PHP_SELF']."?display_time=".self::DISPLAY_REALTIME)
+                    ]);
     }
 
 }
-
-
-?>
