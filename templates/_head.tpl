@@ -141,7 +141,6 @@
         </ul>
     </div>
 </div>
-<br />
 {/if}
 
 <div class="{$container|default:"container"}" id="page_container">

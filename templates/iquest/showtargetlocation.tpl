@@ -4,7 +4,7 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 

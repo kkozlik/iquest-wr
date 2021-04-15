@@ -4,8 +4,8 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-<div class="d-flex flex-column flex-md-row flex-grow-1 mb-2 mb-md-4">
-    <div class="flex-md-grow-1 h-100">
+<div class="d-flex flex-column flex-md-row flex-grow-1 ">
+    <div class="flex-md-grow-1 h-100 hqMapCanvasContainer">
         <div id="mapCanvas" class="w-100 h-100"></div>
     </div>
     <div class="ml-md-3 w-100 w-md-25">

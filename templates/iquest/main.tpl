@@ -119,7 +119,7 @@
  *  Print the block containing input elements for entering key
  *}
 {function print_key_input}
-    <div class="card bg-light mb-4">
+    <div class="card bg-light my-1 my-lg-3">
         <div class="card-body p-4">
 
     {$form.start}
@@ -237,7 +237,7 @@
 
 {if $action=='view_grp'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
@@ -277,7 +277,7 @@
 
 {elseif $action=='view_solution'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
@@ -299,7 +299,7 @@
 
 {elseif $action=='view_graph'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 

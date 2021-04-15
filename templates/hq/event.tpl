@@ -4,8 +4,7 @@
 
 {include file="iquest/iquest-functions.tpl"}
 
-
-    <div class="card bg-light mb-3">
+    <div class="card bg-light my-1 my-lg-3">
         <div class="card-header py-2">
             <a class="align-middle" data-toggle="collapse" href="#filterFormCollapse" style="display: block;">Filtr</a>
         </div>

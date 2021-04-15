@@ -217,6 +217,18 @@ div.popover{
     font-weight: bold;
 }
 
+/****************
+ *  HQ map
+ ****************/
+
+.hqMapCanvasContainer{
+    margin-left: -$grid-gutter-width/2;
+    margin-right: -$grid-gutter-width/2;
+
+    @include media-breakpoint-up(md) {
+        margin-right: 0;
+    }
+}
 
 /****************
  *  login screen
