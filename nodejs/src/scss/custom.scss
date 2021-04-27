@@ -27,7 +27,7 @@
 #infoPlaceHolder,
 #errPlaceHolder {
     .alert{
-        @extend .my-3;
+        @extend .my-1, .my-lg-3;
     }
 }
 
