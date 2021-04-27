@@ -328,7 +328,7 @@
     {call print_key_input}
 
 
-    <div class="row">
+    <div class="form-row">
     <div class="col-6">
     <table class="table table-bordered clue-list">
     <tr><th>{$lang_str.iquest_avail_tasks}</th></tr>
