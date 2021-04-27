@@ -742,7 +742,8 @@ class Chroust{
 
         // Verify that the graph of clues and solutions is continuous.
         // Use any valid team_id does not matter on it.
-        $team = reset(Iquest_Team::fetch());
+        $teams = Iquest_Team::fetch();
+        $team = reset($teams);
 
         $graph = new Iquest_solution_graph($team->id);
         $graph_errors = $graph->check_graph_continuous();
@@ -775,7 +776,13 @@ class Chroust{
                 foreach($solution->aditional_data->traccar_zones as $zone_name){
 
                     static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "metadata (solution): ".basename($solution->aditional_data->dir);
-                    static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;  // TODO: raise error if regexp_key is true
+
+                    if ($solution->regexp_key){
+                        Console::log("*** WARNING: Not using key '{$solution->key}' defined for solution {$solution->id} for zone: '$zone_name' because it contain regular expression.", Console::YELLOW);
+                    }
+                    else{
+                        static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
+                    }
 
                     if (is_null($solution->aditional_data->traccar_condition)){
                         if (!isset(static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND])){
