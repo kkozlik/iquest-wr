@@ -10,6 +10,7 @@ class Iquest_Solution extends Iquest_file{
     public $next_cgrps;
     public $name;
     public $key;
+    public $regexp_key;
     public $timeout;
     public $countdown_start;
     public $coin_value;
@@ -77,6 +78,7 @@ class Iquest_Solution extends Iquest_file{
         if (isset($opt['id']))      $qw[] = "c.".$cc->id." = ".$data->sql_format($opt['id'], "s");
         if (isset($opt['ref_id']))  $qw[] = "c.".$cc->ref_id." = ".$data->sql_format($opt['ref_id'], "s");
         if (isset($opt['key']))     $qw[] = "c.".$cc->key." = ".$data->sql_format($opt['key'], "s");
+        if (isset($opt['regexp_key'])) $qw[] = "c.".$cc->regexp_key." = ".$data->sql_format($opt['regexp_key'], "n");
         if (isset($opt['team_id'])){
             $team = Iquest_Team::fetch_by_id($opt['team_id']);
             $team_time_sql = $team->get_time_sql();
@@ -122,6 +124,7 @@ class Iquest_Solution extends Iquest_file{
                      c.".$cc->comment.",
                      c.".$cc->name.",
                      c.".$cc->key.",
+                     c.".$cc->regexp_key.",
                      c.".$cc->coin_value.",
                      c.".$cc->bomb_value.
                      $cols."
@@ -146,6 +149,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cc->timeout],
                                                        $row[$cc->countdown_start],
                                                        $row[$cc->key],
+                                                       $row[$cc->regexp_key],
                                                        $row[$cc->coin_value],
                                                        $row[$cc->bomb_value],
                                                        $row[$ct->show_at],
@@ -204,6 +208,7 @@ class Iquest_Solution extends Iquest_file{
                      s.".$cs->comment.",
                      s.".$cs->name.",
                      s.".$cs->key.",
+                     s.".$cs->regexp_key.",
                      s.".$cs->coin_value.",
                      s.".$cs->bomb_value.",
                      (".$q2.") as ".$ct->show_at.",
@@ -227,6 +232,7 @@ class Iquest_Solution extends Iquest_file{
                                                        $row[$cs->timeout],
                                                        $row[$cs->countdown_start],
                                                        $row[$cs->key],
+                                                       $row[$cs->regexp_key],
                                                        $row[$cs->coin_value],
                                                        $row[$cs->bomb_value],
                                                        $row[$ct->show_at],
@@ -522,7 +528,7 @@ class Iquest_Solution extends Iquest_file{
     }
 
     function __construct($id, $ref_id, $filename, $content_type, $comment, $name,
-                         $timeout, $countdown_start, $key, $coin_value, $bomb_value,
+                         $timeout, $countdown_start, $key, $regexp_key, $coin_value, $bomb_value,
                          $show_at=null, $solved_at=null, $time_shift=null){
         parent::__construct($id, $ref_id, $filename, $content_type, $comment);
 
@@ -530,6 +536,7 @@ class Iquest_Solution extends Iquest_file{
         $this->timeout = $timeout;
         $this->countdown_start = $countdown_start;
         $this->key = $key;
+        $this->regexp_key = $regexp_key;
         $this->coin_value = $coin_value;
         $this->bomb_value = (float)$bomb_value;
         $this->show_at = $show_at;
@@ -550,7 +557,7 @@ class Iquest_Solution extends Iquest_file{
 
         Iquest_Events::add(Iquest_Events::KEY,
                            true,
-                           array("key" => $this->key,
+                           array("key" => $this->key,       // TODO: log the key user entered (it may differ in case of regexp)
                                  "solution" => $this));
 
         Iquest::solution_found($this, $team_id);
@@ -783,6 +790,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$c->comment.",
                     ".$c->name.",
                     ".$c->key.",
+                    ".$c->regexp_key.",
                     ".$c->coin_value.",
                     ".$c->bomb_value.",
                     ".$c->countdown_start.",
@@ -796,6 +804,7 @@ class Iquest_Solution extends Iquest_file{
                     ".$data->sql_format($this->comment,         "S").",
                     ".$data->sql_format($this->name,            "s").",
                     ".$data->sql_format($this->key,             "s").",
+                    ".$data->sql_format($this->regexp_key,      "n").",
                     ".$data->sql_format($this->coin_value,      "n").",
                     ".$data->sql_format($this->bomb_value,      "n").",
                     ".$data->sql_format($this->countdown_start, "s").",

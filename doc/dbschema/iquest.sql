@@ -160,7 +160,8 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `solution_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `ref_id` varchar(64) COLLATE utf8_czech_ci NOT NULL,
   `name` varchar(255) COLLATE utf8_czech_ci NOT NULL,
-  `solution_key` varchar(255) COLLATE utf8_czech_ci NOT NULL,
+  `solution_key` TEXT NOT NULL COLLATE utf8_czech_ci,
+  `regexp_key` TINYINT(1) NOT NULL DEFAULT '0',
   `filename` varchar(255) COLLATE utf8_czech_ci NOT NULL,
   `content_type` varchar(45) COLLATE utf8_czech_ci NOT NULL,
   `comment` varchar(255) COLLATE utf8_czech_ci DEFAULT NULL,
@@ -170,19 +171,19 @@ CREATE TABLE IF NOT EXISTS `task_solution` (
   `bomb_value` decimal(5,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`solution_id`),
   UNIQUE KEY `ref_id_UNIQUE` (`ref_id`),
-  UNIQUE KEY `solution_key_UNIQUE` (`solution_key`)
+  UNIQUE INDEX `solution_key_UNIQUE` (`solution_key`(1024))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.
 
 # Dumping structure for table iquest.task_solution_nextcgrp
 CREATE TABLE `task_solution_nextcgrp` (
-	`solution_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
-	`cgrp_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
-	`cond` TEXT NULL COLLATE 'utf8_czech_ci',
-	PRIMARY KEY (`solution_id`, `cgrp_id`),
-	INDEX `solution_id` (`solution_id`),
-	INDEX `cgrp_id` (`cgrp_id`)
+  `solution_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
+  `cgrp_id` VARCHAR(64) NOT NULL COLLATE 'utf8_czech_ci',
+  `cond` TEXT NULL COLLATE 'utf8_czech_ci',
+  PRIMARY KEY (`solution_id`, `cgrp_id`),
+  INDEX `solution_id` (`solution_id`),
+  INDEX `cgrp_id` (`cgrp_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 # Data exporting was unselected.

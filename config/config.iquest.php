@@ -111,6 +111,7 @@ $config->data_sql->iquest_solution->cols->id =              "solution_id";
 $config->data_sql->iquest_solution->cols->ref_id =          "ref_id";
 $config->data_sql->iquest_solution->cols->name =            "name";
 $config->data_sql->iquest_solution->cols->key =             "solution_key";
+$config->data_sql->iquest_solution->cols->regexp_key =      "regexp_key";
 $config->data_sql->iquest_solution->cols->filename =        "filename";
 $config->data_sql->iquest_solution->cols->content_type =    "content_type";
 $config->data_sql->iquest_solution->cols->timeout =         "timeout";

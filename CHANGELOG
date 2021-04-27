@@ -1,4 +1,5 @@
 * Fix the problam that wallet is wrongly calculated (#28)
+* Allow to specify key of solution as regular expression (#24)
 
 rel 20.5.0
 * Include sysuser to log messages when executed from cli

@@ -237,7 +237,9 @@ class Chroust{
         $content_type = $metadata->get_mime_type($filename);
 
         $name = $metadata->get_solution_name();
-        $key = $metadata->get_solution_key_canon();
+        $regexp_key = $metadata->get_solution_key_regexp();
+        if ($regexp_key)    $key = $metadata->get_solution_key();
+        else                $key = $metadata->get_solution_key_canon();
         $timeout = $metadata->get_solution_timeout();
         $countdown_start = $metadata->get_solution_countdown_start();
         $next_cgrps = $metadata->get_solution_next_cgrp();
@@ -260,9 +262,11 @@ class Chroust{
             throw new Iquest_InvalidConfigException("There are two solutions sharing same ID: '$solution_id'.");
         }
 
-        $key_dup_solution = Iquest_Solution::by_key($key);
-        if ($key_dup_solution){
-            throw new Iquest_InvalidConfigException("Solution '{$key_dup_solution->id}' and '$solution_id' have same key configured ($key).");
+        if (!$regexp_key){
+            $key_dup_solution = Iquest_Solution::by_key($key);
+            if ($key_dup_solution){
+                throw new Iquest_InvalidConfigException("Solution '{$key_dup_solution->id}' and '$solution_id' have same key configured ($key).");
+            }
         }
 
         $next_cgrps_str = array();
@@ -293,7 +297,7 @@ class Chroust{
 
         $solution = new Iquest_Solution($solution_id, $ref_id,
                 $filename, $content_type, null, $name, $timeout,
-                $countdown_start, $key, $coin_value, $bomb_value);
+                $countdown_start, $key, $regexp_key, $coin_value, $bomb_value);
 
         $solution->set_next_cgrps($next_cgrps);
 
@@ -771,7 +775,7 @@ class Chroust{
                 foreach($solution->aditional_data->traccar_zones as $zone_name){
 
                     static::$parsed_data["traccar_zones"][$zone_name]['referenced_by'][] = "metadata (solution): ".basename($solution->aditional_data->dir);
-                    static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;
+                    static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_KEY] = $solution->key;  // TODO: raise error if regexp_key is true
 
                     if (is_null($solution->aditional_data->traccar_condition)){
                         if (!isset(static::$parsed_data["traccar_zones"][$zone_name][Iquest_Tracker::ZONE_ATTR_COND])){

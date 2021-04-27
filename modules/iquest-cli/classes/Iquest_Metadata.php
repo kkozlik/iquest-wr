@@ -225,6 +225,10 @@ class Iquest_Metadata{
         return Iquest_Solution::canonicalize_key($this->get_solution_key());
     }
 
+    function get_solution_key_regexp(){
+        return !empty($this->data['solution']['key_regexp']);
+    }
+
     function get_solution_timeout(){
         if (!isset($this->data['solution']['timeout'])){
             return 0;
