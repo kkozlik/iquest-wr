@@ -13,7 +13,7 @@ require_once(getenv('SERWEB_DIR')."functions/bootstrap.php");
 function usage(){
     echo <<<EOF
 
-Usage: 
+Usage:
     {$_SERVER['argv'][0]} [--check-key-order|--no-check-key-order]  TEAM   KEY
         Simulate key entering by a team. Team can be identified by it's name or username.
 
@@ -71,7 +71,7 @@ function main(){
     }
 
     // Solve the solution and open another tasks
-    $solution->solve($team->id);
+    $solution->solve($team->id, $key);
 
     echo "OK\n";
     exit(0);

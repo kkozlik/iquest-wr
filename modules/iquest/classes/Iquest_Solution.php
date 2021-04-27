@@ -549,15 +549,16 @@ class Iquest_Solution extends Iquest_file{
      * Set the solution as solved and open new tasks
      *
      * @param int $team_id
+     * @param string $key   - just for log purpose
      * @return void
      */
-    public function solve($team_id){
+    public function solve($team_id, $key=null){
         // make sure the show_at value is present in the solution object
         $this->get_show_at($team_id);
 
         Iquest_Events::add(Iquest_Events::KEY,
                            true,
-                           array("key" => $this->key,       // TODO: log the key user entered (it may differ in case of regexp)
+                           array("key" => $key,
                                  "solution" => $this));
 
         Iquest::solution_found($this, $team_id);

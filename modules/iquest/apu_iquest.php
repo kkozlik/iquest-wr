@@ -46,6 +46,7 @@ class apu_iquest extends apu_base_class{
 
     protected $team_id;
     protected $ref_id;
+    protected $posted_key = null;
     protected $download = false;
     protected $clue;
     protected $clue_grp;
@@ -332,7 +333,7 @@ class apu_iquest extends apu_base_class{
 
         // Solve the solution and open another tasks
         if ($this->solution){
-            $this->solution->solve($this->team_id);
+            $this->solution->solve($this->team_id, $this->posted_key);
 
             action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
 
@@ -352,7 +353,7 @@ class apu_iquest extends apu_base_class{
     function action_solve(){
 
         // Solve the solution and open another tasks
-        $this->solution->solve($this->team_id);
+        $this->solution->solve($this->team_id, $this->posted_key);
 
         action_log($this->opt['screen_name'], $this->action, " Solved: ".$this->solution->id);
 
@@ -1026,6 +1027,8 @@ class apu_iquest extends apu_base_class{
             if (!$result['status']) return false;
             if ($result['solution']) $this->solution = $result['solution'];
 
+            $this->posted_key = "-- Location matched --";
+
             return true;
         }
 
@@ -1038,10 +1041,10 @@ class apu_iquest extends apu_base_class{
             return false;
         }
 
-        $key = null;
-        if (isset($_POST['solution_key'])) $key = $_POST['solution_key'];
+        $this->posted_key = null;
+        if (isset($_POST['solution_key'])) $this->posted_key = $_POST['solution_key'];
 
-        $this->solution = Iquest_Solution::verify_key($key, $this->team_id);
+        $this->solution = Iquest_Solution::verify_key($this->posted_key, $this->team_id);
         if (!$this->solution){
             return false;
         }
