@@ -24,6 +24,13 @@
   }
 }
 
+#infoPlaceHolder,
+#errPlaceHolder {
+    .alert{
+        @extend .my-3;
+    }
+}
+
 /******************
  *  Team interface
  ******************/
