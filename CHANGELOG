@@ -1,4 +1,5 @@
-* Fix the problam that wallet is wrongly calculated (#28)
+rel 21.4.0
+* Fix the problem that wallet is wrongly calculated (#28)
 * Allow to specify key of solution as regular expression (#24)
 * Game time fast forward
 
