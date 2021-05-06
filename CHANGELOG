@@ -1,5 +1,6 @@
 * Fix default values of `teams` DB table
 * Fix top margin on HQ interface
+* Starting with cz manual, adding first two topics
 
 rel 21.4.0
 * Fix the problem that wallet is wrongly calculated (#28)

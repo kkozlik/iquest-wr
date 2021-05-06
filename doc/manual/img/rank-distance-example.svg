@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="798pt"
+   height="195pt"
+   viewBox="0.00 0.00 798.20 195.20"
+   version="1.1"
+   id="svg181"
+   sodipodi:docname="rank-distance-example.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:export-filename="/home/kk/data/radioklub/iquest/contest/doc/manual/img/rank-distance-example-5.png"
+   inkscape:export-xdpi="72"
+   inkscape:export-ydpi="72">
+  <metadata
+     id="metadata187">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs185" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1015"
+     id="namedview183"
+     showgrid="false"
+     inkscape:zoom="1.2340226"
+     inkscape:cx="540.19802"
+     inkscape:cy="159.09381"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg181"
+     inkscape:document-rotation="0" />
+  <g
+     id="graph0"
+     class="graph"
+     transform="scale(1 1) rotate(0) translate(21.6 173.6)">
+    <title
+       id="title2">G</title>
+    <!-- start -->
+    <g
+       id="node1"
+       class="node">
+      <title
+         id="title4">start</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="48"
+         cy="-62"
+         id="ellipse6"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="48"
+         y="-58.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text8" />
+      <text
+         text-anchor="middle"
+         x="18.5"
+         y="-39.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text10">Start</text>
+    </g>
+    <!-- A -->
+    <g
+       id="node2"
+       class="node">
+      <title
+         id="title13">A</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="135"
+         cy="-62"
+         id="ellipse15"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="135"
+         y="-58.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text17" />
+      <text
+         text-anchor="middle"
+         x="118.5"
+         y="-39.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text19">A</text>
+    </g>
+    <!-- start&#45;&gt;A -->
+    <g
+       id="edge1"
+       class="edge">
+      <title
+         id="title22">start-&gt;A</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M59.0186,-62C72.6714,-62 96.242,-62 113.5189,-62"
+         id="path24"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="113.7961,-65.5001 123.7961,-62 113.796,-58.5001 113.7961,-65.5001"
+         id="polygon26"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- B -->
+    <g
+       id="node3"
+       class="node">
+      <title
+         id="title29">B</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="222"
+         cy="-98"
+         id="ellipse31"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="222"
+         y="-94.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text33" />
+      <text
+         text-anchor="middle"
+         x="205.5"
+         y="-75.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text35">B</text>
+    </g>
+    <!-- A&#45;&gt;B -->
+    <g
+       id="edge3"
+       class="edge">
+      <title
+         id="title38">A-&gt;B</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M145.3217,-66.271C159.3186,-72.0629 184.5988,-82.5236 202.2929,-89.8454"
+         id="path40"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="201.1133,-93.145 211.6917,-93.7345 203.7898,-86.6769 201.1133,-93.145"
+         id="polygon42"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- mince -->
+    <g
+       id="node10"
+       class="node">
+      <title
+         id="title45">mince</title>
+      <ellipse
+         fill="#c0c0c0"
+         stroke="#000000"
+         stroke-width="3"
+         cx="222"
+         cy="-26"
+         id="ellipse47"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="222"
+         y="-22.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text49" />
+      <text
+         text-anchor="middle"
+         x="188.5"
+         y="-3.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text51">Mince</text>
+    </g>
+    <!-- A&#45;&gt;mince -->
+    <g
+       id="edge2"
+       class="edge">
+      <title
+         id="title54">A-&gt;mince</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M145.3217,-57.729C159.3186,-51.9371 184.5988,-41.4764 202.2929,-34.1546"
+         id="path56" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="203.7898,-37.3231 211.6917,-30.2655 201.1133,-30.855 203.7898,-37.3231"
+         id="polygon58" />
+    </g>
+    <!-- C -->
+    <g
+       id="node4"
+       class="node">
+      <title
+         id="title61">C</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="309"
+         cy="-141"
+         id="ellipse63"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="309"
+         y="-137.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text65" />
+      <text
+         text-anchor="middle"
+         x="292"
+         y="-118.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text67">C</text>
+    </g>
+    <!-- B&#45;&gt;C -->
+    <g
+       id="edge4"
+       class="edge">
+      <title
+         id="title70">B-&gt;C</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M231.98,-102.9326C246.0743,-109.8988 272.0808,-122.7526 289.9443,-131.5817"
+         id="path72"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="288.6208,-134.8316 299.1364,-136.1249 291.7224,-128.5563 288.6208,-134.8316"
+         id="polygon74"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- G -->
+    <g
+       id="node8"
+       class="node">
+      <title
+         id="title77">G</title>
+      <ellipse
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="3"
+         cx="396"
+         cy="-54"
+         id="ellipse79"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#c0c0c0;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="396"
+         y="-50.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text81" />
+      <text
+         text-anchor="middle"
+         x="379"
+         y="-31.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text83">G</text>
+    </g>
+    <!-- B&#45;&gt;G -->
+    <g
+       id="edge8"
+       class="edge">
+      <title
+         id="title86">B-&gt;G</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M232.8845,-95.2476C261.3251,-88.0557 338.223,-68.6103 375.3669,-59.2176"
+         id="path88"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="376.2829,-62.5962 385.1196,-56.7514 374.5667,-55.8098 376.2829,-62.5962"
+         id="polygon90"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- D -->
+    <g
+       id="node5"
+       class="node">
+      <title
+         id="title93">D</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="396"
+         cy="-141"
+         id="ellipse95"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="396"
+         y="-137.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text97" />
+      <text
+         text-anchor="middle"
+         x="379"
+         y="-118.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text99">D</text>
+    </g>
+    <!-- C&#45;&gt;D -->
+    <g
+       id="edge5"
+       class="edge">
+      <title
+         id="title102">C-&gt;D</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M320.0186,-141C333.6714,-141 357.242,-141 374.5189,-141"
+         id="path104"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="374.7961,-144.5001 384.7961,-141 374.796,-137.5001 374.7961,-144.5001"
+         id="polygon106"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- E -->
+    <g
+       id="node6"
+       class="node">
+      <title
+         id="title109">E</title>
+      <ellipse
+         fill="#468847"
+         stroke="#000000"
+         stroke-width="3"
+         cx="483"
+         cy="-141"
+         id="ellipse111"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="483"
+         y="-137.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text113" />
+      <text
+         text-anchor="middle"
+         x="466.5"
+         y="-118.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text115">E</text>
+    </g>
+    <!-- D&#45;&gt;E -->
+    <g
+       id="edge6"
+       class="edge">
+      <title
+         id="title118">D-&gt;E</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M407.0186,-141C420.6714,-141 444.242,-141 461.5189,-141"
+         id="path120"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="461.7961,-144.5001 471.7961,-141 461.796,-137.5001 461.7961,-144.5001"
+         id="polygon122"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- F -->
+    <g
+       id="node7"
+       class="node">
+      <title
+         id="title125">F</title>
+      <ellipse
+         fill="#ffffff"
+         stroke="#000000"
+         stroke-width="3"
+         cx="570"
+         cy="-141"
+         id="ellipse127"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#468847;fill-opacity:1;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="570"
+         y="-137.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text129" />
+      <text
+         text-anchor="middle"
+         x="554"
+         y="-118.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text131">F</text>
+    </g>
+    <!-- E&#45;&gt;F -->
+    <g
+       id="edge7"
+       class="edge">
+      <title
+         id="title134">E-&gt;F</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M494.0186,-141C507.6714,-141 531.242,-141 548.5189,-141"
+         id="path136"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="548.7961,-144.5001 558.7961,-141 548.796,-137.5001 548.7961,-144.5001"
+         id="polygon138"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- H -->
+    <g
+       id="node9"
+       class="node">
+      <title
+         id="title141">H</title>
+      <ellipse
+         fill="#c0c0c0"
+         stroke="#000000"
+         stroke-width="3"
+         cx="657"
+         cy="-97"
+         id="ellipse143"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;stroke:#d40000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="657"
+         y="-93.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text145" />
+      <text
+         text-anchor="middle"
+         x="639.5"
+         y="-74.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text147">H</text>
+    </g>
+    <!-- F&#45;&gt;H -->
+    <g
+       id="edge10"
+       class="edge">
+      <title
+         id="title150">F-&gt;H</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M579.98,-135.9526C594.1398,-128.7914 620.323,-115.5493 638.193,-106.5116"
+         id="path152"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="639.7923,-109.625 647.1364,-101.9885 636.6331,-103.3784 639.7923,-109.625"
+         id="polygon154"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- G&#45;&gt;H -->
+    <g
+       id="edge9"
+       class="edge">
+      <title
+         id="title157">G-&gt;H</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M406.8826,-55.7929C446.5135,-62.3221 583.5518,-84.8993 636.186,-93.5709"
+         id="path159"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="635.635,-97.0272 646.071,-95.1994 636.773,-90.1203 635.635,-97.0272"
+         id="polygon161"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+    <!-- cil -->
+    <g
+       id="node11"
+       class="node">
+      <title
+         id="title164">cil</title>
+      <ellipse
+         fill="#c0c0c0"
+         stroke="#000000"
+         stroke-width="3"
+         cx="744"
+         cy="-97"
+         id="ellipse166"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#c0c0c0;fill-opacity:1;stroke:#d40000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         ry="11"
+         rx="11" />
+      <text
+         text-anchor="middle"
+         x="744"
+         y="-93.3"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text168" />
+      <text
+         text-anchor="middle"
+         x="722.5"
+         y="-74.8"
+         font-family="Times,serif"
+         font-size="14.00"
+         fill="#000000"
+         id="text170">Cil</text>
+    </g>
+    <!-- H&#45;&gt;cil -->
+    <g
+       id="edge11"
+       class="edge">
+      <title
+         id="title173">H-&gt;cil</title>
+      <path
+         fill="none"
+         stroke="#000000"
+         d="M668.0186,-97C681.6714,-97 705.242,-97 722.5189,-97"
+         id="path175"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+      <polygon
+         fill="#000000"
+         stroke="#000000"
+         points="722.7961,-100.5001 732.7961,-97 722.796,-93.5001 722.7961,-100.5001"
+         id="polygon177"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1" />
+    </g>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:15.0154px;line-height:3.25;font-family:Ubuntu;-inkscape-font-specification:Ubuntu;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.595886;stroke-dasharray:4.76709, 0.595886;stop-color:#000000"
+     x="621.05072"
+     y="165.3609"
+     id="text209"><tspan
+       sodipodi:role="line"
+       id="tspan207"
+       x="621.05072"
+       y="165.3609"
+       style="text-align:start;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.595886">Nevyřešené úkoly: 2</tspan></text>
+  <circle
+     fill="#468847"
+     stroke="#000000"
+     stroke-width="3"
+     cx="656.14557"
+     cy="301.03226"
+     id="ellipse15-6"
+     r="11" />
+  <circle
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="3"
+     cx="610.57697"
+     cy="301.03226"
+     id="ellipse79-7"
+     r="11" />
+  <circle
+     fill="#c0c0c0"
+     stroke="#000000"
+     stroke-width="3"
+     cx="565.00842"
+     cy="301.03226"
+     id="ellipse47-5"
+     r="11" />
+  <g
+     id="g298"
+     style="fill:#d40000;stroke:#d40000">
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 419.27566,279.45476 c 13.9969,5.7919 39.2771,16.25259 56.9712,23.57439"
+       id="path56-3"
+       style="stroke-width:1;fill:#d40000;stroke:#d40000" />
+    <polygon
+       fill="#000000"
+       stroke="#000000"
+       points="201.1133,-30.855 203.7898,-37.3231 211.6917,-30.2655 "
+       id="polygon58-5"
+       transform="translate(273.95397,337.18375)"
+       style="fill:#d40000;stroke:#d40000" />
+  </g>
+  <g
+     id="g294">
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 341.40151,283.34848 c 13.9969,5.7919 39.2771,16.25259 56.9712,23.57439"
+       id="path288"
+       style="stroke-width:1" />
+    <polygon
+       fill="#000000"
+       stroke="#000000"
+       points="203.7898,-37.3231 211.6917,-30.2655 201.1133,-30.855 "
+       id="polygon290"
+       transform="translate(196.07982,341.07747)" />
+  </g>
+  <circle
+     fill="#468847"
+     stroke="#000000"
+     stroke-width="3"
+     cx="656.14557"
+     cy="345.40363"
+     id="circle126"
+     r="11"
+     style="stroke:#d40000;stroke-opacity:1" />
+  <circle
+     fill="#ffffff"
+     stroke="#000000"
+     stroke-width="3"
+     cx="610.57697"
+     cy="345.95123"
+     id="circle128"
+     r="11"
+     style="stroke:#d40000;stroke-opacity:1" />
+  <circle
+     fill="#c0c0c0"
+     stroke="#000000"
+     stroke-width="3"
+     cx="565.00842"
+     cy="345.67743"
+     id="circle130"
+     r="11"
+     style="stroke:#d40000;stroke-opacity:1" />
+</svg>
