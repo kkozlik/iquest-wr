@@ -9,23 +9,31 @@ Určení počtu nevyřešených úkolů na cestě do cíle nemusí být v příp
 soutěže na první pohled zcela zřejmé. Proto si jej názorně ukažme na
 následujících obrázcích.
 
-Červeně jsou ohraničené úkoly se započítávají při určování výsledného pořadí.
+Červeně ohraničené úkoly se započítávají při určování výsledného pořadí.
 <p align="center"><img src="img/rank-distance-example-1.png"></p>
+
+----
 
 Situace po splnění úkolu Start a úkolu A: dojde k otevření úkolu B a mincovního
 úkolu. Počet nevyřešených úkolů se zmenší na 8.
 <p align="center"><img src="img/rank-distance-example-2.png"></p>
+
+----
 
 Mincovní úkol není ve struktuře soutěže na cestě do cíle. Jeho splnění nijak
 neovlivní počet úkolů započítávaných při určování pořadí a tedy ani samotné
 pořadí v soutěži. Přináší to však jiné benefity :).
 <p align="center"><img src="img/rank-distance-example-3.png"></p>
 
+----
+
 Situace kdy je úkol B splněn částečně, nedošlo ještě k otevření úkolu G.
 Splněné úkoly C, D a E. Počet nevyřešených úkolů se tedy zmenší o 3.
 <p align="center"><img src="img/rank-distance-example-4.png"></p>
 
-Došlo k otevření úkolu H (a slpnění F). Dodatečné splnění úkolu G již nevede
+----
+
+Došlo k otevření úkolu H (a splnění F). Dodatečné splnění úkolu G již nevede
 k faktickému přiblížení se k cíli, proto se od této chvíle již žádný úkol před H
 již neuvažuje při výpočtu pořadí.
 <p align="center"><img src="img/rank-distance-example-5.png"></p>
@@ -40,9 +48,9 @@ relativně dlouhý,  zavedli jsme funkci "časový skok".
 
 <p align="center"><img src="img/timeshift-menu.png"></p>
 
-Po aktivaci této funkce dojde k posunu herního času pro daný soutěžní tým až do
-doby kdy vyprší nejbližší časovač pro zobrazení časované nápovědy nebo řešení
-k nějakému úkolu. Nápověda či řešení je tak zobrazeno okamžitě.
+Po aktivaci této funkce dojde k posunu herního času pro daný soutěžní tým do
+chvíle, kdy se má zobrazit nějaká nápověda, nebo vypršet nejbližší deadline
+nějakého úkolu a zobrazit se řešení.
 
 <p align="center"><img src="img/shifted-time.png"></p>
 
