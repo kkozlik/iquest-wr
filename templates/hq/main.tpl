@@ -7,7 +7,7 @@
 
 {if $action=='view_grp'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
@@ -49,7 +49,7 @@
 
 {elseif $action=='view_solution'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
@@ -71,7 +71,7 @@
 
 {elseif $action=='view_hint'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$back_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 
@@ -93,7 +93,7 @@
 
 {elseif $action=='view_graph'}
 
-    <ul class="breadcrumb">
+    <ul class="breadcrumb mt-1 mt-lg-3">
     <li><a href="{$main_url|escape}">{$lang_str.iquest_l_back}</a></li>
     </ul>
 

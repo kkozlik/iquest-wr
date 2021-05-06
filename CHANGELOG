@@ -1,4 +1,5 @@
 * Fix default values of `teams` DB table
+* Fix top margin on HQ interface
 
 rel 21.4.0
 * Fix the problem that wallet is wrongly calculated (#28)
