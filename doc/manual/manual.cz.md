@@ -50,11 +50,13 @@ relativně dlouhý,  zavedli jsme funkci "časový skok".
 
 Po aktivaci této funkce dojde k posunu herního času pro daný soutěžní tým do
 chvíle, kdy se má zobrazit nějaká nápověda, nebo vypršet nejbližší deadline
-nějakého úkolu a zobrazit se řešení.
+nějakého úkolu a zobrazit se řešení. Od této chvíle webové rozhraní přestane
+zobrazovat aktuální čas a na místo něj se zobrazí herní čas a hodnota jeho
+posunu oproti aktuálnímu času.
 
 <p align="center"><img src="img/shifted-time.png"></p>
 
-Ačkoli počet využití funkce časový skok není omezen, její použití má vliv na
+Ačkoli počet využití funkce časový skok není nijak omezen, její použití má vliv na
 celkové pořadí v soutěži. Představme si efekt této funkce na příkladu:
 
 V 9:00 hodin reálného času se soutěžní tým rozhodne že nechce čekat na deadline
