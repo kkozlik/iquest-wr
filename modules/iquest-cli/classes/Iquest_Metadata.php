@@ -202,8 +202,13 @@ class Iquest_Metadata{
     }
 
     function get_solution_key(){
+
+        if (!isset($this->data['solution'])){
+            Console::log("*** WARNING: Solution section is not specified in metadata file.", Console::YELLOW);
+        }
+
         if (!isset($this->data['solution']['key'])){
-            throw new Iquest_InvalidConfigException("Solution key is not set.");
+            throw new Iquest_InvalidConfigException("Solution key is not set: ".$this->dir);
         }
 
         $charset = $this->get_charset(self::METADATA_FILE);
