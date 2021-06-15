@@ -1,3 +1,13 @@
+iquest (21.6.0) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Fix default values of `teams` DB table
+  * Fix top margin on HQ interface
+  * Starting with cz manual, adding first two topics
+  * Improved reporting of tracker status
+
+ --  <kk@kk-iquest.kufr.cz>  Tue, 15 Jun 2021 22:11:07 +0200
+
 iquest (21.4.0) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]

@@ -1,3 +1,4 @@
+rel 21.6.0
 * Fix default values of `teams` DB table
 * Fix top margin on HQ interface
 * Starting with cz manual, adding first two topics
