@@ -197,7 +197,8 @@
         <div class="modal-header">
             <h6 class="modal-title" id="myLocationPopupModalLabel">{$lang_str.iquest_your_position}
                 <br /><small>Pozice získána naposledy před <span class="updateTime"></span></small>
-                <br /><small class="d-none text-danger tracker-warning">Zkontrolujte funkci trackeru!</small>
+                <br /><small class="text-danger tracker-warning-gsm" style="display: none;">Zkontrolujte funkci trackeru! Zdá se že je vypnutý nebo nemá GSM signál.</small>
+                      <small class="text-danger tracker-warning-gps" style="display: none;">Tracker hlásí neplatnou pozici. Pravděpodobně nemá GPS signál.</small>
             </h6>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">×</button>
         </div>

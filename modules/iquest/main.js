@@ -116,8 +116,8 @@ LocationCtl.prototype = {
     },
 
     get_color: function(age){
-        if (age < 3*60) return "text-success";  // less than 3 min
-        if (age < 10*60) return "text-warning"; // less than 10 min
+        if (age < 30)   return "text-success"; // less than 30 s
+        if (age < 2*60) return "text-warning"; // less than 2 min
         return "text-danger";
     },
 
@@ -154,8 +154,18 @@ LocationCtl.prototype = {
                                 .text(data.lastupdate+" ("+data.lastupdate_ts+")");
                 self.mapPopup.find(".updateTime").html(timeStr);
 
-                if (data.age > 3*60) self.mapPopup.find('.tracker-warning').removeClass('d-none');
-                else                 self.mapPopup.find('.tracker-warning').addClass('d-none');
+                if (data.age > 30) {
+                    self.mapPopup.find('.tracker-warning-gsm').show();
+                    self.mapPopup.find('.tracker-warning-gps').hide();
+                }
+                else if (!data.valid) {
+                    self.mapPopup.find('.tracker-warning-gsm').hide();
+                    self.mapPopup.find('.tracker-warning-gps').show();
+                }
+                else{
+                    self.mapPopup.find('.tracker-warning-gsm').hide();
+                    self.mapPopup.find('.tracker-warning-gps').hide();
+                }
 
                 self.last_location = data;
             }
