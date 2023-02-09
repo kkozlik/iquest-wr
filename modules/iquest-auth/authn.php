@@ -22,12 +22,24 @@ class Iquest_authN{
         if (is_null($instance)) {
             $instance = new self();
         }
+
+        $instance->set_storage();
         return $instance;
     }
 
     protected function __construct(){
+    }
+
+    protected function set_storage(){
+        static $done = false;
+
+        if ($done) return;
+        if (!class_exists('PHPlib') or !PHPlib::$session or !PHPlib::$session->is_active()) return;
+
         if (!isset($_SESSION['Iquest_authN'])) $_SESSION['Iquest_authN'] = array();
         $this->storage = &$_SESSION['Iquest_authN'];
+
+        $done = true;
     }
 
     /**
