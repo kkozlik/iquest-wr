@@ -130,6 +130,8 @@ class apu_iquest extends apu_base_class{
         $this->opt['smarty_check_location_url'] = 'check_location_url';
         $this->opt['smarty_timeshift_url'] =    'timeshift_url';
 
+        $this->opt['form_name'] =           'iquest_form';
+
         $this->opt['form_submit']['text'] = $lang_str['b_ok'];
         $this->opt['form_submit']['class'] = "btn btn-primary";
 
