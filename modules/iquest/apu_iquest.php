@@ -975,7 +975,7 @@ class apu_iquest extends apu_base_class{
                 ErrorHandler::add_error($lang_str['iquest_err_cannot_blow_up']);
                 Iquest_Events::add(Iquest_Events::BLOW_UP,
                                 false,
-                                array("Errors" => Array("Clue (ID={$clue->id}) is not blowable.")));
+                                array("Errors" => Array("Clue (ID={$this->clue->id}) is not blowable.")));
                 return false;
             }
 
@@ -985,7 +985,7 @@ class apu_iquest extends apu_base_class{
                 ErrorHandler::add_error($lang_str['iquest_err_cannot_blow_up']);
                 Iquest_Events::add(Iquest_Events::BLOW_UP,
                                 false,
-                                array("Errors" => Array("Clue (ID={$clue->id}) - cannot get the solution.")));
+                                array("Errors" => Array("Clue (ID={$this->clue->id}) - cannot get the solution.")));
                 return false;
             }
 

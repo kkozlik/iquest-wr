@@ -140,6 +140,8 @@ class Iquest_Tracker{
     }
 
     public function get_zones_by_device($devId){
+        global $lang_str;
+
         $zones = [];
         try{
             $traccar = $this->get_traccar();
