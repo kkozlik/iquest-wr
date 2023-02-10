@@ -62,6 +62,7 @@ class apu_auth_login extends apu_base_class{
 
         /* set default values to $this->opt */
 
+        $this->opt['oauth_enabled'] = false;
         $this->opt['redirect_on_login'] = null;
         $this->opt['cookie_domain'] = null;
         $this->opt['redirect_on_logout'] = null;
@@ -116,8 +117,24 @@ class apu_auth_login extends apu_base_class{
                            array("uname" => $this->username,
                                  "perms" => $this->opt['required_capabilities']));
 
+        $get=[];
+        if ($this->opt['oauth_enabled']){
+
+            $this->opt['redirect_on_login'] = $_POST['redirect_uri'];
+
+            try{
+                $code = $this->get_oauth_redirect_token();
+                $get[] = "code=".RawUrlEncode($code);
+
+                sw_log("Generated code: $code", PEAR_LOG_DEBUG);
+            }
+            catch(Iquest_auth_jwt_exception $e){
+                ErrorHandler::add_error($e->getMessage());
+            }
+        }
+
         $this->controler->change_url_for_reload($this->opt['redirect_on_login']);
-        return true;
+        return $get;
     }
 
     function action_logout(){
@@ -139,6 +156,46 @@ class apu_auth_login extends apu_base_class{
             $this->controler->change_url_for_reload($this->opt['redirect_on_logout']);
         }
         return 'logged_out=1';
+    }
+
+    function action_default(){
+        if ($this->opt['oauth_enabled']){
+            if (empty($_GET['redirect_uri'])){
+                throw new Exception('redirect_uri not present in GET params or is empty');
+            }
+
+            $this->opt['redirect_on_login'] = $_GET['redirect_uri'];
+
+            $auth = Iquest_authN::singleton();
+            if ($auth->hasIdentity()) {
+                try{
+                    $code = $this->get_oauth_redirect_token();
+                    $url_param = "code=".$code;
+
+                    sw_log("Generated code: $code", PEAR_LOG_DEBUG);
+                    $this->controler->redirect($_GET['redirect_uri'], [ $url_param ]);
+                }
+                catch(Iquest_auth_jwt_exception $e){
+                    ErrorHandler::add_error($e->getMessage());
+                }
+            }
+        }
+    }
+
+    /**
+     * Generate OAuth token, store it in DB and return the 'code' string of the token
+     *
+     * @return string
+     * @throws Iquest_auth_jwt_exception
+     */
+    private function get_oauth_redirect_token() : string{
+        $token = new Iquest_auth_oauth_token();
+        $token->init();
+
+        Iquest_auth_oauth_token::gc();
+        $token->insert();
+
+        return $token->get_code();
     }
 
     /* check _get and _post arrays and determine what we will do */
@@ -185,6 +242,11 @@ class apu_auth_login extends apu_base_class{
                                      "maxlength"=>25,
                                      "pass"=>1));
 
+        if ($this->opt['oauth_enabled']){
+            $this->f->add_element(array("type"=>"hidden",
+                                        "name"=>"redirect_uri",
+                                        "value"=>!empty($_GET['redirect_uri']) ? $_GET['redirect_uri'] : ""));
+        }
     }
 
 
@@ -204,6 +266,13 @@ class apu_auth_login extends apu_base_class{
         if (isset($_GET['logged_out'])) unset($_GET['logged_out']);
 
         if (false === parent::validate_form()) return false;
+
+        if ($this->opt['oauth_enabled']){
+            if (empty($_POST['redirect_uri'])){
+                ErrorHandler::add_error('redirect_uri not present in POST params or is empty');
+                return false;
+            }
+        }
 
         $this->username = $_POST['uname'];
         $this->password = $_POST['passw'];

@@ -174,7 +174,8 @@ class Iquest_auth{
             http_response_code(401);
             echo "<h1>401 Unauthorized</h1>\n";
 
-            $errors = MsgCollector::get_errors();
+            $eh = &ErrorHandler::singleton();
+            $errors = $eh->get_errors_array();
             if ($errors){
                 echo "<ul>\n";
                 foreach($errors as $error) echo "<li>".htmlspecialchars($error)."</li>\n";
@@ -217,5 +218,41 @@ class Iquest_auth{
         http_response_code(403);
         echo "<h1>403 Forbidden</h1>";
         exit();
+    }
+
+    /**
+     * Get JWT string containing logged in user
+     *
+     * @return string|null
+     * @throws Iquest_auth_jwt_exception
+     */
+    public static function get_jwt() : ?string{
+
+        $authn = Iquest_authN::singleton();
+        if (!$authn->hasIdentity()) return null;
+
+        $user_id = $authn->getUid();
+        $username = $authn->getIdentity();
+
+        // Make the JWT token valid for 24 hours
+        $exp = time() + 86400;
+
+        $jwt_payload = [
+            "sub" => $user_id,
+            "username" => $username,
+            "exp" => $exp
+        ];
+
+        // include tracker ID
+        $team = Iquest_Team::fetch_by_id($user_id);
+
+        if (!$team){
+            throw new Iquest_auth_jwt_exception("Invalid team ID: ".$user_id);
+        }
+        $jwt_payload['custom:tracker_id'] = $team->tracker_id;
+
+        $secret = Iquest_Options::get(Iquest_Options::JWT_SECRET);
+
+        return Iquest_auth_jwt::generate_jwt('HS256', $jwt_payload, $secret);
     }
 }

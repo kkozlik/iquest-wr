@@ -5,6 +5,20 @@ $config->iquest->graphviz_cmd = "dot";
 
 
 /**
+ *      auth_tokens
+ */
+$config->data_sql->iquest_auth_tokens = new stdClass();
+$config->data_sql->iquest_auth_tokens->cols = new stdClass();
+
+$config->data_sql->iquest_auth_tokens->table_name =     "auth_tokens";
+
+$config->data_sql->iquest_auth_tokens->cols->code =     "code";
+$config->data_sql->iquest_auth_tokens->cols->expire =   "expire";
+$config->data_sql->iquest_auth_tokens->cols->jwt =      "jwt";
+
+
+
+/**
  *      clue_grp
  */
 $config->data_sql->iquest_cgrp = new stdClass();

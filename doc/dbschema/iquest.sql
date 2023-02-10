@@ -239,6 +239,14 @@ CREATE TABLE IF NOT EXISTS `team_rank` (
   PRIMARY KEY (`timestamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
+# Dumping structure for table iquest.auth_tokens
+CREATE TABLE IF NOT EXISTS `auth_tokens` (
+	`code` VARCHAR(50) NOT NULL COLLATE 'utf8_czech_ci',
+	`expire` DATETIME NOT NULL,
+	`jwt` TEXT NOT NULL COLLATE 'utf8_czech_ci',
+	PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
 # Data exporting was unselected.
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

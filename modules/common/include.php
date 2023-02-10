@@ -7,3 +7,4 @@
  */
 
 require_once( dirname(__FILE__)."/classes.php" );
+require_once( dirname(__FILE__)."/oauth_token.php" );
