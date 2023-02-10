@@ -24,6 +24,7 @@ class Iquest_Options{
     const TRACCAR_ADDR          = "traccar_addr";
     const TRACCAR_AUTH_TOKEN    = "traccar_auth_token";
     const TRACCAR_GROUP         = "traccar_group";
+    const JWT_SECRET            = "jwt_secret";
 
     /** Show position of the team among others */
     const SHOW_PLACE            = "show_place";
@@ -68,6 +69,7 @@ class Iquest_Options{
                                              self::TRACCAR_ADDR,
                                              self::TRACCAR_AUTH_TOKEN,
                                              self::TRACCAR_GROUP,
+                                             self::JWT_SECRET,
                                              );
 
     public static $set_in_global_ini = array(self::START_TIME,
@@ -92,6 +94,7 @@ class Iquest_Options{
                                              self::TRACCAR_ADDR,
                                              self::TRACCAR_AUTH_TOKEN,
                                              self::TRACCAR_GROUP,
+                                             self::JWT_SECRET,
                                             );
     /** Options cache */
     private static $options = null;
