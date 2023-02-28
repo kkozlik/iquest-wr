@@ -5,7 +5,7 @@
 
 $_phplib_page_open = array();
 $_data_layer_required_methods=array();
-$_required_modules = array('iquest-auth');
+$_required_modules = array('iquest', 'iquest-auth');
 $_required_apu = array();
 
 require(__DIR__."/../prepend.php");
