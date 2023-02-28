@@ -90,7 +90,8 @@ LocationCtl.prototype = {
 
         this.map = L.map(this.mapCanvasId, {zoom: 15});
 
-        L.tileLayer('https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}', {
+        // L.tileLayer('https://m{s}.mapserver.mapy.cz/turist-m/{z}-{x}-{y}', {
+        L.tileLayer('https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}', {
             attribution: '<img src="https://mapy.cz/img/logo-small.svg" style="height: 10px" />',
             subdomains: '1234',
             minZoom: 10,
