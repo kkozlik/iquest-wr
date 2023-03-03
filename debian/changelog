@@ -1,3 +1,11 @@
+iquest (23.3.1) stable; urgency=medium
+
+  [ kk@kk-iquest.kufr.cz ]
+  * Fixed URL of mapserver
+  * Added OAuth based identity provider 
+
+ --  <kk@kk-iquest.kufr.cz>  Tue, 14 Feb 2023 02:15:52 +0100
+
 iquest (21.6.0) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]
