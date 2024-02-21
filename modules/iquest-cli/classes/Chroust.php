@@ -973,7 +973,7 @@ class Chroust{
             echo "\n";
 
             // sort the keys summary by 'ordering' attribute
-            usort(self::$summary['hints'], create_function('$a,$b','
+            usort(self::$summary['hints'], function($a, $b){
                 if ($a["ordering"] == $b["ordering"]) {
                     if ($a["clue_id"] == $b["clue_id"]) {
                         if ($a["hint_nr"] == $b["hint_nr"]) {return 0;}
@@ -982,7 +982,7 @@ class Chroust{
                     return ($a["clue_id"] < $b["clue_id"]) ? -1 : 1;
                 }
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
-            '));
+            });
 
             $fields_headers = array('cgrp_name' => "Cgrp Name ",
                                     'clue_id'   => "Clue ID ",
@@ -1026,10 +1026,10 @@ class Chroust{
             echo "\n";
 
             // sort the keys summary by 'ordering' attribute
-            usort(self::$summary['keys'], create_function('$a,$b','
+            usort(self::$summary['keys'], function($a, $b) {
                 if ($a["ordering"] == $b["ordering"]) {return 0;}
                 return ($a["ordering"] < $b["ordering"]) ? -1 : 1;
-            '));
+            });
 
 
             $fields_headers = array('name'          => "Name ",
@@ -1194,7 +1194,7 @@ class Chroust{
 
     static function print_table_heading($fields_headers, $fields_widths){
         $format_str = self::get_formating_string($fields_widths, "^");
-        $args = array_merge(array($format_str), $fields_headers);
+        $args = array_merge(array($format_str), array_values($fields_headers));
 
         echo call_user_func_array(array('self', 'utf_8_sprintf'), $args);
     }

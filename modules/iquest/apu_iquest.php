@@ -69,15 +69,6 @@ class apu_iquest extends apu_base_class{
     const GET_URL_TOKEN = "token";
 
     /**
-     *  return required data layer methods - static class
-     *
-     *  @return array   array of required data layer methods
-     */
-    function get_required_data_layer_methods(){
-        return array();
-    }
-
-    /**
      *  return array of strings - required javascript files
      *
      *  @return array   array of required javascript files
