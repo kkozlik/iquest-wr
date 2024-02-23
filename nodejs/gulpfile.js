@@ -1,12 +1,11 @@
 var gulp        = require('gulp');
 var browserSync = require('browser-sync').create();
-var sass        = require('gulp-sass');
 var sourcemaps  = require('gulp-sourcemaps');
 var rename      = require("gulp-rename");
 var del         = require('del');
 var cleanCSS    = require('gulp-clean-css');
 
-sass.compiler = require('node-sass');
+const sass = require('gulp-sass')(require('sass'));
 
 const OUTPUT_CSS_DIR =  '../pages/styles';
 const OUTPUT_FONT_DIR = '../pages/styles/fonts';
