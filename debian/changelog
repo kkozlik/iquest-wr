@@ -1,3 +1,9 @@
+iquest (24.2.0) stable; urgency=medium
+
+  * Fixes for PHP 8
+
+ -- root <root@ok1kpi.cz>  Thu, 22 Feb 2024 21:33:25 +0100
+
 iquest (23.3.1) stable; urgency=medium
 
   [ kk@kk-iquest.kufr.cz ]

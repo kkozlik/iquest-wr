@@ -15,7 +15,7 @@ DESTDIR=$(CURDIR)/debian/iquest
 	dh $@
 
 build:
-	cd nodejs; npm install; gulp prod
+	cd nodejs; npm install; node_modules/.bin/gulp prod
 
 install: build
 	dh_testdir
