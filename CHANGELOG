@@ -1,3 +1,6 @@
+rel 24.3.0
+* Fix comunication with traccar
+
 rel 24.2.0
 * Fixes for PHP 8
 
