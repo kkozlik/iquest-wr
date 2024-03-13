@@ -18,7 +18,7 @@ class Traccar{
     }
 
     private function auth(){
-        global $lang_str, $config;
+        global $lang_str;
 
         $curl = curl_init();
 
@@ -31,8 +31,10 @@ class Traccar{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        curl_setopt($curl, CURLOPT_COOKIEJAR, $config->traccar_cookie_file);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, $config->traccar_cookie_file);
+        $cookie_file = self::get_cookie_file();
+
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $cookie_file);
 
         sw_log(__CLASS__."::".__FUNCTION__.": Executing API query: url:'$url'", PEAR_LOG_DEBUG);
 
@@ -42,7 +44,7 @@ class Traccar{
 
         if (false === $output){
             $err = $lang_str['traccar_err_api_auth_error'].curl_error($curl);
-            curl_close($curl);
+            self::curl_close($curl);
 
             sw_log(__CLASS__.": Failed to query url: ".$url, PEAR_LOG_ERR);
             sw_log(__CLASS__.": ".$err, PEAR_LOG_ERR);
@@ -53,7 +55,7 @@ class Traccar{
             if($response_code < 200 or $response_code > 299){
 
                 $resp_code_err = "Response code is not 2xx but ".curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-                curl_close($curl);
+                self::curl_close($curl);
 
                 $resp = json_decode($output, true);
                 if ($resp and isset($resp['error'])) $reason = $resp['error'];
@@ -69,7 +71,7 @@ class Traccar{
             }
         }
 
-        curl_close($curl);
+        self::curl_close($curl);
 
         // If curl return just true, because the output has been redirected to a file,
         // return the true directly without json_decode
@@ -106,7 +108,7 @@ class Traccar{
     }
 
     private function query_server($path, $params=[], $opts=[]){
-        global $lang_str, $config;
+        global $lang_str;
 
         $curl = curl_init();
 
@@ -140,8 +142,10 @@ class Traccar{
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
-        curl_setopt($curl, CURLOPT_COOKIEJAR, $config->traccar_cookie_file);
-        curl_setopt($curl, CURLOPT_COOKIEFILE, $config->traccar_cookie_file);
+        $cookie_file = self::get_cookie_file();
+
+        curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
+        curl_setopt($curl, CURLOPT_COOKIEFILE, $cookie_file);
 
         if (!empty($opts['timeout'])){
             curl_setopt($curl, CURLOPT_TIMEOUT, $opts['timeout']);
@@ -161,7 +165,7 @@ class Traccar{
 
         if (false === $output){
             $err = $lang_str['traccar_err_api_call_error'].curl_error($curl);
-            curl_close($curl);
+            self::curl_close($curl);
 
             sw_log(__CLASS__.": Failed to query url: ".$url, PEAR_LOG_ERR);
             sw_log(__CLASS__.": ".$err, PEAR_LOG_ERR);
@@ -172,7 +176,7 @@ class Traccar{
 
             if($response_code < 200 or $response_code > 299){
 
-                curl_close($curl);
+                self::curl_close($curl);
 
                 if($response_code == 401) {
                     sw_log(__CLASS__."::".__FUNCTION__.": Query failed - unauthorized: $output", PEAR_LOG_DEBUG);
@@ -195,7 +199,7 @@ class Traccar{
             }
         }
 
-        curl_close($curl);
+        self::curl_close($curl);
 
         sw_log(__CLASS__."::".__FUNCTION__.": response: '$output'", PEAR_LOG_DEBUG);
 
@@ -205,6 +209,18 @@ class Traccar{
         return json_decode($output, true);
     }
 
+    private static function get_cookie_file(){
+        global $config;
+
+        return $config->traccar_cookie_file."-".posix_getpwuid(posix_geteuid())['name'];
+    }
+
+    private static function curl_close($curl){
+
+        curl_close($curl);
+
+        chmod(self::get_cookie_file(), 0600);
+    }
 
     public static function parse_time($val){
         // $val example: 2019-12-17T15:51:41.405+0000

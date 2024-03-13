@@ -25,6 +25,8 @@ case "$1" in
             addgroup --quiet --system iquest
         fi
 
+        chmod 775 /var/lib/iquest
+        chown www-data:iquest /var/lib/iquest
 
         chmod 2770 /var/lib/iquest/data
         chown www-data:iquest /var/lib/iquest/data
@@ -40,11 +42,6 @@ case "$1" in
         touch /var/log/iquest
         chown www-data:iquest /var/log/iquest
         chmod 664 /var/log/iquest
-
-        touch /var/lib/iquest/traccar-cookie.txt
-        chown www-data:iquest /var/lib/iquest/traccar-cookie.txt
-        chmod 660 /var/lib/iquest/traccar-cookie.txt
-
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
