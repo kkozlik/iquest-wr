@@ -219,7 +219,7 @@ class Traccar{
 
         curl_close($curl);
 
-        chmod(self::get_cookie_file(), 0600);
+        if (file_exists(self::get_cookie_file())) chmod(self::get_cookie_file(), 0600);
     }
 
     public static function parse_time($val){
