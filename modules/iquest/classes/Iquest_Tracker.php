@@ -172,6 +172,8 @@ class Iquest_Tracker{
             $zones = $traccar->get_zone_by_dev($team->tracker_id);
             $device = $traccar->get_device($team->tracker_id);
 
+            if (!$device) throw new Traccar_api_query_exception("Cannot find device {$team->tracker_id}");
+
             $now = new DateTime('now');
             $data_age = $now->getTimestamp() - $device->lastUpdate->getTimestamp();
 

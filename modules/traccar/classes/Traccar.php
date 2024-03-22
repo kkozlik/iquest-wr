@@ -255,6 +255,8 @@ class Traccar{
     public function get_zone_by_dev($devId){
         $dev = $this->get_device($devId);
 
+        if (!$dev) throw new Traccar_api_query_exception("Cannot find device $devId");
+
         $zones = [];
         foreach($dev->geofenceIds as $zoneId){
             $zone = Traccar_zone::fetch($this, $zoneId);
