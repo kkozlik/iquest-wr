@@ -203,6 +203,10 @@ class Iquest_Tracker{
             return $result;
         }
 
+        if ($data_age > 3*60){
+            ErrorHandler::add_error(str_replace('<age>', '3 min', $lang_str['iquest_err_tracker_old_location']));
+        }
+
         $zone_names = [];
         foreach($zones as $zone) $zone_names[] = $zone->name;
 
@@ -221,10 +225,6 @@ class Iquest_Tracker{
             }
 
             ErrorHandler::add_error($lang_str['iquest_err_tracker_wrong_location']);
-
-            if ($data_age > 3*60){
-                ErrorHandler::add_error(str_replace('<age>', '3 min', $lang_str['iquest_err_tracker_old_location']));
-            }
 
             Iquest_Events::add(Iquest_Events::LOCATION_CHECK,
                     false,
