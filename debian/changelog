@@ -1,3 +1,11 @@
+iquest (24.3.1) stable; urgency=medium
+
+  * Check age of tracker position and warn about offline tracker on each location check (#38)
+  * Check position with tracker ID unknown to traccar causes PHP fatal error (#35)
+  * Team position use logaritmic scale? (#39)
+
+ -- root <root@ok1kpi.cz>  Fri, 22 Mar 2024 21:41:19 +0100
+
 iquest (24.3.0) stable; urgency=medium
 
   * Fix comunication with traccar
