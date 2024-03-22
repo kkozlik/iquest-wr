@@ -67,6 +67,7 @@
             },
             xAxis: {
                 type: 'datetime',
+                ordinal: false,
                 title: {
                     text: '{$lang_str.iquest_rank_x_axes|escape:javascript}'
                 }

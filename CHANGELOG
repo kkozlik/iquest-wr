@@ -1,5 +1,6 @@
 * Check age of tracker position and warn about offline tracker on each location check (#38)
 * Check position with tracker ID unknown to traccar causes PHP fatal error (#35)
+*  Team position use logaritmic scale? (#39)
 
 rel 24.3.0
 * Fix comunication with traccar
